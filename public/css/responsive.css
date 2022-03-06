@@ -1,0 +1,74 @@
+@media screen and (min-width: 768px) {
+  .main__header {
+    display: block;
+    -webkit-box-align: unset;
+        -ms-flex-align: unset;
+            align-items: unset;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .main__header .brand {
+    max-width: 4rem;
+    max-height: 4rem;
+  }
+  .main__header .brand .logo {
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+    -o-object-position: center;
+       object-position: center;
+  }
+  .main__header .search__box {
+    min-width: 450px;
+  }
+  .main__header .search__box .input-group-text,
+  .main__header .search__box .form-control {
+    background-color: #f4f4f4;
+    border-color: #f4f4f4;
+  }
+  .main__header .nav__link {
+    padding: 0.25rem 0.625rem;
+  }
+  .main__header .profile__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .universal__wrapper .sidebar {
+    background-color: rgba(47, 181, 0, 0.1);
+    height: 100%;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .dashboard .inner__field {
+    -ms-grid-columns: (minmax(250px, 1fr))[auto-fit];
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .dashboard .inner__field {
+    -ms-grid-columns: (minmax(300px, 1fr))[auto-fit];
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  .dashboard.gallery .inner__field {
+    -ms-grid-columns: (minmax(270px, 1fr))[auto-fit];
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .dashboard .inner__field {
+    -ms-grid-columns: (minmax(340px, 1fr))[auto-fit];
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  }
+  .dashboard.gallery .inner__field {
+    -ms-grid-columns: (minmax(340px, 1fr))[auto-fit];
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  }
+}

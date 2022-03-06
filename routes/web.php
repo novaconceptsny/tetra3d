@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'dashboard')->name('home');
+Route::view('tour', 'tour')->name('tour');
+Route::view('editor', 'editor')->name('editor');
+Route::view('gallery', 'gallery')->name('gallery');
+Route::view('walls', 'walls')->name('walls');
