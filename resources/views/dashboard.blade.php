@@ -21,14 +21,14 @@
                         </div>
                         <div class="right">
                             <span class="btn btn__stage {{ $is_archive ? 'archive' : '' }}">Active</span>
-                            <a href="#" class="dot__icon dot_1">
-                                <x-svg.ellipsis-vertical/>
-                            </a>
-                            <div class="drop__down drop_1">
-                                <ul>
-                                    <li><a href="#">item-1</a></li>
-                                    <li><a href="#">item-2</a></li>
-                                    <li><a href="#">item-3</a></li>
+                            <div class="dropdown">
+                                <a href="javascript:void(0)" class="dropdown-toggle " id="" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <x-svg.ellipsis-vertical/>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
                                 </ul>
                             </div>
                         </div>

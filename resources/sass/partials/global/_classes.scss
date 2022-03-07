@@ -1,0 +1,16 @@
+.tetra__btn {
+  background-color: $blue;
+  border-radius: 50rem;
+  color: $white;
+  font-size: 1rem;
+  font-weight: 600;
+
+  &:hover {
+    background-color: rgba($color: $blue, $alpha: 0.9);
+    color: $white;
+  }
+}
+
+.bg-creamgreen {
+  background-color: $creamGreen;
+}

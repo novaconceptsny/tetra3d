@@ -85,55 +85,9 @@ $(document).ready(function () {
     $(this).toggleClass('rotate');
   })
 
- 
+
   $('.dot_1').click(function(){
     $('.drop_1 ul').toggleClass('active');
-  });
-  $('.dot_2').click(function(){
-    $('.drop_2 ul').toggleClass('active');
-  });
-  $('.dot_3').click(function(){
-    $('.drop_3 ul').toggleClass('active');
-  });
-  $('.dot_4').click(function(){
-    $('.drop_4 ul').toggleClass('active');
-  });
-
-  $('.dot_5').click(function(){
-    $('.drop_5 ul').toggleClass('active');
-  });
-  $('.dot_6').click(function(){
-    $('.drop_6 ul').toggleClass('active');
-  });
-  $('.dot_7').click(function(){
-    $('.drop_7 ul').toggleClass('active');
-  });
-  $('.dot_8').click(function(){
-    $('.drop_8 ul').toggleClass('active');
-  });
-
-
-  $('.dot_9').click(function(){
-    $('.drop_9 ul').toggleClass('active');
-  });
-  $('.dot_10').click(function(){
-    $('.drop_10 ul').toggleClass('active');
-  });
-  $('.dot_11').click(function(){
-    $('.drop_11 ul').toggleClass('active');
-  });
-  $('.dot_12').click(function(){
-    $('.drop_12 ul').toggleClass('active');
-  });
-
-  $('.dot_13').click(function(){
-    $('.drop_13 ul').toggleClass('active');
-  });
-  $('.dot_14').click(function(){
-    $('.drop_14 ul').toggleClass('active');
-  });
-  $('.dot_15').click(function(){
-    $('.drop_15 ul').toggleClass('active');
   });
 
   $(".accordion__item .arrow").click(function () {

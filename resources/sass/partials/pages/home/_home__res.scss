@@ -1,0 +1,35 @@
+@media screen and (min-width: 576px) {
+  .dashboard {
+    .inner__field {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .dashboard {
+    .inner__field {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    &.gallery {
+      .inner__field {
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .dashboard {
+    .inner__field {
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    }
+
+    &.gallery {
+      .inner__field {
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      }
+    }
+  }
+}

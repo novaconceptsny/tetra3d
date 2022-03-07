@@ -1,0 +1,21 @@
+.signin__screen {
+  padding: 4.5rem 0;
+  font-family: $secondaryFontFamily;
+
+  .primary__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 2.25rem;
+    color: $gray;
+    margin-bottom: 1.75rem;
+  }
+
+  .btn[type="submit"] {
+    @extend .tetra__btn;
+  }
+
+  .forgot__pass {
+    text-decoration: underline;
+    color: $deepPurple;
+  }
+}

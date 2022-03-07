@@ -1,0 +1,7 @@
+@font-face {
+    font-family: "Campton";
+    src: url("#{$fontsDir}/Campton/Campton-BoldDEMO.eot");
+    src: url("#{$fontsDir}/Campton/Campton-LightDEMO.eot?#iefix") format("embedded-opentype"),
+    url("#{$fontsDir}/Campton/Campton-LightDEMO.woff2") format("woff2"),
+    url("#{$fontsDir}/Campton/Campton-LightDEMO.woff") format("woff");
+}
