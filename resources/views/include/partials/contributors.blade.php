@@ -11,4 +11,12 @@
             <span class="profile__tooltip"> Pablo Picasso </span>
         </a>
     @endfor
+    <a href="#" class="profile" style="z-index: 999">
+        <span class="number__count font-primary">1+</span>
+        <span class="profile__tooltip">
+            <span>John Doe</span><br>
+            <span>John Doe</span><br>
+            <span>John Doe</span>
+        </span>
+    </a>
 </div>

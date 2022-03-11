@@ -2,6 +2,9 @@
 
 @section('content')
     @include('include.partials.collection')
+    <button class="btn sidebar__trigger fixed">
+        <x-svg.angle-left/>
+    </button>
     <div class="surface__sidebar card">
         <div class="card-body">
             <div class="top">
@@ -24,44 +27,39 @@
                     <div class="accordion__item">
                         <div class="accordion__header">
                             <div class="left">
-                                <div class="profile">
-                                    <img
-                                        src="{{ asset('images/profile__photo.png') }}"
-                                        alt="profile"
-                                        width="76"
-                                        height="auto"
-                                    />
-                                </div>
                                 <div class="user__details">
                                     <h3 class="username">Matis Centered</h3>
                                     <div class="tag">Nile Berry | 12/11/2021</div>
+                                    <div class="profiles__icons">
+                                        @include('include.partials.contributors')
+                                    </div>
                                 </div>
                             </div>
                             <div class="right">
-                                <a href="#" class="icon accordion__trigger">
-                                    <x-svg.pen-to-square/>
-                                </a>
-                                <a href="#" class="icon">
-                                    <x-svg.trash-can/>
-                                </a>
-                                <a href="#" class="icon">
-                                    <x-svg.thumbs-up/>
-                                </a>
-                                <button type="button" class="icon arrow ">
-                                    <x-svg.angle-up/>
-                                </button>
+                                <div class="surface__items">
+                                    <a href="#" class="icon accordion__trigger">
+                                        <x-svg.pen-to-square/>
+                                    </a>
+                                    <a href="#" class="icon">
+                                        <x-svg.trash-can/>
+                                    </a>
+                                    <a href="#" class="icon">
+                                        <x-svg.thumbs-up/>
+                                    </a>
+                                    <button type="button" class="icon arrow">
+                                        <x-svg.angle-up/>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="accordion__body">
-                            <p class="message">
-                                added some of my daughters left over salmon and avocado roll
-                                with a dap of elk sauce on each one.
-                            </p>
-                            <p class="message">
-                                added some of my daughters left over salmon and avocado roll
-                                with a dap of elk sauce on each one.salmon and avocado roll
-                                with a dap of elk sauce on each
-                            </p>
+                            @for($j=0; $j<3; $j++)
+                                <div class="message">
+                                    <h6 class="user__name">Matis</h6>
+                                    added some of my daughters left over salmon and avocado roll
+                                    with a dap of elk sauce on each one.
+                                </div>
+                            @endfor
                             <div class="input-group type__message">
                                 <input
                                     type="text"
@@ -78,11 +76,6 @@
             </div>
         </div>
     </div>
-
-    <button class="btn sidebar__trigger fixed">
-        <x-svg.angle-left/>
-    </button>
-
     <div class="dashboard mini">
         <div class="image__viewer">
             <img

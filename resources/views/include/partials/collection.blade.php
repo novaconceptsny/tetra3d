@@ -1,6 +1,6 @@
 <div class="collections card mini">
     <div class="card-header">
-        <h2 class="collectoin__title">Collection</h2>
+        <h2 class="collection__title font-secondary">Collection</h2>
         <span class="expand__icon">
             <x-svg.up-right-and-down-left-from-center/>
         </span>
@@ -22,7 +22,7 @@
                 <button type="submit" class="btn">Search</button>
             </div>
         </form>
-        <div class="photo__collectoin">
+        <div class="photo__collection">
             <ul class="item__list">
                 @for($i=1; $i<22; $i++)
                     <li class="item">

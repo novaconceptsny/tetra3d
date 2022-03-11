@@ -1,0 +1,11 @@
+@media screen and (min-width: 992px) {
+  .universal__wrapper .dashboard {
+    .inner__table {
+      .footer__pagination {
+        &.mini {
+          left: 6rem;
+        }
+      }
+    }
+  }
+}

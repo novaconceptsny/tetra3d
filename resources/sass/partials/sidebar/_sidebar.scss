@@ -94,6 +94,8 @@
       }
 
       .nav__item {
+        width: 100%;
+
         &.active {
           .nav__link {
             &::after {
@@ -134,10 +136,10 @@
 
         &#expand__menu {
           .icon {
-           transform: rotate(0deg);
+            transform: rotate(0deg);
 
             &.rotate {
-             transform: rotate(180deg);
+              transform: rotate(180deg);
             }
           }
         }
@@ -189,8 +191,8 @@
       }
 
       .avatar {
-        width: 3rem;
-        height: 3rem;
+        width: 1.75rem;
+        height: 1.75rem;
         border-radius: 50%;
       }
     }

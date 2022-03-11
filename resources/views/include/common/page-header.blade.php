@@ -5,7 +5,7 @@
                 <x-svg.bars/>
             </button>
             <a href="#" class="prev__btn">
-                <x-svg.angle-left/>
+                <x-lineawesome-angle-left-solid class="text-dark"/>
                 <span class="navigator"> Pablo Picasso Show </span>
             </a>
         </div>
@@ -22,7 +22,7 @@
                 </li>
                 <li class="nav__item">
                     <a href="#" class="nav__link">
-                        <x-svg.globe/>
+                        <x-phosphor-globe-thin height="24" width="24"/>
                         Return to 360
                     </a>
                 </li>

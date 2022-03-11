@@ -8,6 +8,7 @@ $(document).ready(function () {
       $(".universal__wrapper .dashboard").removeClass("wide");
       $(".collections").removeClass("hide");
       $(".footer__pagination").removeClass("hide");
+      $(".nav__link .nav__text").addClass("hide");
 
       $("#expand__menu").click(function () {
         $(this).children(".icon").toggleClass("rotate");
@@ -29,11 +30,11 @@ $(document).ready(function () {
       $(".collections").addClass("hide");
       $(".universal__wrapper .dashboard").addClass("wide");
       $(".footer__pagination").addClass("hide");
+      $(".nav__link .nav__text").removeClass("hide");
 
       $("#nav__search__icon").click(function () {
         $("#search__box").slideToggle();
       });
-      $(".nav__link .nav__text").removeClass("hide");
     }
   }
   reportWindow($(window).width());
@@ -66,43 +67,31 @@ $(document).ready(function () {
 
   $(".accordion__trigger").click(function () {
     $(".accordion__item").removeClass("active");
-    $(this).parent().parent().next().slideToggle();
+    $(this).parent().parent().parent().next().slideToggle();
     $(this).siblings(".arrow").toggleClass("rotate");
 
     if ($(".accordion__item .arrow.rotate").hasClass("rotate")) {
-      console.log(
-        $(".accordion__item .arrow.rotate")
-          .parent()
-          .parent()
-          .parent()
-          .addClass("active")
-      );
-      // $(".accordion__item .arrow.rotate").parent().parent().addClass("active");
+      $(".accordion__item .arrow.rotate")
+        .parent()
+        .parent()
+        .parent()
+        .parent()
+        .addClass("active");
     }
-  });
-
-  $('.arrow').click(function(){
-    $(this).toggleClass('rotate');
-  })
-
-
-  $('.dot_1').click(function(){
-    $('.drop_1 ul').toggleClass('active');
   });
 
   $(".accordion__item .arrow").click(function () {
     $(".accordion__item").removeClass("active");
-    $(this).parent().parent().next().slideToggle();
-    $(this).siblings(".arrow").toggleClass("rotate");
+    $(this).parent().parent().parent().next().slideToggle();
+    $(this).toggleClass("rotate");
 
     if ($(".accordion__item .arrow.rotate").hasClass("rotate")) {
-      console.log(
-        $(".accordion__item .arrow.rotate")
-          .parent()
-          .parent()
-          .parent()
-          .addClass("active")
-      );
+      $(".accordion__item .arrow.rotate")
+        .parent()
+        .parent()
+        .parent()
+        .parent()
+        .addClass("active");
     }
   });
 
@@ -111,4 +100,3 @@ $(document).ready(function () {
     $(this).addClass("active");
   });
 });
-

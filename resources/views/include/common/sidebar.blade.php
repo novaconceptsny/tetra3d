@@ -62,7 +62,7 @@
             </a>
         </li>
         <li class="profile__item">
-            <a href="#" class="p-2">
+            <a href="#" class="nav__link mx-2 p-2">
                 <img
                     src="{{ asset('images/profile__photo.png') }}"
                     alt="profile photo"
@@ -70,6 +70,7 @@
                     height="auto"
                     class="avatar"
                 />
+                <span class="nav__text hide"> John Doe </span>
             </a>
         </li>
         <li class="expand__menu__item">

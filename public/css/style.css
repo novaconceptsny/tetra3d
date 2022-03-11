@@ -73,6 +73,14 @@ a {
   background-color: #41c772;
 }
 
+.font-primary {
+  font-family: "Roboto", Arial, Helvetica, sans-serif;
+}
+
+.font-secondary {
+  font-family: "Campton", Arial, Helvetica, sans-serif;
+}
+
 .main__header {
   min-height: 70px;
   box-shadow: 0 0 0.625rem 0 rgba(0, 0, 0, 0.25);
@@ -340,6 +348,9 @@ a {
 .universal__wrapper .sidebar .navbar__nav.mini {
   align-items: center;
 }
+.universal__wrapper .sidebar .navbar__nav .nav__item {
+  width: 100%;
+}
 .universal__wrapper .sidebar .navbar__nav .nav__item.active .nav__link::after {
   content: "";
   width: 0.1875rem;
@@ -411,8 +422,8 @@ a {
   margin-bottom: 0.75rem;
 }
 .universal__wrapper .sidebar .navbar__nav .avatar {
-  width: 3rem;
-  height: 3rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 50%;
 }
 .universal__wrapper .sidebar .divider {
@@ -452,18 +463,26 @@ a {
 }
 .dashboard.gallery {
   overflow: auto !important;
+  padding: 2.5rem !important;
+}
+.dashboard.gallery .inner__field {
+  margin-bottom: 1.625rem;
 }
 .dashboard.gallery .inner__field .card {
   border-radius: 0.375rem;
-  overflow: hidden;
   position: relative;
-  min-height: 308px;
+  min-height: 280px;
 }
-.dashboard.gallery .inner__field .card:hover .card-body {
-  display: none;
+.dashboard.gallery .inner__field .card .overlay__link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 .dashboard.gallery .inner__field .card .card-img-top {
+  max-height: 200px;
   position: relative;
+  border-radius: 0.375rem 0.375rem 0 0;
+  overflow: hidden;
 }
 .dashboard.gallery .inner__field .card .card-img-top img {
   width: 100%;
@@ -474,14 +493,15 @@ a {
      object-position: center;
 }
 .dashboard.gallery .inner__field .card .card-body {
-  content: "";
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  z-index: 5;
-  background: #FFF;
-  transition: 300ms ease;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+}
+.dashboard.gallery .inner__field .card .accordion__item {
+  margin: 0;
+}
+.dashboard.gallery .inner__field .card .accordion__item:hover {
+  background-color: transparent;
 }
 .dashboard.gallery .inner__field .card .add__btn {
   position: absolute;
@@ -495,8 +515,6 @@ a {
   color: #ffffff;
   border: none;
   transition: 300ms ease;
-  opacity: 0;
-  visibility: hidden;
 }
 .dashboard.gallery .inner__field .card .add__btn .plus__icon {
   background-color: #41c772;
@@ -506,10 +524,6 @@ a {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-}
-.dashboard.gallery .inner__field .card:hover .add__btn {
-  opacity: 1;
-  visibility: visible;
 }
 .dashboard.gallery .inner__field .card .top {
   display: flex;
@@ -560,9 +574,9 @@ a {
   max-width: 50%;
   margin-left: auto;
 }
-.dashboard .inner__field {
+.dashboard.gallery .inner__field {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.75rem;
 }
 .dashboard .inner__field .card-header {
@@ -645,7 +659,19 @@ a {
 .profile__group .profile {
   height: 1.875rem;
   width: 1.875rem;
+  border-radius: 50%;
   margin-left: -0.5rem;
+}
+.profile__group .profile .number__count {
+  width: 32px;
+  height: 32px;
+  background: #eeeeee;
+  display: flex;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 12px;
 }
 .profile__group .profile:first-child {
   margin-left: 0;
@@ -665,10 +691,27 @@ a {
   -o-object-position: center;
      object-position: center;
 }
+.profile__group .profile .photo.more {
+  background-color: #f4f4f4;
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  color: #2f2f2f;
+  font-size: 0.75rem;
+}
+.profile__group .profile .photo.more i {
+  font-size: 0.625rem;
+  margin-top: -0.25rem;
+}
 .profile__group .profile .profile__tooltip {
   position: absolute;
   top: 110%;
   left: 50%;
+  z-index: 1048;
   transform: translateX(-50%);
   background-color: #454545;
   padding: 0.25rem 0.75rem;
@@ -745,9 +788,6 @@ a {
   background-color: #ffffff;
   transition: 300ms ease;
 }
-.universal__wrapper .dashboard .inner__table .footer__pagination.mini {
-  left: 6rem;
-}
 .universal__wrapper .dashboard .inner__table .footer__pagination.hide {
   left: 0;
 }
@@ -791,8 +831,8 @@ a {
   padding-bottom: 0.875rem;
   cursor: pointer;
 }
-.collections .card-header .collectoin__title {
-  font-size: 1.375rem;
+.collections .card-header .collection__title {
+  font-size: 1.2rem;
   line-height: 1.75rem;
   color: #000000;
   font-weight: bold;
@@ -822,22 +862,22 @@ a {
   background-color: #41c772;
   color: #ffffff;
 }
-.collections .photo__collectoin {
+.collections .photo__collection {
   overflow-y: auto;
   scrollbar-width: auto;
   scrollbar-color: #cccccc #ffffff;
   max-height: calc(100vh - 199px);
   padding-bottom: 1rem;
 }
-.collections .photo__collectoin::-webkit-scrollbar-thumb {
+.collections .photo__collection::-webkit-scrollbar-thumb {
   background-color: #cccccc;
   border-radius: 25px;
   border: 3px solid #ffffff;
 }
-.collections .photo__collectoin::-webkit-scrollbar-track {
+.collections .photo__collection::-webkit-scrollbar-track {
   background: #ffffff;
 }
-.collections .photo__collectoin::-webkit-scrollbar {
+.collections .photo__collection::-webkit-scrollbar {
   width: 12px;
 }
 .collections .item__list {
@@ -854,6 +894,7 @@ a {
 .collections .item__list .item .preview {
   max-width: 128px;
   max-height: 128px;
+  overflow: hidden;
 }
 .collections .item__list .item .preview img {
   width: 100%;
@@ -950,7 +991,7 @@ a {
 }
 
 .tetra__accordion {
-  overflow-y: auto;
+  overflow: auto;
   scrollbar-width: auto;
   scrollbar-color: #cccccc #ffffff;
   max-height: calc(100vh - 156px);
@@ -974,35 +1015,36 @@ a {
   font-size: 0.625rem;
   color: #454545;
 }
-.tetra__accordion .accordion__item {
+
+.accordion__item {
   padding: 0.75rem;
   border-radius: 0.375rem;
   margin-bottom: 1rem;
 }
-.tetra__accordion .accordion__item.active {
+.accordion__item.active {
   background-color: #f4f4f4;
 }
-.tetra__accordion .accordion__item:hover {
+.accordion__item:hover {
   background-color: #f4f4f4;
   cursor: pointer;
 }
-.tetra__accordion .accordion__header {
+
+.accordion__header {
   display: grid;
   grid-template-columns: 1fr 6rem;
   align-items: center;
   gap: 0.75rem;
 }
-.tetra__accordion .accordion__header .left {
+.accordion__header .left {
   display: flex;
   gap: 0.5rem;
 }
-.tetra__accordion .accordion__header .profile {
+.accordion__header .profile {
   height: 2.875rem;
   width: 2.875rem;
   border-radius: 50%;
-  overflow: hidden;
 }
-.tetra__accordion .accordion__header .profile img {
+.accordion__header .profile img {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
@@ -1010,64 +1052,88 @@ a {
   -o-object-position: center;
      object-position: center;
 }
-.tetra__accordion .accordion__header .user__details .username {
+.accordion__header .user__details .username {
   font-size: 1rem;
   font-weight: bold;
   line-height: 1.5rem;
   margin-bottom: 0;
   color: #2f2f2f;
 }
-.tetra__accordion .accordion__header .user__details .tag {
+.accordion__header .user__details .tag {
   font-size: 0.75rem;
   color: #454545;
+  margin-bottom: 0.5rem;
 }
-.tetra__accordion .accordion__header .right {
+.accordion__header .right {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  flex-direction: column;
   gap: 0.5rem;
 }
-.tetra__accordion .accordion__header .right .icon {
+.accordion__header .right .icon {
   padding: 0;
   background-color: transparent;
   border: 0;
   transition: 300ms ease;
 }
-.tetra__accordion .accordion__header .right .icon.arrow.rotate svg {
+.accordion__header .right .icon.arrow.rotate svg {
   transform: rotate(180deg);
 }
-.tetra__accordion .accordion__header .right .published__time {
+.accordion__header .right .published__time {
   font-family: "Campton", Arial, Helvetica, sans-serif;
   color: #a4a4a4;
   font-size: 0.75rem;
 }
-.tetra__accordion .accordion__body {
+.accordion__header .profiles__icons .profile__group .profile {
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 50%;
+}
+.accordion__header .profiles__icons .profile__group .profile .number__count {
+  width: 24px;
+  height: 24px;
+  background: #eeeeee;
+  display: flex;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 12px;
+}
+
+.accordion__body {
   display: none;
 }
-.tetra__accordion .message {
+
+.message {
   background-color: #ffffff;
   padding: 0.5rem;
   border-radius: 0.375rem;
   margin: 0.75rem 0;
 }
-.tetra__accordion .message:last-child {
+.message:last-child {
   margin: 0;
 }
-.tetra__accordion .message img {
+.message img {
   margin-top: 0.5rem;
 }
-.tetra__accordion .type__message {
+.message .user__name {
+  font-size: 0.875rem;
+}
+
+.type__message {
   background-color: #ffffff;
   border-radius: 0.375rem 0 0 0.375rem;
 }
-.tetra__accordion .type__message .form-control {
+.type__message .form-control {
   background-color: transparent;
   border-color: transparent;
 }
-.tetra__accordion .type__message .form-control:focus {
+.type__message .form-control:focus {
   box-shadow: none;
 }
-.tetra__accordion .type__message .input-group-text {
+.type__message .input-group-text {
   background-color: transparent;
   border-color: transparent;
   background-color: #41c772;

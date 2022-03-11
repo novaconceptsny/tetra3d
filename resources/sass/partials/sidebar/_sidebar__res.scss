@@ -1,24 +1,32 @@
-
 @media screen and (min-width: 992px) {
   .universal__wrapper {
     .sidebar {
       background-color: rgba($color: $green, $alpha: 0.1);
       height: 100%;
       width: 160px;
-       
- 
+
+      &.mini {
+        .nav__item {
+          &.active {
+            width: 100%;
+          }
+
+          .nav__link {
+            flex-direction: column;
+          }
+        }
+      }
     }
   }
 }
-@media all and (max-width: 991px){
-    .sidebar {
-            max-width: 160px !important;
-            width: 100% !important;
-            
-    }
-    .universal__wrapper .sidebar .navbar__nav.mini {
+@media all and (max-width: 991px) {
+  .sidebar {
+    max-width: 160px !important;
+    width: 100% !important;
+  }
+  .universal__wrapper .sidebar .navbar__nav.mini {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: flex-start;
-}
+  }
 }
