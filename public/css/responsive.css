@@ -56,16 +56,6 @@
     align-items: flex-start;
   }
 }
-@media screen and (min-width: 1200px) {
-  .dashboard.gallery .inner__field {
-    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  }
-}
-@media screen and (min-width: 1400px) {
-  .dashboard.gallery .inner__field {
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  }
-}
 @media screen and (min-width: 992px) {
   .universal__wrapper .dashboard .inner__table .footer__pagination.mini {
     left: 6rem;

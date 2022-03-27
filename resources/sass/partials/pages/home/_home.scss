@@ -20,12 +20,10 @@
         padding: 2.5rem !important;
 
         .inner__field {
-            margin-bottom: 1.625rem;
-
             .card {
                 border-radius: 0.375rem;
                 position: relative;
-                min-height: 280px;
+                height: 100%;
 
                 .overlay__link {
                     position: absolute;
@@ -142,14 +140,6 @@
         width: unset;
         max-width: 50%;
         margin-left: auto;
-    }
-
-    &.gallery {
-        .inner__field {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.75rem;
-        }
     }
 
     .inner__field {
