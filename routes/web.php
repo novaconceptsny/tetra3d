@@ -13,8 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'dashboard')->name('home');
-Route::view('tour', 'tour')->name('tour');
-Route::view('editor', 'editor')->name('editor');
-Route::view('gallery', 'gallery')->name('gallery');
-Route::view('walls', 'walls')->name('walls');
+Route::view('tour', 'pages.tour')->name('tour');
+Route::view('editor', 'pages.editor')->name('editor');
+Route::view('gallery', 'pages.gallery')->name('gallery');
+Route::view('walls', 'pages.walls')->name('walls');
+
+Auth::routes();
+
+Route::group(['middleware' => 'auth'], function (){
+    Route::view('/', 'pages.dashboard')->name('home');
+});
