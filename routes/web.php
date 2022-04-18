@@ -21,5 +21,5 @@ Route::view('walls', 'pages.walls')->name('walls');
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function (){
-    Route::view('/', 'pages.dashboard')->name('home');
+    Route::get('/', 'HomeController@index')->name('dashboard');
 });

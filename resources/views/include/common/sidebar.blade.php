@@ -1,5 +1,5 @@
 <aside class="sidebar mini">
-    <a href="{{ route('home') }}" class="brand mini">
+    <a href="{{ route('dashboard') }}" class="brand mini">
         <img
             src="{{ asset('images/tetra__logo.png') }}"
             alt="brand logo"
@@ -11,7 +11,7 @@
 
     <ul class="navbar__nav mini">
         <li class="nav__item">
-            <a href="{{ route('home') }}" class="nav__link">
+            <a href="{{ route('dashboard') }}" class="nav__link">
                 <span class="icon">
                     <x-svg.grid-2/>
                 </span>

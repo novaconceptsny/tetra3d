@@ -31,7 +31,7 @@
 <header id="header" class="main__header">
     <div class="container-fluid">
         <nav id="navbar" class="main__navbar">
-            <a href="{{ route('home') }}" class="brand">
+            <a href="{{ route('dashboard') }}" class="brand">
                 <img
                     src="{{ asset('images/tetra__logo.png') }}"
                     alt="brand logo"
