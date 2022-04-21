@@ -1,0 +1,92 @@
+<krpano>
+    <!-- surface general code -->
+    <style name="surface"
+           edge="center"
+           devices="all"
+           tooltip=""
+           scalechildren="true"
+           maskchildren="false"
+           frame="1"
+           alpha="1"
+           visible="true"
+           zorder="10"
+           capture="false"
+           distorted="true"
+           ondown=""
+           onup=""
+           handcursor="true"
+
+    />
+
+    <style name="surface_click"
+           zorder="50"
+           keep="false"
+           visible="true"
+           enabled="true"
+           handcursor="true"
+           capture="false"
+           blendmode="normal"
+           alpha="0"
+           autoalpha="false"
+           polyline="false"
+           fillcolor="0x333333"
+           fillalpha="0"
+           borderwidth="5"
+           bordercolor="0x000000"
+           borderalpha="1"
+           subdiv="true"
+
+    />
+
+    <style name="surface_click_line"
+           zorder="50"
+           keep="false"
+           visible="true"
+           enabled="true"
+           handcursor="true"
+           capture="false"
+           blendmode="normal"
+           alpha="1"
+           autoalpha="false"
+           polyline="false"
+           fillcolor="0x333333"
+           fillalpha="1"
+           borderwidth="5"
+           bordercolor="0x000000"
+           borderalpha="1"
+           subdiv="true"
+
+    />
+
+    <!-- overlay_surface general code -->
+    <style name="overlay_surface"
+           edge="center"
+           devices="all"
+           scalechildren="true"
+           maskchildren="false"
+           alpha="1"
+           visible="true"
+           capture="false"
+           distorted="true"
+           handcursor="false"
+    />
+
+    <!-- Animated Hotspot -->
+    <style name="artwork_hotspot"
+           url="/krpano/img/hotspot-1118.png"
+           edge="center"
+           devices="all"
+           tooltip=""
+           scalechildren="true"
+           maskchildren="false"
+           width="prop"
+           height="auto"
+           frame="1"
+           visible="false"
+           zorder="40"
+           capture="false"
+           distorted="true"
+           onloaded="delayedcall(0.1,do_crop_animation(100,100,1250);set(visible,true));"
+    />
+
+</krpano>

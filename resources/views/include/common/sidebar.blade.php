@@ -27,7 +27,7 @@
             </a>
         </li>
         <li class="nav__item">
-            <a href="{{ route('tour') }}" class="nav__link plus">
+            <a href="{{ route('dashboard') }}" class="nav__link plus">
                 <span class="icon">
                     <x-svg.magnifying-glass/>
                 </span>

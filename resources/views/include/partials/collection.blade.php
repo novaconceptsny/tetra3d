@@ -1,4 +1,4 @@
-<div class="collections card mini">
+<div class="collections card mini" style="z-index: 999 !important;">
     <div class="card-header">
         <h2 class="collection__title font-secondary">Collection</h2>
         <span class="expand__icon">
@@ -13,6 +13,7 @@
                         <x-svg.magnifying-glass size="small"/>
                     </span>
                     <input
+                        id="search_input"
                         type="text"
                         class="form-control"
                         placeholder="Type.."
@@ -24,20 +25,22 @@
         </form>
         <div class="photo__collection">
             <ul class="item__list">
-                @for($i=1; $i<22; $i++)
-                    <li class="item">
+                @foreach($artworks as $artwork)
+                    <li class="item artwork-img"
+                        data-img-url="https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713872897.png" data-title="Space in Between - Nopal #5" data-thumb-url="https://tetra-gallery.s3.amazonaws.com/artgroup_thumbnail_5/164713872897.png" data-artwork-id="164713872897"
+                    >
                         <div class="preview">
                             <img
-                                src="{{ "images/collection/collection{$i}.png" }}"
+                                src="{{ $artwork->url }}"
                                 alt="thumbnail"
                                 width="100%"
                                 height="auto"
                             />
                         </div>
-                        <h3 class="item__title">Amy</h3>
+                        <h3 class="item__title">{{ $artwork->name }}</h3>
                         <p class="item__text">I added some</p>
                     </li>
-                @endfor
+                @endforeach
             </ul>
         </div>
     </div>

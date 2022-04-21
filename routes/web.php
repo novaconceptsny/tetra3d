@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('tour', 'pages.tour')->name('tour');
 Route::view('editor', 'pages.editor')->name('editor');
 Route::view('gallery', 'pages.gallery')->name('gallery');
 Route::view('walls', 'pages.walls')->name('walls');
@@ -22,4 +21,6 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function (){
     Route::get('/', 'HomeController@index')->name('dashboard');
+    Route::get('tour/{id}', 'TourController@index')->name('tour.index');
+    Route::get('editor', 'CanvasController@index')->name('editor');
 });

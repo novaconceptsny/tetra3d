@@ -1,0 +1,186 @@
+﻿<krpano>
+
+    <!--####### Include links #######-->
+    <include url="/krpano/skin/gyro.xml?%$timestamp%"/>
+    <include url="/krpano/hotspot.xml?%$timestamp%"/>
+    <include url="/krpano/action.xml?%$timestamp%"/>
+
+    <action name="startup" autorun="onstart">
+
+        <!-- This is the PRELOAD fractionalscaling -->
+        div(imageaspect_inst, layer[NOVA_Inst].imagewidth, layer[NOVA_Inst].imageheight);
+        if(imageaspect_inst GT screenaspect,
+        set(layer[NOVA_Inst].width,80%); set(layer[NOVA_Inst].height,prop);
+        ,
+        set(layer[NOVA_Inst].width,prop); set(layer[NOVA_Inst].height,70%);
+        );
+        initiate();
+        set(hotspot[Wall_4001].url , '%$Wall_4001%');
+        set(hotspot[Wall_4002].url , '%$Wall_4002%');
+        set(hotspot[Wall_4003].url , '%$Wall_4003%');
+        set(hotspot[Wall_4004].url , '%$Wall_4004%');
+        set(hotspot[Wall_4005].url , '%$Wall_4005%');
+        set(hotspot[Wall_4006].url , '%$Wall_4006%');
+        set(hotspot[Wall_4007].url , '%$Wall_4007%');
+        set(hotspot[Wall_4008].url , '%$Wall_4008%');
+        set(hotspot[Wall_4009].url , '%$Wall_4009%');
+        set(hotspot[Wall_4010].url , '%$Wall_4010%');
+
+    </action>
+
+    <!-- view settings -->
+    <!-- hlookat -90 -->
+    <view hlookat="-90" vlookat="0" maxpixelzoom="1.0" fov="90" fovmax="120" limitview="auto"/>
+
+
+    <preview url="panos/preview.jpg"/>
+
+    <image>
+        <cube url="panos/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,768,1664,3200"/>
+    </image>
+
+    <!-- ####### scale box ####### -->
+    <!-- <hotspot name="square" ath="-160" atv="38" alpha="1" scale="0.7" type="image" handcursor="false" capture="false" url="/krpano/1000x1000square.png" distorted="true" /> -->
+    <!-- <hotspot name="cross" ath="57" atv="0" alpha="1" scale="0.7" type="image" handcursor="false" capture="false" url="/krpano/1000x1000cross.png" distorted="true" /> -->
+
+    <!-- ####### Hotspots - copy everything below this line to main files  #######-->
+
+    <!-- ##### shared ##### -->
+    <!-- ##### shared ##### -->
+
+
+    <hotspot name="Wall_4001" canvas_id="4001" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
+             url="/krpano/dummy.png"
+             url_main="/surface/p4/s4001(Main) copy.png"
+             url_shared="/surface/p4/s4001BoxPoint1(Shared) copy.png"
+             scale="2.667" ath="-180.1" atv="0" ox="910" oy="-233" zorder="21"
+
+             main_w="1500" main_h="918" shared_w="730" shared_h="444" select="h"
+             ox_offset="0" oy_offset="0"
+             onloaded="setupSurface(live)"/>
+
+    <hotspot name="Wall_4001_click" canvas_id="4001" onclick="getUrl()" style="surface_click">
+        <point ath="172.85" atv="-58.38"/>
+        <point ath="-105.01" atv="-22.80"/>
+        <point ath="-105.08" atv="10.32"/>
+        <point ath="172.93" atv="35.19"/>
+    </hotspot>
+
+    <hotspot name="Wall_4002" canvas_id="4002" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
+             url="/krpano/dummy.png"
+             url_main="/surface/p4/s4002(Main) copy.png"
+             url_shared="/surface/p4/s4002BoxPoint1(Shared) copy.png"
+             scale="0.333" ath="-90" atv="0" ox="4" oy="-61.5" zorder="21"
+
+             main_w="1310" main_h="1500" shared_w="824" shared_h="944" select="h"
+             ox_offset="0" oy_offset="0"
+             onloaded="setupSurface(live)"
+    />
+
+    <hotspot name="Wall_4002_click" canvas_id="4002" onclick="getUrl()" style="surface_click">
+        <point ath="-104.91" atv="-22.83"/>
+        <point ath="-74.31" atv="-22.79"/>
+        <point ath="-74.36" atv="10.40"/>
+        <point ath="-104.90" atv="10.44"/>
+    </hotspot>
+
+    <hotspot name="Wall_4003" canvas_id="4003" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
+             url="/krpano/dummy.png"
+             url_main="/surface/p4/s4003(Main) copy.png"
+             url_shared="/surface/p4/s4003BoxPoint1(Shared) copy.png"
+             scale="2.667" ath="-90.5" atv="0" ox="490" oy="-61.5" zorder="21"
+
+             main_w="1500" main_h="745" shared_w="238" shared_h="119" select="h"
+             ox_offset="0" oy_offset="0"
+             onloaded="setupSurface(live)"/>
+
+    <hotspot name="Wall_4003_click" canvas_id="4003" onclick="getUrl()" style="surface_click">
+        <point ath="-51.07" atv="8.42"/>
+        <point ath="-51.07" atv="-19.18"/>
+        <point ath="-71.2" atv="-22.6"/>
+        <point ath="-71.2" atv="-12.6"/>
+        <point ath="-65.4" atv="-15.87"/>
+        <point ath="-63.1" atv="-15.5"/>
+        <point ath="-62.9" atv="9.5"/>
+    </hotspot>
+
+    <hotspot name="Wall_4006" canvas_id="4006" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
+             url="/krpano/dummy.png"
+             url_main="/surface/p4/s4006(Main) copy.png"
+             url_shared="/surface/p4/s4006BoxPoint1(Shared) copy.png"
+             scale="9.33" ath="90" atv="0" ox="-120" oy="-1800" zorder="21"
+
+             main_w="1310" main_h="1500" shared_w="885" shared_h="1009" select="h"
+             ox_offset="0" oy_offset="0"
+             onloaded="setupSurface(live)"/>
+
+     <hotspot name="Wall_4006_click" canvas_id="4006" onclick="getUrl()" style="surface_click_line">
+        <point ath="6.7" atv="33" />
+        <point ath="6.7" atv="304" />
+        <point ath="173" atv="300" />
+        <point ath="173" atv="30" />
+
+        <point ath="161.2" atv="35.7" />
+        <point ath="161.2" atv="-46.5" />
+        <point ath="18.6" atv="-45.8" />
+        <point ath="18.1" atv="60.4" />
+    </hotspot>
+
+    <hotspot name="Wall_4007" canvas_id="4007" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
+             url="/krpano/dummy.png"
+             url_main="/surface/p4/s4007(Main) copy.png"
+             url_shared="/surface/p4/s4007BoxPoint1(Shared) copy.png"
+             scale="0.867" ath="0" atv="0" ox="-279" oy="0" zorder="30"
+
+             main_w="1500" main_h="1500" shared_w="773" shared_h="774" select="h"
+             ox_offset="0" oy_offset="0"
+             onloaded="setupSurface(shared)"/>
+
+    <hotspot name="Wall_4007_click" canvas_id="4007" onclick="getUrl()" style="surface_click">
+        <point ath="-50.88" atv="-22.89"/>
+        <point ath="6.45" atv="-33.62"/>
+        <point ath="6.09" atv="33.72"/>
+        <point ath="-50.88" atv="22.96"/>
+    </hotspot>
+
+    <hotspot name="Wall_4008" canvas_id="4008" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
+             url="/krpano/dummy.png"
+             url_main="/surface/p4/s4008(Main) copy.png"
+             url_shared="/surface/p4/s4008BoxPoint1(Shared) copy.png"
+             scale="2.667" ath="0.2" atv="0" ox="-1440" oy="0" zorder="30"
+
+             main_w="1500" main_h="1500" shared_w="256" shared_h="256" select="h"
+             ox_offset="0" oy_offset="0"
+             onloaded="setupSurface(live)"/>
+
+    <hotspot name="Wall_4008_click" canvas_id="4008" onclick="getUrl()" style="surface_click">
+        <point ath="-74.12" atv="-10.34"/>
+        <point ath="-65.42" atv="-15.47"/>
+        <point ath="-65.46" atv="15.55"/>
+        <point ath="-74.10" atv="10.36"/>
+    </hotspot>
+
+    <hotspot name="p48002" hotspot_type="navigation" onclick="NavigateTo()" style="artwork_hotspot" rx="50"
+             goto="48002" hlookat="270" vlookat="0" ath="-61.3" atv="45" scale="1"/>
+
+    <hotspot name="p48003" hotspot_type="navigation" onclick="NavigateTo()" style="artwork_hotspot" rx="70"
+             goto="48003" hlookat="226" vlookat="0" ath="-82.9" atv="14.5" scale="0.7"/>
+
+    <hotspot name="p48004" hotspot_type="navigation" onclick="NavigateTo()" style="artwork_hotspot" rx="70"
+             goto="48004" hlookat="60" vlookat="0" ath="-102.6" atv="12.4" scale="0.6"/>
+
+    <hotspot name="p48006" hotspot_type="navigation" onclick="NavigateTo()" style="artwork_hotspot" rx="70"
+             goto="48006" hlookat="55" vlookat="0" ath="-57.4" atv="12.2" scale="0.6"/>
+
+
+    <!-- ##### overlay ##### -->
+    <hotspot name="overlay48001-1" style="overlay_surface"
+             url="/krpano/overlay/p4/overlay48001-1(-52 0 1).png"
+             ath="-52" atv="0" scale="1" zorder="25"/>
+
+    <hotspot name="overlay48001-2" style="overlay_surface"
+             url="/krpano/overlay/p4/overlay48001-2(-160 38 1).png"
+             ath="-160" atv="38" scale="1" zorder="25"/>
+
+
+</krpano>

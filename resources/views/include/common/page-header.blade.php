@@ -11,7 +11,8 @@
         </div>
         <div class="right">
             <ul class="navbar__nav mini d-none d-lg-flex">
-                <li class="nav__item">
+                @yield('page_actions')
+                {{--<li class="nav__item">
                     <a href="#" class="nav__link">Configuration C</a>
                 </li>
                 <li class="nav__item">
@@ -31,7 +32,7 @@
                         <x-svg.magnifying-glass-plus/>
                         97%
                     </a>
-                </li>
+                </li>--}}
             </ul>
             <div class="contributors d-none d-xl-flex">
                 <div class="text">Contributors:</div>
