@@ -4,7 +4,7 @@
             <button class="menu__btn d-lg-none">
                 <x-svg.bars/>
             </button>
-            <a href="#" class="prev__btn">
+            <a href="{{ route('dashboard') }}" class="prev__btn">
                 <x-lineawesome-angle-left-solid class="text-dark"/>
                 <span class="navigator"> Pablo Picasso Show </span>
             </a>

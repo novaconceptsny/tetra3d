@@ -7,7 +7,7 @@ use App\Models\Company;
 use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Surface;
-use App\Models\SurfaceVersion;
+use App\Models\SurfaceState;
 use App\Models\Tour;
 use App\Models\Wall;
 use App\Policies\ArtworkPolicy;
@@ -37,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
         Wall::class => WallPolicy::class,
         Surface::class => SurfacePolicy::class,
         Spot::class => SpotPolicy::class,
-        SurfaceVersion::class => SurfaceVersionPolicy::class,
+        SurfaceState::class => SurfaceVersionPolicy::class,
     ];
 
     /**

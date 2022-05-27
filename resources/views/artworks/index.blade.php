@@ -32,9 +32,7 @@
                 @endforeach
                 </tbody>
             </table>
-            <div class="footer__pagination mini">
-                <p class="pagination__text">Showing 1 to 10 enteries</p>
-            </div>
+            {{ $artworks->links() }}
         </div>
     </div>
 @endsection

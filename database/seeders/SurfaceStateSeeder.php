@@ -1,0 +1,21 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\SurfaceState;
+use Illuminate\Database\Seeder;
+
+class SurfaceStateSeeder extends Seeder
+{
+    public function run()
+    {
+        SurfaceState::updateOrCreate([
+            'surface_id' => 1,
+            'name' => 'Test',
+            'thumbnail_url' => 'public/clients/4001/1648857482_test_thumb.png',
+            'hotspot_url' => 'public/clients/4001/1648857482_test_hotspot.png',
+            'active' => 1,
+            'canvas_data' => '{"savedVersion": true, "isOverlap": false, "defaultScale": 0.09242483486120999, "actualWidthInch": 389, "background": "/canvas/s4001.jpg", "currentVersionData": "{\"client\":1,\"version_id\":246,\"version_name\":\"test\",\"background_id\":4001,\"assigned_artwork\":[{\"title\":\"The Weight of Scars\",\"imgUrl\":\"https:\\/\\/tetra-gallery.s3.amazonaws.com\\/artgroup_5\\/164713872318.png?1648857431\",\"artworkId\":164713872318,\"leftPosition\":788,\"topPosition\":654,\"cropData\":null,\"overrideScale\":8},{\"title\":\"Space in Between - Nopal #5\",\"imgUrl\":\"https:\\/\\/tetra-gallery.s3.amazonaws.com\\/artgroup_5\\/164713872897.png?1648857431\",\"artworkId\":164713872897,\"leftPosition\":934,\"topPosition\":120,\"cropData\":null,\"overrideScale\":39},{\"title\":\"Damascene Athan #10\",\"imgUrl\":\"https:\\/\\/tetra-gallery.s3.amazonaws.com\\/artgroup_5\\/164713874881.png?1648857431\",\"artworkId\":164713874881,\"leftPosition\":309,\"topPosition\":590,\"cropData\":null,\"overrideScale\":58},{\"title\":\"inmysleeplesssolitudetonight, portrait of the girls\",\"imgUrl\":\"https:\\/\\/tetra-gallery.s3.amazonaws.com\\/artgroup_5\\/164713877398.png?1648857431\",\"artworkId\":164713877398,\"leftPosition\":221,\"topPosition\":799,\"cropData\":null,\"overrideScale\":27},{\"title\":\"Sirveintes y Escaleras \\/ Servants and Ladders\",\"imgUrl\":\"https:\\/\\/tetra-gallery.s3.amazonaws.com\\/artgroup_5\\/164713878028.png?1648857431\",\"artworkId\":164713878028,\"leftPosition\":1625,\"topPosition\":120,\"cropData\":null,\"overrideScale\":14},{\"title\":\"Meet To Sleep\",\"imgUrl\":\"https:\\/\\/tetra-gallery.s3.amazonaws.com\\/artgroup_5\\/164713878349.png?1648857431\",\"artworkId\":164713878349,\"leftPosition\":219,\"topPosition\":118,\"cropData\":null,\"overrideScale\":35},{\"title\":\"Flag #54, America\",\"imgUrl\":\"https:\\/\\/tetra-gallery.s3.amazonaws.com\\/artgroup_5\\/164713875675.png\",\"artworkId\":\"164713875675\",\"leftPosition\":690,\"topPosition\":243,\"cropData\":null,\"overrideScale\":null}]}", "assignedArtwork": [{"title": "The Weight of Scars", "imgUrl": "https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713872318.png?1648857431", "artworkId": 164713872318, "leftPosition": 788, "topPosition": 654, "cropData": null, "overrideScale": 8}, {"title": "Space in Between - Nopal #5", "imgUrl": "https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713872897.png?1648857431", "artworkId": 164713872897, "leftPosition": 934, "topPosition": 120, "cropData": null, "overrideScale": 39}, {"title": "Damascene Athan #10", "imgUrl": "https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713874881.png?1648857431", "artworkId": 164713874881, "leftPosition": 309, "topPosition": 590, "cropData": null, "overrideScale": 58}, {"title": "inmysleeplesssolitudetonight, portrait of the girls", "imgUrl": "https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713877398.png?1648857431", "artworkId": 164713877398, "leftPosition": 221, "topPosition": 799, "cropData": null, "overrideScale": 27}, {"title": "Sirveintes y Escaleras / Servants and Ladders", "imgUrl": "https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713878028.png?1648857431", "artworkId": 164713878028, "leftPosition": 1625, "topPosition": 120, "cropData": null, "overrideScale": 14}, {"title": "Meet To Sleep", "imgUrl": "https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713878349.png?1648857431", "artworkId": 164713878349, "leftPosition": 219, "topPosition": 118, "cropData": null, "overrideScale": 35}, {"title": "Flag #54, America", "imgUrl": "https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713875675.png", "artworkId": "164713875675", "leftPosition": 690, "topPosition": 243, "cropData": null, "overrideScale": null}], "modifiedVersion": {"addedArtwork": [], "removedArtwork": [], "modifiedArtwork": []}, "recentSelection": null}'
+        ], []);
+    }
+}

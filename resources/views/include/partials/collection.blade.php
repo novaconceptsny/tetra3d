@@ -31,14 +31,14 @@
                     >
                         <div class="preview">
                             <img
-                                src="{{ $artwork->url }}"
+                                src="{{ $artwork->image_url }}"
                                 alt="thumbnail"
                                 width="100%"
                                 height="auto"
                             />
                         </div>
                         <h3 class="item__title">{{ $artwork->name }}</h3>
-                        <p class="item__text">I added some</p>
+                        <p class="item__text">{{ $artwork->artist }}</p>
                     </li>
                 @endforeach
             </ul>

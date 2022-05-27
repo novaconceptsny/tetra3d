@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
 
 class Artwork extends Model
 {
+    protected $guarded = ['id'];
 
-    public function url(): Attribute
+    public $casts = [
+        'data' => SchemalessAttributes::class,
+    ];
+
+    public function scopeWithData(): Builder
     {
-        return Attribute::make(
-            get: fn () => asset("images/collection/{$this->name}"),
-        );
+        return $this->data->modelScope();
     }
 }

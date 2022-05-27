@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::view('editor', 'pages.editor')->name('editor');
-Route::view('gallery', 'pages.gallery')->name('gallery');
 Route::view('walls', 'pages.walls')->name('walls');
 
 Auth::routes();
@@ -22,5 +21,7 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function (){
     Route::get('/', 'HomeController@index')->name('dashboard');
     Route::get('tour/{id}', 'TourController@index')->name('tour.index');
+    Route::get('tour/{id}/form', 'TourController@xmlForm')->name('tour.xml-form');
     Route::get('editor', 'CanvasController@index')->name('editor');
+    Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
 });

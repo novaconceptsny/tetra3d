@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('artist')->nullable();
             $table->string('type')->nullable();
+            $table->string('image_url')->nullable();
             $table->json('data')->nullable();
             $table->timestamps();
         });

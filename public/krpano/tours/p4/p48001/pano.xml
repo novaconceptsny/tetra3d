@@ -15,7 +15,7 @@
         set(layer[NOVA_Inst].width,prop); set(layer[NOVA_Inst].height,70%);
         );
         initiate();
-        set(hotspot[Wall_4001].url , '%$Wall_4001%');
+        set(hotspot[Wall_1].url , '%$Wall_1%');
         set(hotspot[Wall_4002].url , '%$Wall_4002%');
         set(hotspot[Wall_4003].url , '%$Wall_4003%');
         set(hotspot[Wall_4004].url , '%$Wall_4004%');
@@ -49,7 +49,7 @@
     <!-- ##### shared ##### -->
 
 
-    <hotspot name="Wall_4001" canvas_id="4001" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
+    <hotspot name="Wall_1" canvas_id="4001" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
              url="/krpano/dummy.png"
              url_main="/surface/p4/s4001(Main) copy.png"
              url_shared="/surface/p4/s4001BoxPoint1(Shared) copy.png"
@@ -59,7 +59,7 @@
              ox_offset="0" oy_offset="0"
              onloaded="setupSurface(live)"/>
 
-    <hotspot name="Wall_4001_click" canvas_id="4001" onclick="getUrl()" style="surface_click">
+    <hotspot name="Wall_1_click" canvas_id="4001" onclick="getUrl()" style="surface_click">
         <point ath="172.85" atv="-58.38"/>
         <point ath="-105.01" atv="-22.80"/>
         <point ath="-105.08" atv="10.32"/>

@@ -9,7 +9,8 @@ class ArtworksController extends Controller
 {
     public function index()
     {
-        //
+        $artworks = Artwork::paginate(25);
+        return view('artworks.index', compact('artworks'));
     }
 
     public function create()

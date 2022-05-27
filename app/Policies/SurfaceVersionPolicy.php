@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\SurfaceVersion;
+use App\Models\SurfaceState;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -20,7 +20,7 @@ class SurfaceVersionPolicy
         //
     }
 
-    public function view(User $user, SurfaceVersion $surfaceVersion): bool
+    public function view(User $user, SurfaceState $surfaceVersion): bool
     {
         //
     }
@@ -30,24 +30,24 @@ class SurfaceVersionPolicy
         //
     }
 
-    public function update(User $user, SurfaceVersion $surfaceVersion): bool
+    public function update(User $user, SurfaceState $surfaceVersion): bool
     {
         //
     }
 
-    public function delete(User $user, SurfaceVersion $surfaceVersion): bool
+    public function delete(User $user, SurfaceState $surfaceVersion): bool
     {
         //
     }
 
-    public function restore(User $user, SurfaceVersion $surfaceVersion): bool
+    public function restore(User $user, SurfaceState $surfaceVersion): bool
     {
         //
     }
 
     public function forceDelete(
         User $user,
-        SurfaceVersion $surfaceVersion
+        SurfaceState $surfaceVersion
     ): bool {
         //
     }

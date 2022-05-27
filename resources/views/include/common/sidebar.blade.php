@@ -35,7 +35,7 @@
             </a>
         </li>
         <li class="nav__item">
-            <a href="{{ route('gallery') }}" class="nav__link">
+            <a href="{{ route('artworks.index') }}" class="nav__link">
                 <span class="icon">
                     <x-svg.book-open/>
                 </span>

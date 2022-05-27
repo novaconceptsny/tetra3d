@@ -35,7 +35,7 @@
 <body>
 <!--Starts Header Area-->
 <!--Starts Header Area-->
-@if(request()->routeIs('home'))
+@if(request()->routeIs('dashboard'))
     @include('include.common.header')
 @else
 @include('include.common.page-header')

@@ -8,7 +8,7 @@
         var vlookat=krpano.view.vlookat;
         console.log("canvasId:"+caller.canvas_id);
         var canvasId=caller.canvas_id;
-        urlStr="/artwork_assignment?spotId="+spotId+"&#38;canvasId="+canvasId+"&#38;hlookat="+hlookat+"&#38;vlookat="+vlookat;
+        urlStr="/editor?spotId="+spotId+"&#38;canvasId="+canvasId+"&#38;hlookat="+hlookat+"&#38;vlookat="+vlookat;
         console.log("urlStr:"+urlStr);
         window.location.href = urlStr;
         <!-- actions.openurl("http://www.google.com", _self); -->

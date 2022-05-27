@@ -13,19 +13,12 @@
         <x-svg.angle-right/>
     </button>
     <x-surface-versions/>
-    <div class="dashboard mini">
+    <div class="dashboard mini" style="margin-left: 27rem!important;">
         <div class="d-flex fs-5 mb-2">
             <p class="room_name mb-0">s4002 > Test</p>
             <p class="ml-2" id="assignment_title">Test</p>
         </div>
         <div class="image__viewer main_content">
-            {{--<img
-                src="{{ asset('images/editor.png') }}"
-                alt="image"
-                class="featured__img"
-                width="100%"
-                height="auto"
-            />--}}
             <canvas id="artwork_canvas" style="z-index: 100;"></canvas>
         </div>
     </div>

@@ -3,13 +3,6 @@
 @section('content')
     <div class="dashboard mini">
         <div class="image__viewer">
-            {{--<img
-                src="{{ asset('images/dashboard__bg.png') }}"
-                alt="image"
-                class="featured__img"
-                width="100%"
-                height="auto"
-            />--}}
             @if ($tracker==1)
                 <div id="tracker"
                      style="position:fixed;right:70px;top:0px;width:300px;height:150px;background-color:red;z-index:1000;padding:10px">
@@ -62,8 +55,8 @@
                 shareType: {{$shareType}},
 
 
-                @foreach ($backgroundImgArr as $backgroundImg)
-                {{"wall_".($backgroundImg["id"])}}: '{{asset($backgroundImg["url"])}}',
+                @foreach ($surfaces as $surface)
+                {{ "wall_{$surface->state->id}"}}: '{{ asset($surface->state->url) }}',
                 @endforeach
             },
         });
@@ -125,7 +118,6 @@
         }
 
         krpano.call("set(layer['version'].onclick,openurl('/version/management/spot/{{$spotId}}'))");
-
 
     </script>
 @endsection

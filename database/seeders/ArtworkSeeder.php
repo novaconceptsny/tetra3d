@@ -9,12 +9,23 @@ class ArtworkSeeder extends Seeder
 {
     public function run()
     {
-        $images = \File::allFiles(public_path('/images/collection'));
+        $artworks = array();
 
-        foreach ($images as $image){
-            Artwork::firstOrCreate([
-                'name' => $image->getBasename(),
-            ],[]);
+        require (database_path('source/artworks.php'));
+
+        foreach ($artworks as $artwork){
+            Artwork::updateOrCreate([
+                'name' => $artwork['title'],
+                'artist' => $artwork['artist'],
+                'type' => $artwork['type'],
+                'image_url' => $artwork['image_url'],
+                'data' => array(
+                    'scale' => $artwork['scale'],
+                    'width_inch' => $artwork['width_inch'],
+                    'height_inch' => $artwork['height_inch'],
+                    'no_dimension' => $artwork['no_dimension'],
+                )
+            ]);
         }
     }
 }

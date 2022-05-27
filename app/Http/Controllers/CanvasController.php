@@ -10,7 +10,7 @@ class CanvasController extends Controller
     {
         $data = array();
 
-        $data['artworks'] = Artwork::all();
+        $data['artworks'] = Artwork::paginate(25);
         return view('pages.editor', $data);
     }
 }
