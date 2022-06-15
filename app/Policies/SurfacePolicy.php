@@ -15,37 +15,37 @@ class SurfacePolicy
         //
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): void
     {
         //
     }
 
-    public function view(User $user, Surface $surface): bool
+    public function view(User $user, Surface $surface): void
     {
         //
     }
 
-    public function create(User $user): bool
+    public function create(User $user): void
     {
         //
     }
 
-    public function update(User $user, Surface $surface): bool
+    public function update(User $user, Surface $surface): void
     {
         //
     }
 
-    public function delete(User $user, Surface $surface): bool
+    public function delete(User $user, Surface $surface): void
     {
         //
     }
 
-    public function restore(User $user, Surface $surface): bool
+    public function restore(User $user, Surface $surface): void
     {
         //
     }
 
-    public function forceDelete(User $user, Surface $surface): bool
+    public function forceDelete(User $user, Surface $surface): void
     {
         //
     }

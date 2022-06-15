@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
-<krpano>
-    <include url="/krpano/skin/gyro.xml?%$timestamp%"/>
-    <include url="/krpano/hotspot.xml?%$timestamp%"/>
-    <include url="/krpano/action.xml?%$timestamp%"/>
-    <action name="startup" autorun="onstart">
+<krpano><include url="/krpano/skin/gyro.xml?%$timestamp%"/><include url="/krpano/hotspot.xml?%$timestamp%"/><include url="/krpano/action.xml?%$timestamp%"/><action name="startup" autorun="onstart">
         div(imageaspect_inst, layer[NOVA_Inst].imagewidth, layer[NOVA_Inst].imageheight);
         if(imageaspect_inst GT screenaspect,
         set(layer[NOVA_Inst].width,80%); set(layer[NOVA_Inst].height,prop);
@@ -11,24 +7,4 @@
         set(layer[NOVA_Inst].width,prop); set(layer[NOVA_Inst].height,70%);
         );
         initiate();
-        set(hotspot[Wall1].url , '%$Wall_1%')
-    </action>
-    <view hlookat="-90" vlookat="0" maxpixelzoom="1.0" fov="90" fovmax="120" limitview="auto"/>
-    <preview url="panos/preview.jpg"/>
-    <image>
-        <cube url="panos/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,768,1664,3200"/>
-    </image>
-    <hotspot name="Wall" canvas_id="" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0"
-             url="/krpano/dummy.png" url_main="/surface/p4/s4001(Main) copy.png"
-             url_shared="/surface/p4/s4001BoxPoint1(Shared) copy.png" scale="2.667" ath="-180.1" atv="0" ox="910"
-             oy=" - 233" zorder="21" main_w="1500" main_h="918" shared_w="730" shared_h="444" select="h" ox_offset="0"
-             oy_offset="0" onloaded="setupSurface(live)"/>
-    <hotspot name="Wall" canvas_id="" style="surface_click" onclick="getUrl()">
-        <point ath="172.85" atv="-58.38"/>
-        <point ath="-105.01" atv="-22.8"/>
-        <point ath="-105.08" atv="10.32"/>
-        <point ath="-105.08" atv="10.32"/>
-    </hotspot>
-    <hotspot name="overlay48001-1" style="overlay_surface" url="/krpano/overlay/p4/overlay48001-1(-52 0 1).png"
-             url_shared="/surface/p4/s4001BoxPoint1(Shared) copy.png" ath="-180.1" atv="0" scale="2.667" zorder="21"/>
-</krpano>
+        set(hotspot[Wall1].url , '%$Wall_1%')</action><view hlookat="-90" vlookat="0" maxpixelzoom="1.0" fov="90" fovmax="120" limitview="auto"/><preview url="panos/preview.jpg"/><image><cube url="panos/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,768,1664,3200"/></image><hotspot name="Wall" canvas_id="" hotspot_type="artwork" style="surface" onclick="getUrl()" coin="0" url="/krpano/dummy.png" url_main="/surface/p4/s4001(Main) copy.png" url_shared="/surface/p4/s4001BoxPoint1(Shared) copy.png" scale="2.667" ath="-180.1" atv="0" ox="910" oy=" - 233" zorder="21" main_w="1500" main_h="918" shared_w="730" shared_h="444" select="h" ox_offset="0" oy_offset="0" onloaded="setupSurface(live)"/><hotspot name="Wall" canvas_id="" style="surface_click" onclick="getUrl()"><point ath="172.85" atv="-58.38"/><point ath="-105.01" atv="-22.8"/><point ath="-105.08" atv="10.32"/><point ath="-105.08" atv="10.32"/></hotspot><hotspot name="overlay48001-1" style="overlay_surface" url="/krpano/overlay/p4/overlay48001-1(-52 0 1).png" url_shared="/surface/p4/s4001BoxPoint1(Shared) copy.png" ath="-180.1" atv="0" scale="2.667" zorder="21"/></krpano>

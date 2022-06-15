@@ -1,0 +1,24 @@
+.of-x-visible{
+    overflow-x: visible;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 333;
+    display: block;
+    width: 2.375rem;
+    /*height: 1rem;*/
+    /*line-height: 2.375rem;*/
+    text-align: center;
+    pointer-events: none;
+    top: 25%;
+    color: #aaa;
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
+}

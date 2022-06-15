@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Tour;
-use App\Services\TourGenerator;
+use App\Services\SpotXmlGenerator;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
 
@@ -29,9 +29,8 @@ class TourController extends Controller
         $spot = Spot::first();
 
         $tour = Tour::first();
-        $tourGenerator = new TourGenerator($spot);
-        $tourGenerator->createXml();
-        dd('her');
+        /*$tourGenerator = new TourGenerator($spot);
+        $tourGenerator->createXml();*/
 
         $data['hlookat'] = $request->get('hlookat', 0);
         $data['vlookat'] = $request->get('vlookat', 0);
@@ -95,10 +94,5 @@ class TourController extends Controller
 
 
         return view('pages.tour', $data);
-    }
-
-    public function xmlForm()
-    {
-        return view('xmlGenerator.form');
     }
 }

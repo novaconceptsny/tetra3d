@@ -19,6 +19,11 @@ class Surface extends Model
         return $this->data->modelScope();
     }
 
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
+    }
+
     public function states()
     {
         return $this->hasMany(SurfaceState::class);
@@ -28,5 +33,10 @@ class Surface extends Model
     {
         return $this->hasOne(SurfaceState::class)
             ->where('active', 1);
+    }
+
+    public function spots()
+    {
+        return $this->belongsToMany(Spot::class);
     }
 }

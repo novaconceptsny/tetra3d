@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('surfaces', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('spot_id');
+            $table->foreignId('tour_id');
             $table->string('name');
             $table->string('background_url')->nullable();
             $table->json('data')->nullable();

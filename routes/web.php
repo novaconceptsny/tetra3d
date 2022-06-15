@@ -21,7 +21,17 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function (){
     Route::get('/', 'HomeController@index')->name('dashboard');
     Route::get('tour/{id}', 'TourController@index')->name('tour.index');
-    Route::get('tour/{id}/form', 'TourController@xmlForm')->name('tour.xml-form');
     Route::get('editor', 'CanvasController@index')->name('editor');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
+});
+
+
+Route::group(['middleware' => 'auth', 'prefix' => 'backend'], function (){
+    Route::get('spots/{spot}/xml', 'SpotXmlController@edit')
+        ->name('spots.xml.edit');
+    Route::post('spots/{spot}/xml', 'SpotXmlController@update')
+        ->name('spots.xml.update');
+
+    Route::resource('spots', 'SpotController');
+    Route::resource('surfaces', 'SurfaceController');
 });

@@ -15,37 +15,37 @@ class SpotPolicy
         //
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): void
     {
         //
     }
 
-    public function view(User $user, Spot $spot): bool
+    public function view(User $user, Spot $spot): void
     {
         //
     }
 
-    public function create(User $user): bool
+    public function create(User $user): void
     {
         //
     }
 
-    public function update(User $user, Spot $spot): bool
+    public function update(User $user, Spot $spot): void
     {
         //
     }
 
-    public function delete(User $user, Spot $spot): bool
+    public function delete(User $user, Spot $spot): void
     {
         //
     }
 
-    public function restore(User $user, Spot $spot): bool
+    public function restore(User $user, Spot $spot): void
     {
         //
     }
 
-    public function forceDelete(User $user, Spot $spot): bool
+    public function forceDelete(User $user, Spot $spot): void
     {
         //
     }

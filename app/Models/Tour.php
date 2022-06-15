@@ -12,4 +12,9 @@ class Tour extends Model
     {
         return $this->hasMany(Spot::class);
     }
+
+    public function surfaces()
+    {
+        return $this->hasMany(Surface::class);
+    }
 }
