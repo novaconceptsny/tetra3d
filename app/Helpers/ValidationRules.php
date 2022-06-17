@@ -40,4 +40,29 @@ class ValidationRules
     {
         return self::storeSpot();
     }
+
+    public static function storeProject()
+    {
+        return [
+            'name' => 'required',
+            'tour_id' => 'required'
+        ];
+    }
+
+    public static function updateProject()
+    {
+        return self::storeProject();
+    }
+
+    public static function storeTour()
+    {
+        return [
+            'name' => 'required',
+        ];
+    }
+
+    public static function updateTour()
+    {
+        return self::storeTour();
+    }
 }

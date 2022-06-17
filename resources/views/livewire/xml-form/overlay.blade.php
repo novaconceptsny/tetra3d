@@ -20,7 +20,6 @@
                     <i class="la la-trash-o"></i>{{ __('Delete') }}
                 </button>
             </div>
-
         </div>
     @endforeach
 

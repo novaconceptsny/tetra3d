@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
-            <h4 class="page-title">{{ __('Xml Form') }}</h4>
+            <h4 class="page-title">{{ __('Spot Configuration') }}</h4>
         </div>
     </div>
     <div class="col-3">
@@ -17,12 +17,12 @@
     <div class="col-8">
         <div class="card">
             <div class="card-body">
-                <form class="gap-2" action="{{ route('spots.xml.update', $spot) }}" method="post">
+                <form class="gap-2" action="{{ route('backend.spot-configuration.update', $spot) }}" method="post">
                     @csrf
                     @foreach($sections as $form => $section)
                         <div class="{{ $activeForm == $form ? '' : 'd-none' }}">
                             <h5 class="mb-3 mt-0">{{ $section['name'] }}</h5>
-                            @include("backend.spot.xml.sections.{$form}")
+                            @include("backend.spot.configuration.sections.{$form}")
                         </div>
                     @endforeach
 

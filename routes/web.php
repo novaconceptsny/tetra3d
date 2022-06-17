@@ -18,7 +18,7 @@ Route::view('walls', 'pages.walls')->name('walls');
 
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function (){
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'HomeController@index')->name('dashboard');
     Route::get('tour/{id}', 'TourController@index')->name('tour.index');
     Route::get('editor', 'CanvasController@index')->name('editor');
@@ -26,12 +26,24 @@ Route::group(['middleware' => 'auth'], function (){
 });
 
 
-Route::group(['middleware' => 'auth', 'prefix' => 'backend'], function (){
-    Route::get('spots/{spot}/xml', 'SpotXmlController@edit')
-        ->name('spots.xml.edit');
-    Route::post('spots/{spot}/xml', 'SpotXmlController@update')
-        ->name('spots.xml.update');
+Route::group([
+    'middleware' => 'auth',
+    'prefix' => 'backend',
+    'namespace' => 'Backend',
+    'as' => 'backend.',
+], function () {
 
-    Route::resource('spots', 'SpotController');
-    Route::resource('surfaces', 'SurfaceController');
+    Route::controller('SpotConfigurationController')->group(function () {
+        Route::get('spot-configuration/{spot}/edit', 'edit')
+            ->name('spot-configuration.edit');
+        Route::put('spot-configuration/{spot}', 'update')
+            ->name('spot-configuration.update');
+    });
+
+
+    Route::resource('projects', 'ProjectController');
+    Route::resource('tours', 'TourController');
+    Route::resource('tours.spots', 'SpotController')->shallow();
+    Route::resource('tours.surfaces', 'SurfaceController')
+        ->shallow();
 });

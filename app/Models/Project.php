@@ -6,4 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    protected $guarded = ['id'];
+
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
+    }
 }

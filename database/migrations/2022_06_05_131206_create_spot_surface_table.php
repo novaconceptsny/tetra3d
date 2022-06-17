@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('spot_surface', function (Blueprint $table) {
             $table->foreignId('spot_id');
             $table->foreignId('surface_id');
+            $table->foreignId('project_id');
         });
     }
 

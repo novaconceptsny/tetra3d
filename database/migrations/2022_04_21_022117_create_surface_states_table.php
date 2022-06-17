@@ -10,7 +10,9 @@ return new class extends Migration
     {
         Schema::create('surface_states', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
             $table->foreignId('surface_id');
+            $table->foreignId('project_id');
             $table->string('name');
             $table->json('canvas_data')->nullable();
             $table->string('hotspot_url')->nullable();

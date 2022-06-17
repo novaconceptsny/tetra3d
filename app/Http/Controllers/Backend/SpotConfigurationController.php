@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
+use App\Http\Controllers\Controller;
 use App\Models\Spot;
 use App\Services\SpotXmlGenerator;
 use Illuminate\Http\Request;
 
-class SpotXmlController extends Controller
+class SpotConfigurationController extends Controller
 {
     public function edit(Spot $spot)
     {
         $data = array();
         $data['spot'] = $spot;
 
-        return view('backend.spot.xml.form', $data);
+        return view('backend.spot.configuration.form', $data);
     }
 
     public function update(Request $request, Spot $spot)
@@ -25,6 +26,7 @@ class SpotXmlController extends Controller
         ]);
 
         $xmlGenerator = new SpotXmlGenerator($spot);
+        $xmlGenerator->createXml();
 
         return redirect()->back()->with('success', 'Xml updated');
     }

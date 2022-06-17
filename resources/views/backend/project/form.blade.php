@@ -1,9 +1,9 @@
 @extends('layouts.backend')
 
 @section('content')
-    @php($spot = $spot ?? null)
-    @php($edit_mode = (bool)$spot)
-    @php($heading = $heading ?? ( $spot ? __('Edit Spot') : __('Add New Spot') ))
+    @php($project = $project ?? null)
+    @php($edit_mode = (bool)$project)
+    @php($heading = $heading ?? ( $project ? __('Edit Project') : __('Add New Project') ))
 
     <div class="card mb-3">
         <div class="card-header">
@@ -15,22 +15,21 @@
                 @csrf
                 @method($method ?? 'POST')
 
-                <x-backend::inputs.text name="name" value="{{ $spot?->name }}"/>
+                <x-backend::inputs.text name="name" value="{{ $project ? $project->name : '' }}"/>
 
-                <x-backend::inputs.select2 name="surfaces" :multiple="true">
-                    @foreach($tour->surfaces as $surface)
+                <x-backend::inputs.select2 name="tour_id" label="Tour">
+                    @foreach($tours as $tour)
                         <x-backend::inputs.select-option
-                            :multiple="true"
-                            :selected="$spot?->surfaces->pluck('id')->toArray()"
-                            :value="$surface->id"
-                            :text="$surface->name"
+                            :selected="$project?->tour_id"
+                            :value="$tour->id"
+                            :text="$tour->name"
                         />
                     @endforeach
                 </x-backend::inputs.select2>
 
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
-                        {{ $submit_text ?? ( $spot ? __('Update') : __('Create') ) }}
+                        {{ $submit_text ?? ( $project ? __('Update') : __('Create') ) }}
                     </button>
                 </div>
             </form>

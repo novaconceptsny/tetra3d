@@ -17,4 +17,9 @@ class Tour extends Model
     {
         return $this->hasMany(Surface::class);
     }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

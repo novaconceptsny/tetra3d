@@ -4,10 +4,10 @@
     <div class="card">
         <div class="card-header">
             <div class="float-end">
-                <a href="{{ route('backend.tours.spots.create', $tour) }}" class="btn btn-sm btn-outline-primary"><i
+                <a href="{{ route('backend.tours.create') }}" class="btn btn-sm btn-outline-primary"><i
                         class="fal fa-plus"></i> {{ __('Add New') }}</a>
             </div>
-            <h5 class="mb-0 ">{{ __('Spots') }}</h5>
+            <h5 class="mb-0 ">{{ __('Tours') }}</h5>
         </div>
         <div class="card-body p-0">
             <div class="mb-3">
@@ -19,36 +19,41 @@
                     </tr>
                     </thead>
                     <tbody class="list">
-                    @forelse($spots as $spot)
+                    @forelse($tours as $tour)
                         <tr>
-                            <td>{{ $spot->name }}</td>
+                            <td>{{ $tour->name }}</td>
                             <td>
-                                <x-backend::dropdown.container permission="update|delete" :permission_params="$spot">
-
+                                <x-backend::dropdown.container permission="update|delete" :permission_params="$tour">
                                     <x-backend::dropdown.item
-                                        permission="update" :permission_params="$spot"
-                                        :route="route('backend.spot-configuration.edit', $spot)">
-                                        <i class="fal fa-pen mr-1"></i> {{ __('Configure Spot') }}
+                                        permission="update" :permission_params="$tour"
+                                        :route="route('backend.tours.surfaces.index', $tour)">
+                                        <i class="fal fa-list mr-1"></i> {{ __('Surfaces') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item
-                                        permission="update" :permission_params="$spot"
-                                        :route="route('backend.spots.edit', $spot)">
+                                        permission="update" :permission_params="$tour"
+                                        :route="route('backend.tours.spots.index', $tour)">
+                                        <i class="fal fa-list mr-1"></i> {{ __('Spots') }}
+                                    </x-backend::dropdown.item>
+
+                                    <x-backend::dropdown.item
+                                        permission="update" :permission_params="$tour"
+                                        :route="route('backend.tours.edit', $tour)">
                                         <i class="fal fa-pen mr-1"></i> {{ __('Edit') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item
-                                        permission="delete" :permission_params="$spot"
+                                        permission="delete" :permission_params="$tour"
                                         class="text-danger" data-bs-toggle="modal"
-                                        data-bs-target="#confirm_spot_{{ $spot->id }}">
+                                        data-bs-target="#confirm_tour_{{ $tour->id }}">
                                         <i class="fa fa-trash mr-1"></i> {{ __('Delete') }}
                                     </x-backend::dropdown.item>
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm
-                                permission="edit" :permission_params="$spot"
-                                :route="route('backend.spots.destroy', $spot)"
-                                :model="$spot" :button="false"
+                                permission="edit" :permission_params="$tour"
+                                :route="route('backend.tours.destroy', $tour)"
+                                :model="$tour" :button="false"
                             />
                         </tr>
                     @empty

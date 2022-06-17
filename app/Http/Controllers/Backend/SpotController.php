@@ -1,34 +1,37 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ValidationRules;
+use App\Http\Controllers\Controller;
 use App\Models\Spot;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 
 class SpotController extends Controller
 {
-    public function index()
-    {
-        $spots = Spot::all();
-        return view('backend.spot.index', compact('spots'));
-    }
-
-    public function create()
+    public function index(Tour $tour)
     {
         $data = array();
-        $data['route'] = route('spots.store');
-        $data['tour'] = Tour::find(1);
+
+        $data['spots'] = $tour->spots;
+        $data['tour'] = $tour;
+
+        return view('backend.spot.index', $data);
+    }
+
+    public function create(Tour $tour)
+    {
+        $data = array();
+        $data['route'] = route('backend.tours.spots.store', $tour);
+        $data['tour'] = $tour;
 
         return view('backend.spot.form', $data);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Tour $tour)
     {
         $request->validate(ValidationRules::storeSpot());
-
-        $tour = Tour::find(1);
 
         $spot = $tour->spots()->create($request->only([
             'name'
@@ -49,7 +52,7 @@ class SpotController extends Controller
         $data = array();
         $data['spot'] = $spot;
         $data['method'] = 'put';
-        $data['route'] = route('spots.update', $spot);
+        $data['route'] = route('backend.spots.update', $spot);
         $data['tour'] = Tour::find(1);
 
         return view('backend.spot.form', $data);

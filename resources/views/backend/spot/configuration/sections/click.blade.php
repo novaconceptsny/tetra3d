@@ -16,7 +16,7 @@
             </x-backend::inputs.select>
         </div>
         <livewire:xml-form.point
-            :wire:key="$surface->id" :surface_id="$surface->id"
+            wire:key="{{$surface->id}}" :surface_id="$surface->id"
             :points="$spot->xml->surfaces[$surface->id]['click']['points'] ?? []"
         />
     </div>

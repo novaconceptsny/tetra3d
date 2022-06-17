@@ -9,6 +9,7 @@
 
 @php
     if ($multiple){
+        $selected = !is_array($selected) ? array($selected) : $selected;
         $is_selected = in_array($value, old($field, $selected));
     } else {
         $is_selected = $value == old($field, $selected);

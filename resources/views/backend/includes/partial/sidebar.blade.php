@@ -6,9 +6,8 @@
         <ul class="side-nav">
             <x-backend::layout.sidebar.title label="{{ __('Navigation') }}"/>
 
-            <x-backend::layout.sidebar.nav-item label="Dashboard" icon="fal fa-home" route="{{ route('dashboard') }}"/>
-            <x-backend::layout.sidebar.nav-item label="Spots" icon="fal fa-circle" route="{{ route('spots.index') }}"/>
-            <x-backend::layout.sidebar.nav-item label="Surfaces" icon="fal fa-circle" route="{{ route('surfaces.index') }}"/>
+            <x-backend::layout.sidebar.nav-item label="Projects" icon="fal fa-home" route="{{ route('backend.projects.index') }}"/>
+            <x-backend::layout.sidebar.nav-item label="Tours" icon="fal fa-circle" route="{{ route('backend.tours.index') }}"/>
 
         </ul>
         <div class="clearfix"></div>

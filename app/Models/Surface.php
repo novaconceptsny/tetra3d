@@ -19,9 +19,9 @@ class Surface extends Model
         return $this->data->modelScope();
     }
 
-    public function tour()
+    public function project()
     {
-        return $this->belongsTo(Tour::class);
+        return $this->belongsTo(Project::class);
     }
 
     public function states()
