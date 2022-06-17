@@ -10,7 +10,7 @@
 ])
 
 @php
-    $id = \Livewire\str($id ?? $name)->replace('.', '_');
+    $id = str($id ?? $name)->replace('.', '_');
     $field = $field ?? $name;
     $name = dotToHtmlArray($name);
     $placeholder = $placeholder ?? $label;

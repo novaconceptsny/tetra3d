@@ -19,6 +19,7 @@
             <div class="card-body">
                 <form class="gap-2" action="{{ route('backend.spot-configuration.update', $spot) }}" method="post">
                     @csrf
+                    @method('put')
                     @foreach($sections as $form => $section)
                         <div class="{{ $activeForm == $form ? '' : 'd-none' }}">
                             <h5 class="mb-3 mt-0">{{ $section['name'] }}</h5>

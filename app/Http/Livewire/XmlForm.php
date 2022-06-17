@@ -31,15 +31,23 @@ class XmlForm extends Component
             'share' => 'Share',
         ];
 
+        $data['spots'] = $this->spot->tour->spots()->where('id', '!=', $this->spot->id)->get();
+
         $sections = [
             'view' => [
                 'name' => 'View',
+            ],
+            'scale-box' => [
+                'name' => 'Scale Box',
             ],
             'background' => [
                 'name' => 'Surface Background',
             ],
             'click' => [
                 'name' => 'Surface Click',
+            ],
+            'navigation' => [
+                'name' => 'Navigation',
             ],
             'overlay' => [
                 'name' => 'Overlay',

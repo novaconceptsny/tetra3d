@@ -40,14 +40,22 @@
         <div class="row mt-3">
             <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][main_w]" label="main_w"/>
             <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][main_h]" label="main_h"/>
-            <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][shared_w]"
-                                     label="shared_w"/>
-            <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][shared_h]"
-                                     label="shared_h"/>
-            <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][ox_offset]"
-                                     label="ox_offset"/>
-            <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][oy_offset]"
-                                     label="oy_offset"/>
+            <x-backend::inputs.input
+                label="shared_w" col="col"
+                name="surfaces[{{$surface->id}}][background][shared_w]"
+            />
+            <x-backend::inputs.input
+                col="col" label="shared_h"
+                name="surfaces[{{$surface->id}}][background][shared_h]"
+            />
+            <x-backend::inputs.input
+                col="col" label="ox_offset"
+                name="surfaces[{{$surface->id}}][background][ox_offset]"
+            />
+            <x-backend::inputs.input
+                col="col" label="oy_offset"
+                name="surfaces[{{$surface->id}}][background][oy_offset]"
+            />
 
         </div>
         <div class="row mt-3">

@@ -21,7 +21,7 @@ class SpotConfigurationController extends Controller
     {
         $spot->update([
             'xml' => $request->only([
-                'view', 'surfaces', 'overlays'
+                'view', 'surfaces', 'overlays', 'scale_box', 'navigations'
             ])
         ]);
 
