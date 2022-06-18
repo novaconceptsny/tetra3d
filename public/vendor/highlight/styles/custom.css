@@ -1,0 +1,20 @@
+.hljs{
+    max-height: 100%;
+}
+
+/* attribute value */
+.hljs-doctag, .hljs-string {
+    /*color: #fa5c7c;*/
+    background-color: #fff0f0 !important;
+}
+
+/* tag name*/
+.hljs-attribute, .hljs-name, .hljs-tag {
+    color: #007700 !important;;
+    /*font-weight: 400;*/
+}
+
+/* attribute name */
+.hljs-literal, .hljs-number, .hljs-tag .hljs-attr, .hljs-template-variable, .hljs-variable{
+    color: #0000CC !important;;
+}

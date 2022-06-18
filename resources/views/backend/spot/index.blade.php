@@ -27,8 +27,14 @@
 
                                     <x-backend::dropdown.item
                                         permission="update" :permission_params="$spot"
+                                        :route="route('backend.spot-configuration.show', $spot)">
+                                        <i class="fal fa-code mr-1"></i> {{ __('Show Configuration') }}
+                                    </x-backend::dropdown.item>
+
+                                    <x-backend::dropdown.item
+                                        permission="update" :permission_params="$spot"
                                         :route="route('backend.spot-configuration.edit', $spot)">
-                                        <i class="fal fa-pen mr-1"></i> {{ __('Configure Spot') }}
+                                        <i class="fal fa-cog mr-1"></i> {{ __('Configure Spot') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item

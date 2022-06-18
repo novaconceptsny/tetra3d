@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 
 class SpotConfigurationController extends Controller
 {
+    public function show(Spot $spot)
+    {
+        $xml = file_get_contents($spot->xml_path);
+        return view('backend.spot.configuration.show', compact('xml', 'spot'));
+       /* return response(file_get_contents($spot->xml_path), 200)
+            ->header('Content-Type', 'text/xml');*/
+    }
+
     public function edit(Spot $spot)
     {
         $data = array();

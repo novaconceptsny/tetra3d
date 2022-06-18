@@ -4,13 +4,14 @@ namespace App\Services;
 
 use App\Models\Spot;
 use App\Models\Surface;
+use App\SimpleDOM\SimpleDOM;
 use SimpleXMLElement;
 
 class SpotXmlGenerator
 {
     private Spot $spot;
     private mixed $xmlData;
-    private SimpleXMLElement $xml;
+    private SimpleDOM $xml;
 
     function __construct(Spot $spot)
     {
@@ -20,7 +21,7 @@ class SpotXmlGenerator
 
     public function createXml()
     {
-        $this->xml = new SimpleXMLElement('<krpano/>');
+        $this->xml = new SimpleDOM('<krpano/>');
         $this->addIncludes();
         $this->addAction();
         $this->addView();
@@ -38,7 +39,13 @@ class SpotXmlGenerator
             \File::makeDirectory($dir, 0777, true, true);
         }
 
-        $this->xml->saveXML("$dir/pano.xml");
+        $dom = new \DOMDocument('1.0');
+        $dom->preserveWhiteSpace = true;
+        $dom->formatOutput = true;
+        $dom->loadXML($this->xml->asXML());
+        $dom->save("$dir/pano.xml");
+
+        /*$this->xml->saveXML("$dir/pano.xml");*/
     }
 
     private function addIncludes()
@@ -67,7 +74,7 @@ class SpotXmlGenerator
         ";
 
         foreach ($this->spot->surfaces as $surface) {
-            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$Wall_{$surface->id}%')\n";
+            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$Wall_{$surface->id}%')\n\t\t";
         }
 
         $action = $this->xml->addChild('action', $content);
@@ -78,11 +85,11 @@ class SpotXmlGenerator
     private function addView()
     {
         $attributes = [
-            "hlookat" => "-90",
-            "vlookat" => "0",
+            "hlookat" => $this->xmlData->view['hlookat'] ?? 0,
+            "vlookat" => $this->xmlData->view['hlookat'] ?? 0,
             "maxpixelzoom" => "1.0",
-            "fov" => "90",
-            "fovmax" => "120",
+            "fov" => $this->xmlData->view['fov'] ?? 0,
+            "fovmax" => $this->xmlData->view['fovmax'] ?? 0,
             "limitview" => "auto",
         ];
 
@@ -142,8 +149,11 @@ class SpotXmlGenerator
         $square_enabled = $this->xmlData->scale_box['square']['enabled'] ?? false;
         $cross_enabled = $this->xmlData->scale_box['cross']['enabled'] ?? false;
 
-        if ($square_enabled){
+        if ($square_enabled) {
             $square = $this->xml->addChild('hotspot');
+
+            $this->addComment($square, 'Scale box');
+
             foreach ($squareAttributes as $attribute => $value) {
                 $square->addAttribute($attribute, $value);
             }
@@ -151,6 +161,11 @@ class SpotXmlGenerator
 
         if ($cross_enabled){
             $cross = $this->xml->addChild('hotspot');
+
+            if (!$square_enabled){
+                $this->addComment($cross, 'Scale box');
+            }
+
             foreach ($crossAttributes as $attribute => $value) {
                 $cross->addAttribute($attribute, $value);
             }
@@ -159,9 +174,13 @@ class SpotXmlGenerator
 
     private function addSurfaces()
     {
-        foreach ($this->spot->surfaces as $surface){
-            $this->addSurfaceBackground($surface);
+        foreach ($this->spot->surfaces as $index => $surface){
+            $background = $this->addSurfaceBackground($surface);
             $this->addSurfaceClick($surface);
+
+            if ($index === 0) {
+                $this->addComment($background, 'Surfaces');
+            }
         }
     }
 
@@ -199,6 +218,8 @@ class SpotXmlGenerator
         foreach ($attributes as $attribute => $value) {
             $hotspot->addAttribute($attribute, $value);
         }
+
+        return $hotspot;
     }
 
     private function addSurfaceClick(Surface $surface)
@@ -237,10 +258,14 @@ class SpotXmlGenerator
 
     private function addNavigations()
     {
-        $navigations = $this->xmlData->spots ?? [];
+        $navigations = $this->xmlData->navigations ?? [];
 
         foreach ($navigations as $index => $navigation) {
-            $this->addNavigation($index, $navigation);
+            $navigation = $this->addNavigation($index, $navigation);
+
+            if ($index === array_key_first($navigations)) {
+                $this->addComment($navigation, 'Navigations');
+            }
         }
     }
 
@@ -252,7 +277,7 @@ class SpotXmlGenerator
             'onclick' => 'NavigateTo()',
             'style' => 'artwork_hotspot',
             "rx" => $navigationData['rx'] ?? 0,
-            "goto" => $index->id,
+            "goto" => $index,
             "hlookat" => $navigationData['hlookat'] ?? 0,
             "vlookat" => $navigationData['vlookat'] ?? 0,
             "ath" => $navigationData['ath'] ?? 0,
@@ -265,6 +290,8 @@ class SpotXmlGenerator
         foreach ($attributes as $attribute => $value) {
             $navigation->addAttribute($attribute, $value);
         }
+
+        return $navigation;
     }
 
     private function addOverlays()
@@ -272,7 +299,11 @@ class SpotXmlGenerator
         $overlays = $this->xmlData->overlays ?? [];
 
         foreach ($overlays as $index => $overlay) {
-            $this->addOverlay($index, $overlay);
+            $overlay = $this->addOverlay($index, $overlay);
+
+            if ($index === array_key_first($overlays)) {
+                $this->addComment($overlay, 'Overlays');
+            }
         }
     }
 
@@ -294,10 +325,26 @@ class SpotXmlGenerator
             $overlay->addAttribute($attribute, $value);
         }
 
+        return $overlay;
     }
 
     private function getSurfaceData($surface, $field, $type = 'background')
     {
         return $this->xmlData->surfaces[$surface->id][$type][$field] ?? '';
+    }
+
+    private function addComment($element, $content, $style = true)
+    {
+        if (!method_exists($element, 'insertComment')){
+            return;
+        }
+
+        $styler = ' ####### ';
+
+        if ($style){
+            $content = str($content)->prepend($styler)->append($styler);
+        }
+
+        $element->insertComment($content, 'before');
     }
 }

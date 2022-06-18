@@ -34,6 +34,8 @@ Route::group([
 ], function () {
 
     Route::controller('SpotConfigurationController')->group(function () {
+        Route::get('spot-configuration/{spot}', 'show')
+            ->name('spot-configuration.show');
         Route::get('spot-configuration/{spot}/edit', 'edit')
             ->name('spot-configuration.edit');
         Route::put('spot-configuration/{spot}', 'update')
