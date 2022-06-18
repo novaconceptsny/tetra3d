@@ -10,7 +10,7 @@ class SurfaceSeeder extends Seeder
     public function run()
     {
         Surface::create([
-            'spot_id' => 1,
+            'tour_id' => 1,
             'name' => 's4001',
             'background_url' => '/canvas/s4001.jpg',
             'data' => [
