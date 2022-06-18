@@ -10,6 +10,7 @@ class SpotSeeder extends Seeder
     public function run()
     {
         Spot::updateOrCreate([
+            'tour_id' => 1,
             'name' => 'p4point1',
             'krpano_path' => 'assets/KRpano/p4/p48001'
         ], []);

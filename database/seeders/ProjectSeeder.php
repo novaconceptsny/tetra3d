@@ -17,6 +17,7 @@ class ProjectSeeder extends Seeder
 
         foreach ($projects as $project) {
             Project::updateOrCreate([
+                'tour_id' => 1,
                 'name' => $project['name'],
             ], []);
         }
