@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\SpotXmlGenerator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,20 @@ class Spot extends Model
     public $casts = [
         'xml' => SchemalessAttributes::class,
     ];
+
+    public static function boot() {
+        parent::boot();
+
+        static::created(function(self $spot) {
+            $spot->generateXml();
+        });
+    }
+
+    public function generateXml()
+    {
+        $xmlGenerator = new SpotXmlGenerator($this);
+        $xmlGenerator->createXml();
+    }
 
     public function scopeWithXml(): Builder
     {

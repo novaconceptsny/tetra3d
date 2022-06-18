@@ -11,10 +11,12 @@ class SpotConfigurationController extends Controller
 {
     public function show(Spot $spot)
     {
+        if (!file_exists($spot->xml_path)){
+            $spot->generateXml();
+        }
+
         $xml = file_get_contents($spot->xml_path);
         return view('backend.spot.configuration.show', compact('xml', 'spot'));
-       /* return response(file_get_contents($spot->xml_path), 200)
-            ->header('Content-Type', 'text/xml');*/
     }
 
     public function edit(Spot $spot)
@@ -33,8 +35,7 @@ class SpotConfigurationController extends Controller
             ])
         ]);
 
-        $xmlGenerator = new SpotXmlGenerator($spot);
-        $xmlGenerator->createXml();
+        $spot->generateXml();
 
         return redirect()->back()->with('success', 'Xml updated');
     }
