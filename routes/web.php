@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\Process\Process;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+/*$process = new Process(['D:\krpano-1.20.11\krpanotools', 'makepano', 'D:\krpano-1.20.11\templates\krpano.config', 'D:\krpano-1.20.11\360\p48003.JPG']);
+$process->run();
+dd($process->getOutput());*/
+/*\App\Helpers\ShellCommand::execute('D:\krpano-1.20.11\krpanotools makepano D:\krpano-1.20.11\templates\krpano.config D:\krpano-1.20.11\360\p48003.JPG');*/
 
 Route::view('editor', 'pages.editor')->name('editor');
 Route::view('walls', 'pages.walls')->name('walls');

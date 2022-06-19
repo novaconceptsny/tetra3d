@@ -1,5 +1,11 @@
-.hljs{
+pre code.hljs{
     max-height: 100%;
+    padding: 1em;
+}
+
+/* meta tags */
+.hljs-bullet, .hljs-link, .hljs-meta, .hljs-selector-id, .hljs-symbol, .hljs-title{
+    color: #4078f2;
 }
 
 /* attribute value */

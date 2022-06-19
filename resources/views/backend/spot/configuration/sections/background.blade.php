@@ -3,10 +3,6 @@
         <h5>{{ __('Surface ') . $loop->iteration }}</h5>
         <div class="row mt-3">
             <x-backend::inputs.input
-                col="col" name="surfaces[{{$surface->id}}][background][name]" label="Name"
-                :value="$spot->xml->surfaces[$surface->id]['background']['name'] ?? ''"
-            />
-            <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][type]" label="Hotspot Type"
                 :value="$spot->xml->surfaces[$surface->id]['background']['type'] ?? ''"
             />

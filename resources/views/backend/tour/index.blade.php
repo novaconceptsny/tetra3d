@@ -2,6 +2,11 @@
 
 @section('content')
     <div class="card">
+        <div class="card-body">
+            <livewire:krpano-test/>
+        </div>
+    </div>
+    <div class="card">
         <div class="card-header">
             <div class="float-end">
                 <a href="{{ route('backend.tours.create') }}" class="btn btn-sm btn-outline-primary"><i
@@ -27,13 +32,13 @@
                                     <x-backend::dropdown.item
                                         permission="update" :permission_params="$tour"
                                         :route="route('backend.tours.surfaces.index', $tour)">
-                                        <i class="fal fa-list mr-1"></i> {{ __('Surfaces') }}
+                                        <i class="fal fa-rectangle-landscape mr-1"></i> {{ __('Surfaces') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item
                                         permission="update" :permission_params="$tour"
                                         :route="route('backend.tours.spots.index', $tour)">
-                                        <i class="fal fa-list mr-1"></i> {{ __('Spots') }}
+                                        <i class="fal fa-circle-notch mr-1"></i> {{ __('Spots') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item

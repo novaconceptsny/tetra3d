@@ -15,6 +15,18 @@ class Point extends Component
     public $points = [];
     public $surface_id;
 
+    public function mount()
+    {
+        if ( ! $this->points) {
+            $this->points = [
+                ['ath' => '', 'atv' => ''],
+                ['ath' => '', 'atv' => ''],
+                ['ath' => '', 'atv' => ''],
+                ['ath' => '', 'atv' => ''],
+            ];
+        }
+    }
+
     public function render()
     {
         return view('livewire.xml-form.point');

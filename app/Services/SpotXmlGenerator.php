@@ -73,8 +73,12 @@ class SpotXmlGenerator
         initiate();
         ";
 
-        foreach ($this->spot->surfaces as $surface) {
-            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$Wall_{$surface->id}%')\n\t\t";
+        foreach ($this->spot->surfaces as $index => $surface) {
+            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$Wall_{$surface->id}%')\n\t";
+
+            if (count($this->spot->surfaces) == $index + 1) {
+                $content = str($content)->trim(" \t")->append("  ");
+            }
         }
 
         $action = $this->xml->addChild('action', $content);
@@ -224,9 +228,6 @@ class SpotXmlGenerator
 
     private function addSurfaceClick(Surface $surface)
     {
-        /*
-         * style = surface_click | surface_click_line*/
-
         $attributes = [
             'name' => "surface_{$surface->id}_click",
             'canvas_id' => $surface->id,

@@ -1,19 +1,15 @@
 @extends('layouts.backend')
 
+@section('title', "Spot {$spot->id} Configuration")
+
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">{{ "Spot {$spot->id} Configuration" }}</h5>
-        </div>
-        <div class="card-body">
-            <pre style="overflow: unset"><code class="language-xml">{{ $xml }}</code></pre>
-        </div>
-    </div>
+    <div class="card"></div>
+    <pre style="overflow: unset"><code class="language-xml">{{ $xml }}</code></pre>
 @endsection
 
 @section('styles')
     {{--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one.min.css">--}}
-    <link rel="stylesheet" href="{{ asset('vendor/highlight/styles/atom-one-light.min.css') }}">
+    {{--<link rel="stylesheet" href="{{ asset('vendor/highlight/styles/atom-one-light.min.css') }}">--}}
     <link rel="stylesheet" href="{{ asset('vendor/highlight/styles/custom.css') }}">
 @endsection
 
