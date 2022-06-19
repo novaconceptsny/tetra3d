@@ -65,6 +65,7 @@
 
 
 <!-- bundle -->
+<script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('backend/assets/js/vendor.min.js') }}"></script>
 <script src="{{ asset('backend/assets/js/app.min.js') }}"></script>
 
@@ -89,6 +90,12 @@
         toastr[type](message)
     });
 
+    Echo.channel('shell')
+        .listen('.newOutput', (e) => {
+            let $output = $('#command-output');
+            $output.append(e)
+            $output.scrollTop($output.prop("scrollHeight"));
+        });
 </script>
 
 @yield('livewire-scripts')

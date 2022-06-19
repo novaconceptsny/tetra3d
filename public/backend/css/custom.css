@@ -22,3 +22,9 @@
 .cursor-pointer {
     cursor: pointer !important;
 }
+
+.command-output {
+    max-height: 300px;
+    overflow-y: scroll;
+    margin-top: 10px
+}

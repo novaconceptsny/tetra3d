@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Pusher\Pusher;
 use Symfony\Component\Process\Process;
 
 class KrpanoTools extends Component
@@ -16,15 +17,25 @@ class KrpanoTools extends Component
 
     public function runCommand()
     {
-        $cmd = 'D:\krpano-1.20.11\krpanotools makepano D:\krpano-1.20.11\templates\krpano.config D:\krpano-1.20.11\360\p48003.JPG';
+        $pusher = new Pusher(
+            config('broadcasting.connections.pusher.key'),
+            config('broadcasting.connections.pusher.secret'),
+            config('broadcasting.connections.pusher.app_id'),
+            config('broadcasting.connections.pusher.options'),
+        );
+
+        /*$panos_path = */
+
+        $cmd = 'D:\krpano-1.20.11\krpanotools makepano D:\krpano-1.20.11\templates\krpano.configs D:\krpano-1.20.11\360\p48003.JPG';
 
         $process = Process::fromShellCommandline($cmd);
 
         $processOutput = '';
 
-        $captureOutput = function ($type, $line) use (&$processOutput) {
+        $captureOutput = function ($type, $line) use (&$processOutput, $pusher) {
+            $line = str($line)->replace("\r", "\n");
             $processOutput .= $line;
-            $this->output = $line;
+            $pusher->trigger('shell', 'newOutput', $line);
         };
 
         $process->setTimeout(null)
@@ -37,6 +48,5 @@ class KrpanoTools extends Component
             throw $exception;
         }
 
-        $this->output = "Finished!";
     }
 }
