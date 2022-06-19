@@ -2,12 +2,15 @@
 
 namespace App\Http\Livewire\Modals;
 
+use App\Models\Spot;
+use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Pusher\Pusher;
 use Symfony\Component\Process\Process;
 
 class KrpanoTools extends Component
 {
+    public Spot $spot;
     public $output;
     public $initialized = false;
 
@@ -16,8 +19,18 @@ class KrpanoTools extends Component
         return view('livewire.modals.krpano-tools');
     }
 
+    public function mount(Spot $spot)
+    {
+        $this->spot = $spot;
+    }
+
     public function runCommand()
     {
+        if (!file_exists($this->spot->getFirstMediaPath('image_360'))){
+            $this->output = "Invalid Image";
+            return;
+        }
+
         $pusher = new Pusher(
             config('broadcasting.connections.pusher.key'),
             config('broadcasting.connections.pusher.secret'),
@@ -25,11 +38,13 @@ class KrpanoTools extends Component
             config('broadcasting.connections.pusher.options'),
         );
 
-        /*$panos_path = */
+        if (File::isDirectory($this->spot->tour_path)){
+            File::deleteDirectory($this->spot->tour_path, true);
+        }
 
-        $cmd = 'D:\krpano-1.20.11\krpanotools makepano D:\krpano-1.20.11\templates\krpano.config D:\krpano-1.20.11\360\p48003.JPG';
+        $command = $this->getKrpanoCommand();
 
-        $process = Process::fromShellCommandline($cmd);
+        $process = new Process($command);
 
         $processOutput = '';
 
@@ -39,15 +54,32 @@ class KrpanoTools extends Component
             $pusher->trigger('shell', 'newOutput', $line);
         };
 
-        $process->setTimeout(null)
-            ->run($captureOutput);
+        $process->setTimeout(null)->run($captureOutput);
 
         if ($process->getExitCode()) {
-            $exception = new \Exception($cmd . " - " . $processOutput);
-            report($exception);
-
-            throw $exception;
+            $this->output = $processOutput;
         }
 
+    }
+
+    public function getKrpanoCommand()
+    {
+        $panos_path = $this->spot->tour_path;
+
+        $command = [
+            config('krpano.path'),
+            'makepano',
+            "-outputpath=$panos_path",
+        ];
+
+        // options
+        foreach (config('krpano.config') as $key => $value){
+            $command[] = "-{$key}={$value}";
+        }
+
+        // input file: 360 image
+        $command[] = $this->spot->getFirstMediaPath('image_360');
+
+        return $command;
     }
 }

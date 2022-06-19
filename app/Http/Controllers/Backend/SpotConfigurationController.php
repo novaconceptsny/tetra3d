@@ -35,8 +35,54 @@ class SpotConfigurationController extends Controller
             ])
         ]);
 
+        $this->uploadOverlyImages($request, $spot);
+
         $spot->generateXml();
 
         return redirect()->back()->with('success', 'Xml updated');
+    }
+
+    private function uploadOverlyImages(Request $request, Spot $spot){
+        $overlays = $request->overlays ?? [];
+
+        $this->addOverlayAttributes($request, $overlays);
+
+        foreach ($overlays as $index => $overlay){
+            if ( ! isset($overlay['image'])) {
+                continue;
+            }
+
+            // remove old media if exists!
+            $spot->getFirstMedia('overlays', [
+                'uuid' => $overlay['uuid']
+            ])?->delete();
+
+            $spot->addFromMediaLibraryRequest($request->overlays[$index]['image'])
+                ->withCustomProperties('overlay')
+                ->toMediaCollection('overlays');
+        }
+    }
+
+    private function addOverlayAttributes(Request $request, $overlays)
+    {
+        if (!$overlays){
+            return;
+        }
+
+        foreach ($overlays as &$overlay){
+            if ( ! isset($overlay['image'])) {
+                continue;
+            }
+
+            $uuid = array_key_first($overlay['image']);
+
+            $overlay['image'][$uuid]['custom_properties'] = array(
+                'uuid' => $overlay['uuid']
+            );
+        }
+
+        $request->merge([
+            'overlays' => $overlays
+        ]);
     }
 }

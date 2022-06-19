@@ -6,7 +6,7 @@
     'type' => 'text',
     'placeholder',
     'field',
-    'col' => 'col-12'
+    'col' => 'col-12',
 ])
 
 @php

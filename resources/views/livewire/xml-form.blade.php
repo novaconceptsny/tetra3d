@@ -1,9 +1,4 @@
 <div class="row">
-    <div class="col-12">
-        <div class="page-title-box">
-            <h4 class="page-title">{{ __('Spot Configuration') }}</h4>
-        </div>
-    </div>
     <div class="col-3">
         <div class="list-group">
             @foreach($sections as $form => $section)
@@ -14,7 +9,7 @@
             @endforeach
         </div>
     </div>
-    <div class="col-8">
+    <div class="col-9">
         <div class="card">
             <div class="card-body">
                 <form class="gap-2" action="{{ route('backend.spot-configuration.update', $spot) }}" method="post">

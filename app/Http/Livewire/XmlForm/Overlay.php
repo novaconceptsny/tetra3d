@@ -21,6 +21,7 @@ class Overlay extends Component
     public function add()
     {
         $this->overlays[] = [
+            'uuid' => str()->uuid(),
             'ath' => '',
             'atv' => '',
             'scale' => '',

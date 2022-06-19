@@ -18,6 +18,8 @@ class Spot extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    public static bool $organiseMediaByCollection = true;
+
     public $casts = [
         'xml' => SchemalessAttributes::class,
     ];
@@ -33,6 +35,7 @@ class Spot extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('image_360')->singleFile();
+        $this->addMediaCollection('overlays');
     }
 
     public function generateXml()
@@ -56,11 +59,30 @@ class Spot extends Model implements HasMedia
         return $this->belongsToMany(Surface::class);
     }
 
-    public function xmlPath(): Attribute
+
+    public function tourPath(): Attribute
     {
-        $path = public_path("storage/tours/{$this->tour_id}/{$this->id}/pano.xml");
+        $path = public_path("storage/tours/{$this->tour_id}/{$this->id}");
         return Attribute::make(
             get: fn() => $path
         );
+    }
+
+    public function xmlPath(): Attribute
+    {
+        $path = "{$this->tour_path}/pano.xml";
+        return Attribute::make(
+            get: fn() => $path
+        );
+    }
+
+    public function getOverlayImageUrl($uuid){
+        $media = $this->getFirstMedia('overlays', ['uuid' => $uuid]);
+
+        if(!$media){
+            return "";
+        }
+
+        return $media->getUrl();
     }
 }

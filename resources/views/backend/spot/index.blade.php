@@ -3,11 +3,11 @@
 @section('content')
     <div class="card">
         <div class="card-header">
+            <h5 class="mb-0 ">{{ __('Spots') }}</h5>
             <div class="float-end">
                 <a href="{{ route('backend.tours.spots.create', $tour) }}" class="btn btn-sm btn-outline-primary"><i
                         class="fal fa-plus"></i> {{ __('Add New') }}</a>
             </div>
-            <h5 class="mb-0 ">{{ __('Spots') }}</h5>
         </div>
         <div class="card-body p-0">
             <div class="mb-3">
@@ -26,7 +26,7 @@
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$spot">
 
                                     <x-backend::dropdown.item
-                                        onclick="window.livewire.emit('showModal', 'modals.krpano-tools')">
+                                        onclick="window.livewire.emit('showModal', 'modals.krpano-tools', {{ $spot->id }})">
                                         <i class="fal fa-toolbox mr-1"></i> {{ __('Krpano Tools') }}
                                     </x-backend::dropdown.item>
 

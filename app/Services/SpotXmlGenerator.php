@@ -312,7 +312,7 @@ class SpotXmlGenerator
         $attributes = [
             'name' => "overlay_{$this->spot->id}_$index",
             'style' => 'overlay_surface',
-            "url" => "/krpano/overlay/p4/overlay48001-1(-52 0 1).png", //todo,
+            "url" => $this->spot->getOverlayImageUrl($overlayData['uuid']),
             "ath" => $overlayData['ath'] ?? 0,
             "atv" => $overlayData['atv'] ?? 0,
             "scale" => $overlayData['scale'] ?? 0,

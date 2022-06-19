@@ -2,6 +2,9 @@
     @foreach($overlays as $index => $overlay)
         <div class="row mt-2" wire:key="{{$index}}">
             <x-backend::inputs.input
+                name="overlays[{{$index}}][uuid]" value="{{ $overlay['uuid'] }}" type="hidden"
+            />
+            <x-backend::inputs.input
                 col="col" name="overlays[{{$index}}][ath]" value="{{ $overlay['ath'] }}" label="ath"
             />
             <x-backend::inputs.input
@@ -14,7 +17,12 @@
                 col="col" name="overlays[{{$index}}][zorder]" value="{{ $overlay['zorder'] }}" label="zorder"
             />
 
-            <div class="col-2 text-end">
+            <div class="col-12">
+                <h5>{{ __('Overlay Image') }}</h5>
+                <x-media-library-attachment name="overlays[{{$index}}][image]" rules="max:102400" />
+            </div>
+
+            <div class="col-12 text-end">
                 <button type="button" class="btn btn-danger mt-3"
                         wire:click.prevent="remove({{$index}})">
                     <i class="la la-trash-o"></i>{{ __('Delete') }}

@@ -39,9 +39,18 @@ class PathGenerator implements BasePathGenerator
     {
         $baseDir = 'media';
         $model = new ($media->model_type);
-        $mediaModelBaseDir = $model->mediaDir ?? $model->getTable();
+        $mediaModelBaseDir = $media->model_type::$mediaDir ?? $model->getTable();
+        $collectionDir = $media->collection_name;
         $mediaModelDir = $media->model_id;
         $mediaDir = $media->getKey();
+
+        $organizeByCollection = property_exists($media->model_type,
+                'organiseMediaByCollection')
+                                && $media->model_type::$organiseMediaByCollection;
+
+        if ($organizeByCollection) {
+            $mediaModelDir .= "/$collectionDir";
+        }
 
         unset($model);
 

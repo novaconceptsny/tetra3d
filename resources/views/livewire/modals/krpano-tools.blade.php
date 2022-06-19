@@ -13,7 +13,11 @@
                 </div>
                 <div class="col-12 pt-3">
                     <h5>Output:</h5>
-                    <pre wire:ignore class="command-output" id="command-output"></pre>
+                    @if($output)
+                        <pre style="color: red">{{ $output }}</pre>
+                    @else
+                        <pre wire:ignore class="command-output" id="command-output"></pre>
+                    @endif
                 </div>
             </div>
         </div>

@@ -16,6 +16,7 @@
     <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('backend/css/icons.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('backend/css/custom.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('backend/css/media-library.css') }}">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.7.1/dist/cdn.min.js"></script>

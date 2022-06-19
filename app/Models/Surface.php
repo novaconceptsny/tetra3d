@@ -15,6 +15,8 @@ class Surface extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    public static bool $organiseMediaByCollection = true;
+
     public $casts = [
         'data' => SchemalessAttributes::class,
     ];
