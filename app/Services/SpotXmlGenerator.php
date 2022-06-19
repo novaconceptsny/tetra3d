@@ -198,9 +198,8 @@ class SpotXmlGenerator
             "onclick" => "getUrl()",
             "coin" => "0",
             "url" => "/krpano/dummy.png",
-            "url_main" => "/surface/p4/s4001(Main) copy.png", //todo
-            "url_shared" => "/surface/p4/s4001BoxPoint1(Shared) copy.png",
-            //todo
+            "url_main" => $surface->getFirstMediaUrl('main'),
+            "url_shared" => $surface->getFirstMediaUrl('shared'),
             "scale" => $this->getSurfaceData($surface, 'scale'),
             "ath" => $this->getSurfaceData($surface, 'ath'),
             "atv" => $this->getSurfaceData($surface, 'atv'),

@@ -6,10 +6,16 @@ use App\Services\SpotXmlGenerator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
+use Spatie\MediaLibrary\MediaCollections\File;
 
-class Spot extends Model
+
+class Spot extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
     protected $guarded = ['id'];
 
     public $casts = [
@@ -22,6 +28,11 @@ class Spot extends Model
         static::created(function(self $spot) {
             $spot->generateXml();
         });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('image_360')->singleFile();
     }
 
     public function generateXml()

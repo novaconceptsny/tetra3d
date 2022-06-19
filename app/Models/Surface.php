@@ -2,17 +2,28 @@
 
 namespace App\Models;
 
+use App\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
 
-class Surface extends Model
+class Surface extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
     protected $guarded = ['id'];
 
     public $casts = [
         'data' => SchemalessAttributes::class,
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('main')->singleFile();
+        $this->addMediaCollection('shared')->singleFile();
+    }
 
     public function scopeWithData(): Builder
     {
@@ -38,5 +49,14 @@ class Surface extends Model
     public function spots()
     {
         return $this->belongsToMany(Spot::class);
+    }
+
+    public function uploadImages(Request $request)
+    {
+        $this->addFromMediaLibraryRequest($request->main)
+            ->toMediaCollection('main');
+
+        $this->addFromMediaLibraryRequest($request->shared)
+            ->toMediaCollection('shared');
     }
 }

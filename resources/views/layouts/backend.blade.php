@@ -58,7 +58,7 @@
 
     </div>
 
-    {{--<livewire:modals.base-modal />--}}
+    <livewire:modals.base-modal />
 </div>
 
 {{--@include('backend.includes.partial.settings')--}}
@@ -83,7 +83,7 @@
 
 @yield('scripts')
 <livewire:scripts/>
-{{--<script src="{{ asset('js/modals.js') }}"></script>--}}
+<script src="{{ asset('js/modals.js') }}"></script>
 
 <script>
     Livewire.on('flashNotification', (message, type = 'success') => {

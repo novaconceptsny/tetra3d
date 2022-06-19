@@ -32,9 +32,11 @@ class SurfaceController extends Controller
             'name' => 'required'
         ]);
 
-        $tour->surfaces()->create([
+        $surface = $tour->surfaces()->create([
             'name' => $request->name
         ]);
+
+        $surface->uploadImages($request);
 
         return redirect()
             ->route('backend.tours.surfaces.index', $tour)
@@ -65,6 +67,8 @@ class SurfaceController extends Controller
         $surface->update($request->only([
             'name'
         ]));
+
+        $surface->uploadImages($request);
 
         return redirect()->back()->with('success', 'Surface updated successfully');
     }

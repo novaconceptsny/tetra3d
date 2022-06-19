@@ -26,6 +26,11 @@
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$spot">
 
                                     <x-backend::dropdown.item
+                                        onclick="window.livewire.emit('showModal', 'modals.krpano-tools')">
+                                        <i class="fal fa-toolbox mr-1"></i> {{ __('Krpano Tools') }}
+                                    </x-backend::dropdown.item>
+
+                                    <x-backend::dropdown.item
                                         permission="update" :permission_params="$spot"
                                         :route="route('backend.spot-configuration.show', $spot)">
                                         <i class="fal fa-code mr-1"></i> {{ __('Show Configuration') }}

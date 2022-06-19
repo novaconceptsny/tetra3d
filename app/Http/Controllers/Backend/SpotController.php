@@ -39,6 +39,10 @@ class SpotController extends Controller
 
         $spot->surfaces()->sync($request->surfaces);
 
+        $spot
+            ->addFromMediaLibraryRequest($request->image_360)
+            ->toMediaCollection('image_360');
+
         return redirect()->back()->with('success', 'Spot created successfully');
     }
 
@@ -67,6 +71,10 @@ class SpotController extends Controller
         ]));
 
         $spot->surfaces()->sync($request->surfaces);
+
+        $spot
+            ->addFromMediaLibraryRequest($request->image_360)
+            ->toMediaCollection('image_360');
 
         return redirect()->back()->with('success', 'Spot updated successfully');
     }

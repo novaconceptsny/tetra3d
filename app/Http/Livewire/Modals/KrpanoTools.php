@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Modals;
 
 use Livewire\Component;
 use Pusher\Pusher;
@@ -9,10 +9,11 @@ use Symfony\Component\Process\Process;
 class KrpanoTools extends Component
 {
     public $output;
+    public $initialized = false;
 
     public function render()
     {
-        return view('livewire.krpano-tools');
+        return view('livewire.modals.krpano-tools');
     }
 
     public function runCommand()
@@ -26,7 +27,7 @@ class KrpanoTools extends Component
 
         /*$panos_path = */
 
-        $cmd = 'D:\krpano-1.20.11\krpanotools makepano D:\krpano-1.20.11\templates\krpano.configs D:\krpano-1.20.11\360\p48003.JPG';
+        $cmd = 'D:\krpano-1.20.11\krpanotools makepano D:\krpano-1.20.11\templates\krpano.config D:\krpano-1.20.11\360\p48003.JPG';
 
         $process = Process::fromShellCommandline($cmd);
 

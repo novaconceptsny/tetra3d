@@ -17,6 +17,16 @@
 
                 <x-backend::inputs.text name="name" value="{{ $surface ? $surface->name : '' }}"/>
 
+                <div class="col-6">
+                    <h5>{{ __('Main Image') }}</h5>
+                    <x-media-library-attachment name="main" rules="max:102400"/>
+                </div>
+
+                <div class="col-6">
+                    <h5>{{ __('Shared Image') }}</h5>
+                    <x-media-library-attachment name="shared" rules="max:102400"/>
+                </div>
+
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
                         {{ $submit_text ?? ( $surface ? __('Update') : __('Create') ) }}
@@ -25,5 +35,9 @@
             </form>
         </div>
     </div>
+@endsection
+
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('backend/css/media-library.css') }}">
 @endsection
 

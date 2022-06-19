@@ -2,11 +2,6 @@
 
 @section('content')
     <div class="card">
-        <div class="card-body">
-            <livewire:krpano-test/>
-        </div>
-    </div>
-    <div class="card">
         <div class="card-header">
             <div class="float-end">
                 <a href="{{ route('backend.tours.create') }}" class="btn btn-sm btn-outline-primary"><i

@@ -28,6 +28,10 @@
                     @endforeach
                 </x-backend::inputs.select2>
 
+                <div class="col-12">
+                    <x-media-library-attachment name="image_360" rules="max:102400" />
+                </div>
+
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
                         {{ $submit_text ?? ( $spot ? __('Update') : __('Create') ) }}
@@ -38,3 +42,6 @@
     </div>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('backend/css/media-library.css') }}">
+@endsection
