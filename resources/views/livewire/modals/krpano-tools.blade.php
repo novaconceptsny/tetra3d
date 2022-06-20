@@ -15,9 +15,8 @@
                     <h5>Output:</h5>
                     @if($output)
                         <p style="color: red">{{ $output }}</p>
-                    @else
-                        <pre wire:ignore class="command-output" id="command-output"></pre>
                     @endif
+                    <pre wire:ignore class="command-output" id="command-output"></pre>
 
                     @if($confirmation_required && !$confirmed)
                         <p class=" mt-2">{{ __('Do you want to re-create panos ?') }}</p>
