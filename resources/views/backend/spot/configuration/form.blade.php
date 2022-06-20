@@ -9,7 +9,7 @@
                     <i class="fal fa-code"></i> {{ __('Show Configuration') }}
                 </a>
             </div>
-            <h5 class="mb-0">{{ __('Configure Spot') }}</h5>
+            <h5 class="mb-0">{{ __('Configure Spot '). "'$spot->name'" }}</h5>
         </div>
         <div class="card-body">
             <livewire:xml-form :spot="$spot"/>

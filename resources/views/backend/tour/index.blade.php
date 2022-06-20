@@ -1,5 +1,11 @@
 @extends('layouts.backend')
 
+@section('title_right')
+    <x-backend::layout.breadcrumbs>
+        <x-backend::layout.breadcrumb-item text="Tours" :active="true"/>
+    </x-backend::layout.breadcrumbs>
+@endsection
+
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -15,6 +21,8 @@
                     <thead>
                     <tr>
                         <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('Spots') }}</th>
+                        <th scope="col">{{ __('Surfaces') }}</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -22,6 +30,8 @@
                     @forelse($tours as $tour)
                         <tr>
                             <td>{{ $tour->name }}</td>
+                            <td><a href="{{ route('backend.tours.spots.index', $tour) }}">{{ $tour->spots_count }} Spots</a></td>
+                            <td><a href="{{ route('backend.tours.surfaces.index', $tour) }}">{{ $tour->surfaces_count }} Surfaces</a></td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$tour">
                                     <x-backend::dropdown.item

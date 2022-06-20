@@ -11,7 +11,7 @@ class TourController extends Controller
 {
     public function index()
     {
-        $tours = Tour::all();
+        $tours = Tour::withCount('surfaces', 'spots')->get();
         return view('backend.tour.index', compact('tours'));
     }
 

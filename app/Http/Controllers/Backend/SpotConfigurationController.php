@@ -58,7 +58,7 @@ class SpotConfigurationController extends Controller
             ])?->delete();
 
             $spot->addFromMediaLibraryRequest($request->overlays[$index]['image'])
-                ->withCustomProperties('overlay')
+                ->withCustomProperties('uuid')
                 ->toMediaCollection('overlays');
         }
     }

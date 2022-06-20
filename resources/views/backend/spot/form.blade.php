@@ -1,5 +1,13 @@
 @extends('layouts.backend')
 
+@section('title_right')
+    <x-backend::layout.breadcrumbs>
+        <x-backend::layout.breadcrumb-item text="Tours" :route="route('backend.tours.index')" />
+        <x-backend::layout.breadcrumb-item text="Spots" :route="route('backend.tours.spots.index', $tour)" />
+        <x-backend::layout.breadcrumb-item text="Form" :active="true" />
+    </x-backend::layout.breadcrumbs>
+@endsection
+
 @section('content')
     @php($spot = $spot ?? null)
     @php($edit_mode = (bool)$spot)
@@ -17,7 +25,7 @@
 
                 <x-backend::inputs.text name="name" value="{{ $spot?->name }}"/>
 
-                <x-backend::inputs.select2 name="surfaces" :multiple="true">
+                <x-backend::inputs.select2 name="surfaces" :multiple="true" :placeholder="false">
                     @foreach($tour->surfaces as $surface)
                         <x-backend::inputs.select-option
                             :multiple="true"

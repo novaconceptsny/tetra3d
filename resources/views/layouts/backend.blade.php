@@ -35,16 +35,15 @@
         <div class="content">
             @include('backend.includes.partial.navbar')
             <div class="container-fluid">
-                <div class="row {{ empty($__env->yieldContent('title')) ? 'mt-4' : '' }}">
+                @php
+                    $add_margin = empty($__env->yieldContent('title')) && empty($__env->yieldContent('title_right'));
+                @endphp
+                <div class="row {{ $add_margin ? 'mt-4' : '' }}">
                     <div class="col-12">
                         <div class="page-title-box">
-                            {{--<div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
-                                    <li class="breadcrumb-item active">Profile</li>
-                                </ol>
-                            </div>--}}
+                            <div class="page-title-right">
+                                @yield('title_right')
+                            </div>
                             <h4 class="page-title">@yield('title')</h4>
                         </div>
                     </div>

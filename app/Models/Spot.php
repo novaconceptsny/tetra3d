@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Spot\PanoStatus;
+use App\Enums\Spot\XmlStatus;
 use App\Services\SpotXmlGenerator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -74,6 +76,33 @@ class Spot extends Model implements HasMedia
         return Attribute::make(
             get: fn() => $path
         );
+    }
+
+    public function xmlStatus()
+    {
+        if (! file_exists($this->xml_path)) {
+            return XmlStatus::NOT_PRESENT;
+        }
+
+        return XmlStatus::PRESENT;
+    }
+
+    public function panoStatus()
+    {
+        // todo::improvement: might have performance issues!
+
+        $base_dir = $this->tour_path;
+        $pano_dir = "$base_dir/panos";
+
+        if ( ! \File::isDirectory($pano_dir)) {
+            return PanoStatus::NOT_PRESENT;
+        }
+
+        if (count(\File::allFiles($pano_dir)) !== 415) {
+            return PanoStatus::INVALID;
+        }
+
+        return PanoStatus::PRESENT;
     }
 
     public function getOverlayImageUrl($uuid){

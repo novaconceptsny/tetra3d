@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Modals;
 
+use App\Enums\Spot\PanoStatus;
 use App\Models\Spot;
 use Illuminate\Support\Facades\File;
 use Livewire\Component;
@@ -13,6 +14,8 @@ class KrpanoTools extends Component
     public Spot $spot;
     public $output;
     public $initialized = false;
+    public $confirmation_required = false;
+    public $confirmed = false;
 
     public function render()
     {
@@ -27,7 +30,13 @@ class KrpanoTools extends Component
     public function runCommand()
     {
         if (!file_exists($this->spot->getFirstMediaPath('image_360'))){
-            $this->output = "Invalid Image";
+            $this->output = "No Image Found!";
+            return;
+        }
+
+        if ($this->spot->panoStatus() == PanoStatus::PRESENT && !$this->confirmed){
+            $this->output = "Panos already exists";
+            $this->confirmation_required = true;
             return;
         }
 
@@ -60,6 +69,11 @@ class KrpanoTools extends Component
             $this->output = $processOutput;
         }
 
+    }
+
+    public function confirm(){
+        $this->confirmed = true;
+        $this->runCommand();
     }
 
     public function getKrpanoCommand()

@@ -21,6 +21,7 @@ class SurfaceController extends Controller
     public function create(Tour $tour)
     {
         $data = array();
+        $data['tour'] = $tour;
         $data['route'] = route('backend.tours.surfaces.store', $tour);
 
         return view('backend.surface.form', $data);
@@ -52,6 +53,7 @@ class SurfaceController extends Controller
     {
         $data = array();
         $data['surface'] = $surface;
+        $data['tour'] = $surface->tour;
         $data['route'] = route('backend.surfaces.update', $surface);
         $data['method'] = 'put';
 

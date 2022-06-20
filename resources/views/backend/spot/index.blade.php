@@ -1,5 +1,12 @@
 @extends('layouts.backend')
 
+@section('title_right')
+    <x-backend::layout.breadcrumbs>
+        <x-backend::layout.breadcrumb-item text="Tours" :route="route('backend.tours.index')" />
+        <x-backend::layout.breadcrumb-item text="Spots" :active="true"/>
+    </x-backend::layout.breadcrumbs>
+@endsection
+
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -15,6 +22,9 @@
                     <thead>
                     <tr>
                         <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('Surfaces') }}</th>
+                        <th scope="col">{{ __('Panos') }}</th>
+                        <th scope="col">{{ __('XML') }}</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -22,6 +32,19 @@
                     @forelse($spots as $spot)
                         <tr>
                             <td>{{ $spot->name }}</td>
+                            <td>{{ $spot->surfaces_count }} {{ __('Surfaces') }}</td>
+                            <td>
+                                <span class="text-{{ $spot->panoStatus()->color() }}">
+                                    <i class="{{ $spot->panoStatus()->icon() }}"></i>
+                                    <span>{{ $spot->panoStatus()->value }}</span>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-{{ $spot->xmlStatus()->color() }}">
+                                    <i class="{{ $spot->xmlStatus()->icon() }}"></i>
+                                    <span>{{ $spot->xmlStatus()->value }}</span>
+                                </span>
+                            </td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$spot">
 

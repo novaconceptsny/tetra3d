@@ -14,7 +14,7 @@ class SpotController extends Controller
     {
         $data = array();
 
-        $data['spots'] = $tour->spots;
+        $data['spots'] = $tour->spots()->withCount('surfaces')->get();
         $data['tour'] = $tour;
 
         return view('backend.spot.index', $data);
@@ -57,7 +57,7 @@ class SpotController extends Controller
         $data['spot'] = $spot;
         $data['method'] = 'put';
         $data['route'] = route('backend.spots.update', $spot);
-        $data['tour'] = Tour::find(1);
+        $data['tour'] = $spot->tour;
 
         return view('backend.spot.form', $data);
     }

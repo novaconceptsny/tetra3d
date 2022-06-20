@@ -1,5 +1,12 @@
 @extends('layouts.backend')
 
+@section('title_right')
+    <x-backend::layout.breadcrumbs>
+        <x-backend::layout.breadcrumb-item text="Projects" :route="route('backend.projects.index')"/>
+        <x-backend::layout.breadcrumb-item text="Form" :active="true"/>
+    </x-backend::layout.breadcrumbs>
+@endsection
+
 @section('content')
     @php($project = $project ?? null)
     @php($edit_mode = (bool)$project)

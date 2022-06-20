@@ -1,5 +1,13 @@
 @extends('layouts.backend')
 
+@section('title_right')
+    <x-backend::layout.breadcrumbs>
+        <x-backend::layout.breadcrumb-item text="Tours" :route="route('backend.tours.index')" />
+        <x-backend::layout.breadcrumb-item text="Surfaces" :route="route('backend.tours.surfaces.index', $tour)" />
+        <x-backend::layout.breadcrumb-item text="Form" :active="true" />
+    </x-backend::layout.breadcrumbs>
+@endsection
+
 @section('content')
     @php($surface = $surface ?? null)
     @php($edit_mode = (bool)$surface)
