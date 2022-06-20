@@ -29,6 +29,8 @@ class KrpanoTools extends Component
 
     public function runCommand()
     {
+        $this->output = false;
+
         if (!file_exists($this->spot->getFirstMediaPath('image_360'))){
             $this->output = "No Image Found!";
             return;
