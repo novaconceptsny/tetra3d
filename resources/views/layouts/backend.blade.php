@@ -92,6 +92,7 @@
 
     Echo.channel('shell')
         .listen('.newOutput', (e) => {
+            console.log(e);
             let $output = $('#command-output');
             $output.append(e)
             $output.scrollTop($output.prop("scrollHeight"));

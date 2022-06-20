@@ -40,12 +40,17 @@ class KrpanoTools extends Component
             return;
         }
 
-        $pusher = new Pusher(
-            config('broadcasting.connections.pusher.key'),
-            config('broadcasting.connections.pusher.secret'),
-            config('broadcasting.connections.pusher.app_id'),
-            config('broadcasting.connections.pusher.options'),
-        );
+        try {
+            $pusher = new Pusher(
+                config('broadcasting.connections.pusher.key'),
+                config('broadcasting.connections.pusher.secret'),
+                config('broadcasting.connections.pusher.app_id'),
+                config('broadcasting.connections.pusher.options'),
+            );
+        } catch (\Error|\Exception $exception){
+            $this->output = $exception->getMessage();
+            return;
+        }
 
         if (File::isDirectory($this->spot->tour_path)){
             File::deleteDirectory($this->spot->tour_path, true);
