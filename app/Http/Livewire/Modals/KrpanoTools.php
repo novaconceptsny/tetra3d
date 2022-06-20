@@ -80,6 +80,7 @@ class KrpanoTools extends Component
 
     public function confirm(){
         $this->confirmed = true;
+        $this->output = false;
         $this->runCommand();
     }
 
