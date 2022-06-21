@@ -95,4 +95,22 @@ class TourController extends Controller
 
         return view('pages.tour', $data);
     }
+
+    public function show(Tour $tour)
+    {
+        $request = \request();
+
+        $data = array();
+        $data['tour'] = $tour;
+        $data['spot'] = $tour->spots->first();
+
+        $data['hash'] = 0;
+        $data['tracker'] = 0;
+        $data['shareType'] = 0;
+        $data['hlookat'] = $request->get('hlookat', 0);
+        $data['vlookat'] = $request->get('vlookat', 0);
+
+
+        return view('pages.tour', $data);
+    }
 }

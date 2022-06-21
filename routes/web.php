@@ -26,7 +26,7 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'HomeController@index')->name('dashboard');
-    Route::get('tour/{id}', 'TourController@index')->name('tour.index');
+    Route::get('tours/{tour}', 'TourController@show')->name('tours.show');
     Route::get('editor', 'CanvasController@index')->name('editor');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
 });

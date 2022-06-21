@@ -31,7 +31,7 @@
                     <tbody class="list">
                     @forelse($spots as $spot)
                         <tr>
-                            <td>{{ $spot->name }}</td>
+                            <td><a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->name }}</a></td>
                             <td>{{ $spot->surfaces_count }} {{ __('Surfaces') }}</td>
                             <td>
                                 <span class="text-{{ $spot->panoStatus()->color() }}">

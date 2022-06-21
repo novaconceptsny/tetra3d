@@ -29,7 +29,7 @@
                     <tbody class="list">
                     @forelse($tours as $tour)
                         <tr>
-                            <td>{{ $tour->name }}</td>
+                            <td><a href="{{ route('tours.show', $tour) }}" target="_blank">{{ $tour->name }}</a></td>
                             <td><a href="{{ route('backend.tours.spots.index', $tour) }}">{{ $tour->spots_count }} Spots</a></td>
                             <td><a href="{{ route('backend.tours.surfaces.index', $tour) }}">{{ $tour->surfaces_count }} Surfaces</a></td>
                             <td>

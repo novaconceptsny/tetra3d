@@ -51,9 +51,9 @@ class SpotXmlGenerator
     private function addIncludes()
     {
         $includeUrls = [
-            '/krpano/skin/gyro.xml?%$timestamp%',
-            '/krpano/hotspot.xml?%$timestamp%',
-            '/krpano/action.xml?%$timestamp%',
+            $this->getKrpanoAsset('skin/gyro.xml?%$timestamp%'),
+            $this->getKrpanoAsset('hotspot.xml?%$timestamp%'),
+            $this->getKrpanoAsset('action.xml?%$timestamp%'),
         ];
 
         foreach ($includeUrls as $url) {
@@ -92,8 +92,8 @@ class SpotXmlGenerator
             "hlookat" => $this->xmlData->view['hlookat'] ?? 0,
             "vlookat" => $this->xmlData->view['hlookat'] ?? 0,
             "maxpixelzoom" => "1.0",
-            "fov" => $this->xmlData->view['fov'] ?? 0,
-            "fovmax" => $this->xmlData->view['fovmax'] ?? 0,
+            "fov" => $this->xmlData->view['fov'] ?? 90,
+            "fovmax" => $this->xmlData->view['fovmax'] ?? 120,
             "limitview" => "auto",
         ];
 
@@ -113,14 +113,14 @@ class SpotXmlGenerator
     private function addPreview()
     {
         $this->xml->addChild('preview')
-            ->addAttribute('url', 'panos/preview.jpg');
+            ->addAttribute('url', $this->getSpotAsset('panos/preview.jpg'));
     }
 
     private function addImage()
     {
         $image = $this->xml->addChild('image');
         $cube = $image->addChild('cube');
-        $cube->addAttribute('url', 'panos/%s/l%l/%v/l%l_%s_%v_%h.jpg');
+        $cube->addAttribute('url', $this->getSpotAsset('panos/%s/l%l/%v/l%l_%s_%v_%h.jpg'));
         $cube->addAttribute('multires', '512,768,1664,3200');
     }
 
@@ -139,7 +139,7 @@ class SpotXmlGenerator
            'ath' => $this->xmlData->scale_box['square']['ath'] ?? 0,
            'atv' => $this->xmlData->scale_box['square']['ath'] ?? 0,
            'scale' => $this->xmlData->scale_box['square']['scale'] ?? 0,
-            'url' => '/assets/1000x1000square.png'
+           'url' => $this->getKrpanoAsset('assets/1000x1000square.png')
         ]);
 
         $crossAttributes = array_merge($attributes,[
@@ -147,7 +147,7 @@ class SpotXmlGenerator
             'ath' => $this->xmlData->scale_box['cross']['ath'] ?? 0,
             'atv' => $this->xmlData->scale_box['cross']['ath'] ?? 0,
             'scale' => $this->xmlData->scale_box['cross']['scale'] ?? 0,
-            'url' => '/assets/1000x1000cross.png'
+            'url' => $this->getKrpanoAsset('assets/1000x1000cross.png')
         ]);
 
         $square_enabled = $this->xmlData->scale_box['square']['enabled'] ?? false;
@@ -350,5 +350,15 @@ class SpotXmlGenerator
         }
 
         $element->insertComment($content, 'before');
+    }
+
+    private function getKrpanoAsset($asset)
+    {
+        return asset("krpano/$asset");
+    }
+
+    private function getSpotAsset($asset)
+    {
+        return asset("storage/tours/{$this->spot->tour_id}/{$this->spot->id}/$asset");
     }
 }

@@ -33,7 +33,7 @@
         let vlookat = {{$vlookat}};
         let shareType = {{$shareType}};
         let hash = "{{$hash}}";
-        let spotId = "{{ $spot->id }}";
+        let spotId = {{$spotId}};
         let timestamp = Date.now();
 
         let tracker = {{$tracker}};
@@ -42,7 +42,7 @@
         console.log("timestamp:" + timestamp);
 
         embedpano({
-            xml: '{{ $spot->xml_url }}' + '?' + timestamp,
+            xml: '{{ asset($xmlPath) }}' + '?' + timestamp,
             target: "pano",
             html5: "only",
             passQueryParameters: true,
@@ -51,6 +51,13 @@
             initvars: {
                 timestamp: timestamp,
                 showerrors: false,
+                spot_id: {{$spotId}},
+                shareType: {{$shareType}},
+
+
+                @foreach ($surfaces as $surface)
+                {{ "wall_{$surface->state->id}"}}: '{{ asset($surface->state->url) }}',
+                @endforeach
             },
         });
 
@@ -110,7 +117,7 @@
             track_mouse();
         }
 
-        krpano.call("set(layer['version'].onclick,openurl('/version/management/spot/{{$spot->id}}'))");
+        krpano.call("set(layer['version'].onclick,openurl('/version/management/spot/{{$spotId}}'))");
 
     </script>
 @endsection

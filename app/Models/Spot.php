@@ -78,6 +78,13 @@ class Spot extends Model implements HasMedia
         );
     }
 
+    public function xmlUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => asset('storage/tours/1/1/pano.xml')
+        );
+    }
+
     public function xmlStatus()
     {
         if (! file_exists($this->xml_path)) {
