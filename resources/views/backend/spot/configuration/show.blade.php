@@ -1,6 +1,6 @@
 @extends('layouts.backend')
 
-@section('title', "Spot {$spot->id} Configuration")
+@section('title', "Spot {$spot->name} Configuration")
 
 @section('content')
     <div class="card"></div>
