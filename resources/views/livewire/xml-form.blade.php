@@ -3,6 +3,7 @@
         <div class="list-group">
             @foreach($sections as $form => $section)
                 <button type="button"
+                        wire:loading.attr="disabled"
                         class="list-group-item list-group-item-action {{ $form == $activeForm ? 'active' : '' }}"
                         wire:click="$set('activeForm', '{{$form}}')">{{ $section['name'] }}
                 </button>

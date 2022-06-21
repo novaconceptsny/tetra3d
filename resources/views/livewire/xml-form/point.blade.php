@@ -13,6 +13,7 @@
 
             <div class="col-2 text-end">
                 <button type="button" class="btn btn-danger mt-3"
+                        wire:loading.attr="disabled"
                         wire:click.prevent="remove({{$index}})">
                     <i class="la la-trash-o"></i>{{ __('Delete') }}
                 </button>
@@ -23,6 +24,7 @@
 
     <div class="form-group mt-5 text-end">
         <button type="button" class="btn btn-primary"
+                wire:loading.attr="disabled"
                 wire:click.prevent="add()">
             <i class="la la-plus"></i>{{ __('Add Point') }}
         </button>
