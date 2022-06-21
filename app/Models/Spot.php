@@ -81,7 +81,7 @@ class Spot extends Model implements HasMedia
     public function xmlUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => asset('storage/tours/1/1/pano.xml')
+            get: fn() => asset("storage/tours/{$this->tour_id}/{$this->id}/pano.xml")
         );
     }
 
