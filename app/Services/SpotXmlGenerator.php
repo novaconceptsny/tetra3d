@@ -275,7 +275,7 @@ class SpotXmlGenerator
     {
         $attributes = [
             'name' => "spot_{$index}",
-            'hotspot_type' => 'overlay_surface',
+            'hotspot_type' => 'navigation',
             'onclick' => 'NavigateTo()',
             'style' => 'artwork_hotspot',
             "rx" => $navigationData['rx'] ?? 0,
