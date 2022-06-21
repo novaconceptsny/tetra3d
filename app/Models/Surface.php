@@ -53,6 +53,11 @@ class Surface extends Model implements HasMedia
         return $this->belongsToMany(Spot::class);
     }
 
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
+    }
+
     public function uploadImages(Request $request)
     {
         $this->addFromMediaLibraryRequest($request->main)

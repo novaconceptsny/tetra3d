@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('spots', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->nullable();
             $table->foreignId('tour_id');
             $table->string('name');
             $table->json('xml')->nullable();

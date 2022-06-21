@@ -11,7 +11,7 @@
 
 @php
     $id = str($id ?? $name)->replace('.', '_');
-    $label = $label ?? ucfirst($name);
+    $label = $label ?? str_to_title($name);
     $field = $field ?? $name;
     $name = dotToHtmlArray($name);
     $placeholder = $placeholder ?? $label;

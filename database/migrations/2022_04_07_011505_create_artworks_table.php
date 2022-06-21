@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('artworks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id');
             $table->string('name');
             $table->string('artist')->nullable();
             $table->string('type')->nullable();

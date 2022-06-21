@@ -14,7 +14,8 @@ class ValidationRules
     public static function storeUser()
     {
         return [
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|string|max:255|email|unique:users,email',
             'password' => 'required|string|max:25|min:6',
         ];
@@ -64,5 +65,17 @@ class ValidationRules
     public static function updateTour()
     {
         return self::storeTour();
+    }
+
+    public static function storeCompany()
+    {
+        return [
+            'name' => self::$basicString,
+        ];
+    }
+
+    public static function updateCompany()
+    {
+        return self::storeCompany();
     }
 }

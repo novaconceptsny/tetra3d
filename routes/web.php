@@ -49,6 +49,8 @@ Route::group([
     });
 
 
+    Route::resource('companies', 'CompanyController');
+    Route::resource('users', 'UserController');
     Route::resource('projects', 'ProjectController');
     Route::resource('tours', 'TourController');
     Route::resource('tours.spots', 'SpotController')->shallow();
