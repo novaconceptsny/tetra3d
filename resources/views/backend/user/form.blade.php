@@ -26,7 +26,7 @@
                 <x-backend::inputs.text col="col-6" name="first_name" value="{{ $user?->first_name }}"/>
                 <x-backend::inputs.text col="col-6" name="last_name" value="{{ $user?->last_name }}"/>
                 <x-backend::inputs.text col="col-6" name="email" value="{{ $user?->email }}"/>
-                <x-backend::inputs.text col="col-6" name="password" value="{{ $user?->password }}"/>
+                <x-backend::inputs.text col="col-6" name="password" />
 
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">

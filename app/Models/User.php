@@ -14,7 +14,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasCompany;
 
-    protected $fillable = ['name', 'email', 'password',];
+    protected $guarded = ['id'];
 
     protected $hidden = ['password', 'remember_token',];
 
@@ -36,6 +36,17 @@ class User extends Authenticatable
         }
 
         return $path;
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        // well, there are chances that some password really starts with
+        // $2y$, but having password of length 60 is practically impossible.
+        // so let's assume that it's an encrypted string!
+        // let's not encrypt it!
+
+        $isEncrypted = strlen($value) == 60 && strpos($value, '$2y$') == 0;
+        $this->attributes['password'] = $isEncrypted ? $value : bcrypt($value);
     }
 
     public function name(): Attribute

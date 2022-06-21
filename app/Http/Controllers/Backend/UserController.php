@@ -28,8 +28,10 @@ class UserController extends Controller
         $request->validate(ValidationRules::storeUser());
 
         $user = User::create($request->only([
-            'first_name', 'last_name'
+            'first_name', 'last_name', 'email', 'password', 'company_id'
         ]));
+
+        return redirect()->route('backend.users.index')->with('success', 'User created successfully');
     }
 
     public function show(User $user)
@@ -39,12 +41,24 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        //
+        $data = array();
+        $data['route'] = route('backend.users.update', $user);
+        $data['method'] = 'put';
+        $data['user'] = $user;
+
+        return view('backend.user.form', $data);
     }
 
     public function update(Request $request, User $user)
     {
         $request->validate(ValidationRules::updateUser($user));
+
+        $user->update($request->only([
+            'first_name', 'last_name', 'email', 'password', 'company_id'
+        ]));
+
+
+        return redirect()->back()->with('success', 'User created successfully');
     }
 
     public function destroy(User $user)

@@ -24,7 +24,7 @@ class Surface extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('main')->singleFile();
-        $this->addMediaCollection('shared')->singleFile();
+        $this->addMediaCollection('shared');
     }
 
     public function scopeWithData(): Builder
@@ -56,14 +56,5 @@ class Surface extends Model implements HasMedia
     public function tour()
     {
         return $this->belongsTo(Tour::class);
-    }
-
-    public function uploadImages(Request $request)
-    {
-        $this->addFromMediaLibraryRequest($request->main)
-            ->toMediaCollection('main');
-
-        $this->addFromMediaLibraryRequest($request->shared)
-            ->toMediaCollection('shared');
     }
 }

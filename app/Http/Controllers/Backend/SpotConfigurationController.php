@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Spot;
+use App\Models\Surface;
 use App\Services\SpotXmlGenerator;
 use Illuminate\Http\Request;
 
@@ -36,6 +37,7 @@ class SpotConfigurationController extends Controller
         ]);
 
         $this->uploadOverlyImages($request, $spot);
+        $this->uploadSurfacesSharedImage($request, $spot);
 
         $spot->generateXml();
 
@@ -63,6 +65,30 @@ class SpotConfigurationController extends Controller
         }
     }
 
+    private function uploadSurfacesSharedImage(Request $request, Spot $spot){
+        $surfaces = $request->surfaces ?? [];
+
+        $this->addSurfaceAttributes($request, $spot, $surfaces);
+
+        foreach ($surfaces as $surface_id => $surface){
+            if ( ! isset($surface['shared_image'])) {
+                continue;
+            }
+
+            $surfaceModel = Surface::find($surface_id);
+
+            // remove old media if exists!
+            $surfaceModel->getFirstMedia('shared', [
+                'spot_id' => $spot->id
+            ])?->delete();
+
+            $surfaceModel->addFromMediaLibraryRequest($request->surfaces[$surface_id]['shared_image'])
+                ->withCustomProperties('spot_id')
+                ->toMediaCollection('shared');
+        }
+    }
+
+    // add uuid to overlay image custom fields
     private function addOverlayAttributes(Request $request, $overlays)
     {
         if (!$overlays){
@@ -83,6 +109,30 @@ class SpotConfigurationController extends Controller
 
         $request->merge([
             'overlays' => $overlays
+        ]);
+    }
+
+    // add spot_id to shared image custom fields
+    private function addSurfaceAttributes(Request $request, $spot, $surfaces)
+    {
+        if (!$surfaces){
+            return;
+        }
+
+        foreach ($surfaces as &$surface){
+            if ( ! isset($surface['shared_image'])) {
+                continue;
+            }
+
+            $uuid = array_key_first($surface['shared_image']);
+
+            $surface['shared_image'][$uuid]['custom_properties'] = array(
+                'spot_id' => $spot->id
+            );
+        }
+
+        $request->merge([
+            'surfaces' => $surfaces
         ]);
     }
 }

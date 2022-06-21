@@ -1,12 +1,6 @@
 @foreach($spot->surfaces as $surface)
     <div class="rounded p-3 mb-3">
-        <h5>{{ __('Surface ') . $loop->iteration }}</h5>
-        <div class="row mt-3">
-            <x-backend::inputs.input
-                col="col" name="surfaces[{{$surface->id}}][background][type]" label="Hotspot Type"
-                :value="$spot->xml->surfaces[$surface->id]['background']['type'] ?? ''"
-            />
-        </div>
+        <h5>{{ "surface_{$surface->id}" }}</h5>
         <div class="row mt-3">
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][scale]" label="scale"
@@ -76,6 +70,11 @@
                     />
                 @endforeach
             </x-backend::inputs.select>
+
+            <div class="col-12 mt-3">
+                <h5>{{ __('Shared Image') }}</h5>
+                <x-media-library-attachment name="surfaces[{{$surface->id}}][shared_image]" rules="max:102400" />
+            </div>
         </div>
     </div>
     <hr>

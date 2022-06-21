@@ -1,5 +1,14 @@
 @extends('layouts.backend')
 
+@section('title_right')
+    <x-backend::layout.breadcrumbs>
+        <x-backend::layout.breadcrumb-item text="Tours" :route="route('backend.tours.index')" />
+        <x-backend::layout.breadcrumb-item text="Spots" :route="route('backend.tours.spots.index', $spot->tour)" />
+        <x-backend::layout.breadcrumb-item :text="$spot->name"  />
+        <x-backend::layout.breadcrumb-item text="Configuration" :active="true" />
+    </x-backend::layout.breadcrumbs>
+@endsection
+
 @section('content')
     <div class="card shadow-none bg-body">
         <div class="card-header bg-body">

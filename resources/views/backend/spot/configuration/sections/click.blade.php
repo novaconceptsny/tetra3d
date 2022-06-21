@@ -1,6 +1,6 @@
 @foreach($spot->surfaces as $surface)
     <div class="rounded p-3 mb-3">
-        <h5>{{ __('Surface ') . $loop->iteration }}</h5>
+        <h5>{{ "surface_{$surface->id}_click" }}</h5>
         <div class="row">
             <x-backend::inputs.select col="col" label="Style" name="surfaces[{{$surface->id}}][click][style]" :placeholder="false">
                 @foreach($surface_click_styles as $surface_click_style)

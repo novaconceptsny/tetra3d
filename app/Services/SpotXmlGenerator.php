@@ -199,7 +199,9 @@ class SpotXmlGenerator
             "coin" => "0",
             "url" => "/krpano/dummy.png",
             "url_main" => $surface->getFirstMediaUrl('main'),
-            "url_shared" => $surface->getFirstMediaUrl('shared'),
+            "url_shared" => $surface->getFirstMedia('shared',
+                ['spot_id' => $this->spot->id]
+            )?->getUrl(),
             "scale" => $this->getSurfaceData($surface, 'scale'),
             "ath" => $this->getSurfaceData($surface, 'ath'),
             "atv" => $this->getSurfaceData($surface, 'atv'),
@@ -312,7 +314,9 @@ class SpotXmlGenerator
         $attributes = [
             'name' => "overlay_{$this->spot->id}_$index",
             'style' => 'overlay_surface',
-            "url" => $this->spot->getOverlayImageUrl($overlayData['uuid']),
+            "url" => $this->spot->getFirstMedia('overlays',
+                ['uuid' => $overlayData['uuid']]
+            )?->getUrl(),
             "ath" => $overlayData['ath'] ?? 0,
             "atv" => $overlayData['atv'] ?? 0,
             "scale" => $overlayData['scale'] ?? 0,

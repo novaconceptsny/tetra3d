@@ -37,7 +37,8 @@ class SurfaceController extends Controller
             'name' => $request->name
         ]);
 
-        $surface->uploadImages($request);
+        $surface->addFromMediaLibraryRequest($request->main)
+            ->toMediaCollection('main');
 
         return redirect()
             ->route('backend.tours.surfaces.index', $tour)
@@ -70,7 +71,8 @@ class SurfaceController extends Controller
             'name'
         ]));
 
-        $surface->uploadImages($request);
+        $surface->addFromMediaLibraryRequest($request->main)
+            ->toMediaCollection('main');
 
         return redirect()->back()->with('success', 'Surface updated successfully');
     }

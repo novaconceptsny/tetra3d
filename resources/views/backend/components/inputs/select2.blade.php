@@ -26,7 +26,7 @@
     <label class="form-label" for="{{$id}}">{{ __($label) }}</label>
     <select class="form-control select2 @error($field) is-invalid @enderror "
             data-toggle="select2"
-            multiple="{{ $multiple }}"
+            {{ $multiple ? 'multiple' : '' }}
             name="{{$name}}" id="{{$id}}"
             {{ $attributes->merge() }}>
         @if($placeholder)

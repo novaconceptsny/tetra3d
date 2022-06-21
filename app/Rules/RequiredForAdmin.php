@@ -22,7 +22,7 @@ class RequiredForAdmin implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (!user()->is_super_admin){
+        if (!user()->isSuperAdmin()){
             return true;
         }
 
