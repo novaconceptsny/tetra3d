@@ -55,7 +55,7 @@ class KrpanoTools extends Component
         }
 
         if (File::isDirectory($this->spot->tour_path)){
-            File::deleteDirectory($this->spot->tour_path, true);
+            File::deleteDirectory("{$this->spot->tour_path}/panos", true);
         }
 
         $command = $this->getKrpanoCommand();
