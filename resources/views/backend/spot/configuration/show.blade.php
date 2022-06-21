@@ -1,6 +1,9 @@
 @extends('layouts.backend')
 
-@section('title', "Spot {$spot->name} Configuration")
+@section('title')
+    <span>{{ "Spot {$spot->name} Configuration" }}</span>
+    <span class="ms-2"><a href="{{ route('backend.spot-configuration.edit', $spot) }}"><i class="fal fa-pencil"></i></a></span>
+@endsection
 
 @section('content')
     <div class="card"></div>
