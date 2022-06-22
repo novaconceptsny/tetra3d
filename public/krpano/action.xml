@@ -1,40 +1,30 @@
 <krpano>
     <action name="getUrl" type="javascript">
-        console.log("spot_id:"+krpano.spot_id);
         var spotId=krpano.spot_id;
-        console.log("hlookat:"+krpano.view.hlookat);
         var hlookat=krpano.view.hlookat;
-        console.log("vlookat:"+krpano.view.vlookat);
         var vlookat=krpano.view.vlookat;
-        console.log("canvasId:"+caller.canvas_id);
         var canvasId=caller.canvas_id;
         urlStr="/editor?spotId="+spotId+"&#38;canvasId="+canvasId+"&#38;hlookat="+hlookat+"&#38;vlookat="+vlookat;
-        console.log("urlStr:"+urlStr);
         window.location.href = urlStr;
-        <!-- actions.openurl("http://www.google.com", _self); -->
     </action>
 
     <action name="set_tool" type="javascript">
-        if(krpano.tipCoin==0){
-        var fontScale=caller.scale;
-        krpano.layer.getItem('tooltip_text').html=caller.name;
-        krpano.layer.getItem('tooltip_text').visible=true;
-        krpano.layer.getItem('tooltip_text').css="font-family:Arial; font-size:20px; color:#ffffff;"
-        var x1;
-        var y1;
-        var coord=krpano.spheretoscreen(caller.ath,caller.atv);
-        <!-- console.log(coord.x,+":",); -->
-        <!-- console.log("y:"+callery+20); -->
-        krpano.layer.getItem('tooltip_text').x=coord.x;
-        krpano.layer.getItem('tooltip_text').y=coord.y-10;
-        krpano.tipCoin=1;
-        }else {
-        krpano.layer.getItem('tooltip_text').visible=false;
-        krpano.layer.getItem('tooltip_text').html="";
-        krpano.tipCoin=0;
+        if(krpano.tipCoin == 0){
+            var fontScale=caller.scale;
+            krpano.layer.getItem('tooltip_text').html=caller.name;
+            krpano.layer.getItem('tooltip_text').visible=true;
+            krpano.layer.getItem('tooltip_text').css="font-family:Arial; font-size:20px; color:#ffffff;"
+            var x1;
+            var y1;
+            var coord=krpano.spheretoscreen(caller.ath,caller.atv);
+            krpano.layer.getItem('tooltip_text').x=coord.x;
+            krpano.layer.getItem('tooltip_text').y=coord.y-10;
+            krpano.tipCoin=1;
+        } else {
+            krpano.layer.getItem('tooltip_text').visible=false;
+            krpano.layer.getItem('tooltip_text').html="";
+            krpano.tipCoin=0;
         }
-        <!-- console.log(krpano.tipCoin); -->
-
     </action>
 
     <action name="initiate" scope="global" type="javascript">
@@ -49,18 +39,14 @@
         krpano.layer.getItem('tooltip_text').css="font-family:Arial; font-size:50px; color:#ffffff;";
         krpano.layer.getItem('tooltip_text').bgalpha="0";
 
-
-        var spots=krpano.hotspot.getArray();
+        var spots = krpano.hotspot.getArray();
 
         spots.forEach(function(spot){
-        if(spot.hotspot_type=="navigation"){
-        spot.onover="set_tool";
-        spot.onout="set_tool";
-        }
-
+            if(spot.hotspot_type == "navigation"){
+                spot.onover="set_tool";
+                spot.onout="set_tool";
+            }
         });
-        <!-- console.log(krpano.hotspot.count); -->
-
     </action>
 
 
@@ -77,11 +63,9 @@
         var coin = caller.coin;
 
         let surface = args[1];
-        console.log(args);
 
         if(coin == "0"){
             if (surface == 'main' || surface == 'live'){
-                console.log('her is main');
                 var scale_shared = caller.scale;
                 var main_w = caller.main_w;
                 var main_h = caller.main_h;
@@ -109,7 +93,8 @@
             }
             caller.coin = 1;
         }
-        console.log(caller.url)
+        console.log("surface: ", surface)
+        console.log("surface_url: ", caller.url)
 
     </action>
 
@@ -118,10 +103,8 @@
         var hlookat = caller.hlookat;
         var vlookat = caller.vlookat;
         url = url + "?hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
-        console.log("url:" + url);
         window.location.href = url;
     </action>
-
 
     <!-- view settings -->
     <action name="do_crop_animation" scope="local" args="framewidth, frameheight, framerate">
@@ -152,92 +135,67 @@
     </action>
 
     <action name="hideNav" type="javascript" scope="global">
-
         var hotspotArr= krpano.hotspot;
         var count=hotspotArr.count;
         console.log(count);
         var i=0;
 
-        <!-- console.log(hotspotArr.getArray()); -->
         for (x in hotspotArr.getArray()){
-
-        var type=hotspotArr.getItem(i).hotspot_type;
-        if (type=="navigation"){
-        console.log(hotspotArr.getItem(i).name);
-        hotspotArr.getItem(i).enabled=false;
-        hotspotArr.getItem(i).alpha=0;
-
+            var type = hotspotArr.getItem(i).hotspot_type;
+            if (type == "navigation"){
+                hotspotArr.getItem(i).enabled=false;
+                hotspotArr.getItem(i).alpha=0;
+            }
+            i++;
         }
-
-        i++;
-        }
-
-
     </action>
 
-
     <action name="addHashToNav" type="javascript" scope="local" args="hash">
-
-        var hotspotArr= krpano.hotspot;
-        var layerArr= krpano.layer;
-        var count=hotspotArr.count;
-        var count2=layerArr.count;
-        console.log('nara',count2);
+        var hotspotArr = krpano.hotspot;
+        var layerArr = krpano.layer;
+        var count = hotspotArr.count;
+        var count2 = layerArr.count;
         var i=0;
-        <!-- console.log(hotspotArr.getArray()); -->
-        for (x in hotspotArr.getArray()){
-        var type=hotspotArr.getItem(i).hotspot_type;
-        var style=hotspotArr.getItem(i).style;
-        if (type=="navigation"){
-        console.log(hotspotArr.getItem(i).name);
 
-        clickStr=hotspotArr.getItem(i).onclick;
-        console.log(clickStr);
-        var strArr=clickStr.split("?");
-        console.log(strArr[0]);
-        var str1Arr=strArr[0].split("/");
-        var newSpotId=str1Arr[str1Arr.length-1]
-        var clickStr="openurl('/share/link/"+hash+"/"+newSpotId+"?"+strArr[1];
-        console.log(clickStr);
-        hotspotArr.getItem(i).onclick=clickStr;
-        }
-        if (style=="surface_click"){
-        hotspotArr.getItem(i).enabled=false;
-        }
-        i++;
+        for (x in hotspotArr.getArray()){
+            var type=hotspotArr.getItem(i).hotspot_type;
+            var style=hotspotArr.getItem(i).style;
+            if (type=="navigation"){
+                clickStr=hotspotArr.getItem(i).onclick;
+                var strArr=clickStr.split("?");
+                var str1Arr=strArr[0].split("/");
+                var newSpotId=str1Arr[str1Arr.length-1]
+                var clickStr="openurl('/share/link/"+hash+"/"+newSpotId+"?"+strArr[1];
+                hotspotArr.getItem(i).onclick=clickStr;
+            }
+            if (style=="surface_click"){
+                hotspotArr.getItem(i).enabled=false;
+            }
+            i++;
         }
 
         i=0;
         for (x in layerArr.getArray()){
-        var type=layerArr.getItem(i).layer_type;
-        console.log('nara_test',type);
-        if (type=="map_pin"){
-        console.log(layerArr.getItem(i).name);
-        console.log(strArr[1])
-        var clickStr=layerArr.getItem(i).onclick;
-        var splitStrArr=clickStr.split("?");
-        var str1Arr=splitStrArr[0].split("/");
-        var newSpotId=str1Arr[str1Arr.length-1].split("'")[0]
-        console.log(newSpotId, "Spot id")
-        var clickStr="openurl('/share/link/"+hash+"/"+newSpotId+"?"+strArr[1];
-        layerArr.getItem(i).onclick=clickStr;
+            var type=layerArr.getItem(i).layer_type;
+            if (type=="map_pin"){
+                var clickStr=layerArr.getItem(i).onclick;
+                var splitStrArr=clickStr.split("?");
+                var str1Arr=splitStrArr[0].split("/");
+                var newSpotId=str1Arr[str1Arr.length-1].split("'")[0]
+                var clickStr="openurl('/share/link/"+hash+"/"+newSpotId+"?"+strArr[1];
+                layerArr.getItem(i).onclick=clickStr;
+            }
+            if (style=="surface_click"){
+                layerArr.getItem(i).enabled=true;
+            }
+            i++;
         }
-        if (style=="surface_click"){
-        layerArr.getItem(i).enabled=true;
-        }
-        i++;
-        }
-
-
     </action>
 
 
     <action name="hideEditBtn">
-
         set(layer['version'].visible,false);
         set(layer['guide'].visible,false);
-
-
     </action>
 
     <action name="hideMap">
@@ -255,6 +213,5 @@
     <action name="moveLogout120">
         set(layer['logout'].x,120);
     </action>
-
 
 </krpano>
