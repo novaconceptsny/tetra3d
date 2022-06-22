@@ -29,7 +29,7 @@ class XmlForm extends Component
         $data['surface_types'] = [
             'live' => 'Live',
             'main' => 'Main',
-            'share' => 'Share',
+            'shared' => 'Shared',
         ];
 
         $data['scales'] = [
