@@ -120,15 +120,12 @@
     </action>
 
     <action name="NavigateTo" type="javascript">
-        console.log("toSpot:"+caller.goto);
-        var goto=caller.goto;
-        console.log("hlookat:"+caller.hlookat);
+        var url=caller.goto_url;
         var hlookat=caller.hlookat;
-        console.log("vlookat:"+caller.vlookat);
         var vlookat=caller.vlookat;
-        urlStr="/tour/"+goto+"?hlookat="+hlookat+"&#38;vlookat="+vlookat ;
-        console.log("urlStr:"+urlStr);
-        window.location.href = urlStr;
+        url=url+"?hlookat="+hlookat+"&#38;vlookat="+vlookat ;
+        console.log("url:"+url);
+        window.location.href = url;
     </action>
 
 

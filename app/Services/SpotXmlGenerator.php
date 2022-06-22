@@ -278,13 +278,14 @@ class SpotXmlGenerator
             'hotspot_type' => 'navigation',
             'onclick' => 'NavigateTo()',
             'style' => 'artwork_hotspot',
-            "rx" => $navigationData['rx'] ?? 0,
+            "rx" => $navigationData['rx'] ?? 75,
             "goto" => $index,
+            "goto_url" => route('tours.show', [$this->spot->tour, 'spot_id' => $index]),
             "hlookat" => $navigationData['hlookat'] ?? 0,
             "vlookat" => $navigationData['vlookat'] ?? 0,
             "ath" => $navigationData['ath'] ?? 0,
             "atv" => $navigationData['atv'] ?? 0,
-            "scale" => $navigationData['scale'] ?? 0,
+            "scale" => $navigationData['scale'] ?? 1,
         ];
 
         $navigation = $this->xml->addChild('hotspot');
