@@ -4,47 +4,59 @@
         <div class="row mt-3">
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][scale]" label="scale"
-                :value="$spot->xml->surfaces[$surface->id]['background']['scale'] ?? ''"
+                :value="$spot->xml->surfaces[$surface->id]['background']['scale'] ?? 1"
             />
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][ath]" label="ath"
-                :value="$spot->xml->surfaces[$surface->id]['background']['ath'] ?? ''"
+                :value="$spot->xml->surfaces[$surface->id]['background']['ath'] ?? 0"
             />
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][atv]" label="atv"
-                :value="$spot->xml->surfaces[$surface->id]['background']['atv'] ?? ''"
+                :value="$spot->xml->surfaces[$surface->id]['background']['atv'] ?? 0"
             />
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][ox]" label="ox"
-                :value="$spot->xml->surfaces[$surface->id]['background']['ox'] ?? ''"
+                :value="$spot->xml->surfaces[$surface->id]['background']['ox'] ?? 0"
             />
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][oy]" label="oy"
-                :value="$spot->xml->surfaces[$surface->id]['background']['oy'] ?? ''"
+                :value="$spot->xml->surfaces[$surface->id]['background']['oy'] ?? 0"
             />
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][zorder]" label="zorder"
-                :value="$spot->xml->surfaces[$surface->id]['background']['zorder'] ?? ''"
+                :value="$spot->xml->surfaces[$surface->id]['background']['zorder'] ?? 21"
             />
         </div>
         <div class="row mt-3">
-            <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][main_w]" label="main_w"/>
-            <x-backend::inputs.input col="col" name="surfaces[{{$surface->id}}][background][main_h]" label="main_h"/>
+            <x-backend::inputs.input
+                col="col" label="main_w"
+                name="surfaces[{{$surface->id}}][background][main_w]"
+                :value="$spot->xml->surfaces[$surface->id]['background']['main_w'] ?? 0"
+            />
+            <x-backend::inputs.input
+                col="col" label="main_h"
+                name="surfaces[{{$surface->id}}][background][main_h]"
+                :value="$spot->xml->surfaces[$surface->id]['background']['main_h'] ?? 0"
+            />
             <x-backend::inputs.input
                 label="shared_w" col="col"
                 name="surfaces[{{$surface->id}}][background][shared_w]"
+                :value="$spot->xml->surfaces[$surface->id]['background']['shared_w'] ?? 0"
             />
             <x-backend::inputs.input
                 col="col" label="shared_h"
                 name="surfaces[{{$surface->id}}][background][shared_h]"
+                :value="$spot->xml->surfaces[$surface->id]['background']['shared_h'] ?? 0"
             />
             <x-backend::inputs.input
                 col="col" label="ox_offset"
                 name="surfaces[{{$surface->id}}][background][ox_offset]"
+                :value="$spot->xml->surfaces[$surface->id]['background']['ox_offset'] ?? 0"
             />
             <x-backend::inputs.input
                 col="col" label="oy_offset"
                 name="surfaces[{{$surface->id}}][background][oy_offset]"
+                :value="$spot->xml->surfaces[$surface->id]['background']['oy_offset'] ?? 0"
             />
 
         </div>
@@ -61,11 +73,14 @@
                 />
             </x-backend::inputs.select>
 
-            <x-backend::inputs.select col="col" label="Onload" name="surfaces[{{$surface->id}}][background][onloaded]"
-                                      :placeholder="false">
-                @foreach($surface_types as $surface_type)
+            <x-backend::inputs.select
+                col="col" label="Load Surface" :placeholder="false"
+                name="surfaces[{{$surface->id}}][background][onloaded]"
+            >
+                @foreach($surface_types as $surface_type => $surface_name)
                     <x-backend::inputs.select-option
-                        :text="$surface_type"
+                        :text="$surface_name"
+                        :value="$surface_type"
                         :selected="$spot->xml->surfaces[$surface->id]['background']['onloaded'] ?? ''"
                     />
                 @endforeach

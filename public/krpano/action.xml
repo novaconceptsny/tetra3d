@@ -65,66 +65,60 @@
 
 
     <action name="setupSurface" type="javascript">
+        <!--
+        The function in onloaded event is to load the image on the image.
+        However, krpano will fire onloaded event when a new image is load.
+        So the coin is like a flag.
+        Coin=0 is the initial states.
+        The first time onloaded event is fired, coin= 1 and the function will know
+         it’s duplicated onloaded event, so it won’t execute it.
+        -->
 
-        var coin=caller.coin;
-        <!-- 因為只要image重新lode，就會再執行一次onloaded。
-            所以我們要用coin的判斷是不是這個action已經執行過了。
-            若執行過就不再執行一次。
-            -->
-        if (coin=="0"){
-        if ((args[1]=='main')){
-        console.log('main');
-        caller.url=caller.url_main;
-        var scale_shared=caller.scale;
-        var main_w=caller.main_w;
-        var main_h=caller.main_h;
-        var shared_w=caller.shared_w;
-        var shared_h=caller.shared_h;
-        var select=caller.select;
-        var scale_main;
-        if (select=="w") {
-        scale_main=scale_shared*(shared_w/main_w);
-        }else {
-        scale_main=scale_shared*(shared_h/main_h);
-        }
-        console.log(scale_main);
-        caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
-        caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
-        caller.scale=scale_main;
-        caller.coin=1;
-        }else if ((args[1]=='live')){
-        var scale_shared=caller.scale;
-        var main_w=caller.main_w;
-        var main_h=caller.main_h;
-        var shared_w=caller.shared_w;
-        var shared_h=caller.shared_h;
-        var select=caller.select;
-        var scale_main;
-        if (select=="w") {
-        scale_main=scale_shared*(shared_w/main_w);
-        }else {
-        scale_main=scale_shared*(shared_h/main_h);
-        }
-        console.log(scale_main);
-        caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
-        caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
-        caller.scale=scale_main;
-        caller.coin=1;
+        var coin = caller.coin;
 
-        }else if(args[1]=='shared') {
-        console.log('shared');
-        caller.url=caller.url_shared;
-        caller.coin=1;
+        let surface = args[1];
+        console.log(args);
+
+        if(coin == "0"){
+            if (surface == 'main' || surface == 'live'){
+                console.log('her is main');
+                var scale_shared = caller.scale;
+                var main_w = caller.main_w;
+                var main_h = caller.main_h;
+                var shared_w = caller.shared_w;
+                var shared_h = caller.shared_h;
+                var select = caller.select;
+                var scale_main;
+                if (select === "w") {
+                    scale_main=scale_shared*(shared_w/main_w);
+                } else {
+                    scale_main=scale_shared*(shared_h/main_h);
+                }
+                caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
+                caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
+
+                caller.scale = scale_main;
+            }
+
+            if (surface == 'main'){
+                caller.url = caller.url_main;
+            }
+
+            if(surface == 'shared') {
+                caller.url = caller.url_shared;
+            }
+            caller.coin = 1;
         }
-        }
+        console.log(caller.url)
+
     </action>
 
     <action name="NavigateTo" type="javascript">
-        var url=caller.goto_url;
-        var hlookat=caller.hlookat;
-        var vlookat=caller.vlookat;
-        url=url+"?hlookat="+hlookat+"&#38;vlookat="+vlookat ;
-        console.log("url:"+url);
+        var url = caller.goto_url;
+        var hlookat = caller.hlookat;
+        var vlookat = caller.vlookat;
+        url = url + "?hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
+        console.log("url:" + url);
         window.location.href = url;
     </action>
 

@@ -68,11 +68,6 @@
             }
         }
 
-
-        function krpano_onready_callback(krpano_interface) {
-            krpano = krpano_interface;
-        }
-
         let track_mouse_enabled = false;
         let track_mouse_interval_id = null;
 

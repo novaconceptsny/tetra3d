@@ -74,7 +74,8 @@ class SpotXmlGenerator
         ";
 
         foreach ($this->spot->surfaces as $index => $surface) {
-            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$Wall_{$surface->id}%')\n\t";
+            /*$content .= "set(hotspot[surface_{$surface->id}].url , '%\$Wall_{$surface->id}%')\n\t";*/
+            $content .= "set(hotspot[surface_{$surface->id}].url , '/krpano/dummy.png')\n\t";
 
             if (count($this->spot->surfaces) == $index + 1) {
                 $content = str($content)->trim(" \t")->append("  ");
@@ -90,7 +91,7 @@ class SpotXmlGenerator
     {
         $attributes = [
             "hlookat" => $this->xmlData->view['hlookat'] ?? 0,
-            "vlookat" => $this->xmlData->view['hlookat'] ?? 0,
+            "vlookat" => $this->xmlData->view['vlookat'] ?? 0,
             "maxpixelzoom" => "1.0",
             "fov" => $this->xmlData->view['fov'] ?? 90,
             "fovmax" => $this->xmlData->view['fovmax'] ?? 120,
@@ -263,6 +264,12 @@ class SpotXmlGenerator
         $navigations = $this->xmlData->navigations ?? [];
 
         foreach ($navigations as $index => $navigation) {
+            $navigation_is_enabled = $navigation['enabled'] ?? false;
+
+            if(!$navigation_is_enabled){
+                continue;
+            }
+
             $navigation = $this->addNavigation($index, $navigation);
 
             if ($index === array_key_first($navigations)) {

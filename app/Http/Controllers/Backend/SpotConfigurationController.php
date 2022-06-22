@@ -41,7 +41,12 @@ class SpotConfigurationController extends Controller
 
         $spot->generateXml();
 
-        return redirect()->back()->with('success', 'Xml updated');
+        return redirect()
+            ->route('backend.spot-configuration.edit', [
+                $spot,
+                'section' => $request->section
+            ])
+            ->with('success', 'Xml updated');
     }
 
     private function uploadOverlyImages(Request $request, Spot $spot){

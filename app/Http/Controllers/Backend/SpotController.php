@@ -76,7 +76,7 @@ class SpotController extends Controller
             ->addFromMediaLibraryRequest($request->image_360)
             ->toMediaCollection('image_360');
 
-        return redirect()->back()->with('success', 'Spot updated successfully');
+        return redirect()->route('backend.tours.spots.index', $spot->tour)->with('success', 'Spot updated successfully');
     }
 
     public function destroy(Spot $spot)

@@ -14,6 +14,7 @@ class XmlForm extends Component
     public function mount(Spot $spot)
     {
         $this->spot = $spot;
+        $this->activeForm = request('section', 'view');
     }
 
     public function render()
@@ -29,6 +30,11 @@ class XmlForm extends Component
             'live' => 'Live',
             'main' => 'Main',
             'share' => 'Share',
+        ];
+
+        $data['scales'] = [
+            'cross' => 'Cross',
+            'square' => 'Square',
         ];
 
         $data['spots'] = $this->spot->tour->spots()->where('id', '!=', $this->spot->id)->get();

@@ -41,7 +41,8 @@ class SurfaceController extends Controller
             ->toMediaCollection('main');
 
         return redirect()
-            ->route('backend.tours.surfaces.index', $tour)
+            ->back()
+            /*->route('backend.tours.surfaces.index', $tour)*/
             ->with('success', 'Surface created successfully');
     }
 
@@ -74,7 +75,9 @@ class SurfaceController extends Controller
         $surface->addFromMediaLibraryRequest($request->main)
             ->toMediaCollection('main');
 
-        return redirect()->back()->with('success', 'Surface updated successfully');
+        return redirect()
+            ->route('backend.tours.surfaces.index', $surface->tour)
+            ->with('success', 'Surface updated successfully');
     }
 
     public function destroy(Surface $surface)

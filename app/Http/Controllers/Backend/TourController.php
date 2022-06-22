@@ -64,6 +64,7 @@ class TourController extends Controller
     {
         $tour->delete();
         $tour->projects()->delete();
+        $tour->spots()->delete();
 
         return redirect()->back()->with('success', 'Tour deleted successfully');
 
