@@ -22,10 +22,10 @@ class Overlay extends Component
     {
         $this->overlays[] = [
             'uuid' => str()->uuid(),
-            'ath' => '',
-            'atv' => '',
-            'scale' => '',
-            'zorder' => '',
+            'ath' => 0,
+            'atv' => 0,
+            'scale' => 1,
+            'zorder' => 20,
         ];
     }
 }

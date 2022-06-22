@@ -1,6 +1,6 @@
 @foreach($spot->surfaces as $surface)
     <div class="rounded p-3 mb-3">
-        <h5>{{ "surface_{$surface->id}" }}</h5>
+        <h5>{{ "surface_{$surface->id}" }} ({{ $surface->name }})</h5>
         <div class="row mt-3">
             <x-backend::inputs.input
                 col="col" name="surfaces[{{$surface->id}}][background][scale]" label="scale"

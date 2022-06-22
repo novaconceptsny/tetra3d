@@ -233,7 +233,7 @@ class SpotXmlGenerator
         $attributes = [
             'name' => "surface_{$surface->id}_click",
             'canvas_id' => $surface->id,
-            "style" => $this->getSurfaceData($surface, 'scale', 'click'),
+            "style" => $this->getSurfaceData($surface, 'style', 'click'),
             "onclick" => "getUrl()",
         ];
 

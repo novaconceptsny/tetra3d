@@ -5,16 +5,16 @@
                 name="overlays[{{$index}}][uuid]" value="{{ $overlay['uuid'] }}" type="hidden"
             />
             <x-backend::inputs.input
-                col="col" name="overlays[{{$index}}][ath]" value="{{ $overlay['ath'] }}" label="ath"
+                col="col" name="overlays[{{$index}}][ath]" value="{{ $overlay['ath'] ?? 0 }}" label="ath"
             />
             <x-backend::inputs.input
-                col="col" name="overlays[{{$index}}][atv]" value="{{ $overlay['atv'] }}" label="atv"
+                col="col" name="overlays[{{$index}}][atv]" value="{{ $overlay['atv'] ?? 0 }}" label="atv"
             />
             <x-backend::inputs.input
-                col="col" name="overlays[{{$index}}][scale]" value="{{ $overlay['scale'] }}" label="scale"
+                col="col" name="overlays[{{$index}}][scale]" value="{{ $overlay['scale'] ?? 1 }}" label="scale"
             />
             <x-backend::inputs.input
-                col="col" name="overlays[{{$index}}][zorder]" value="{{ $overlay['zorder'] }}" label="zorder"
+                col="col" name="overlays[{{$index}}][zorder]" value="{{ $overlay['zorder'] ?? 20 }}" label="zorder"
             />
 
             <div class="col-12">
