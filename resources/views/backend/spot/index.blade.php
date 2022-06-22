@@ -26,12 +26,15 @@
                         <th scope="col">{{ __('Panos') }}</th>
                         <th scope="col">{{ __('XML') }}</th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody class="list">
                     @forelse($spots as $spot)
                         <tr>
-                            <td><a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->name }}</a></td>
+                            <td>
+                                <a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->name }}</a>
+                            </td>
                             <td>{{ $spot->surfaces_count }} {{ __('Surfaces') }}</td>
                             <td>
                                 <span class="text-{{ $spot->panoStatus()->color() }}">
@@ -44,6 +47,11 @@
                                     <i class="{{ $spot->xmlStatus()->icon() }}"></i>
                                     <span>{{ $spot->xmlStatus()->value }}</span>
                                 </span>
+                            </td>
+                            <td>
+                                <a href="{{ route('tours.show', [$tour, 'spot_id' => $spot->id]) }}" target="_blank">
+                                    <i class="mdi mdi-rotate-3d-variant"></i>
+                                </a>
                             </td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$spot">

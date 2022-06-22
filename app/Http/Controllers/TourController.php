@@ -98,11 +98,17 @@ class TourController extends Controller
 
     public function show(Tour $tour)
     {
-        $request = \request();
+        $request = request();
+
+        if ($spot_id = $request->get('spot_id')){
+            $spot = $tour->spots()->findOrFail($spot_id);
+        } else {
+            $spot = $tour->spots->first();
+        }
 
         $data = array();
         $data['tour'] = $tour;
-        $data['spot'] = $tour->spots->first();
+        $data['spot'] = $spot;
 
         $data['hash'] = 0;
         $data['tracker'] = 0;
