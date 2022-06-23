@@ -1,5 +1,17 @@
 @extends('layouts.master')
 
+@section('page_actions')
+    @php
+        $parameters = array_merge(request()->all(), ['tour' => $tour]);
+        $parameters['tracker'] = request('tracker') ? 0 : 1;
+    @endphp
+    <li class="nav__item">
+        <a href="{{ route('tours.show', $parameters) }}" class="nav__link {{ $tracker ? 'selected' : '' }}">
+            Tracker
+        </a>
+    </li>
+@endsection
+
 @section('content')
     <div class="dashboard mini">
         <div class="image__viewer">

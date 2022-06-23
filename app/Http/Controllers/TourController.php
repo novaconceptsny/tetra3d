@@ -116,7 +116,7 @@ class TourController extends Controller
         $data['project'] = $project ?? null;
 
         $data['hash'] = 0;
-        $data['tracker'] = request('tracker', false);
+        $data['tracker'] = request('tracker', 0);
         $data['shareType'] = 0;
         $data['hlookat'] = $request->get('hlookat', 0);
         $data['vlookat'] = $request->get('vlookat', 0);

@@ -1,10 +1,18 @@
 #tracker {
     position: fixed;
-    right: 70px;
-    top: 0;
+    right: 25px;
+    top: 97px;
     width: 300px;
     height: 150px;
-    background-color: red;
+    background-color: black;
     z-index: 99999;
-    padding: 10px
+    padding: 10px;
+    opacity: 0.6;
+    color: white;
+    font-family: sans-serif;
+}
+
+.main__header.universal .right .navbar__nav .nav__link.selected {
+    background-color: #f4f4f4;
+    color: rgba(0, 0, 0, 0.75);
 }
