@@ -71,7 +71,7 @@ class SurfaceController extends Controller
         ]);
 
         $surface->update($request->only([
-            'name'
+            'name', 'data'
         ]));
 
         $surface->addFromMediaLibraryRequest($request->main)

@@ -25,6 +25,43 @@
 
                 <x-backend::inputs.text name="name" value="{{ $surface ? $surface->name : '' }}"/>
 
+                <div class="col-12">
+                    <div class="row g-3">
+                        <x-backend::inputs.text
+                            col="col-6" name="data[bounding_box_top]" label="Bounding box top"
+                            value="{{ $surface?->data->bounding_box_top }}"
+                        />
+                        <x-backend::inputs.text
+                            col="col-6" name="data[bounding_box_left]" label="Bounding box left"
+                            value="{{ $surface?->data->bounding_box_left }}"
+                        />
+                        <x-backend::inputs.text
+                            col="col-6" name="data[bounding_box_height]" label="Bounding box height"
+                            value="{{ $surface?->data->bounding_box_height }}"
+                        />
+                        <x-backend::inputs.text
+                            col="col-6" name="data[bounding_box_width]" label="Bounding box width"
+                            value="{{ $surface?->data->bounding_box_width }}"
+                        />
+                        <x-backend::inputs.text
+                            col="col-6" name="data[hotspot_width_px]" label="Hotspot width (px)"
+                            value="{{ $surface?->data->hotspot_width_px }}"
+                        />
+                        <x-backend::inputs.text
+                            col="col-6" name="data[hotspot_width_inch]" label="Hotspot width (in)"
+                            value="{{ $surface?->data->hotspot_width_inch }}"
+                        />
+                        <x-backend::inputs.text
+                            col="col-6" name="data[img_width]" label="Image width"
+                            value="{{ $surface?->data->img_width }}"
+                        />
+                        <x-backend::inputs.text
+                            col="col-6" name="data[img_height]" label="Image height"
+                            value="{{ $surface?->data->img_height }}"
+                        />
+                    </div>
+                </div>
+
                 <div class="col-6">
                     <h5>{{ __('Background Image') }}</h5>
                     <x-media-library-attachment name="background" rules="max:102400"/>

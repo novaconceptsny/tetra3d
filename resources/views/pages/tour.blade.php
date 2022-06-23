@@ -39,17 +39,14 @@
 
     <script type="text/javascript">
         let krpano = null;
-        let hlookat = {{$hlookat}};
-        let vlookat = {{$vlookat}};
+        let hlookat = {{ request('hlookat') }};
+        let vlookat = {{ request('vlookat') }};
         let shareType = {{$shareType}};
         let hash = "{{$hash}}";
         let spotId = "{{ $spot->id }}";
         let timestamp = Date.now();
 
         let tracker = {{$tracker}};
-
-
-        console.log("timestamp:" + timestamp);
 
         embedpano({
             xml: '{{ $spot->xml_url }}' + '?' + timestamp,
@@ -117,5 +114,11 @@
 
         krpano.call("set(layer['version'].onclick,openurl('/version/management/spot/{{$spot->id}}'))");
 
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            setHVLookat(hlookat,vlookat);
+        });
     </script>
 @endsection

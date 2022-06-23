@@ -1,10 +1,14 @@
 <krpano>
-    <action name="getUrl" type="javascript">
-        var spotId = krpano.spot_id;
+    <action name="openCanvas" type="javascript">
+        var url = caller.canvas_url;
         var hlookat = krpano.view.hlookat;
         var vlookat = krpano.view.vlookat;
+        <!--
+        var spotId = krpano.spot_id;
         var canvasId = caller.canvas_id;
         urlStr = "/editor?spotId=" + spotId + "&#38;canvasId=" + canvasId + "&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
+        -->
+        urlStr = url + "&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
         window.location.href = urlStr;
     </action>
 
@@ -93,9 +97,6 @@
         }
         caller.coin = 1;
         }
-        console.log("surface: ", surface)
-        console.log("surface_url: ", caller.url)
-
     </action>
 
     <action name="NavigateTo" type="javascript">

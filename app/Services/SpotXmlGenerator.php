@@ -193,10 +193,10 @@ class SpotXmlGenerator
     {
         $attributes = [
             'name' => "surface_{$surface->id}",
-            'canvas_id' => $surface->id,
+            'canvas_url' => route('editor', [$surface, 'spot_id' => $this->spot]),
             "hotspot_type" => 'artwork',
             "style" => "surface",
-            "onclick" => "getUrl()",
+            "onclick" => "openCanvas()",
             "coin" => "0",
             "url" => "/krpano/dummy.png",
             "url_main" => $surface->getFirstMediaUrl('main'),
@@ -232,9 +232,9 @@ class SpotXmlGenerator
     {
         $attributes = [
             'name' => "surface_{$surface->id}_click",
-            'canvas_id' => $surface->id,
+            'canvas_url' => route('editor', [$surface, 'spot_id' => $this->spot]),
             "style" => $this->getSurfaceData($surface, 'style', 'click'),
-            "onclick" => "getUrl()",
+            "onclick" => "openCanvas()",
         ];
 
         $points = $this->xmlData->surfaces[$surface->id]['click']['points'] ?? [];

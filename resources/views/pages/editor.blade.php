@@ -4,7 +4,7 @@
     <x-page-action id="save_btn" title="{{ __('Save') }}"/>
     <x-page-action id="save_as_btn" title="{{ __('Save As') }}"/>
     <x-page-action id="remove_btn" title="{{ __('Remove') }}"/>
-    <x-page-action id="remove_btn" title="{{ __('Return to 360 view') }}"/>
+    <x-page-action title="Return to 360 view" :url="route('tours.show', array_merge(['tour' => $spot->tour_id], request()->all()))"/>
 @endsection
 
 @section('content')
@@ -51,19 +51,8 @@
         locationId = 4;
         vlookat = 0;
         hlookat = -90;
-        canvasDBArr = {
-            "background_url": "{{ $surface->getFirstMediaUrl('background') }}",
-            "spot_name": "na",
-            "overlay_url": null,
-            "bound_box_top": 110,
-            "bound_box_left": 205,
-            "bound_box_height": 930,
-            "bound_box_width": 1510,
-            "img_width": 1644,
-            "img_height": 1810,
-            "hotspot_width_px": null,
-            "actual_width_inch": 208
-        }; //這裡其實應該是一個json。代表單一surface的data而已
+        // This should actually be a json. Data representing a single surface only
+        canvasDBArr = @json($surface);
         latestState = {};
         artworkTotalNum = 15;
 

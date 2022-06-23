@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable();
             $table->foreignId('tour_id');
             $table->string('name');
-            $table->string('background_url')->nullable();
             $table->json('data')->nullable();
             $table->timestamps();
         });

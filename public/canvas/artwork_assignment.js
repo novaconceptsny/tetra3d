@@ -32,8 +32,8 @@ let filterMenu;
 let searchButton;
 let searchInput;
 let filterButton;
-let imgWidth = canvasDBArr.img_width;
-let imgHeight = canvasDBArr.img_height;
+let imgWidth = canvasDBArr.data.img_width;
+let imgHeight = canvasDBArr.data.img_height;
 let baseWidth;
 let baseScale;
 
@@ -293,17 +293,19 @@ function setTitle(versionName) {
  *  for art assignments.
  */
 
-function requestCanvasBackgroundProperties(canvasAssetData,baseScale) {
-///************可能需要變動的地方****************
-   renderCanvasBackground(canvasAssetData['background_url'],baseScale);
+function requestCanvasBackgroundProperties(canvasAssetData, baseScale) {
+///************where changes may be required****************
+    let data = canvasAssetData['data'];
+
+    renderCanvasBackground(canvasAssetData['background_url'], baseScale);
     canvasState.background = canvasAssetData['background_url'];
-    canvasState['actualWidthInch'] = canvasAssetData['actual_width_inch'];
+    canvasState['actualWidthInch'] = data['actual_width_inch'];
     if (canvasAssetData['overlay_url'] !== null) {
         setCanvasOverlay(canvasAssetData['overlay_url']);
     }
     setBoundingBoxProperties(
-        canvasAssetData['bound_box_top']*baseScale, canvasAssetData['bound_box_left']*baseScale,
-        canvasAssetData['bound_box_height']*baseScale, canvasAssetData['bound_box_width']*baseScale
+        data['bounding_box_top'] * baseScale, data['bounding_box_left'] * baseScale,
+        data['bounding_box_height'] * baseScale, data['bounding_box_width'] * baseScale
     );
 }
 
