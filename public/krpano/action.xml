@@ -1,50 +1,50 @@
 <krpano>
     <action name="getUrl" type="javascript">
-        var spotId=krpano.spot_id;
-        var hlookat=krpano.view.hlookat;
-        var vlookat=krpano.view.vlookat;
-        var canvasId=caller.canvas_id;
-        urlStr="/editor?spotId="+spotId+"&#38;canvasId="+canvasId+"&#38;hlookat="+hlookat+"&#38;vlookat="+vlookat;
+        var spotId = krpano.spot_id;
+        var hlookat = krpano.view.hlookat;
+        var vlookat = krpano.view.vlookat;
+        var canvasId = caller.canvas_id;
+        urlStr = "/editor?spotId=" + spotId + "&#38;canvasId=" + canvasId + "&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
         window.location.href = urlStr;
     </action>
 
     <action name="set_tool" type="javascript">
-        if(krpano.tipCoin == 0){
-            var fontScale=caller.scale;
-            krpano.layer.getItem('tooltip_text').html=caller.name;
-            krpano.layer.getItem('tooltip_text').visible=true;
-            krpano.layer.getItem('tooltip_text').css="font-family:Arial; font-size:20px; color:#ffffff;"
+        if (krpano.tipCoin == 0) {
+            var fontScale = caller.scale;
+            krpano.layer.getItem('tooltip_text').html = caller.name;
+            krpano.layer.getItem('tooltip_text').visible = true;
+            krpano.layer.getItem('tooltip_text').css = "font-family:Arial; font-size:20px; color:#ffffff;"
             var x1;
             var y1;
-            var coord=krpano.spheretoscreen(caller.ath,caller.atv);
-            krpano.layer.getItem('tooltip_text').x=coord.x;
-            krpano.layer.getItem('tooltip_text').y=coord.y-10;
-            krpano.tipCoin=1;
+            var coord = krpano.spheretoscreen(caller.ath, caller.atv);
+            krpano.layer.getItem('tooltip_text').x = coord.x;
+            krpano.layer.getItem('tooltip_text').y = coord.y - 10;
+            krpano.tipCoin = 1;
         } else {
-            krpano.layer.getItem('tooltip_text').visible=false;
-            krpano.layer.getItem('tooltip_text').html="";
-            krpano.tipCoin=0;
+            krpano.layer.getItem('tooltip_text').visible = false;
+            krpano.layer.getItem('tooltip_text').html = "";
+            krpano.tipCoin = 0;
         }
     </action>
 
     <action name="initiate" scope="global" type="javascript">
-        krpano.tipCoin=0;
+        krpano.tipCoin = 0;
         krpano.addlayer("tooltip_text");
-        krpano.layer.getItem('tooltip_text').type="text";
-        krpano.layer.getItem('tooltip_text').edge="bottom";
-        krpano.layer.getItem('tooltip_text').x=0;
-        krpano.layer.getItem('tooltip_text').y=0;
-        krpano.layer.getItem('tooltip_text').html="";
-        krpano.layer.getItem('tooltip_text').visible=false;
-        krpano.layer.getItem('tooltip_text').css="font-family:Arial; font-size:50px; color:#ffffff;";
-        krpano.layer.getItem('tooltip_text').bgalpha="0";
+        krpano.layer.getItem('tooltip_text').type = "text";
+        krpano.layer.getItem('tooltip_text').edge = "bottom";
+        krpano.layer.getItem('tooltip_text').x = 0;
+        krpano.layer.getItem('tooltip_text').y = 0;
+        krpano.layer.getItem('tooltip_text').html = "";
+        krpano.layer.getItem('tooltip_text').visible = false;
+        krpano.layer.getItem('tooltip_text').css = "font-family:Arial; font-size:50px; color:#ffffff;";
+        krpano.layer.getItem('tooltip_text').bgalpha = "0";
 
         var spots = krpano.hotspot.getArray();
 
-        spots.forEach(function(spot){
-            if(spot.hotspot_type == "navigation"){
-                spot.onover="set_tool";
-                spot.onout="set_tool";
+        spots.forEach(function (spot) {
+            if (spot.hotspot_type == "navigation") {
+                spot.onover = "set_tool";
+                spot.onout = "set_tool";
             }
         });
     </action>
@@ -65,33 +65,33 @@
         let surface = args[1];
 
         if(coin == "0"){
-            if (surface == 'main' || surface == 'live'){
-                var scale_shared = caller.scale;
-                var main_w = caller.main_w;
-                var main_h = caller.main_h;
-                var shared_w = caller.shared_w;
-                var shared_h = caller.shared_h;
-                var select = caller.select;
-                var scale_main;
-                if (select === "w") {
-                    scale_main=scale_shared*(shared_w/main_w);
-                } else {
-                    scale_main=scale_shared*(shared_h/main_h);
-                }
-                caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
-                caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
+        if (surface == 'main' || surface == 'live'){
+        var scale_shared = caller.scale;
+        var main_w = caller.main_w;
+        var main_h = caller.main_h;
+        var shared_w = caller.shared_w;
+        var shared_h = caller.shared_h;
+        var select = caller.select;
+        var scale_main;
+        if (select === "w") {
+        scale_main=scale_shared*(shared_w/main_w);
+        } else {
+        scale_main=scale_shared*(shared_h/main_h);
+        }
+        caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
+        caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
 
-                caller.scale = scale_main;
-            }
+        caller.scale = scale_main;
+        }
 
-            if (surface == 'main'){
-                caller.url = caller.url_main;
-            }
+        if (surface == 'main'){
+        caller.url = caller.url_main;
+        }
 
-            if(surface == 'shared') {
-                caller.url = caller.url_shared;
-            }
-            caller.coin = 1;
+        if(surface == 'shared') {
+        caller.url = caller.url_shared;
+        }
+        caller.coin = 1;
         }
         console.log("surface: ", surface)
         console.log("surface_url: ", caller.url)
@@ -135,16 +135,16 @@
     </action>
 
     <action name="hideNav" type="javascript" scope="global">
-        var hotspotArr= krpano.hotspot;
-        var count=hotspotArr.count;
+        var hotspotArr = krpano.hotspot;
+        var count = hotspotArr.count;
         console.log(count);
-        var i=0;
+        var i = 0;
 
-        for (x in hotspotArr.getArray()){
+        for (x in hotspotArr.getArray()) {
             var type = hotspotArr.getItem(i).hotspot_type;
-            if (type == "navigation"){
-                hotspotArr.getItem(i).enabled=false;
-                hotspotArr.getItem(i).alpha=0;
+            if (type == "navigation") {
+                hotspotArr.getItem(i).enabled = false;
+                hotspotArr.getItem(i).alpha = 0;
             }
             i++;
         }
@@ -155,38 +155,38 @@
         var layerArr = krpano.layer;
         var count = hotspotArr.count;
         var count2 = layerArr.count;
-        var i=0;
+        var i = 0;
 
-        for (x in hotspotArr.getArray()){
-            var type=hotspotArr.getItem(i).hotspot_type;
-            var style=hotspotArr.getItem(i).style;
-            if (type=="navigation"){
-                clickStr=hotspotArr.getItem(i).onclick;
-                var strArr=clickStr.split("?");
-                var str1Arr=strArr[0].split("/");
-                var newSpotId=str1Arr[str1Arr.length-1]
-                var clickStr="openurl('/share/link/"+hash+"/"+newSpotId+"?"+strArr[1];
-                hotspotArr.getItem(i).onclick=clickStr;
+        for (x in hotspotArr.getArray()) {
+            var type = hotspotArr.getItem(i).hotspot_type;
+            var style = hotspotArr.getItem(i).style;
+            if (type == "navigation") {
+                clickStr = hotspotArr.getItem(i).onclick;
+                var strArr = clickStr.split("?");
+                var str1Arr = strArr[0].split("/");
+                var newSpotId = str1Arr[str1Arr.length - 1]
+                var clickStr = "openurl('/share/link/" + hash + "/" + newSpotId + "?" + strArr[1];
+                hotspotArr.getItem(i).onclick = clickStr;
             }
-            if (style=="surface_click"){
-                hotspotArr.getItem(i).enabled=false;
+            if (style == "surface_click") {
+                hotspotArr.getItem(i).enabled = false;
             }
             i++;
         }
 
-        i=0;
-        for (x in layerArr.getArray()){
-            var type=layerArr.getItem(i).layer_type;
-            if (type=="map_pin"){
-                var clickStr=layerArr.getItem(i).onclick;
-                var splitStrArr=clickStr.split("?");
-                var str1Arr=splitStrArr[0].split("/");
-                var newSpotId=str1Arr[str1Arr.length-1].split("'")[0]
-                var clickStr="openurl('/share/link/"+hash+"/"+newSpotId+"?"+strArr[1];
-                layerArr.getItem(i).onclick=clickStr;
+        i = 0;
+        for (x in layerArr.getArray()) {
+            var type = layerArr.getItem(i).layer_type;
+            if (type == "map_pin") {
+                var clickStr = layerArr.getItem(i).onclick;
+                var splitStrArr = clickStr.split("?");
+                var str1Arr = splitStrArr[0].split("/");
+                var newSpotId = str1Arr[str1Arr.length - 1].split("'")[0]
+                var clickStr = "openurl('/share/link/" + hash + "/" + newSpotId + "?" + strArr[1];
+                layerArr.getItem(i).onclick = clickStr;
             }
-            if (style=="surface_click"){
-                layerArr.getItem(i).enabled=true;
+            if (style == "surface_click") {
+                layerArr.getItem(i).enabled = true;
             }
             i++;
         }

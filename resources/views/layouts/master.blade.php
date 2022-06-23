@@ -30,6 +30,7 @@
     />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}"/>
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}"/>
+    <livewire:styles/>
 </head>
 
 <body>
@@ -71,6 +72,7 @@
         })
     })
 </script>
+<livewire:scripts/>
 
 @yield('scripts')
 </body>

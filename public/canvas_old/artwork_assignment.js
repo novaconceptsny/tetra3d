@@ -78,7 +78,8 @@ $(function(){
     // baseWidth=1500; //這是我們一開始換算時。nara用來計算所有東西的長度。
     // baseScale=mainWidth/baseWidth; //這邊就是螢幕縮放時的相對數據
     // reverseScale = 1 / baseScale;
-
+    console.log('test');
+    console.log('mainWidth:'+mainWidth+",mainHeight:"+mainHeight);
 
 ///************這邊長寬高的數字是假的，之後會改掉****************
     boundingBox = new fabric.Rect({
@@ -120,6 +121,9 @@ $(function(){
     }).on('hidden.bs.modal',function(event){
         $('#crop_btn').show();
     })
+
+
+
 
 
     // listener for on-scroll event in left menu.
@@ -324,6 +328,7 @@ function setBoundingBoxProperties(top, left, height, width) {
  *  @param imgUrl: url of the background image pertaining to a wall, being placed on canvas.
  */
 function renderCanvasBackground(imgUrl,baseScale) {
+    console.log("baseScale:",baseScale);
     artworkCanvas.setBackgroundImage(imgUrl, artworkCanvas.renderAll.bind(artworkCanvas), {
         originX: 'left',
         originY: 'top',
@@ -418,9 +423,8 @@ function addArtworkSelectionListener(cardElement) {
 function getSelectionData (selectedElement) {
     let title = selectedElement.dataset.title;
     let imgUrl = selectedElement.dataset.imgUrl;
-    let artworkId = selectedElement.dataset.artworkId;
-    let scale = selectedElement.dataset.scale;
-    return { title , imgUrl, artworkId, scale };
+    let artId = selectedElement.dataset.artworkId;
+    return { title , imgUrl, artId };
 }
 
 /** Creates a new JSON serializable object from a user selected artwork HTML element.
@@ -429,8 +433,7 @@ function getSelectionData (selectedElement) {
  */
 function newArtworkSelection(targetElement) {
     let data = getSelectionData(targetElement);
-    /*return new ArtSelection(data.title, data.imgUrl, data.artId);*/
-    return new ArtSelection(data);
+    return new ArtSelection(data.title, data.imgUrl, data.artId);
 }
 
 /** adds event listeners to each bookmark icon for toggling selected (filled) and unselected (unfilled) styles, on click. **/
@@ -559,9 +562,7 @@ function placeSelectedImage(artSelection, topPos=boundingBox.top, leftPos=boundi
                 hasRotatingPoint: true,
                 noScaleCache: false
             });
-            /*let scale = scaleArr[artSelection.artworkId];*/
-            let scale = artSelection.scale;
-            console.log('scale: ', artSelection.scale)
+            let scale=scaleArr[artSelection.artworkId]; //找到相應的scale
 
             let overrideScale = artSelection.overrideScale;
 
@@ -1139,4 +1140,4 @@ function resetLeftMenuView() {
 }
 
 
-export { artworkCanvas, canvasState, newArtworkSelection, placeSelectedImage };
+export { artworkCanvas, canvasState };

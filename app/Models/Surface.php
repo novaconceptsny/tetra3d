@@ -24,6 +24,7 @@ class Surface extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('main')->singleFile();
+        $this->addMediaCollection('background')->singleFile();
         $this->addMediaCollection('shared');
     }
 

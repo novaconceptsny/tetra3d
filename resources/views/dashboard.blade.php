@@ -42,7 +42,7 @@
                             </div>
                             <div class="card-footer">
                                 @include('include.partials.contributors')
-                                <a href="{{ route('tours.show', $project->tour) }}" class="btn next__btn">
+                                <a href="{{ route('tours.show', [$project->tour, 'project_id' => $project->id]) }}" class="btn next__btn">
                                     <x-svg.angle-right/>
                                 </a>
                             </div>

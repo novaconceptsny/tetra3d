@@ -6,6 +6,7 @@ use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Tour;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -21,6 +22,7 @@ class ProjectController extends Controller
         $data = array();
         $data['route'] = route('backend.projects.store');
         $data['tours'] = Tour::all();
+        $data['users'] = User::all();
 
         return view('backend.project.form', $data);
     }
@@ -45,6 +47,7 @@ class ProjectController extends Controller
         $data = array();
         $data['route'] = route('backend.projects.update', $project);
         $data['tours'] = Tour::all();
+        $data['users'] = User::all();
         $data['project'] = $project;
         $data['method'] = 'put';
 

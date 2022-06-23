@@ -1,3 +1,5 @@
+@php($project = $project ?? null)
+
 <header id="header" class="main__header universal mini">
     <nav id="navbar" class="main__navbar">
         <div class="left">
@@ -6,7 +8,7 @@
             </button>
             <a href="{{ route('dashboard') }}" class="prev__btn">
                 <x-lineawesome-angle-left-solid class="text-dark"/>
-                <span class="navigator"> Pablo Picasso Show </span>
+                <span class="navigator">{{  $project?->name }}</span>
             </a>
         </div>
         <div class="right">

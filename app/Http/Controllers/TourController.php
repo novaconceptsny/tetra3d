@@ -100,22 +100,26 @@ class TourController extends Controller
     {
         $request = request();
 
-        if ($spot_id = $request->get('spot_id')){
+        if ($spot_id = request('spot_id')){
             $spot = $tour->spots()->findOrFail($spot_id);
         } else {
             $spot = $tour->spots->first();
         }
 
+        if ($project_id = request('project_id')){
+            $project = Project::findOrFail($project_id);
+        }
+
         $data = array();
         $data['tour'] = $tour;
         $data['spot'] = $spot;
+        $data['project'] = $project ?? null;
 
         $data['hash'] = 0;
         $data['tracker'] = 0;
         $data['shareType'] = 0;
         $data['hlookat'] = $request->get('hlookat', 0);
         $data['vlookat'] = $request->get('vlookat', 0);
-
 
         return view('pages.tour', $data);
     }

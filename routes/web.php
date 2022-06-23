@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\Process\Process;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +13,6 @@ use Symfony\Component\Process\Process;
 |
 */
 
-/*$process = new Process(['D:\krpano-1.20.11\krpanotools', 'makepano', 'D:\krpano-1.20.11\templates\krpano.config', 'D:\krpano-1.20.11\360\p48003.JPG']);
-$process->run();
-dd($process->getOutput());*/
-/*\App\Helpers\ShellCommand::execute('D:\krpano-1.20.11\krpanotools makepano D:\krpano-1.20.11\templates\krpano.config D:\krpano-1.20.11\360\p48003.JPG');*/
 
 Route::view('editor', 'pages.editor')->name('editor');
 Route::view('walls', 'pages.walls')->name('walls');
@@ -27,7 +22,7 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'HomeController@index')->name('dashboard');
     Route::get('tours/{tour}', 'TourController@show')->name('tours.show');
-    Route::get('editor', 'CanvasController@index')->name('editor');
+    Route::get('editor/{surface}', 'CanvasController@show')->name('editor');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
 });
 

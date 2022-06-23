@@ -14,10 +14,10 @@ class SurfaceSeeder extends Seeder
             'name' => 's4001',
             'background_url' => '/canvas/s4001.jpg',
             'data' => [
-                'bounding_box_top' => 118,
-                'bounding_box_left' => 219,
-                'bounding_box_height' => 918,
-                'bounding_box_width' => 1500,
+                'bound_box_top' => 118,
+                'bound_box_left' => 219,
+                'bound_box_height' => 918,
+                'bound_box_width' => 1500,
                 'hotspot_width_px' => null,
                 'actual_width_inch' => 389,
 

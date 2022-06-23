@@ -34,6 +34,15 @@
                     @endforeach
                 </x-backend::inputs.select2>
 
+                <x-backend::inputs.select2 name="user_ids[]" label="Users" :multiple="true">
+                    @foreach($users as $user)
+                        <x-backend::inputs.select-option
+                            :value="$user->id"
+                            :text="$user->name"
+                        />
+                    @endforeach
+                </x-backend::inputs.select2>
+
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
                         {{ $submit_text ?? ( $project ? __('Update') : __('Create') ) }}

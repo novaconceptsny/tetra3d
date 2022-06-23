@@ -25,26 +25,15 @@
 
                 <x-backend::inputs.text name="name" value="{{ $surface ? $surface->name : '' }}"/>
 
-                <div class="col-12">
-                    <h5>{{ __('Main Image') }}</h5>
-                    <x-backend::media-attachment
-                        name="main" rules="max:102400"
-                        max-items="1" :model="$surface"
-                        collection="shared"
-                    />
+                <div class="col-6">
+                    <h5>{{ __('Background Image') }}</h5>
+                    <x-media-library-attachment name="background" rules="max:102400"/>
                 </div>
 
-                {{--<div class="col-12">
-                    <h5>{{ __('Shared Images') }}</h5>
-                    <x-backend::media-attachment
-                        name="shared"
-                        :model="$surface"
-                        collection="shared"
-                        :multiple="true"
-                        rules="max:102400"
-                        properties-view="backend.includes.media_fields.surface-shared"
-                    />
-                </div>--}}
+                <div class="col-6">
+                    <h5>{{ __('Main Image') }}</h5>
+                    <x-media-library-attachment name="main" rules="max:102400"/>
+                </div>
 
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">

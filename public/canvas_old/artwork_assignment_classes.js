@@ -1,11 +1,11 @@
 class ArtSelection {
-    constructor(imgData, topPosition, leftPosition, cropData=null, overrideScale=null) {
-        this.title = imgData['title'] ?? null;
-        this.imgUrl = imgData['imgUrl'] ?? null;
-        this.artworkId = imgData['artworkId'] ?? null;
-        this.scale = imgData['scale'] ?? null;
+    constructor(title, imgUrl, artworkId, topPosition, leftPosition, cropData=null, overrideScale=null) {
+        this.title = title;
+        this.imgUrl = imgUrl;
+        this.artworkId = artworkId;
         this.topPosition = topPosition;
         this.leftPosition = leftPosition;
+        console.log("inside overrideScale", overrideScale);
         this.overrideScale = overrideScale;
         this.cropData = cropData;
         if (cropData=="null"){
@@ -19,10 +19,8 @@ class ArtSelection {
     getTopPosition() { return this.topPosition; }
     getLeftPosition() { return this.leftPosition; }
     getCropData() { return this.cropData; }
-    getScale() { return this.scale; }
     // sets
     setTitle(title) { this.title = title; }
-    setScale(scale) { this.scale = scale; }
     setTopPosition(topPos) { this.topPosition = topPos; }
     setLeftPosition(leftPos) { this.leftPosition = leftPos; }
     setCropData(cropData) { this.cropData = cropData; }
@@ -34,7 +32,6 @@ class ArtSelection {
             title: this.title,
             imgUrl: this.imgUrl,
             artworkId: this.artworkId,
-            scale: this.scale,
             leftPosition: this.leftPosition,
             topPosition: this.topPosition,
             cropData: this.cropData,
