@@ -138,7 +138,7 @@ class SpotXmlGenerator
         $squareAttributes = array_merge($attributes,[
            'name' => 'square',
            'ath' => $this->xmlData->scale_box['square']['ath'] ?? 0,
-           'atv' => $this->xmlData->scale_box['square']['ath'] ?? 0,
+           'atv' => $this->xmlData->scale_box['square']['atv'] ?? 0,
            'scale' => $this->xmlData->scale_box['square']['scale'] ?? 0,
            'url' => $this->getKrpanoAsset('assets/1000x1000square.png')
         ]);
@@ -146,7 +146,7 @@ class SpotXmlGenerator
         $crossAttributes = array_merge($attributes,[
             'name' => 'cross',
             'ath' => $this->xmlData->scale_box['cross']['ath'] ?? 0,
-            'atv' => $this->xmlData->scale_box['cross']['ath'] ?? 0,
+            'atv' => $this->xmlData->scale_box['cross']['atv'] ?? 0,
             'scale' => $this->xmlData->scale_box['cross']['scale'] ?? 0,
             'url' => $this->getKrpanoAsset('assets/1000x1000cross.png')
         ]);

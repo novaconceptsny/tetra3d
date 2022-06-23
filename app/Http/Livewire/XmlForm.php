@@ -33,8 +33,8 @@ class XmlForm extends Component
         ];
 
         $data['scales'] = [
-            'cross' => 'Cross',
             'square' => 'Square',
+            'cross' => 'Cross',
         ];
 
         $data['spots'] = $this->spot->tour->spots()->where('id', '!=', $this->spot->id)->get();
