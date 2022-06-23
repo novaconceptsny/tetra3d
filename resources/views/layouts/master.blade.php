@@ -30,6 +30,7 @@
     />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}"/>
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}"/>
     <livewire:styles/>
 </head>
 

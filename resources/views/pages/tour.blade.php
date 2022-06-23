@@ -3,10 +3,8 @@
 @section('content')
     <div class="dashboard mini">
         <div class="image__viewer">
-            @if ($tracker==1)
-                <div id="tracker"
-                     style="position:fixed;right:70px;top:0px;width:300px;height:150px;background-color:red;z-index:1000;padding:10px">
-                </div>
+            @if ($tracker)
+                <div id="tracker"></div>
             @endif
             <div class="featured__img" id="pano" >
                 <noscript>
@@ -88,7 +86,7 @@
 
         function track_mouse() {
             if (krpano) {
-                if (track_mouse_enabled == false) {
+                if (track_mouse_enabled === false) {
                     // enable - call 60 times per second
                     track_mouse_interval_id = setInterval(track_mouse_interval_callback, 1000.0 / 60.0);
                     track_mouse_enabled = true;
@@ -101,7 +99,7 @@
             }
         }
 
-        if (tracker == 1) {
+        if (tracker === 1) {
             track_mouse();
         }
 
