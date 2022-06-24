@@ -543,7 +543,11 @@ function placeSelectedImage(artSelection, topPos=boundingBox.top, leftPos=boundi
     let notSelected = !isAlreadySelected(artSelection.artworkId);
     if (notSelected) {
         // $('#loadingModal').modal('show');
-        fabric.Image.fromURL(imgUrl, function(myImg) {
+        fabric.Image.fromURL(imgUrl, function (myImg) {
+            if (myImg._element == null) {
+                alert("Image could not be loaded...");
+            }
+
             let img1 = myImg.set({
                 originX: "left",
                 originY: "top",
@@ -563,12 +567,13 @@ function placeSelectedImage(artSelection, topPos=boundingBox.top, leftPos=boundi
             });
             /*let scale = scaleArr[artSelection.artworkId];*/
             let scale = artSelection.scale;
-            console.log('scale: ', artSelection.scale)
 
             let overrideScale = artSelection.overrideScale;
 
-            if (scale==null){scale =96;}
-            applyAdaptiveRescale(img1,scale,overrideScale);
+            if (scale == null) {
+                scale = 96;
+            }
+            applyAdaptiveRescale(img1, scale, overrideScale);
             artworkCanvas.add(img1);
 
             artworkCanvas.renderAll();
