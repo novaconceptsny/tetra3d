@@ -50,7 +50,8 @@
                         @if($tour?->map)
                             <div class="row g-3 mt-2">
                                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
-                                @foreach($tour->map->spots as $spot)
+                                @foreach($tour->spots as $spot)
+                                    @php($map = $spot->maps?->first()?->pivot)
                                     <input
                                         type="hidden" name='{{ dotToHtmlArray("map.spots.{$spot->id}.id") }}'
                                         value="{{ $spot->id }}"
@@ -59,11 +60,11 @@
                                     <div class="row g-2">
                                         <x-backend::inputs.text
                                             col="col-6" name='{{ "map.spots.{$spot->id}.x" }}'
-                                            :value="$spot?->pivot->x" label='{{ "Spot {$spot->id} X" }}'
+                                            :value="$map?->x" label='{{ "Spot {$spot->id} X" }}'
                                         />
                                         <x-backend::inputs.text
                                             col="col-6" name='{{ "map.spots.{$spot->id}.y" }}'
-                                            :value="$spot?->pivot->y" label='{{ "Spot {$spot->id} Y" }}'
+                                            :value="$map?->y" label='{{ "Spot {$spot->id} Y" }}'
                                         />
                                     </div>
                                 @endforeach

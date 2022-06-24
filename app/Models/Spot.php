@@ -56,6 +56,11 @@ class Spot extends Model implements HasMedia
         return $this->belongsTo(Tour::class);
     }
 
+    public function maps()
+    {
+        return $this->belongsToMany(Map::class)->withPivot(['x', 'y']);
+    }
+
     public function surfaces()
     {
         return $this->belongsToMany(Surface::class);

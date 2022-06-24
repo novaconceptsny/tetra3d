@@ -46,6 +46,8 @@ class TourController extends Controller
 
     public function edit(Tour $tour)
     {
+        $tour->load('map', 'spots.maps');
+
         $data = array();
         $data['route'] = route('backend.tours.update', $tour);
         $data['method'] = 'put';
