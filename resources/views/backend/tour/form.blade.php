@@ -47,7 +47,7 @@
                                 />
                             </div>
                         </div>
-                        @if($tour)
+                        @if($tour?->map)
                             <div class="row g-3 mt-2">
                                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
                                 @foreach($tour->map->spots as $spot)
