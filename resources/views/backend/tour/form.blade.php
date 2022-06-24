@@ -12,19 +12,62 @@
     @php($edit_mode = (bool)$tour)
     @php($heading = $heading ?? ( $tour ? __('Edit Tour') : __('Add New Tour') ))
 
-    <div class="card mb-3">
+    <div class="card">
         <div class="card-header">
             <h5 class="mb-0">{{ $heading }}</h5>
         </div>
         <div class="card-body">
-
-            <form class="row g-3" action="{{ $route }}" method="POST">
+            <form action="{{ $route }}" method="POST">
                 @csrf
                 @method($method ?? 'POST')
 
-                <x-backend::inputs.text name="name" value="{{ $tour ? $tour->name : '' }}"/>
+                <x-backend::error-alert />
+                <x-backend::tab :padding-x="0">
+                    <x-slot name="tabs">
+                        <x-backend::tab.item label="Tour" id="tour_form" :active="true"/>
+                        <x-backend::tab.item label="Map" id="map_form"/>
+                    </x-slot>
+                    <x-backend::tab.content id="tour_form" :active="true">
+                        <div class="row g-3">
+                            <x-backend::inputs.text name="name" value="{{ $tour?->name }}"/>
+                        </div>
+                    </x-backend::tab.content>
+                    <x-backend::tab.content id="map_form">
+                        <div class="row g-3">
+                            <x-backend::inputs.text name="map.name" value="{{ $tour?->map?->name }}" />
+                            <x-backend::inputs.text col="col-6" name="map.width" value="{{ $tour?->map?->width }}" />
+                            <x-backend::inputs.text col="col-6" name="map.height" value="{{ $tour?->map?->height }}" />
 
-                <div class="col-12 d-flex justify-content-end">
+                            <div class="col-12">
+                                <h5>{{ __('Map Image') }}</h5>
+                                <x-media-library-attachment name="map_image" rules="max:102400"/>
+                            </div>
+                        </div>
+                        @if($tour)
+                            <div class="row g-3 mt-2">
+                                <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
+                                @foreach($tour->map->spots as $spot)
+                                    <input
+                                        type="hidden" name='{{ dotToHtmlArray("map.spots.{$spot->id}.id") }}'
+                                        value="{{ $spot->id }}"
+                                    >
+
+                                    <div class="row g-2">
+                                        <x-backend::inputs.text
+                                            col="col-6" name='{{ "map.spots.{$spot->id}.x" }}'
+                                            :value="$spot?->pivot->x" label='{{ "Spot {$spot->id} X" }}'
+                                        />
+                                        <x-backend::inputs.text
+                                            col="col-6" name='{{ "map.spots.{$spot->id}.y" }}'
+                                            :value="$spot?->pivot->y" label='{{ "Spot {$spot->id} Y" }}'
+                                        />
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </x-backend::tab.content>
+                </x-backend::tab>
+                <div class="text-end">
                     <button class="btn btn-primary" type="submit">
                         {{ $submit_text ?? ( $tour ? __('Update') : __('Create') ) }}
                     </button>

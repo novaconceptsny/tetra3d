@@ -16,3 +16,31 @@
     background-color: #f4f4f4;
     color: rgba(0, 0, 0, 0.75);
 }
+
+
+.pin {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    z-index: 600;
+    cursor: pointer;
+    background-image: url("/images/location_pin.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.tour-map-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    max-width: 1500px
+}
+
+.tour-map {
+    position: relative;
+    width: 1300px;
+    height: 500px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: block;
+}

@@ -5,11 +5,12 @@
         $parameters = array_merge(request()->all(), ['tour' => $tour]);
         $parameters['tracker'] = request('tracker') ? 0 : 1;
     @endphp
-    <li class="nav__item">
-        <a href="{{ route('tours.show', $parameters) }}" class="nav__link {{ $tracker ? 'selected' : '' }}">
-            Tracker
-        </a>
-    </li>
+
+    <x-page-action
+        :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
+        text="Tracker" icon="fal fa-ruler-combined"
+    />
+    <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal"  text="Map" icon="fal fa-map-marker-alt" />
 @endsection
 
 @section('content')
@@ -29,6 +30,22 @@
                     </table>
                 </noscript>
 
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="tourMapModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tour Map</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <x-tour-map :tour="$tour"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -115,5 +132,57 @@
         krpano.call("set(layer['version'].onclick,openurl('/version/management/spot/{{$spot->id}}'))");
         setLookat(hlookat,vlookat);
 
+    </script>
+
+    <script>
+        function setMapScale() {
+            let $pin = $('.pin');
+            $pin.hide();
+
+            let zoneW;
+            let zoneH;
+            let defaultW;
+            let defaultH;
+
+            $(".floorPlan").each(function () {
+                if ($(this).css('display') === 'block') {
+                    zoneW = $(this).innerWidth();
+                    zoneH = $(this).innerHeight();
+                    defaultW = $(this).attr('defaultWidth');
+                    defaultH = $(this).attr('defaultHeight');
+                }
+            });
+
+
+            let scaleW = zoneW / defaultW;
+            let scaleH = zoneH / defaultH;
+
+            let scale;
+            let screenRatio = zoneW / zoneH;
+            let mapRatio = defaultW / defaultH;
+
+            if (screenRatio > mapRatio) {
+                scale = scaleH;
+            } else {
+                scale = scaleW;
+            }
+
+            $pin.each(function () {
+                let top = $(this).attr('top');
+                let left = $(this).attr('left');
+                $(this).css('top', (top * scale - 40 + "px"));
+                $(this).css('left', (left * scale - 20 + "px"));
+            });
+
+            $pin.show();
+        }
+
+        $(document).ready(function () {
+            setMapScale();
+        });
+
+        $(window).resize(function () {
+            setMapScale();
+        });
     </script>
 @endsection

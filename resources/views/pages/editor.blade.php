@@ -1,10 +1,10 @@
 @extends('layouts.master')
 
 @section('page_actions')
-    <x-page-action id="save_btn" title="{{ __('Save') }}"/>
-    <x-page-action id="save_as_btn" title="{{ __('Save As') }}"/>
-    <x-page-action id="remove_btn" title="{{ __('Remove') }}"/>
-    <x-page-action title="Return to 360 view" :url="route('tours.show', array_merge(['tour' => $spot->tour_id], request()->all()))"/>
+    <x-page-action id="save_btn" text="{{ __('Save') }}"/>
+    <x-page-action id="save_as_btn" text="{{ __('Save As') }}"/>
+    <x-page-action id="remove_btn" text="{{ __('Remove') }}"/>
+    <x-page-action text="Return to 360 view" :url="route('tours.show', array_merge(['tour' => $spot->tour_id], request()->all()))"/>
 @endsection
 
 @section('content')

@@ -22,4 +22,9 @@ class Tour extends Model
     {
         return $this->hasMany(Project::class);
     }
+
+    public function map()
+    {
+        return $this->hasOne(Map::class);
+    }
 }

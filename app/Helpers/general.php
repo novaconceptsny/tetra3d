@@ -16,10 +16,24 @@ function user($guard=null)
 
 function dotToHtmlArray($string = ''){
     $array = explode('.', $string);
-    return isset($array[1]) ? "{$array[0]}[{$array[1]}]" : $string;
+
+    if (count($array) < 2) {
+        return $string;
+    }
+
+    $name = array_shift($array);
+
+    foreach ($array as $item){
+        $name .= "[$item]";
+    }
+
+    return $name;
 }
 
 function str_to_title($string): string
 {
-    return str($string)->title()->replace('_', ' ')->value();
+    return str($string)
+        ->title()
+        ->replace(['_', '.'], ' ')
+        ->value();
 }

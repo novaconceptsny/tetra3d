@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Tour;
+use Arr;
 use Illuminate\Http\Request;
 
 class TourController extends Controller
@@ -27,7 +28,12 @@ class TourController extends Controller
     {
         $request->validate(ValidationRules::storeTour());
 
-        Tour::create($request->all());
+        $tour = Tour::create($request->all());
+
+        $map = $tour->map()->create($request->map);
+
+        $map->addFromMediaLibraryRequest($request->map_image)
+            ->toMediaCollection('image');
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour created successfully');
@@ -52,11 +58,23 @@ class TourController extends Controller
     {
         $request->validate(ValidationRules::updateTour());
 
-        $tour->update($request->all());
+        $tour->update($request->only([
+            'name'
+        ]));
+
+
+        $map = $tour->map()->updateOrCreate([
+            'tour_id' => $tour->id,
+        ], Arr::except($request->map, 'spots'));
+
+
+        $map->spots()->sync(Arr::keyByAndForget($request->map['spots'], 'id'));
+
+        $map->addFromMediaLibraryRequest($request->map_image)
+            ->toMediaCollection('image');
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour updated successfully');
-
 
     }
 

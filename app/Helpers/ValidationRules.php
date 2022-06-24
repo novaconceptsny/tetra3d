@@ -57,9 +57,9 @@ class ValidationRules
 
     public static function storeTour()
     {
-        return [
+        return array_merge([
             'name' => 'required',
-        ];
+        ], self::storeMap());
     }
 
     public static function updateTour()
@@ -77,5 +77,20 @@ class ValidationRules
     public static function updateCompany()
     {
         return self::storeCompany();
+    }
+
+    public static function storeMap($prefix = true)
+    {
+        return [
+            'map.height' => 'nullable|numeric',
+            'map.width' => 'nullable|numeric',
+            'map.spots.*.x' => 'nullable|numeric',
+            'map.spots.*.y' => 'nullable|numeric',
+        ];
+    }
+
+    public static function updateMap()
+    {
+        return self::storeMap();
     }
 }

@@ -3,12 +3,15 @@
     'bordered' => true,
     'card' => false,
     'justified' => false,
-    'tabClasses' => ''
+    'tabClasses' => '',
+    'paddingX',
 ])
 
 @php
     $tabClasses .= $bordered ? ' nav-bordered' : '';
     $tabClasses .= $justified ? ' nav-justified' : '';
+    $padding = 'p-3 ';
+    $padding .= isset($paddingX) ? "px-{$paddingX}" : '';
 @endphp
 
 @if($card)
@@ -18,11 +21,11 @@
             <ul class="nav nav-tabs {{ $tabClasses }}" id="{{$id}}" role="tablist">
                 {{ $tabs }}
             </ul>
-        </div>
+        @if($card)</div> @endif
         @if($card)
             <div class="card-body p-0">
                 @endif
-                <div class="tab-content {{ $card ? '' : 'p-3' }}" id="{{$id}}Content">
+                <div class="tab-content {{ $card ? '' : $padding }}" id="{{$id}}Content">
                     {{ $slot }}
                 </div>
                 @if($card)
