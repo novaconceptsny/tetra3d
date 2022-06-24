@@ -19,7 +19,10 @@
 
             <div class="col-12">
                 <h5>{{ __('Overlay Image') }}</h5>
-                <x-media-library-attachment name="overlays[{{$index}}][image]" rules="max:102400" />
+                <x-backend::media-attachment
+                    name="overlays[{{$index}}][image]" rules="max:102400"
+                    :media="$spot?->getFirstMedia('overlays',  ['uuid' => $overlay['uuid']])"
+                />
             </div>
 
             <div class="col-12 text-end">

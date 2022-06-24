@@ -88,7 +88,10 @@
 
             <div class="col-12 mt-3">
                 <h5>{{ __('Shared Image') }}</h5>
-                <x-media-library-attachment name="surfaces[{{$surface->id}}][shared_image]" rules="max:102400" />
+                <x-backend::media-attachment
+                    name="surfaces[{{$surface->id}}][shared_image]" rules="max:102400"
+                    :media="$surface?->getFirstMedia('shared', ['spot_id' => $spot->id])"
+                />
             </div>
         </div>
     </div>

@@ -64,12 +64,18 @@
 
                 <div class="col-6">
                     <h5>{{ __('Background Image') }}</h5>
-                    <x-media-library-attachment name="background" rules="max:102400"/>
+                    <x-backend::media-attachment
+                        name="background" rules="max:102400"
+                        :media="$surface?->getFirstMedia('background')"
+                    />
                 </div>
 
                 <div class="col-6">
                     <h5>{{ __('Main Image') }}</h5>
-                    <x-media-library-attachment name="main" rules="max:102400"/>
+                    <x-backend::media-attachment
+                        name="main" rules="max:102400"
+                        :media="$surface?->getFirstMedia('main')"
+                    />
                 </div>
 
                 <div class="col-12 d-flex justify-content-end">

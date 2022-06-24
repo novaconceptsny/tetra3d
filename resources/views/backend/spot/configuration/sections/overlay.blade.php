@@ -1,1 +1,1 @@
-<livewire:xml-form.overlay :overlays="$spot->xml->overlays ?? []" />
+<livewire:xml-form.overlay :overlays="$spot->xml->overlays ?? []" :spot="$spot" />

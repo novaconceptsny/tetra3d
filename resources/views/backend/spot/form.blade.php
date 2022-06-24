@@ -37,7 +37,11 @@
                 </x-backend::inputs.select2>
 
                 <div class="col-12">
-                    <x-media-library-attachment name="image_360" rules="max:102400" />
+                    <h5>{{ __('360 Image') }}</h5>
+                    <x-backend::media-attachment
+                        name="image_360" rules="max:102400"
+                        :media="$spot?->getFirstMedia('image_360')"
+                    />
                 </div>
 
                 <div class="col-12 d-flex justify-content-end">

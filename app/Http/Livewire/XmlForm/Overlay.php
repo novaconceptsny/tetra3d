@@ -7,6 +7,7 @@ use Livewire\Component;
 class Overlay extends Component
 {
     public $overlays = [];
+    public $spot;
 
     public function render()
     {

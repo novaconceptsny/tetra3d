@@ -40,7 +40,11 @@
 
                             <div class="col-12">
                                 <h5>{{ __('Map Image') }}</h5>
-                                <x-media-library-attachment name="map_image" rules="max:102400"/>
+
+                                <x-backend::media-attachment
+                                    name="map_image" rules="max:102400"
+                                    :media="$tour?->map?->getFirstMedia('image')"
+                                />
                             </div>
                         </div>
                         @if($tour)
