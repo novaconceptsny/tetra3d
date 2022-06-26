@@ -1,14 +1,28 @@
-import { ArtSelection } from './artwork_assignment_classes.js';
-import { getCanvasAssets, getArtworkSelections, postUserArtAssignments, putUserArtAssignmentUpdates, getParameter,
-    getUserLatestVersion, getUserPreviousVersion, getPagedArtworkSelections, getSearchedArtworkResults,
-    getFilenameUsageForVersion } from './host_client_interface.js';
+import ArtSelection from './ArtSelection.js';
+import {
+    createSurfaceState,
+    updateSurfaceState,
+    getPagedArtworkSelections,
+    getSearchedArtworkResults
+} from './host_client_interface.js';
 
 // window.onpaint = decodeUrl();
-//這邊的assignedArtwork是所有放置了的artwork的集合。若對任一artwork有變動，就更改這裡面的數值。最後就將之送出就讓php處理
+// The assignedArtwork here is a collection of all placed artworks.
+// If there is any change to any artwork, change the value here.
+// Finally, send it out and let php process it
 const canvasState = {
-    savedVersion: false, isOverlap : false, defaultScale: 1.0, actualWidthInch: 0, background: null,
-    currentVersionData: null, assignedArtwork:[],
-    modifiedVersion: { addedArtwork: [], removedArtwork: [], modifiedArtwork: [] },
+    savedVersion: false,
+    isOverlap: false,
+    defaultScale: 1.0,
+    actualWidthInch: 0,
+    background: null,
+    currentVersionData: null,
+    assignedArtwork: [],
+    modifiedVersion: {
+        addedArtwork: [],
+        removedArtwork: [],
+        modifiedArtwork: []
+    },
     recentSelection: null
 };
 
@@ -18,9 +32,12 @@ const artworkCanvas = new fabric.Canvas('artwork_canvas', {
     skipOffscreen: false,
 });
 
+// todo::remove_this:not using anymore!
 const filterState = {
     searchOption: 'all', searchKey: null, results: null,
-    isValidInput: function () { return this.searchKey !== null && this.searchKey !== "" }
+    isValidInput: function () {
+        return this.searchKey !== null && this.searchKey !== ""
+    }
 };
 
 let listItems = null;
@@ -28,26 +45,28 @@ let bookmark_icons = null;
 let latestPage = 1;
 let userBookmarks = [];
 let boundingBox;
-let filterMenu;
-let searchButton;
-let searchInput;
-let filterButton;
-let imgWidth = canvasDBArr.data.img_width;
-let imgHeight = canvasDBArr.data.img_height;
+let filterMenu; // todo::remove_this:not using anymore!
+let searchButton; // todo::remove_this:not using anymore!
+let searchInput; // todo::remove_this:not using anymore!
+let filterButton; // todo::remove_this:not using anymore!
+let imgWidth = surface.data.img_width;
+let imgHeight = surface.data.img_height;
 let baseWidth;
 let baseScale;
+let defaultScales = [];
 
 let reverseScale; //這個reverseScale，在整個artassignment裡面只會有一個數值。取決於canvase縮小放大的倍數
 
 
-$(function(){
+$(function () {
 
     // some commonly manipulated page elements
+    // todo::remove_this:not using anymore!
     const leftMenu = document.querySelector('.left_menu');
     const menuTop = document.getElementById('left_menu_top');
     const mainContent = document.querySelector('.main_content');    // canvas containing div
 
-    //建立預設的數值
+    // Create preset values
     // main content's dimensions for the canvas to fill.
     let mainHeight = mainContent.offsetHeight,
         mainWidth = mainContent.offsetWidth;
@@ -59,28 +78,26 @@ $(function(){
     artworkCanvas.setHeight(mainHeight);
 
 
-    //這邊要寫一個程式來計算是要scale height還是width。目前只有scale width
-    if ((imgWidth / imgHeight)>=(mainWidth / mainHeight) ){
-        //圖片比螢幕比例來得寬
-        //依照寬度來縮
-        console.log("wide:"+(mainWidth+":"+mainHeight+":"+imgWidth+":"+imgHeight));
-        baseScale = mainWidth / imgWidth; //這邊就是螢幕縮放時的相對數據
+    // Here we need to write a program to calculate whether to scale height or width. Currently only scale width
+    if ((imgWidth / imgHeight) >= (mainWidth / mainHeight)) {
+        //The image is wider than the screen ratio
+        //shrink by width
+        baseScale = mainWidth / imgWidth; //Here is the relative data when the screen is zoomed
         reverseScale = 1 / baseScale;
-    }else {
-        //圖片比螢幕比例來得窄
-        //依照高度來縮
-        baseScale = mainHeight / imgHeight; //這邊就是螢幕縮放時的相對數據
+    } else {
+        //The picture is narrower than the screen ratio
+        //shrink by height
+        baseScale = mainHeight / imgHeight; //Here is the relative data when the screen is zoomed
         reverseScale = 1 / baseScale;
-        console.log("narrow"+(mainWidth+":"+mainHeight+":"+imgWidth+":"+imgHeight));
     }
 
-    //下面這是舊的方式
+    // Here's the old way
     // baseWidth=1500; //這是我們一開始換算時。nara用來計算所有東西的長度。
-    // baseScale=mainWidth/baseWidth; //這邊就是螢幕縮放時的相對數據
+    // baseScale=mainWidth/baseWidth; //Here is the relative data when the screen is zoomed
     // reverseScale = 1 / baseScale;
 
 
-///************這邊長寬高的數字是假的，之後會改掉****************
+///************ The numbers of length, width and height here are fake and will be changed later ****************
     boundingBox = new fabric.Rect({
         originX: 'left',
         originY: 'top',
@@ -96,10 +113,11 @@ $(function(){
         selectable: false,
         selection: false,
     });
-    artworkCanvas.add(boundingBox); //這是fabric物件
+    artworkCanvas.add(boundingBox); //This is the fabric object
 
-    //按鈕連結的event大部份在下面這邊
-    initPagination();
+    // Most of the events linked to the buttons are on the following code
+    // todo::remove_this:not using anymore!
+    //initPagination();
     // listener for deleting assigned artwork on 'Delete' key press
     $(document).on('keydown', handleDeleteKeyOnArtwork);
     // listener for confirming saved art assignments on 'Enter' key press
@@ -117,7 +135,7 @@ $(function(){
 
     $('#confirmation_modal').on('show.bs.modal', function (event) {
         $('#crop_btn').hide();
-    }).on('hidden.bs.modal',function(event){
+    }).on('hidden.bs.modal', function (event) {
         $('#crop_btn').show();
     })
 
@@ -127,34 +145,31 @@ $(function(){
     addCanvasEvents();
 
     // makes request to backend to retrieve all necessary data for a new canvas.
-    //canvasDBArr是從該頁面一開始來的
-    requestCanvasBackgroundProperties(canvasDBArr,baseScale);
+    requestCanvasBackgroundProperties(surface, baseScale);
 
-	//叫出所有的artwork。並顯示在版面上
-    //artworkArr陣列是從該頁面一開始來的。
-    if (artworkArr) { //null equal to false
+    // Call out all the artwork. and display on the page
+    if (assignedArtworks) {
 
-        artworkArr.forEach((art) => {
-            art= remapArtVariable(art);
+        assignedArtworks.forEach((art) => {
+            art = remapArtVariable(art);
             art = deserializeArtSelection(art);
-	        placeSelectedImage(art, (art.getTopPosition()*baseScale), (art.getLeftPosition()*baseScale));
-	    });
-	    canvasState['savedVersion'] = true;
+            placeSelectedImage(art, (art.getTopPosition() * baseScale), (art.getLeftPosition() * baseScale));
+        });
+        canvasState['savedVersion'] = true;
         canvasState['currentVersionData'] = latestState;
-        canvasState['currentVersionData'].version_id;
-	    setTitle(latestState.version_name);
-	    disableSaveButton();
-	    addSavedVersionEvents();
-	}
+        setTitle(latestState.version_name);
+        disableSaveButton();
+        addSavedVersionEvents();
+    }
 
+    // todo::remove_this:not using anymore!
     filterMenu = $('#filter_menu');
     searchButton = $('#search_button');
     filterButton = $('#filter_button');
     searchInput = document.getElementById('search_input');
 
-
-
-    filterMenu.click(function(event) {
+    // todo::remove_this:not using anymore!
+    filterMenu.click(function (event) {
         const target = event.target;
         filterButton.text(target.innerText);
         filterState.searchOption = target.dataset.option;
@@ -162,15 +177,17 @@ $(function(){
         updateSearchBarPlaceholder();
     });
 
-    searchButton.click(function ()  {
+    // todo::remove_this:not using anymore!
+    searchButton.click(function () {
         updateSearchKey();
         printFilterState();
         makeSearchRequest().catch(error => {
-            console.log("error on artwork filtration: ", error)
+                console.log("error on artwork filtration: ", error)
             }
         );
     });
 
+    // todo::remove_this:not using anymore!
     /**
      * sets events for detecting updates from the search/filter text-input field.
      * @param event: triggered when a key is released from being pressed.
@@ -181,7 +198,7 @@ $(function(){
             printFilterState();
             if (!filterState.isValidInput()) {
                 displayInvalidSearchMessage(false);
-                loadPagedArtworkSelections(latestPage,locationId,artgroupId);
+                loadPagedArtworkSelections(latestPage, locationId, artgroupId);
             } else {
                 makeSearchRequest().catch(error => console.log("error on artwork filtration: ", error));
             }
@@ -197,15 +214,16 @@ $(function(){
 
 
 function remapArtVariable(art) {
-    let tempArr=[];
-    tempArr['title'] = art['title'];
+    let tempArr = [];
+    let canvas_data = art.pivot;
+    tempArr['title'] = art['name'];
     tempArr['imgUrl'] = art['image_url'];
-    tempArr['artworkId'] = art['artwork_id'];
-    tempArr['topPosition'] = art['top_position'];
-    tempArr['leftPosition'] = art['left_position'];
-    tempArr['cropData'] = JSON.parse(art['crop_data']);
-    tempArr['overrideScale'] = art['override_scale'];
-    console.log('her for overrideScale', art['override_scale']);
+    tempArr['artworkId'] = art['id'];
+    tempArr['scale'] = art.data.scale;
+    tempArr['topPosition'] = canvas_data['top_position'];
+    tempArr['leftPosition'] = canvas_data['left_position'];
+    tempArr['cropData'] = canvas_data['crop_data'];
+    tempArr['overrideScale'] = canvas_data['override_scale'];
     return tempArr;
 }
 
@@ -213,7 +231,8 @@ function remapArtVariable(art) {
  * Makes a GET request to server for a list of artwork selection objects, based on page offset, as per pagination.
  * @param page: the page number corresponding to a set artwork selections to display.
  */
-function loadPagedArtworkSelections(page,location, artgroupId) {
+// todo::remove_this:not using anymore!
+function loadPagedArtworkSelections(page, location, artgroupId) {
     getPagedArtworkSelections(page, location, artgroupId).then((jsonResponse) => {
         const data = jsonResponse['page']['data'];
         clearArtworkList();
@@ -223,11 +242,13 @@ function loadPagedArtworkSelections(page,location, artgroupId) {
 }
 
 /** removes all arwork selections from view. **/
+// todo::remove_this:not using anymore!
 function clearArtworkList() {
     let artList = document.getElementById('artwork_list');
     while (artList.firstChild) artList.removeChild(artList.firstChild);
 }
 
+// todo::remove_this:not using anymore! (not sure)
 /** positions the scrollbar at the top of the left menu's bottom section, after page is chaged via pagination. **/
 function resetScrollPosition() {
     const leftMenuBottom = document.getElementById('left_menu_bottom');
@@ -236,24 +257,21 @@ function resetScrollPosition() {
 
 
 /** initializes pagination functionality */
+// todo::remove_this:not using anymore!
 function initPagination() {
 
     $(function () {
-
-        console.log('artworkTotalNum:'+artworkTotalNum);
-        let totalPageNum=Math.ceil(artworkTotalNum/20);
+        let totalPageNum = Math.ceil(artworkTotalNum / 20);
         const load = loadPagedArtworkSelections;
         window.pagObj = $('#pagination').twbsPagination({
             totalPages: totalPageNum,
             visiblePages: 3,
             onPageClick: function (event, page) {
-                console.log('locationId-initial:'+locationId);
-                load(page,locationId);
+                load(page, locationId);
                 latestPage = page;
             }
         }).on('page', function (event, page) {
             displayInvalidSearchMessage(false);
-            console.log(`page ${page} loaded.`);
         });
     });
 }
@@ -264,13 +282,14 @@ function initPagination() {
  * or filtered search results are resolved.
  * @param artworks: a list of artwork objects requested from server.
  */
+// todo::remove_this:not using anymore!
 function renderArtworkList(artworks) {
     document.getElementById('artwork_list').append(
         ...artworks.map(art => {
             let li = document.createElement('li');
             let selection = getArtworkSelectionTemplate(
                 art['title'], art['artist'], art['artwork_id'], art['thumbnail_url'], art['image_url']
-                ,art['width_inch'],art['height_inch']
+                , art['width_inch'], art['height_inch']
             );
             addArtworkSelectionListener(selection.querySelector('.card'));
             li.append(selection);
@@ -293,15 +312,14 @@ function setTitle(versionName) {
  *  for art assignments.
  */
 
-function requestCanvasBackgroundProperties(canvasAssetData, baseScale) {
-///************where changes may be required****************
-    let data = canvasAssetData['data'];
+function requestCanvasBackgroundProperties(surface, baseScale) {
+    let data = surface['data'];
 
-    renderCanvasBackground(canvasAssetData['background_url'], baseScale);
-    canvasState.background = canvasAssetData['background_url'];
+    renderCanvasBackground(surface['background_url'], baseScale);
+    canvasState.background = surface['background_url'];
     canvasState['actualWidthInch'] = data['actual_width_inch'];
-    if (canvasAssetData['overlay_url'] !== null) {
-        setCanvasOverlay(canvasAssetData['overlay_url']);
+    if (surface['overlay_url'] !== null) {
+        setCanvasOverlay(surface['overlay_url']);
     }
     setBoundingBoxProperties(
         data['bounding_box_top'] * baseScale, data['bounding_box_left'] * baseScale,
@@ -325,7 +343,7 @@ function setBoundingBoxProperties(top, left, height, width) {
 /** renders an image of a wall, identified by parameters sent in URL, as a canvas background.
  *  @param imgUrl: url of the background image pertaining to a wall, being placed on canvas.
  */
-function renderCanvasBackground(imgUrl,baseScale) {
+function renderCanvasBackground(imgUrl, baseScale) {
     artworkCanvas.setBackgroundImage(imgUrl, artworkCanvas.renderAll.bind(artworkCanvas), {
         originX: 'left',
         originY: 'top',
@@ -352,6 +370,7 @@ function setCanvasOverlay(imgUrl) {
     };
 }
 
+// todo::remove_this:not using anymore!
 /** listens for mouse scroll events in the left menu to relocate the search bar to top of menu, for ease of use.  **/
 function addLeftMenuScrollEvents() {
 
@@ -374,19 +393,25 @@ function addLeftMenuScrollEvents() {
             btnAppend.classList.remove('mr-1');
             btnAppend.classList.add('mr-3');
         }
-    } catch (DOMException) { }
+    } catch (DOMException) {
+    }
 }
 
 /** adds events for mouse hover, exit, click and release, to artwork card list items.
  *  @param cardElement: the element representing a listed artwork to be selected by user.
  */
+// todo::remove_this:not using anymore! (not sure)
 function addArtworkSelectionListener(cardElement) {
     const defaultAttribute = "card text-center";
     const hoverAttribute = `${defaultAttribute} shadow`;
     const clickAttribute = `${defaultAttribute} border-secondary shadow-sm`;
 
-    cardElement.addEventListener('mouseover', (event) => { event.currentTarget.setAttribute('class', hoverAttribute) });
-    cardElement.addEventListener('mouseleave', (event) => { event.currentTarget.setAttribute('class', defaultAttribute) });
+    cardElement.addEventListener('mouseover', (event) => {
+        event.currentTarget.setAttribute('class', hoverAttribute)
+    });
+    cardElement.addEventListener('mouseleave', (event) => {
+        event.currentTarget.setAttribute('class', defaultAttribute)
+    });
 
     cardElement.addEventListener('mousedown', (event) => {
         if (!event.target.matches('.bookmark_icon')) {      //check to avoid conflict with '.bookmark_icon' click event
@@ -405,7 +430,7 @@ function addArtworkSelectionListener(cardElement) {
         }
     });
     cardElement.addEventListener('click', (event) => {
-        if  (!event.target.matches('.bookmark_icon')) {     //check to avoid conflict with '.bookmark_icon' click event
+        if (!event.target.matches('.bookmark_icon')) {     //check to avoid conflict with '.bookmark_icon' click event
             let target = event.currentTarget;
             let newSelection = newArtworkSelection(target);
             placeSelectedImage(newSelection);
@@ -417,12 +442,12 @@ function addArtworkSelectionListener(cardElement) {
  * @param selectedElement: the element which triggered user click event.
  * @returns object: containing values of the artwork's title: str, image URL: str, artwork ID: str, whether bookmarked: bool.
  */
-function getSelectionData (selectedElement) {
+function getSelectionData(selectedElement) {
     let title = selectedElement.dataset.title;
     let imgUrl = selectedElement.dataset.imgUrl;
     let artworkId = selectedElement.dataset.artworkId;
     let scale = selectedElement.dataset.scale;
-    return { title , imgUrl, artworkId, scale };
+    return {title, imgUrl, artworkId, scale};
 }
 
 /** Creates a new JSON serializable object from a user selected artwork HTML element.
@@ -437,7 +462,7 @@ function newArtworkSelection(targetElement) {
 
 /** adds event listeners to each bookmark icon for toggling selected (filled) and unselected (unfilled) styles, on click. **/
 function addBookmarkIconEvents() {
-    for (let i = 0 ; i < bookmark_icons.length ; i++) {
+    for (let i = 0; i < bookmark_icons.length; i++) {
         bookmark_icons[i].addEventListener('click', (event) => {
             let targetElement = event.currentTarget;
             let containingElement = event.currentTarget.parentElement.parentElement;
@@ -461,12 +486,12 @@ function addCanvasEvents() {
             let object = options.target;
             // const xyScale = canvas State.defaultScale;c
             $('#crop_btn').css('top', object.top);
-            let locLeft = object.left + ($('.left_menu').width() - $('#crop_btn').width()/2-20);
+            let locLeft = object.left + ($('.left_menu').width() - $('#crop_btn').width() / 2 - 20);
             $('#crop_btn').css('left', locLeft);
             // target object's right and bottom edge boundaries (originally not provided)
-            let xyScale=defaultScaleArr[object.id];
+            let xyScale = defaultScales[object.id];
             const objectBottom = Math.abs(object.top + (object.height * xyScale)),
-                objectRight  = Math.abs(object.left + (object.width * xyScale));
+                objectRight = Math.abs(object.left + (object.width * xyScale));
             // bounding box's edge boundaries
             const topBound = boundingBox.top,
                 leftBound = boundingBox.left,
@@ -481,11 +506,11 @@ function addCanvasEvents() {
             }
             if (objectBottom > bottomBound) {
                 let y = bottomBound - Math.abs(object.height * xyScale);
-                object.set({top: y });
+                object.set({top: y});
             }
             if (objectRight > rightBound) {
                 let x = rightBound - Math.abs(object.width * xyScale);
-                object.set({left: x });
+                object.set({left: x});
             }
         }
     });
@@ -495,7 +520,6 @@ function addCanvasEvents() {
 function addSavedVersionEvents() {
     let handleModification = (event, msg) => {
         if (canvasState.savedVersion && canvasState.currentVersionData !== null) {
-            console.log('object changed on canvas post save: ', event.target);
             enableSaveButton();
         }
     };
@@ -514,21 +538,18 @@ function applyAdaptiveRescale(image, scale, overrideScale) {
     let b = boundingBox.width;
     let c = canvasState.actualWidthInch * scale;
 
-    let adaptedScale = a * (b/c);
+    let adaptedScale = a * (b / c);
 
     // image.scaleToHeight(adaptedScale, false);
     image.scaleToWidth(adaptedScale, false);
-    canvasState.defaultScale = image.scaleX ;   // XY scale changes when calling scaleToWidth() on image.
-    defaultScaleArr[image.id]=image.scaleX
+    canvasState.defaultScale = image.scaleX;   // XY scale changes when calling scaleToWidth() on image.
+    defaultScales[image.id] = image.scaleX
 
     if (overrideScale != null) {
         c = canvasState.actualWidthInch * overrideScale;
     }
     adaptedScale = a * (b / c);
     image.scaleToWidth(adaptedScale, false);
-
-    console.log('adaptedScale:', adaptedScale);
-    console.log('canvasState.defaultScale:', image.scaleX);
 }
 
 
@@ -537,7 +558,7 @@ function applyAdaptiveRescale(image, scale, overrideScale) {
  * @param topPos: the image's starting position from the top in pixels, to place relative to canvas.
  * @param leftPos: the image's starting position from the left in pixels, to place relative to canvas.
  */
-function placeSelectedImage(artSelection, topPos=boundingBox.top, leftPos=boundingBox.left) {
+function placeSelectedImage(artSelection, topPos = boundingBox.top, leftPos = boundingBox.left) {
 
     let imgUrl = artSelection.imgUrl;
     let notSelected = !isAlreadySelected(artSelection.artworkId);
@@ -616,9 +637,9 @@ function handleEnterKeyOnSaveAs(key) {
  * @param artId: artwork_id of the image selected by user, to identify the image on canvas.
  * @returns boolean: true if the selected artwork is already present within the canvas, false otherwise.
  */
-function isAlreadySelected (artId) {
+function isAlreadySelected(artId) {
     let canvasObjects = artworkCanvas.getObjects();
-    for (let i = 1 ; i < canvasObjects.length ; i++) {
+    for (let i = 1; i < canvasObjects.length; i++) {
         let presentId = canvasObjects[i].id;
         if (artId === presentId) {
             artworkCanvas.setActiveObject(canvasObjects[i]);
@@ -633,15 +654,14 @@ function isAlreadySelected (artId) {
  * @param targetElement: the element for which a bookmark click applies to; containing data about the selection to
  * bookmark.
  */
-function addBookmark (targetElement) {
+function addBookmark(targetElement) {
     let selected = newArtworkSelection(targetElement);
-    for (let i = 0 ; i < userBookmarks.length ; i++) {
+    for (let i = 0; i < userBookmarks.length; i++) {
         if (userBookmarks[i].getTitle() === selected.getTitle()) {
             return;
         }
     }
     userBookmarks.push(selected);
-    console.log("current bookmarks: ", userBookmarks);
 }
 
 
@@ -649,10 +669,9 @@ function addBookmark (targetElement) {
  *  @param targetElement: the element for which a bookmark click applies to; containing data of an un-bookmarked
  *  selection.
  */
-function removeBookmark (targetElement) {
+function removeBookmark(targetElement) {
     let unselected = newArtworkSelection(targetElement);
     userBookmarks = userBookmarks.filter(obj => obj.getTitle() !== unselected.getTitle());
-    console.log("current bookmarks: ", userBookmarks);
 }
 
 
@@ -663,15 +682,18 @@ function removeSelectedArtwork() {
         artworkCanvas.remove(obj);
         canvasState.assignedArtwork = canvasState.assignedArtwork.filter(art => art.getArtworkId() !== obj.id);
     });
-    console.log("currently selected objects: ", canvasState.assignedArtwork);
 }
 
 
 /** Removes all artwork present on canvas from view. **/
 function removeAllArtwork() {
     artworkCanvas.getObjects()
-        .filter((obj) => { return obj.type === 'image' })
-        .map((obj) => { artworkCanvas.remove(obj) });
+        .filter((obj) => {
+            return obj.type === 'image'
+        })
+        .map((obj) => {
+            artworkCanvas.remove(obj)
+        });
     canvasState.assignedArtwork = [];
 }
 
@@ -705,9 +727,9 @@ function updateSavedVersion(event) {
         disableSaveButton();
 
         let screenshots = exportArtAssignments(canvasState['currentVersionData'].version_name);
-        let theVersionId=versionId; //get from global
-        // const response = await putUserArtAssignmentUpdates(versionId, updates, screenshots, canvasState);
-        putUserArtAssignmentUpdates(theVersionId, updates, screenshots, canvasState, reverseScale,userId);
+        let theVersionId = versionId; //get from global
+        // const response = await updateSurfaceState(versionId, updates, screenshots, canvasState);
+        updateSurfaceState(theVersionId, updates, screenshots, canvasState, reverseScale, user_id);
 
         // confirmSaveSuccess(response, document.getElementById('assignment_title').textContent);
         // clearTransientData();
@@ -719,9 +741,20 @@ function updateSavedVersion(event) {
  * @param art
  * @returns {ArtSelection}
  */
-function deserializeArtSelection (art) {
-    return new ArtSelection(art['title'], art['imgUrl'], art['artworkId'], art['topPosition'],
-        art['leftPosition'], art['cropData'],art['overrideScale']);
+function deserializeArtSelection(art) {
+    let imageProperties = [];
+    imageProperties['title'] = art['title'];
+    imageProperties['imgUrl'] = art['imgUrl'];
+    imageProperties['artworkId'] = art['artworkId'];
+    imageProperties['scale'] = art['scale'];
+
+    return new ArtSelection(
+        imageProperties,
+        art['topPosition'],
+        art['leftPosition'],
+        art['cropData'],
+        art['overrideScale']
+    );
 }
 
 
@@ -746,14 +779,13 @@ function trackChanges() {
                 if (obj1.getTopPosition() !== obj2.getTopPosition() ||
                     obj1.getLeftPosition() !== obj2.getLeftPosition() ||
                     obj1.getCropData() !== obj2.getCropData()) {
-                        canvasState.modifiedVersion.modifiedArtwork.push(obj2);
+                    canvasState.modifiedVersion.modifiedArtwork.push(obj2);
                 }
             }
         });
     });
 
     //move button––
-
 
 
     return {
@@ -765,15 +797,7 @@ function trackChanges() {
 }
 
 
-
-
-//這邊就是存檔的地方了//這邊就是存檔的地方了
-//這邊就是存檔的地方了//這邊就是存檔的地方了
-//這邊就是存檔的地方了//這邊就是存檔的地方了
-//這邊就是存檔的地方了//這邊就是存檔的地方了
-//這邊就是存檔的地方了//這邊就是存檔的地方了
-//這邊就是存檔的地方了//這邊就是存檔的地方了
-//這邊就是存檔的地方了//這邊就是存檔的地方了
+//This is where the archive is
 /** Invoked by 'CONFIRM SAVE' button within the 'Save Canvas' modal dialog box. Verifies criteria before saving. **/
 async function confirmSave() {
     let filenameInput = document.getElementById("file_name");
@@ -781,7 +805,7 @@ async function confirmSave() {
 
     let filename = filenameInput.value.trim();
     // let filenameExists = await isExistingFilename(filename);
-    confirmBtn.setAttribute('data-dismiss', '');
+    confirmBtn.setAttribute('data-bs-dismiss', '');
 
     if (filename.length !== 0) {
         if (filenameInput.classList.contains('is-invalid')) {
@@ -793,9 +817,9 @@ async function confirmSave() {
         setAssignmentProperties(reverseScale);
 
 
-        if (canvasState.assignedArtwork.length!=0){
-            const response = await postUserArtAssignments(
-                filename, canvasState.assignedArtwork, screenshots, canvasState,reverseScale,userId
+        if (canvasState.assignedArtwork.length != 0) {
+            const response = await createSurfaceState(
+                filename, canvasState.assignedArtwork, screenshots, canvasState, reverseScale, user_id
             );
             // confirmSaveSuccess(response, filename);
         } else {
@@ -806,7 +830,6 @@ async function confirmSave() {
         filenameInput.classList.add('is-invalid');
         let invalidFeedback = document.querySelector('.invalid-feedback');
         // let roomName = document.getElementById('room_name').innerText.split(':')[0];
-        console.log('you are in the wrong location');
         invalidFeedback.innerText = filenameExists ?
             `File name: "${filename}" already exists for a version of ${roomName}.` : "No file name provided.";
     }
@@ -816,10 +839,9 @@ async function confirmSave() {
 /**
  * creates route for KRPano 360 preview page to redirect on successful art assignment save.
  */
- ///這個之後應該移到php來進行。
+// This should be moved to php after this
 function makeVtourRoute() {
-
-    window.location.href = "/vtour/post/"+spotId+"?vlookat="+vlookat+"&hlookat="+hlookat;
+    window.location.href = "/vtour/post/" + spot_id + "?vlookat=" + vlookat + "&hlookat=" + hlookat;
 }
 
 /**
@@ -840,7 +862,6 @@ function confirmSaveSuccess(response, versionName) {
         };
         executeDelayedAction(finalize, 1500);
     }
-    console.log("current version data: "+JSON.stringify(canvasState.currentVersionData));
 }
 
 
@@ -860,8 +881,7 @@ function disableSaveButton() {
  *  @returns object with keys of 'thumbnail' and 'hotspot' mapped to base64 encoded image values
  *           of both screenshots respectively.
  */
- ///這邊來製作screenshot ///這邊來製作screenshot ///這邊來製作screenshot ///這邊來製作screenshot
-  ///這邊來製作screenshot ///這邊來製作screenshot ///這邊來製作screenshot ///這邊來製作screenshot
+// crate screenshot
 function exportArtAssignments(filename) {
 
     function captureCanvas() {
@@ -869,7 +889,8 @@ function exportArtAssignments(filename) {
             format: 'png',
         });
     }
-    function captureHotspot()  {
+
+    function captureHotspot() {
         boundingBox.opacity = 0;                    // hide bounding box
         artworkCanvas.backgroundImage.opacity = 0;  // hide background image
         let href = artworkCanvas.toDataURL({
@@ -884,7 +905,7 @@ function exportArtAssignments(filename) {
         return href;
     }
 
-    return { 'thumbnail': captureCanvas(), 'hotspot': captureHotspot()};
+    return {'thumbnail': captureCanvas(), 'hotspot': captureHotspot()};
 }
 
 
@@ -899,7 +920,7 @@ function setAssignmentProperties(reverseScale) {
      * @returns a modified ArtSelection object with updated top and left values.
      */
     let propertize = (art) => {
-        for (let i = 1 ; i < assignedArt.length ; i++) {
+        for (let i = 1; i < assignedArt.length; i++) {
             if (art.getArtworkId() === assignedArt[i].id) {
                 art.setTopPosition(parseInt(assignedArt[i].top * reverseScale));
                 art.setLeftPosition(parseInt(assignedArt[i].left * reverseScale));
@@ -918,50 +939,53 @@ function setAssignmentProperties(reverseScale) {
  * @param event: event fired after 'SAVE' or 'SAVE AS' button is pressed.
  */
 
- // overlap function
+// overlap function
 function checkOverlapping(event) {
+    event.preventDefault();
+
     let btn = event.target;
     let errorMsg = document.getElementById('error_alert');
-    // updateOverlapDetection();
     if (canvasState.isOverlap) {
-        btn.setAttribute('data-target', 'none');
+        btn.setAttribute('data-bs-target', 'none');
         errorMsg.classList.add('show');
-        console.log("Cannot save! \nOverlap detected on canvas between 2 or more images. ");
     } else {
-        btn.setAttribute('data-target', '#confirmation_modal');
-        errorMsg.classList.replace('show', 'hide');
+        let modal = new bootstrap.Modal(document.getElementById("confirmation_modal"), {});
+        myModal.show();
+        //errorMsg.classList.replace('show', 'hide');
     }
 }
 
 function executeDelayedAction(action, delay) {
-    setTimeout(() => { action() }, delay);
+    setTimeout(() => {
+        action()
+    }, delay);
 }
 
+// todo::remove_this:not using anymore!
 /** Updates boolean value for whether any artwork images within the canvas overlap. Prevents erroneous layouts. **/
 function updateOverlapDetection() {
     let allObjects = artworkCanvas.getObjects();
-    canvasState.isOverlap=false;
-    let startNum=2;
-    for (let i = startNum ; i < allObjects.length ; i++) {
-        for (let j = allObjects.length - 1 ; j >= startNum ;  j--) {
+    canvasState.isOverlap = false;
+    let startNum = 2;
+    for (let i = startNum; i < allObjects.length; i++) {
+        for (let j = allObjects.length - 1; j >= startNum; j--) {
             canvasState.isOverlap = allObjects[i] !== allObjects[j] &&
                 allObjects[i].intersectsWithObject(allObjects[j]);
-            if (canvasState.isOverlap === true) { return; }
+            if (canvasState.isOverlap === true) {
+                return;
+            }
         }
     }
 }
 
 
-//每個artwork卡片的地方
-//每個artwork卡片的地方
-//每個artwork卡片的地方
-//每個artwork卡片的地方
+// todo::remove_this:not using anymore!
 /** @returns DocumentFragment template for an individual artwork selection card in the left menu pane.
  *  @params title: title of the artwork selection.
  *  @params id: unique id number of the artwork selection.
  *  @params img: url path to image of the artwork selection.
  */
-function getArtworkSelectionTemplate(title, artist, id, thumb_url, img_url,width,height) {
+function getArtworkSelectionTemplate(title, artist, id, thumb_url, img_url, width, height) {
     return document.createRange().createContextualFragment(
         `<div class="card text-center animated fadeIn faster"
                 data-img-url="${img_url}"
@@ -980,6 +1004,7 @@ function getArtworkSelectionTemplate(title, artist, id, thumb_url, img_url,width
     );
 }
 
+// todo::remove_this:not using anymore!
 /** @returns DocumentFragment template for invalid search result placeholder. **/
 function getPlaceholderTextMarkup() {
     const format = () => {
@@ -1003,6 +1028,7 @@ function getPlaceholderTextMarkup() {
  * displays an indicator of the number of results retrieved from a search.
  * @param flag: boolan value that toggles search result counter display (true: show, false: hide).
  */
+// todo::remove_this:not using anymore!
 function displaySearchResultCounter(flag) {
     let bottomNav = document.getElementById('artwork_navbar');
     let counterMarkup = null;
@@ -1019,6 +1045,7 @@ function displaySearchResultCounter(flag) {
     }
 }
 
+// todo::remove_this:not using anymore!
 function getSearchResultCounterMarkup(numResults) {
     let resultTxt = numResults > 1 ? `${numResults} results found` : `${numResults} result found`;
     return document.createRange().createContextualFragment(
@@ -1026,6 +1053,7 @@ function getSearchResultCounterMarkup(numResults) {
     );
 }
 
+// todo::remove_this:not using anymore!
 // function displayLoadingImageModal() {
 //     let loading = () => {
 //         if (canvasState.recentSelection.isOnScreen(true)) { clear() }
@@ -1037,29 +1065,9 @@ function getSearchResultCounterMarkup(numResults) {
 //     }
 // }
 
-function timeIt(funct) {
-    let start = window.performance.now();
-    funct();
-    let end = window.performance.now();
-    return end - start;
-}
 
-//整理URL應該不需要了
-function decodeUrl() {
-    let link = window.location.href;
-    if (link.includes('&amp;')) {
-        link = link.replace('&amp;', '&');
-        window.location.href = link;
-    }
-}
-
-/** below is code for search/filter functionalia **/
-
-
-
-
+// todo::remove_this:not using anymore!
 function printFilterState() {
-
     console.log("filter data: ", filterState);
 }
 
@@ -1068,6 +1076,7 @@ function printFilterState() {
  * displays indication for no results being found for an artwork search.
  * @param flag: boolan value that toggles invalid search message display (true: show, false: hide).
  */
+// todo::remove_this:not using anymore!
 function displayInvalidSearchMessage(flag) {
     let displayedMsg = document.getElementById('invalid_search_msg');
     let artListDiv = document.getElementById('left_menu_bottom');
@@ -1084,6 +1093,7 @@ function displayInvalidSearchMessage(flag) {
     }
 }
 
+// todo::remove_this:not using anymore!
 /** Renders artwork retrieved from a valid search result, or an error message indicating no results for a search. */
 function displayArtworkSearchResults() {
     clearArtworkList();
@@ -1101,20 +1111,22 @@ function displayArtworkSearchResults() {
 /**
  * Makes a server request to search for user specified keyword in search-bar.
  */
+// todo::remove_this:not using anymore!
 async function makeSearchRequest() {
     if (filterState.isValidInput()) {
-        const response = await getSearchedArtworkResults(filterState,artgroupId);
+        const response = await getSearchedArtworkResults(filterState, artgroupId);
         filterState.results = response[0].length > 0 ? response[0] : null;
         displayArtworkSearchResults();
-        console.log("filter response: ", response, "\nresults: ", filterState);
     }
 }
 
+// todo::remove_this:not using anymore!
 /** invoked when contents in the search-bar is modified by user, or when search is pressed. **/
 function updateSearchKey() {
     filterState.searchKey = searchInput.value;
 }
 
+// todo::remove_this:not using anymore!
 /** changes search-bar placeholder text based on filter criteria selection. */
 function updateSearchBarPlaceholder() {
     const placeholders = [
@@ -1131,19 +1143,19 @@ function updateSearchBarPlaceholder() {
 }
 
 
+// todo::remove_this:not using anymore!
 function hidePagination(flag) {
     let pagination = $('#pagination');
     flag ? pagination.hide() : pagination.show();
 }
 
 function resetLeftMenuView() {
-    console.log('locationId-resetleftmenu:'+locationId);
     displayInvalidSearchMessage(false);
     displaySearchResultCounter(false);
-    loadPagedArtworkSelections(latestPage,locationId,artgroupId);
+    loadPagedArtworkSelections(latestPage, locationId, artgroupId);
     hidePagination(false);
     document.getElementById('search_input').value = "";
 }
 
 
-export { artworkCanvas, canvasState, newArtworkSelection, placeSelectedImage };
+export {artworkCanvas, canvasState, newArtworkSelection, placeSelectedImage};

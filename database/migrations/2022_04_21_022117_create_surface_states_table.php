@@ -14,9 +14,7 @@ return new class extends Migration
             $table->foreignId('surface_id');
             $table->foreignId('project_id');
             $table->string('name');
-            $table->json('canvas_data')->nullable();
-            $table->string('hotspot_url')->nullable();
-            $table->string('thumbnail_url')->nullable();
+            $table->json('canvas')->nullable();
             $table->boolean('active')->default(1);
             $table->timestamps();
         });

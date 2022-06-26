@@ -10,6 +10,7 @@
     <meta property="og:type" content=""/>
     <meta property="og:url" content=""/>
     <meta property="og:image" content=""/>
+    <meta name="_token" content="{{ csrf_token() }}">
     <!--Fontawesome cdn	-->
 
     <!-- CSS File -->

@@ -19,7 +19,7 @@
             </a>
         </li>
         <li class="nav__item">
-            <a href="{{ route('walls') }}" class="nav__link">
+            <a href="#" class="nav__link">
                 <span class="icon">
                     <x-svg.plus/>
                 </span>

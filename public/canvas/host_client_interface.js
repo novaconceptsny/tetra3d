@@ -1,7 +1,7 @@
 /**
  * This module contains functions for making network requests to create, retrieve, update and delete
  * assets & data used on artwork_assignment, spot_versions and spots_collection pages.
-**/
+ **/
 
 
 /** Makes a GET request for a spot's wall image, and data to display and apply on canvas, for artwork assignments.
@@ -56,26 +56,26 @@ async function getUserPreviousVersion() {
  * @param canvasState: latest state of the canvas.
  * @returns JSON response from server of either the success or failure of the request, along with payload to reference.
  */
-async function postUserArtAssignments(filename, assignedArtwork, screenshots, canvasState, reverseScale,userId) {
-    const endpoint = 'api/wall/assign?client=1';
+async function createSurfaceState(filename, assignedArtwork, screenshots, canvasState, reverseScale, userId) {
+    const endpoint = updateCanvasRoute
     canvasState = JSON.parse(JSON.stringify(canvasState));
     canvasState.savedVersion = true;
     let payload = {
-        "version_name": filename,
-        "background_id": canvasId,
+        "name": filename,
         "assigned_artwork": assignedArtwork,
         "thumbnail": screenshots['thumbnail'],
         "hotspot": screenshots['hotspot'],
         "canvasState": JSON.stringify(canvasState),
-        "reverseScale": reverseScale,
-        "userId":userId,
+        "reverse_scale": reverseScale,
+        "user_id": userId,
+        "new": true,
     };
 
-    var jsonPayload=JSON.stringify(payload);
-    payload.assigned_artwork=JSON.stringify(payload.assigned_artwork);
+    var jsonPayload = JSON.stringify(payload);
+    payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
 
     // simplePost(endpoint,payload);
-    fakeFormPost(endpoint,payload);
+    fakeFormPost(endpoint, payload);
 
     // return specificRequest(endpoint, 'POST', payload);
 }
@@ -90,8 +90,8 @@ async function postUserArtAssignments(filename, assignedArtwork, screenshots, ca
  */
 
 //這邊就是將assignment存起來的地方了。重要!!!
-function putUserArtAssignmentUpdates(versionId, updates, screenshots, canvasState, reverseScale,userId) {
-    const endpoint = '/api/wall/update?client=1';
+function updateSurfaceState(versionId, updates, screenshots, canvasState, reverseScale, userId) {
+    const endpoint = updateCanvasRoute;
     let payload = {
         "version_id": versionId,
         "assigned_artwork": updates['assignedArtwork'],
@@ -102,7 +102,7 @@ function putUserArtAssignmentUpdates(versionId, updates, screenshots, canvasStat
         "hotspot": screenshots['hotspot'],
         "canvasState": JSON.stringify(canvasState),
         "reverseScale": reverseScale,
-        "userId":userId,
+        "userId": userId,
     };
     payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
     payload.added = JSON.stringify(payload.added);
@@ -136,10 +136,14 @@ async function getAllUserActiveVersions() {
 async function getSearchedArtworkResults(searchData, artgroupId) {
     const searchKey = searchData.searchKey;
     switch (searchData.searchOption) {
-        case 'all': return getSearchedArtworksByAll(searchKey,artgroupId);
-        case 'artist': return getSearchedArtworksByArtist(searchKey,artgroupId);
-        case 'title' : return getSearchedArtworksByTitle(searchKey,artgroupId);
-        default: break;
+        case 'all':
+            return getSearchedArtworksByAll(searchKey, artgroupId);
+        case 'artist':
+            return getSearchedArtworksByArtist(searchKey, artgroupId);
+        case 'title' :
+            return getSearchedArtworksByTitle(searchKey, artgroupId);
+        default:
+            break;
     }
 }
 
@@ -148,12 +152,12 @@ async function getSearchedArtworksByArtist(searchKey, artgroupId) {
     return await generalRequest(endpoint);
 }
 
-async function getSearchedArtworksByTitle(searchKey,artgroupId) {
+async function getSearchedArtworksByTitle(searchKey, artgroupId) {
     const endpoint = `/filter/title?key=${searchKey}&artgroup_id=${artgroupId}`;
     return await generalRequest(endpoint);
 }
 
-async function getSearchedArtworksByAll(searchKey,artgroupId) {
+async function getSearchedArtworksByAll(searchKey, artgroupId) {
     const endpoint = `/filter/all?key=${searchKey}&artgroup_id=${artgroupId}`;
     return await generalRequest(endpoint);
 }
@@ -190,19 +194,19 @@ function fakeFormPost(endpoint, payload) {
         action: endpoint,
         method: 'post'
     });
-    $.each(payload, function(key, val) {
-        // console.log("payload:"+key+":"+val);
-         $('<input>').attr({
-             type: "hidden",
-             name: key,
-             value: val
-         }).appendTo($form);
+    let token = $('meta[name="_token"]').attr('content');
+
+    $.each(payload, function (key, val) {
+        $('<input>').attr({
+            type: "hidden",
+            name: key,
+            value: val
+        }).appendTo($form);
     });
-    $('<input>').attr({type: "hidden",name: "spotId", value: spotId}).appendTo($form);
-    $('<input>').attr({type: "hidden",name: "canvasId",value: canvasId}).appendTo($form);
-	$('<input>').attr({type: "hidden",name: "hlookat",value: hlookat}).appendTo($form);
-	$('<input>').attr({type: "hidden",name: "vlookat",value: vlookat}).appendTo($form);
-    console.log('stop');
+    $('<input>').attr({type: "hidden", name: "_token", value: token}).appendTo($form);
+    $('<input>').attr({type: "hidden", name: "project_id", value: project_id}).appendTo($form);
+    $('<input>').attr({type: "hidden", name: "hlookat", value: hlookat}).appendTo($form);
+    $('<input>').attr({type: "hidden", name: "vlookat", value: vlookat}).appendTo($form);
     $form.appendTo('body').submit();
 }
 
@@ -224,14 +228,14 @@ async function getSpotVersionsByFloor(floorNumber) {
 
 async function getSharedLinkForSpot(spotId, sharedVersions) {
     const endpoint = "/api/spot_versions/post_shared_versions";
-    const payload = { 'spotId': spotId, 'sharedVersions': sharedVersions };
+    const payload = {'spotId': spotId, 'sharedVersions': sharedVersions};
     console.log("payload: ", payload);
     return specificRequest(endpoint, 'POST', payload);
 }
 
 async function getSharedLinkForFloor(sharedVersions) {
     const endpoint = "/api/spot_versions/post_shared_floor_versions";
-    const payload = { 'sharedVersions': sharedVersions };
+    const payload = {'sharedVersions': sharedVersions};
     return specificRequest(endpoint, 'POST', payload);
 }
 
@@ -280,7 +284,7 @@ async function getAllFloors() {
 
 export {
     getCanvasAssets, getArtworkSelections, getUserParameter, getParameter,
-    getUserSpotCollection, postUserArtAssignments, putUserArtAssignmentUpdates,
+    getUserSpotCollection, createSurfaceState, updateSurfaceState,
     getUserLatestVersion, getSpotVersions, deleteUserSpotVersion, putUserActiveSpotVersion,
     getUserPreviousVersion, getPagedArtworkSelections, getSearchedArtworkResults, getFilenameUsageForVersion,
     getSharedLinkForSpot, getAllUserActiveVersions, postLastVtourLookLocation, getLastVtourLookLocation, getAllFloors,

@@ -14,16 +14,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::view('editor', 'pages.editor')->name('editor');
-Route::view('walls', 'pages.walls')->name('walls');
-
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'HomeController@index')->name('dashboard');
     Route::get('tours/{tour}', 'TourController@show')->name('tours.show');
-    Route::get('editor/{surface}', 'CanvasController@show')->name('editor');
+    Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
+
+    Route::get('surfaces/{surface}', 'SurfaceStateController@show')->name('surfaces.show');
+    Route::post('surfaces/{surface}', 'SurfaceStateController@store')->name('surfaces.store');
+    Route::post('surfaces/{surface}', 'SurfaceStateController@update')->name('surfaces.update');
 });
 
 

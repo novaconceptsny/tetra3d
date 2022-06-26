@@ -43,10 +43,24 @@ class Surface extends Model implements HasMedia
         return $this->hasMany(SurfaceState::class);
     }
 
-    public function state()
+    public function getCurrentState($project_id)
     {
-        return $this->hasOne(SurfaceState::class)
-            ->where('active', 1);
+        return $this->states()->current($project_id)->firstOrCreate([
+            'user_id' => auth()->id(),
+            'project_id' => $project_id
+        ]);
+    }
+
+    public function createNewState($project_id)
+    {
+        $this->states()->where('project_id', $project_id)->update([
+            'active' => 0
+        ]);
+
+        return $this->states()->create([
+            'user_id' => auth()->id(),
+            'project_id' => $project_id
+        ]);
     }
 
     public function spots()
@@ -57,5 +71,14 @@ class Surface extends Model implements HasMedia
     public function tour()
     {
         return $this->belongsTo(Tour::class);
+    }
+
+    public function getActiveStateUrl($project_id)
+    {
+        if (!$project_id){
+            return "";
+        }
+
+        return $this->getCurrentState($project_id)?->getFirstMediaUrl('hotspot');
     }
 }

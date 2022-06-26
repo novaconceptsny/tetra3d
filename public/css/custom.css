@@ -44,3 +44,16 @@
     background-repeat: no-repeat;
     display: block;
 }
+
+#crop_btn {
+    z-index: 3000;
+    position: fixed;
+    left: 500px;
+    top: 100px;
+    width: 50px;
+    height: 50px;
+}
+
+.dashboard.gallery .inner__field .card .bg__image {
+    object-fit: fill;
+}

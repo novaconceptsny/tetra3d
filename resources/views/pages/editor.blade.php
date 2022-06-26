@@ -1,8 +1,8 @@
 @extends('layouts.master')
 
 @section('page_actions')
-    <x-page-action id="save_btn" text="{{ __('Save') }}"/>
-    <x-page-action id="save_as_btn" text="{{ __('Save As') }}"/>
+    <x-page-action id="save_btn" text="{{ __('Save') }}" type="button"/>
+    <x-page-action  data-bs-toggle="modal" data-bs-target="#confirmation_modal"  text="Save As" type="button"/>
     <x-page-action id="remove_btn" text="{{ __('Remove') }}"/>
     <x-page-action text="Return to 360 view" :url="route('tours.show', array_merge(['tour' => $spot->tour_id], request()->all()))"/>
 @endsection
@@ -14,6 +14,10 @@
     </button>
     <x-surface-versions/>
     <div class="dashboard mini" style="margin-left: 27rem!important;">
+        <div class="alert alert-danger fade slow w-100 row hide" style="position: absolute; z-index: 200; left: 0.8vw;"
+             role="alert" id="error_alert">
+            <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
+        </div>
         <div class="d-flex fs-5 mb-2">
             <p class="room_name mb-0">s4002 > Test</p>
             <p class="ml-2" id="assignment_title">Test</p>
@@ -23,38 +27,56 @@
         </div>
     </div>
 
-    <button type="button" id="crop_btn" class="btn btn-outline-info" data-toggle="tooltip" data-placement="top"
-            style="z-index:3000;position:fixed;left:500px;top:100px;width:50px;height:50px;" title="Crop">
-        <i class="fas fa-crop-alt" style="font-size:20px"></i>
-    </button>
+    <div class="modal fade" id="confirmation_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Save Canvas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Save artwork assignment as:</p>
+                    <form>
+                        <div class="form-row">
+                            <input type="text" class="form-control ml-2 mr-2" placeholder="assignment1" id="file_name">
+                            <div class="invalid-feedback ml-3">
+                                Invalid file name provided.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-secondary" id="confirm_save_btn">Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <x-editor.crop-button/>
 @endsection
 
 @section('scripts')
     <script>
-        let userId = 1;
+        let user_id = {{ auth()->id() }};
+        let project_id = {{ request('project_id') }};
+        let updateCanvasRoute = "{{ route('surfaces.update', $surface) }}"
 
-        let spotId = 48001;
-        let canvasId = 4002;
-        let vlookat = 0;
-        let hlookat = 0;
-        let canvasDBArr = null;
-        let latestState = null;
+        let spot_id = {{ $spot->id }};
+        let hlookat = {{ request('hlookat', 0) }};
+        let vlookat = {{ request('vlookat', -90) }};
+        let surface = @json($surface_data);
+        let latestState = @json($canvas_state);
         let versionId = 240;
-        let artworkArr = null;
-        let scaleArr =  null;
-        let locationId = 4;
-        let artgroupId = 5;
-        let defaultScaleArr = [];
-        let artworkTotalNum = null;
+        let assignedArtworks = @json($assigned_artworks);
+        /*let scaleArr =  null;*/
+        /*let locationId = 4;*/
+        /*let artgroupId = 5;*/
+        /*let artworkTotalNum = null;*/
 
-        artworkArr = [];
-        locationId = 4;
-        vlookat = 0;
-        hlookat = -90;
-        // This should actually be a json. Data representing a single surface only
-        canvasDBArr = @json($surface);
         latestState = {};
-        artworkTotalNum = 15;
 
     </script>
     <script type="module" src="{{ asset('canvas/crop_functions.js') }}"></script>

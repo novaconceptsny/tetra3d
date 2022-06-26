@@ -74,8 +74,8 @@ class SpotXmlGenerator
         ";
 
         foreach ($this->spot->surfaces as $index => $surface) {
-            /*$content .= "set(hotspot[surface_{$surface->id}].url , '%\$Wall_{$surface->id}%')\n\t";*/
-            $content .= "set(hotspot[surface_{$surface->id}].url , '/krpano/dummy.png')\n\t";
+            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$surface_{$surface->id}%')\n\t";
+            /*$content .= "set(hotspot[surface_{$surface->id}].url , '/krpano/dummy.png')\n\t";*/
 
             if (count($this->spot->surfaces) == $index + 1) {
                 $content = str($content)->trim(" \t")->append("  ");
@@ -193,7 +193,7 @@ class SpotXmlGenerator
     {
         $attributes = [
             'name' => "surface_{$surface->id}",
-            'canvas_url' => route('editor', [$surface, 'spot_id' => $this->spot]),
+            'canvas_url' => route('surfaces.show', [$surface, 'spot_id' => $this->spot]),
             "hotspot_type" => 'artwork',
             "style" => "surface",
             "onclick" => "openCanvas()",
@@ -232,7 +232,7 @@ class SpotXmlGenerator
     {
         $attributes = [
             'name' => "surface_{$surface->id}_click",
-            'canvas_url' => route('editor', [$surface, 'spot_id' => $this->spot]),
+            'canvas_url' => route('surfaces.show', [$surface, 'spot_id' => $this->spot]),
             "style" => $this->getSurfaceData($surface, 'style', 'click'),
             "onclick" => "openCanvas()",
         ];

@@ -1,10 +1,14 @@
 @extends('layouts.master')
 
+@section('page_actions')
+    <x-page-action text="Return to 360 view" :url="route('tours.show', [$tour, 'project_id' => $project->id])"/>
+@endsection
+
 @section('content')
     <div class="dashboard gallery mini">
-        @for($i = 1; $i < 4; $i++)
+        @foreach($surfaces as $surface)
             <h4 class="font-secondary section__title">
-                Version {{ $i }}
+                {{ $surface->name }}
             </h4>
             <div class="inner__field row mb-4">
                 <div class="col-md-6 col-lg-3 mb-3 ">
@@ -12,11 +16,11 @@
                         <a href="#" class="overlay__link"></a>
                         <div class="card-body">
                             <img
-                                src="{{ asset('images/card-img.png') }}"
+                                src="{{ $surface->getFirstMediaUrl('background') }}"
                                 alt="image"
                                 class="bg__image"
                             />
-                            <a href="{{ route('editor') }}" class="add__btn">
+                            <a href="{{ route('surfaces.show', [$surface, 'project_id' => $project->id, 'new' => 1]) }}" class="add__btn">
                                 <span class="plus__icon">
                                     <x-svg.plus width="35" height="35"/>
                                 </span>
@@ -25,13 +29,13 @@
                         </div>
                     </div>
                 </div>
-                @for($j = 1; $j < 6; $j++)
+                @foreach($surface->states as $state)
                     <div class="col-md-6 col-lg-3 mb-3 ">
                         <div href="#" class="card">
                             <a href="#" class="overlay__link"></a>
                             <div class="card-img-top">
                                 <img
-                                    src="{{ asset('images/card-img.png') }}"
+                                    src="{{ $state->getFirstMediaUrl('thumbnail') }}"
                                     alt="image"
                                     width="100%"
                                     height="auto"
@@ -64,9 +68,9 @@
                             </div>
                         </div>
                     </div>
-                @endfor
+                @endforeach
             </div>
             <hr >
-        @endfor
+        @endforeach
     </div>
 @endsection

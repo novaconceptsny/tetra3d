@@ -10,6 +10,12 @@
         :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
         text="Tracker" icon="fal fa-ruler-combined"
     />
+
+    <x-page-action
+        :url="route('tours.surfaces', [$tour, 'project_id' => $project->id])"
+        text="Versions" icon="fal fa-layer-group"
+    />
+
     <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal"  text="Map" icon="fal fa-map-marker-alt" />
 @endsection
 
@@ -75,6 +81,11 @@
             initvars: {
                 timestamp: timestamp,
                 showerrors: false,
+                project_id: "{{ request('project_id', '') }}",
+
+                @foreach ($spot->surfaces as $surface)
+                    {{ "surface_{$surface->id}" }}: '{{ $surface->getActiveStateUrl(request('project_id')) }}',
+                @endforeach
             },
         });
 
