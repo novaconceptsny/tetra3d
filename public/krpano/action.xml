@@ -10,7 +10,9 @@
         urlStr = "/editor?spotId=" + spotId + "&#38;canvasId=" + canvasId + "&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
         -->
         urlStr = url + "&#38;project_id=" + project_id +"&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
-        window.location.href = urlStr;
+        if (project_id){
+            window.location.href = urlStr;
+        }
     </action>
 
     <action name="set_tool" type="javascript">

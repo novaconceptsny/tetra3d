@@ -11,10 +11,12 @@
         text="Tracker" icon="fal fa-ruler-combined"
     />
 
-    <x-page-action
-        :url="route('tours.surfaces', [$tour, 'project_id' => $project->id])"
-        text="Versions" icon="fal fa-layer-group"
-    />
+    @if($project)
+        <x-page-action
+            :url="route('tours.surfaces', [$tour, 'project_id' => $project->id])"
+            text="Versions" icon="fal fa-layer-group"
+        />
+    @endif
 
     <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal"  text="Map" icon="fal fa-map-marker-alt" />
 @endsection
