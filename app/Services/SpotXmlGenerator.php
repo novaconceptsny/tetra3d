@@ -281,7 +281,7 @@ class SpotXmlGenerator
     private function addNavigation($index, $navigationData)
     {
         $attributes = [
-            'name' => "spot_{$index}",
+            'name' => $navigationData['name'] ?? "spot_{$index}",
             'hotspot_type' => 'navigation',
             'onclick' => 'NavigateTo()',
             'style' => 'artwork_hotspot',
