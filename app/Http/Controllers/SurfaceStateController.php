@@ -37,7 +37,7 @@ class SurfaceStateController extends Controller
         $data['spot'] = $spot;
         $artworks = Artwork::take(30)->get();
         $data['assigned_artworks'] = $assignedArtworks;
-        $data['canvas_state'] = $surface_state->canvas;
+        $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
 
         $data['artworks'] = $artworks;
         return view('pages.editor', $data);

@@ -72,33 +72,33 @@
         let surface = args[1];
 
         if(coin == "0"){
-        if (surface == 'main' || surface == 'live'){
-        var scale_shared = caller.scale;
-        var main_w = caller.main_w;
-        var main_h = caller.main_h;
-        var shared_w = caller.shared_w;
-        var shared_h = caller.shared_h;
-        var select = caller.select;
-        var scale_main;
-        if (select === "w") {
-        scale_main=scale_shared*(shared_w/main_w);
-        } else {
-        scale_main=scale_shared*(shared_h/main_h);
-        }
-        caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
-        caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
+            if (surface == 'main' || surface == 'live'){
+                var scale_shared = caller.scale;
+                var main_w = caller.main_w;
+                var main_h = caller.main_h;
+                var shared_w = caller.shared_w;
+                var shared_h = caller.shared_h;
+                var select = caller.select;
+                var scale_main;
+                if (select === "w") {
+                    scale_main=scale_shared*(shared_w/main_w);
+                } else {
+                    scale_main=scale_shared*(shared_h/main_h);
+                }
+                caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
+                caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
 
-        caller.scale = scale_main;
-        }
+                caller.scale = scale_main;
+            }
 
-        if (surface == 'main'){
-        caller.url = caller.url_main;
-        }
+            if (surface == 'main'){
+                caller.url = caller.url_main;
+            }
 
-        if(surface == 'shared') {
-        caller.url = caller.url_shared;
-        }
-        caller.coin = 1;
+            if(surface == 'shared') {
+                caller.url = caller.url_shared;
+            }
+            caller.coin = 1;
         }
     </action>
 

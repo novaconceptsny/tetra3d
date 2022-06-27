@@ -45,10 +45,7 @@ class Surface extends Model implements HasMedia
 
     public function getCurrentState($project_id)
     {
-        return $this->states()->current($project_id)->firstOrCreate([
-            'user_id' => auth()->id(),
-            'project_id' => $project_id
-        ]);
+        return $this->states()->current($project_id)->first();
     }
 
     public function createNewState($project_id)
@@ -79,6 +76,10 @@ class Surface extends Model implements HasMedia
             return "";
         }
 
-        return $this->getCurrentState($project_id)?->getFirstMediaUrl('hotspot');
+        if (!$this->getCurrentState($project_id)){
+            return asset('images/defaults/no-artwork.png');
+        }
+
+        return $this->getCurrentState($project_id)->getFirstMediaUrl('hotspot');
     }
 }

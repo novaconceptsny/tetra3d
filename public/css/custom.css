@@ -57,3 +57,11 @@
 .dashboard.gallery .inner__field .card .bg__image {
     object-fit: fill;
 }
+
+.main__header.universal .right .navbar__nav .nav__link{
+    background-color: white;
+}
+
+.hide{
+    display: none;
+}

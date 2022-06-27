@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
 @section('page_actions')
-    <x-page-action id="save_btn" text="{{ __('Save') }}" type="button"/>
+    <x-page-action id="save_btn" text="{{ __('Save') }}" type="button" class="hide"/>
     <x-page-action  data-bs-toggle="modal" data-bs-target="#confirmation_modal"  text="Save As" type="button"/>
-    <x-page-action id="remove_btn" text="{{ __('Remove') }}"/>
+    <x-page-action id="remove_btn" text="{{ __('Remove') }}" class="hide"/>
     <x-page-action text="Return to 360 view" :url="route('tours.show', array_merge(['tour' => $spot->tour_id], request()->all()))"/>
 @endsection
 

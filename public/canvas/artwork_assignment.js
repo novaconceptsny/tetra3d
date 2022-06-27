@@ -55,6 +55,9 @@ let baseWidth;
 let baseScale;
 let defaultScales = [];
 
+let $save_btn = $('#save_btn');
+let $remove_btn = $('#remove_btn');
+
 let reverseScale; //這個reverseScale，在整個artassignment裡面只會有一個數值。取決於canvase縮小放大的倍數
 
 
@@ -123,9 +126,9 @@ $(function () {
     // listener for confirming saved art assignments on 'Enter' key press
     $('#file_name').on('keydown', handleEnterKeyOnSaveAs);
     // listeners for button clicks in the 'edit tools' section.
-    $('#remove_btn').on('click', removeSelectedArtwork);
+    $remove_btn.on('click', removeSelectedArtwork);
     $('#cancel_btn').on('click', removeAllArtwork);
-    $('#save_btn').on('click', updateSavedVersion);
+    $save_btn.on('click', updateSavedVersion);
     $('#save_as_btn').on('click', saveNewVersion);
     $('#confirm_save_btn').on('click', confirmSave);
     $('#crop_btn').hide();
@@ -480,6 +483,20 @@ function addBookmarkIconEvents() {
 /** adds event listener for when images are moved in the canvas' bounding box area. **/
 function addCanvasEvents() {
     // images being moved are tried against the bounding box to prevent inappropriate placements within canvas.
+
+    artworkCanvas.on('object:selected', function (options) {
+        if (options.target) {
+            $remove_btn.show();
+        }
+    });
+
+    artworkCanvas.on('object:deselected', function (options) {
+        console.log('i am hidden')
+        if (options.target) {
+            $remove_btn.hide();
+            console.log('i am hidden')
+        }
+    });
 
     artworkCanvas.on('object:moving', function (options) {
         if (options.target) {
@@ -867,13 +884,12 @@ function confirmSaveSuccess(response, versionName) {
 
 /** Enables 'SAVE' button after a new version has been saved, to allow any changes to the saved version to be updated. **/
 function enableSaveButton() {
-    let saveBtn = document.getElementById('save_btn');
-    saveBtn.disabled = false;
+    $save_btn.show();
 }
 
 
 function disableSaveButton() {
-    document.getElementById('save_btn').disabled = true;
+    $save_btn.hide();
 }
 
 /** Captures and saves two screenshots: one of the entire canvas, and another of the bounding area where art is displayed.
@@ -950,9 +966,10 @@ function checkOverlapping(event) {
         errorMsg.classList.add('show');
     } else {
         let modal = new bootstrap.Modal(document.getElementById("confirmation_modal"), {});
-        myModal.show();
-        //errorMsg.classList.replace('show', 'hide');
+        modal.show();
+        errorMsg.classList.replace('show', 'hide');
     }
+    console.log(errorMsg)
 }
 
 function executeDelayedAction(action, delay) {
