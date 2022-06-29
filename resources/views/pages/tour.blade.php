@@ -84,6 +84,7 @@
                 timestamp: timestamp,
                 showerrors: false,
                 project_id: "{{ request('project_id', '') }}",
+                tracker: "{{ request('tracker', '') }}",
 
                 @foreach ($spot->surfaces as $surface)
                     {{ "surface_{$surface->id}" }}: '{{ $surface->getActiveStateUrl(request('project_id')) }}',

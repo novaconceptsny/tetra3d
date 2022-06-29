@@ -106,7 +106,18 @@
         var url = caller.goto_url;
         var hlookat = caller.hlookat;
         var vlookat = caller.vlookat;
-        url = url + "?hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
+        var project_id = krpano.project_id;
+        var tracker = krpano.tracker;
+
+        if (project_id){
+            url = url + "&#38;project_id=" + project_id
+        }
+
+        if (tracker){
+            url = url + "&#38;tracker=" + tracker
+        }
+
+        url = url + "&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
         window.location.href = url;
     </action>
 
