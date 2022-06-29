@@ -43,6 +43,8 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    'debug_tour' => (bool) env('DEBUG_TOUR', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\HasMedia;
@@ -58,6 +59,18 @@ class Surface extends Model implements HasMedia
             'user_id' => auth()->id(),
             'project_id' => $project_id
         ]);
+    }
+
+    public function friendlyName(): Attribute
+    {
+        $name = $this->name;
+        if (config('app.debug_tour')) {
+            $name .= " (surface_{$this->id})";
+        }
+
+        return Attribute::make(
+            get: fn() => $name
+        );
     }
 
     public function spots()

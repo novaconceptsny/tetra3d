@@ -60,11 +60,11 @@
                                     <div class="row g-2">
                                         <x-backend::inputs.text
                                             col="col-6" name='{{ "map.spots.{$spot->id}.x" }}'
-                                            :value="$map?->x" label='{{ "Spot {$spot->id} X" }}'
+                                            :value="$map?->x" label='{{ "{$spot->friendly_name} X" }}'
                                         />
                                         <x-backend::inputs.text
                                             col="col-6" name='{{ "map.spots.{$spot->id}.y" }}'
-                                            :value="$map?->y" label='{{ "Spot {$spot->id} Y" }}'
+                                            :value="$map?->y" label='{{ "{$spot->friendly_name} Y" }}'
                                         />
                                     </div>
                                 @endforeach

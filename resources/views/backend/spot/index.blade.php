@@ -33,7 +33,7 @@
                     @forelse($spots as $spot)
                         <tr>
                             <td>
-                                <a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->name }}</a>
+                                <a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->friendly_name }}</a>
                             </td>
                             <td>{{ $spot->surfaces_count }} {{ __('Surfaces') }}</td>
                             <td>

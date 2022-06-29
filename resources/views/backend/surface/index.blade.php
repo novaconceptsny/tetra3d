@@ -28,7 +28,7 @@
                     <tbody class="list">
                     @forelse($surfaces as $surface)
                         <tr>
-                            <td><a href="{{ route('backend.surfaces.edit', $surface) }}">{{ $surface->name }}</a></td>
+                            <td><a href="{{ route('backend.surfaces.edit', $surface) }}">{{ $surface->friendly_name }}</a></td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$surface">
                                     <x-backend::dropdown.item

@@ -1,7 +1,7 @@
 @foreach($spots as $_spot)
     <div class="rounded p-3 mb-3">
         <h5>
-            {{ __('Spot ') . $_spot->id }} ({{ $_spot->name }})
+            {{ $_spot->friendly_name }}
             <x-backend::inputs.switch
                 col="col-12 mb-3" name="navigations[{{$_spot->id}}][enabled]" label=""
                 checked="{{ $spot->xml->navigations[$_spot->id]['enabled'] ?? false }}"

@@ -75,6 +75,18 @@ class Spot extends Model implements HasMedia
         );
     }
 
+    public function friendlyName(): Attribute
+    {
+        $name = $this->name;
+        if (config('app.debug_tour')) {
+            $name .= " (spot_{$this->id})";
+        }
+
+        return Attribute::make(
+            get: fn() => $name
+        );
+    }
+
     public function xmlPath(): Attribute
     {
         $path = "{$this->tour_path}/pano.xml";
