@@ -46,11 +46,9 @@
     <hr class="divider"/>
     <ul class="navbar__nav mini bottom">
         <li class="nav__item">
-            <a href="#" class="nav__link">
-                <span class="icon">
-                    <x-svg.bell/>
-                </span>
-                <span class="nav__text hide"> Notifications </span>
+            <a href="{{ route('backend.projects.index') }}" class="nav__link" target="_blank">
+                <x-ri-dashboard-line />
+                <span class="nav__text hide"> Backend </span>
             </a>
         </li>
         <li class="nav__item">

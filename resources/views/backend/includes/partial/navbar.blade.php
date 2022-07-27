@@ -1,6 +1,10 @@
 <div class="navbar-custom">
     <ul class="list-unstyled topbar-menu float-end mb-0">
-
+        <li class="dropdown notification-list">
+            <a class="nav-link dropdown-toggle arrow-none" href="{{ route('dashboard') }}" target="_blank">
+                <i class="dripicons-monitor noti-icon"></i>
+            </a>
+        </li>
         <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown" href="#"
                role="button" aria-haspopup="false"
