@@ -22,6 +22,7 @@ async function getArtworkSelections() {
     return generalRequest(endpoint);
 }
 
+//todo::remove: not using anymore!
 //這裡就是叫出artwork選取的地方
 async function getPagedArtworkSelections(pageNum, locationId, artgroupId) {
     const endpoint = `api/wall/paged_artworks?page=${pageNum}&location=${locationId}&artgroup=${artgroupId}`;
@@ -133,6 +134,7 @@ async function getAllUserActiveVersions() {
     return await generalRequest(endpoint);
 }
 
+//todo::remove:not using anymore
 async function getSearchedArtworkResults(searchData, artgroupId) {
     const searchKey = searchData.searchKey;
     switch (searchData.searchOption) {

@@ -22,6 +22,7 @@ class SpotConfigurationController extends Controller
 
     public function edit(Spot $spot)
     {
+        $spot->load('surfaces.media');
         $data = array();
         $data['spot'] = $spot;
 
@@ -32,7 +33,7 @@ class SpotConfigurationController extends Controller
     {
         $spot->update([
             'xml' => $request->only([
-                'view', 'surfaces', 'overlays', 'scale_box', 'navigations'
+                'view', 'surfaces', 'overlays', 'scale_box', 'navigations', 'quick_actions'
             ])
         ]);
 

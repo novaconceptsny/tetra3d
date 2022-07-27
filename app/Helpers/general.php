@@ -30,6 +30,14 @@ function dotToHtmlArray($string = ''){
     return $name;
 }
 
+function htmlArrayToDot($arrayString = ''){
+    if (!str($arrayString)->contains('[')){
+        return $arrayString;
+    }
+
+    return str($arrayString)->replace(['[', ']'], ['.', '']);
+}
+
 function str_to_title($string): string
 {
     return str($string)

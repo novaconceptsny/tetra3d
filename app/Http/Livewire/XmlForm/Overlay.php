@@ -27,6 +27,7 @@ class Overlay extends Component
             'atv' => 0,
             'scale' => 1,
             'zorder' => 20,
+            'enabled' => 1,
         ];
     }
 }

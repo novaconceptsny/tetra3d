@@ -29,7 +29,7 @@
                     @forelse($projects as $project)
                         <tr>
                             <td>{{ $project->tour->name }}</td>
-                            <td><a href="{{ route('backend.projects.show', $project) }}">{{ $project->name }}</a></td>
+                            <td>{{ $project->name }}</td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$project">
 

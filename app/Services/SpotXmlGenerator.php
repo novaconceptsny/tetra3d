@@ -11,12 +11,14 @@ class SpotXmlGenerator
 {
     private Spot $spot;
     private mixed $xmlData;
+    private $actions;
     private SimpleDOM $xml;
 
     function __construct(Spot $spot)
     {
         $this->spot = $spot;
         $this->xmlData = $spot->xml;
+        $this->actions = $this->xmlData->quick_actions;
     }
 
     public function createXml()
@@ -216,7 +218,7 @@ class SpotXmlGenerator
             "select" => $this->getSurfaceData($surface, 'shared_h'),
             "ox_offset" => $this->getSurfaceData($surface, 'ox_offset'),
             "oy_offset" => $this->getSurfaceData($surface, 'oy_offset'),
-            "onloaded" => "setupSurface({$this->getSurfaceData($surface, 'onloaded')})",
+            "onloaded" => "setupSurface({$this->getSurfaceBackground($surface)})",
         ];
 
         $hotspot = $this->xml->addChild('hotspot');
@@ -261,12 +263,20 @@ class SpotXmlGenerator
 
     private function addNavigations()
     {
+        if ($this->allNavigationsAreDisabled()) {
+            return;
+        }
+
         $navigations = $this->xmlData->navigations ?? [];
 
         foreach ($navigations as $index => $navigation) {
-            $navigation_is_enabled = $navigation['enabled'] ?? false;
+            $navigation_enabled = $navigation['enabled'] ?? false;
 
-            if(!$navigation_is_enabled){
+            if ($this->allNavigationsAreEnabled()){
+                $navigation_enabled = true;
+            }
+
+            if(!$navigation_enabled){
                 continue;
             }
 
@@ -306,9 +316,23 @@ class SpotXmlGenerator
 
     private function addOverlays()
     {
+        if ($this->allOverlaysAreDisabled()) {
+            return;
+        }
+
         $overlays = $this->xmlData->overlays ?? [];
 
         foreach ($overlays as $index => $overlay) {
+            $overlay_enabled = $overlay['enabled'] ?? false;
+
+            if ($this->allOverlaysAreEnabled()){
+                $overlay_enabled = true;
+            }
+
+            if(!$overlay_enabled){
+                continue;
+            }
+
             $overlay = $this->addOverlay($index, $overlay);
 
             if ($index === array_key_first($overlays)) {
@@ -368,5 +392,37 @@ class SpotXmlGenerator
     private function getSpotAsset($asset)
     {
         return asset("storage/tours/{$this->spot->tour_id}/{$this->spot->id}/$asset");
+    }
+
+    // Quick Actions
+    private function allNavigationsAreDisabled()
+    {
+        return isset($this->actions['navigations']) && $this->actions['navigations'] == 'off';
+    }
+
+    private function allNavigationsAreEnabled()
+    {
+        return isset($this->actions['navigations']) && $this->actions['navigations'] == 'on';
+    }
+
+    private function allOverlaysAreDisabled()
+    {
+        return isset($this->actions['overlays']) && $this->actions['overlays'] == 'off';
+    }
+
+    private function allOverlaysAreEnabled()
+    {
+        return isset($this->actions['overlays']) && $this->actions['overlays'] == 'on';
+    }
+
+    private function getSurfaceBackground($surface)
+    {
+        if ( ! isset($this->actions['surface_backgrounds'])
+             || $this->actions['surface_backgrounds'] == 'default'
+        ) {
+            return $this->getSurfaceData($surface, 'onloaded');
+        }
+
+        return $this->actions['surface_backgrounds'];
     }
 }

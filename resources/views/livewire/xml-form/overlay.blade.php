@@ -1,5 +1,12 @@
 <div>
     @foreach($overlays as $index => $overlay)
+        <h5>
+            {{ "Overlay {$index}" }}
+            <x-backend::inputs.switch
+                col="col-12 mb-3" name="overlays[{{$index}}][enabled]" label=""
+                checked="{{ $overlay['enabled'] ?? false }}"
+            />
+        </h5>
         <div class="row mt-2" wire:key="{{$index}}">
             <x-backend::inputs.input
                 name="overlays[{{$index}}][uuid]" value="{{ $overlay['uuid'] }}" type="hidden"
