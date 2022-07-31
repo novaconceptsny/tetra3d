@@ -10,6 +10,7 @@
             <x-backend::layout.sidebar.nav-item label="Tours" icon="fal fa-vr-cardboard" route="{{ route('backend.tours.index') }}"/>
             <x-backend::layout.sidebar.nav-item label="Users" icon="fal fa-users" route="{{ route('backend.users.index') }}"/>
             <x-backend::layout.sidebar.nav-item label="Companies" icon="fal fa-sitemap" route="{{ route('backend.companies.index') }}"/>
+            <x-backend::layout.sidebar.nav-item label="Artworks" icon="fal fa-paint-brush" route="{{ route('backend.artworks.index') }}"/>
 
         </ul>
         <div class="clearfix"></div>

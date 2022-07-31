@@ -135,7 +135,7 @@ $(function () {
         });
         canvasState['savedVersion'] = true;
         canvasState['currentVersionData'] = latestState;
-        setTitle(latestState.version_name);
+        //setTitle(latestState.version_name);
         disableSaveButton();
         addSavedVersionEvents();
     }
@@ -157,6 +157,7 @@ function remapArtVariable(art) {
     return tempArr;
 }
 
+//todo::remove_this:not using anymore
 /**
  * Loads the title of a saved artwork image if it's a previously saved version.
  * @param versionName: user designated name for a particular saved version.
@@ -465,19 +466,21 @@ function removeAllArtwork() {
  * @param event: the event that triggered this function. Used for identifying clicked buttons.
  */
 function saveNewVersion(event) {
-    checkOverlapping(event);
+    openSaveFileModal(event);
 }
 
 
 /**
  * Applies changes made since last save to an artwork assignment version.
  * @param event: The event fired from a 'SAVE' button press.
- * @returns {Promise<void>}
  */
 
 
 function updateSavedVersion(event) {
-    checkOverlapping(event);
+    if (canvasHasOverlap()) {
+        window.alert('There is an overlap');
+        return;
+    }
     let clearTransientData = () => {
         canvasState.modifiedVersion.addedArtwork = [];
         canvasState.modifiedVersion.removedArtwork = [];
@@ -671,18 +674,16 @@ function setAssignmentProperties(reverseScale) {
 }
 
 /**
- * Checks whether any artwork images assigned in the canvas are overlapping.
- * Prevents saving assignments if so, allows otherwise.
+ * Prevents saving assignments if canvas has overlap, allows otherwise.
  * @param event: event fired after 'SAVE' or 'SAVE AS' button is pressed.
  */
 
-// overlap function
-function checkOverlapping(event) {
+function openSaveFileModal(event) {
     event.preventDefault();
 
     let btn = event.target;
     let errorMsg = document.getElementById('error_alert');
-    if (canvasState.isOverlap) {
+    if (canvasHasOverlap()) {
         btn.setAttribute('data-bs-target', 'none');
         errorMsg.classList.add('show');
     } else {
@@ -691,6 +692,14 @@ function checkOverlapping(event) {
         errorMsg.classList.replace('show', 'hide');
     }
     console.log(errorMsg)
+}
+
+/**
+ * Checks whether any artwork images assigned in the canvas are overlapping.
+ */
+
+function canvasHasOverlap() {
+    return canvasState.isOverlap;
 }
 
 export {artworkCanvas, canvasState, newArtworkSelection, placeSelectedImage};

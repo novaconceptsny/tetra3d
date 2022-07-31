@@ -34,6 +34,7 @@ class SurfaceStateController extends Controller
         $data = array();
         $data['surface'] = $surface;
         $data['surface_data'] = $surfaceData;
+        $data['surface_current_state'] = $surface_state;
         $data['spot'] = $spot;
         $artworks = Artwork::take(30)->get();
         $data['assigned_artworks'] = $assignedArtworks;
@@ -90,5 +91,11 @@ class SurfaceStateController extends Controller
             'hlookat' => $request->hlookat,
             'vlookat' => $request->vlookat,
         ]);
+    }
+
+    public function destroy(SurfaceState $state)
+    {
+        $state->delete();
+        return redirect()->back()->with('success', 'State removed');
     }
 }

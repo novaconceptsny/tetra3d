@@ -35,6 +35,11 @@ class SurfaceState extends Model implements HasMedia
         return $this->belongsTo(Surface::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function project()
     {
         return $this->belongsTo(Project::class);

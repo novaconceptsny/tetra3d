@@ -19,8 +19,8 @@
             <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
         </div>
         <div class="d-flex fs-5 mb-2">
-            <p class="room_name mb-0">s4002 > Test</p>
-            <p class="ml-2" id="assignment_title">Test</p>
+            <p class="room_name mb-0">{{ $spot->name }} > {{ $surface_current_state->name }}</p>
+            {{--<p class="ml-2" id="assignment_title">Test</p>--}}
         </div>
         <div class="image__viewer main_content">
             <canvas id="artwork_canvas" style="z-index: 100;"></canvas>
@@ -94,8 +94,8 @@
             });
         });*/
 
-        window.addEventListener('artworksLoaded', function (){
+        /*window.addEventListener('artworksLoaded', function (){
             console.log('her');
-        })
+        })*/
     </script>
 @endsection

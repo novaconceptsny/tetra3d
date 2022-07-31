@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Spot\PanoStatus;
 use App\Enums\Spot\XmlStatus;
 use App\Services\SpotXmlGenerator;
+use Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -117,16 +118,22 @@ class Spot extends Model implements HasMedia
 
         $base_dir = $this->tour_path;
         $pano_dir = "$base_dir/panos";
+        $cache_key = "pano_{$this->id}_status";
 
-        if ( ! \File::isDirectory($pano_dir)) {
-            return PanoStatus::NOT_PRESENT;
-        }
+        return Cache::remember($cache_key, now()->addMinutes(10),
+            function () use ($pano_dir) {
+                if ( ! \File::isDirectory($pano_dir)) {
+                    return PanoStatus::NOT_PRESENT;
+                }
 
-        if (count(\File::allFiles($pano_dir)) !== 415) {
-            return PanoStatus::INVALID;
-        }
+                if (count(\File::allFiles($pano_dir)) !== 415) {
+                    return PanoStatus::INVALID;
+                }
 
-        return PanoStatus::PRESENT;
+                return PanoStatus::PRESENT;
+            }
+        );
+
     }
 
     public function getOverlayImageUrl($uuid){

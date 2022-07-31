@@ -52,6 +52,7 @@
         @include('include.common.sidebar')
         @yield('content')
     </section>
+    <livewire:modals.base-modal />
 </main>
 <!--Ends Main Area-->
 
@@ -75,7 +76,15 @@
         })
     })
 </script>
+
 <livewire:scripts/>
+<script src="{{ asset('js/modals.js') }}"></script>
+<script>
+    Livewire.on('flashNotification', (message, type = 'success') => {
+        toastr[type](message)
+    });
+</script>
+
 
 @yield('scripts')
 </body>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SurfaceStateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,9 +23,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
 
-    Route::get('surfaces/{surface}', 'SurfaceStateController@show')->name('surfaces.show');
-    Route::post('surfaces/{surface}', 'SurfaceStateController@store')->name('surfaces.store');
-    Route::post('surfaces/{surface}', 'SurfaceStateController@update')->name('surfaces.update');
+    Route::controller(SurfaceStateController::class)->group(function () {
+        Route::get('surfaces/{surface}', 'show')->name('surfaces.show');
+        Route::post('surfaces/{surface}', 'store')->name('surfaces.store');
+        Route::post('surfaces/{surface}', 'update')->name('surfaces.update');
+        Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
+    });
 });
 
 
@@ -49,6 +53,7 @@ Route::group([
     Route::resource('users', 'UserController');
     Route::resource('projects', 'ProjectController');
     Route::resource('tours', 'TourController');
+    Route::resource('artworks', 'ArtworkController');
     Route::resource('tours.spots', 'SpotController')->shallow();
     Route::resource('tours.surfaces', 'SurfaceController')
         ->shallow();

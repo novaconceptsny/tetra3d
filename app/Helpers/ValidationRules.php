@@ -93,4 +93,18 @@ class ValidationRules
     {
         return self::storeMap();
     }
+
+    public static function storeArtwork()
+    {
+        return [
+            'name' => 'required',
+            'artist' => 'required',
+            'type' => 'required',
+        ];
+    }
+
+    public static function updateArtwork()
+    {
+        return self::storeArtwork();
+    }
 }
