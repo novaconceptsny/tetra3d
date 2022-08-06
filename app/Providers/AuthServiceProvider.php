@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\ArtowrkCollection;
 use App\Models\Artwork;
+use App\Models\ArtworkCollection;
 use App\Models\Company;
 use App\Models\Map;
 use App\Models\Project;
@@ -11,6 +13,8 @@ use App\Models\Surface;
 use App\Models\SurfaceState;
 use App\Models\Tour;
 use App\Models\Wall;
+use App\Policies\ArtowrkCollectionPolicy;
+use App\Policies\ArtworkCollectionPolicy;
 use App\Policies\ArtworkPolicy;
 use App\Policies\CompanyPolicy;
 use App\Policies\MapPolicy;
@@ -41,6 +45,8 @@ class AuthServiceProvider extends ServiceProvider
         Spot::class => SpotPolicy::class,
         SurfaceState::class => SurfaceVersionPolicy::class,
         Map::class => MapPolicy::class,
+        ArtowrkCollection::class => ArtowrkCollectionPolicy::class,
+        ArtworkCollection::class => ArtworkCollectionPolicy::class,
     ];
 
     /**

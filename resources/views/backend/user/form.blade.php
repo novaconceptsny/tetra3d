@@ -28,6 +28,12 @@
                 <x-backend::inputs.text col="col-6" name="email" value="{{ $user?->email }}"/>
                 <x-backend::inputs.text col="col-6" name="password" />
 
+                <x-backend::inputs.select name="role">
+                    @foreach(\Spatie\Permission\Models\Role::whereNotIn('id', [1])->get() as $role)
+                        <x-backend::inputs.select-option :value="$role->id" :text="$role->display_name" :selected="$user?->roles?->first()?->id"/>
+                    @endforeach
+                </x-backend::inputs.select>
+
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
                         {{ $submit_text ?? ( $user ? __('Update') : __('Create') ) }}

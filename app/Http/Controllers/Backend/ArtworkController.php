@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Artwork;
+use App\Models\ArtworkCollection;
 use Illuminate\Http\Request;
 
 class ArtworkController extends Controller
@@ -19,6 +20,7 @@ class ArtworkController extends Controller
         $data = array();
 
         $data['route'] = route('backend.artworks.store');
+        $data['artwork_collections'] = ArtworkCollection::all();
         return view('backend.artwork.form', $data);
     }
 
@@ -27,7 +29,7 @@ class ArtworkController extends Controller
         $request->validate(ValidationRules::storeArtwork());
 
         $artwork = Artwork::create($request->only([
-            'name', 'artist', 'type', 'data'
+            'name', 'artist', 'type', 'data', 'collection_id'
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)
@@ -48,6 +50,7 @@ class ArtworkController extends Controller
         $data['route'] = route('backend.artworks.update', $artwork);
         $data['method'] = 'put';
         $data['artwork'] = $artwork;
+        $data['artwork_collections'] = ArtworkCollection::all();
 
         return view('backend.artwork.form', $data);
     }
@@ -57,7 +60,7 @@ class ArtworkController extends Controller
         $request->validate(ValidationRules::updateArtwork());
 
         $artwork->update($request->only([
-            'name', 'artist', 'type', 'data'
+            'name', 'artist', 'type', 'data', 'collection_id'
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)

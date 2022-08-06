@@ -18,6 +18,7 @@ class ValidationRules
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|max:255|email|unique:users,email',
             'password' => 'required|string|max:25|min:6',
+            'role' => 'required'
         ];
     }
 

@@ -54,6 +54,8 @@ Route::group([
     Route::resource('projects', 'ProjectController');
     Route::resource('tours', 'TourController');
     Route::resource('artworks', 'ArtworkController');
+    Route::resource('artwork-collections', 'ArtworkCollectionController')
+    ->parameter('artwork-collections', 'collection');
     Route::resource('tours.spots', 'SpotController')->shallow();
     Route::resource('tours.surfaces', 'SurfaceController')
         ->shallow();

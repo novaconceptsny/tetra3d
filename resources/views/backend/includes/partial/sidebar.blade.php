@@ -11,6 +11,7 @@
             <x-backend::layout.sidebar.nav-item label="Users" icon="fal fa-users" route="{{ route('backend.users.index') }}"/>
             <x-backend::layout.sidebar.nav-item label="Companies" icon="fal fa-sitemap" route="{{ route('backend.companies.index') }}"/>
             <x-backend::layout.sidebar.nav-item label="Artworks" icon="fal fa-paint-brush" route="{{ route('backend.artworks.index') }}"/>
+            <x-backend::layout.sidebar.nav-item label="Artwork Collections" icon="fal fa-images" route="{{ route('backend.artwork-collections.index') }}"/>
 
         </ul>
         <div class="clearfix"></div>

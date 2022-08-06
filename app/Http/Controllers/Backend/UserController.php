@@ -31,6 +31,8 @@ class UserController extends Controller
             'first_name', 'last_name', 'email', 'password', 'company_id'
         ]));
 
+        $user->assignRole($request->role);
+
         return redirect()->route('backend.users.index')->with('success', 'User created successfully');
     }
 
@@ -57,6 +59,7 @@ class UserController extends Controller
             'first_name', 'last_name', 'email', 'password', 'company_id'
         ]));
 
+        $user->assignRole($request->role);
 
         return redirect()->back()->with('success', 'User created successfully');
     }

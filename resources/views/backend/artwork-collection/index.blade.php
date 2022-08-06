@@ -2,7 +2,7 @@
 
 @section('title_right')
     <x-backend::layout.breadcrumbs>
-        <x-backend::layout.breadcrumb-item text="Users" :active="true"/>
+        <x-backend::layout.breadcrumb-item text="Collections" :active="true"/>
     </x-backend::layout.breadcrumbs>
 @endsection
 
@@ -10,10 +10,10 @@
     <div class="card">
         <div class="card-header">
             <div class="float-end">
-                <a href="{{ route('backend.users.create') }}" class="btn btn-sm btn-outline-primary"><i
+                <a href="{{ route('backend.artwork-collections.create') }}" class="btn btn-sm btn-outline-primary"><i
                         class="fal fa-plus"></i> {{ __('Add New') }}</a>
             </div>
-            <h5 class="mb-0 ">{{ __('Tours') }}</h5>
+            <h5 class="mb-0 ">{{ __('Collections') }}</h5>
         </div>
         <div class="card-body p-0">
             <div class="mb-3">
@@ -21,39 +21,33 @@
                     <thead>
                     <tr>
                         <th scope="col">{{ __('Name') }}</th>
-                        <th scope="col">{{ __('Email') }}</th>
-                        <th scope="col">{{ __('Role') }}</th>
-                        <th scope="col">{{ __('Company') }}</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody class="list">
-                    @forelse($users as $user)
+                    @forelse($collections as $collection)
                         <tr>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->role }}</td>
-                            <td>{{ $user->company?->name }}</td>
+                            <td>{{ $collection->name }}</td>
                             <td>
-                                <x-backend::dropdown.container permission="update|delete" :permission_params="$user">
+                                <x-backend::dropdown.container permission="update|delete" :permission_params="$collection">
                                     <x-backend::dropdown.item
-                                        permission="update" :permission_params="$user"
-                                        :route="route('backend.users.edit', $user)">
+                                        permission="update" :permission_params="$collection"
+                                        :route="route('backend.artwork-collections.edit', $collection)">
                                         <i class="fal fa-pen mr-1"></i> {{ __('Edit') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item
-                                        permission="delete" :permission_params="$user"
+                                        permission="delete" :permission_params="$collection"
                                         class="text-danger" data-bs-toggle="modal"
-                                        data-bs-target="#confirm_user_{{ $user->id }}">
+                                        data-bs-target="#confirm_company_{{ $collection->id }}">
                                         <i class="fa fa-trash mr-1"></i> {{ __('Delete') }}
                                     </x-backend::dropdown.item>
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm
-                                permission="edit" :permission_params="$user"
-                                :route="route('backend.users.destroy', $user)"
-                                :model="$user" :button="false"
+                                permission="edit" :permission_params="$collection"
+                                :route="route('backend.artwork-collections.destroy', $collection)"
+                                :model="$collection" :button="false"
                             />
                         </tr>
                     @empty
@@ -66,3 +60,4 @@
         <div class="card-footer py-0"></div>
     </div>
 @endsection
+

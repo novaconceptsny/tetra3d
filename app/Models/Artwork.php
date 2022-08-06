@@ -27,6 +27,13 @@ class Artwork extends Model implements HasMedia
         'data' => SchemalessAttributes::class,
     ];
 
+    public function collection()
+    {
+        return $this->belongsTo(
+            ArtworkCollection::class, 'collection_id'
+        )->withDefault(['name' => 'No Collection']);
+    }
+
     public function scopeWithData(): Builder
     {
         return $this->data->modelScope();

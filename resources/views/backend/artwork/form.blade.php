@@ -22,7 +22,16 @@
                 @method($method ?? 'POST')
 
                 <div class="row g-3">
-                    <x-backend::inputs.text name="name" value="{!! $artwork?->name !!}"/>
+                    <x-backend::inputs.select name="collection_id" label="Collection">
+                        @foreach($artwork_collections as $collection)
+                            <x-backend::inputs.select-option
+                                :value="$collection->id" :text="$collection->name"
+                                :selected="$artwork?->collection_id"
+                            />
+                        @endforeach
+                    </x-backend::inputs.select>
+
+                    <x-backend::inputs.text col="col-6" name="name" value="{!! $artwork?->name !!}"/>
                     <x-backend::inputs.text col="col-6" name="artist" value="{{ $artwork?->artist }}"/>
                     <x-backend::inputs.text col="col-6" name="type" value="{{ $artwork?->type }}"/>
                     <x-backend::inputs.text col="col-4" name="data.scale" value="{{ $artwork?->data->scale }}"/>

@@ -34,6 +34,7 @@ class ArtworkDatatable extends BaseDatatable
 
         $rows->getCollection()->transform(function ($row){
             $row->company_name = $row->company->name;
+            $row->collection_name = $row->collection?->name;
             return $row;
         });
 
@@ -53,7 +54,11 @@ class ArtworkDatatable extends BaseDatatable
     {
         $columns = [
             'company_name' => [
-                'name' => 'Company Name',
+                'name' => 'Company',
+                'visible' => true,
+            ],
+            'collection_name' => [
+                'name' => 'Collection',
                 'visible' => true,
             ],
             'name' => [
