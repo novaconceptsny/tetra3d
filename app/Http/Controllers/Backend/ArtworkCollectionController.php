@@ -4,10 +4,16 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\ArtworkCollection;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ArtworkCollectionController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(ArtworkCollection::class, 'collection');
+    }
+
     public function index()
     {
         $collections = ArtworkCollection::all();

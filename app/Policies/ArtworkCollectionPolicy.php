@@ -12,38 +12,44 @@ class ArtworkCollectionPolicy
 
     public function viewAny(User $user)
     {
-
+        if ($user->isCompanyAdmin()) {
+            return true;
+        }
     }
 
     public function view(User $user, ArtworkCollection $collection)
     {
+        if ($user->isCompanyAdmin()) {
+            return $user->company_id == $collection->company_id;
+        }
     }
 
     public function create(User $user)
     {
+        if ($user->isCompanyAdmin()) {
+            return true;
+        }
     }
 
-    public function update(
-        User $user,
-        ArtworkCollection $collection
-    ) {
+    public function update(User $user, ArtworkCollection $collection)
+    {
+        if ($user->isCompanyAdmin()) {
+            return $user->company_id == $collection->company_id;
+        }
     }
 
-    public function delete(
-        User $user,
-        ArtworkCollection $collection
-    ) {
+    public function delete(User $user, ArtworkCollection $collection)
+    {
+        if ($user->isCompanyAdmin()) {
+            return $user->company_id == $collection->company_id;
+        }
     }
 
-    public function restore(
-        User $user,
-        ArtworkCollection $collection
-    ) {
+    public function restore(User $user, ArtworkCollection $collection)
+    {
     }
 
-    public function forceDelete(
-        User $user,
-        ArtworkCollection $collection
-    ) {
+    public function forceDelete(User $user, ArtworkCollection $collection)
+    {
     }
 }

@@ -6,10 +6,16 @@ use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ArtworkController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Artwork::class, 'artwork');
+    }
+
     public function index()
     {
         return view('backend.artwork.index');

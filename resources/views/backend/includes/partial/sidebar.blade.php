@@ -6,12 +6,30 @@
         <ul class="side-nav">
             <x-backend::layout.sidebar.title label="{{ __('Navigation') }}"/>
 
-            <x-backend::layout.sidebar.nav-item label="Projects" icon="fal fa-home" route="{{ route('backend.projects.index') }}"/>
-            <x-backend::layout.sidebar.nav-item label="Tours" icon="fal fa-vr-cardboard" route="{{ route('backend.tours.index') }}"/>
-            <x-backend::layout.sidebar.nav-item label="Users" icon="fal fa-users" route="{{ route('backend.users.index') }}"/>
-            <x-backend::layout.sidebar.nav-item label="Companies" icon="fal fa-sitemap" route="{{ route('backend.companies.index') }}"/>
-            <x-backend::layout.sidebar.nav-item label="Artworks" icon="fal fa-paint-brush" route="{{ route('backend.artworks.index') }}"/>
-            <x-backend::layout.sidebar.nav-item label="Artwork Collections" icon="fal fa-images" route="{{ route('backend.artwork-collections.index') }}"/>
+            <x-backend::layout.sidebar.nav-item
+                label="Projects" icon="fal fa-home" route="{{ route('backend.projects.index') }}"
+                permission="viewAny" :permission-params="\App\Models\Project::class"
+            />
+            <x-backend::layout.sidebar.nav-item
+                label="Tours" icon="fal fa-vr-cardboard" route="{{ route('backend.tours.index') }}"
+                permission="viewAny" :permission-params="\App\Models\Tour::class"
+            />
+            <x-backend::layout.sidebar.nav-item
+                label="Users" icon="fal fa-users" route="{{ route('backend.users.index') }}"
+                permission="viewAny" :permission-params="\App\Models\User::class"
+            />
+            <x-backend::layout.sidebar.nav-item
+                label="Companies" icon="fal fa-sitemap" route="{{ route('backend.companies.index') }}"
+                permission="viewAny" :permission-params="\App\Models\Company::class"
+            />
+            <x-backend::layout.sidebar.nav-item
+                label="Artworks" icon="fal fa-paint-brush" route="{{ route('backend.artworks.index') }}"
+                permission="viewAny" :permission-params="\App\Models\Artwork::class"
+            />
+            <x-backend::layout.sidebar.nav-item
+                label="Artwork Collections" icon="fal fa-images" route="{{ route('backend.artwork-collections.index') }}"
+                permission="viewAny" :permission-params="\App\Models\ArtworkCollection::class"
+            />
 
         </ul>
         <div class="clearfix"></div>

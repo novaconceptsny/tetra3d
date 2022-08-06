@@ -2,18 +2,12 @@
 
 namespace App\Policies;
 
-use App\Models\Artwork;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ArtworkPolicy
+class UserPolicy
 {
     use HandlesAuthorization;
-
-    public function __construct()
-    {
-        //
-    }
 
     public function viewAny(User $user)
     {
@@ -22,10 +16,10 @@ class ArtworkPolicy
         }
     }
 
-    public function view(User $user, Artwork $artwork)
+    public function view(User $user, User $model)
     {
-        if ($user->isCompanyAdmin()) {
-            return true;
+        if ($user->isCompanyAdmin()){
+            return $user->company_id == $model->company_id;
         }
     }
 
@@ -36,26 +30,26 @@ class ArtworkPolicy
         }
     }
 
-    public function update(User $user, Artwork $artwork)
+    public function update(User $user, User $model)
     {
         if ($user->isCompanyAdmin()){
-            return $user->company_id == $artwork->company_id;
+            return $user->company_id == $model->company_id;
         }
     }
 
-    public function delete(User $user, Artwork $artwork)
+    public function delete(User $user, User $model)
     {
         if ($user->isCompanyAdmin()){
-            return $user->company_id == $artwork->company_id;
+            return $user->company_id == $model->company_id;
         }
     }
 
-    public function restore(User $user, Artwork $artwork)
+    public function restore(User $user, User $model)
     {
         //
     }
 
-    public function forceDelete(User $user, Artwork $artwork)
+    public function forceDelete(User $user, User $model)
     {
         //
     }

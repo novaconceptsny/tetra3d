@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Company::class, 'company');
+    }
+
     public function index()
     {
         $companies = Company::paginate(25);

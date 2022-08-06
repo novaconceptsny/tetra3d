@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasCompany;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -78,5 +79,10 @@ class User extends Authenticatable
     public function isSuperAdmin()
     {
         return $this->isAdmin();
+    }
+
+    public function isCompanyAdmin()
+    {
+        return $this->hasRole('company_admin');
     }
 }

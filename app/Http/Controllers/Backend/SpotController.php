@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 
 class SpotController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Spot::class, 'spot');
+    }
+
     public function index(Tour $tour)
     {
         $data = array();

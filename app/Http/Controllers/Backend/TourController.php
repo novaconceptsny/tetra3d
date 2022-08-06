@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use App\Models\Tour;
 use Arr;
 use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Tour::class, 'tour');
+    }
+
     public function index()
     {
         $tours = Tour::withCount('surfaces', 'spots')->get();

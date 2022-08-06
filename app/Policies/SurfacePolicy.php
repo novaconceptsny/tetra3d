@@ -15,37 +15,39 @@ class SurfacePolicy
         //
     }
 
-    public function viewAny(User $user): void
+    public function viewAny(User $user)
+    {
+        if ($user->isCompanyAdmin()) {
+            return true;
+        }
+    }
+
+    public function view(User $user, Surface $surface)
     {
         //
     }
 
-    public function view(User $user, Surface $surface): void
+    public function create(User $user)
     {
         //
     }
 
-    public function create(User $user): void
+    public function update(User $user, Surface $surface)
     {
         //
     }
 
-    public function update(User $user, Surface $surface): void
+    public function delete(User $user, Surface $surface)
     {
         //
     }
 
-    public function delete(User $user, Surface $surface): void
+    public function restore(User $user, Surface $surface)
     {
         //
     }
 
-    public function restore(User $user, Surface $surface): void
-    {
-        //
-    }
-
-    public function forceDelete(User $user, Surface $surface): void
+    public function forceDelete(User $user, Surface $surface)
     {
         //
     }

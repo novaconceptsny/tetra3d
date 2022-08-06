@@ -17,7 +17,9 @@ class ProjectPolicy
 
     public function viewAny(User $user)
     {
-        //
+        if ($user->isCompanyAdmin()) {
+            return true;
+        }
     }
 
     public function view(User $user, Project $project)

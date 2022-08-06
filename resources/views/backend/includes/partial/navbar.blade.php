@@ -24,6 +24,14 @@
                 </div>
 
                 <!-- item-->
+                @if(session()->has('admin_id'))
+                    <form class="d-inline" action="{{ route('back.to.admin') }}" method="post">
+                        @csrf
+                        <button type="submit" class="dropdown-item notify-item"><i class="fal fa-arrow-to-left"></i>
+                            {{ __('Back to Admin') }}
+                        </button>
+                    </form>
+                @endif
                 <a href="javascript:void(0);"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                    class="dropdown-item notify-item">

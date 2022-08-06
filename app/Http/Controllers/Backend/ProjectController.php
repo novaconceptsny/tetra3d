@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Project;
 use App\Models\Tour;
 use App\Models\User;
@@ -11,9 +12,14 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Project::class, 'project');
+    }
+
     public function index()
     {
-        $projects = Project::paginate(25);
+        $projects = Project::relevant()->paginate(25);
         return view('backend.project.index', compact('projects'));
     }
 

@@ -5,13 +5,19 @@ namespace App\Http\Controllers\Backend;
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(User::class, 'user');
+    }
+
     public function index()
     {
-        $users = User::paginate(25);
+        $users = User::forCurrentCompany()->paginate(25);
         return view('backend.user.index', compact('users'));
     }
 
@@ -67,5 +73,25 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    public function loginAs(Request $request, User $user)
+    {
+        $this->authorize('switch to user');
+        session()->put('admin_id', auth()->id());
+        Auth::login($user);
+        $route = $user->can('access-backend') ? 'backend.dashboard' : 'dashboard';
+        return redirect()->route($route)->with('success', __("You are now logged in as "). $user->name);
+    }
+
+    public function backToAdmin(Request $request)
+    {
+        $admin_id = session()->pull('admin_id');
+        $user = User::findOrFail($admin_id);
+        $this->authorizeForUser($user, 'switch to user');
+
+        Auth::loginUsingId($admin_id);
+        session()->forget(['applicant_type', 'applicant_id', 'applicant', 'admin_id']);
+        return redirect()->route('backend.dashboard')->with('success', __("You are now logged in as admin"));
     }
 }

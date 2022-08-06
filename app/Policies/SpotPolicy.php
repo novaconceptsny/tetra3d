@@ -15,37 +15,47 @@ class SpotPolicy
         //
     }
 
-    public function viewAny(User $user): void
+    public function viewAny(User $user)
+    {
+        if ($user->isCompanyAdmin()) {
+            return true;
+        }
+    }
+
+    public function view(User $user, Spot $spot)
+    {
+        if ($user->isCompanyAdmin()) {
+            return $user->company_id == $spot->company_id;
+        }
+    }
+
+    public function create(User $user)
+    {
+        if ($user->isCompanyAdmin()) {
+            return true;
+        }
+    }
+
+    public function update(User $user, Spot $spot)
+    {
+        if ($user->isCompanyAdmin()) {
+            return $user->company_id == $spot->company_id;
+        }
+    }
+
+    public function delete(User $user, Spot $spot)
+    {
+        if ($user->isCompanyAdmin()) {
+            return $user->company_id == $spot->company_id;
+        }
+    }
+
+    public function restore(User $user, Spot $spot)
     {
         //
     }
 
-    public function view(User $user, Spot $spot): void
-    {
-        //
-    }
-
-    public function create(User $user): void
-    {
-        //
-    }
-
-    public function update(User $user, Spot $spot): void
-    {
-        //
-    }
-
-    public function delete(User $user, Spot $spot): void
-    {
-        //
-    }
-
-    public function restore(User $user, Spot $spot): void
-    {
-        //
-    }
-
-    public function forceDelete(User $user, Spot $spot): void
+    public function forceDelete(User $user, Spot $spot)
     {
         //
     }

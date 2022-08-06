@@ -10,8 +10,10 @@
     <div class="card">
         <div class="card-header">
             <div class="float-end">
-                <a href="{{ route('backend.users.create') }}" class="btn btn-sm btn-outline-primary"><i
-                        class="fal fa-plus"></i> {{ __('Add New') }}</a>
+                @can('create', \App\Models\User::class)
+                    <a href="{{ route('backend.users.create') }}" class="btn btn-sm btn-outline-primary"><i
+                            class="fal fa-plus"></i> {{ __('Add New') }}</a>
+                @endif
             </div>
             <h5 class="mb-0 ">{{ __('Tours') }}</h5>
         </div>
@@ -48,6 +50,8 @@
                                         data-bs-target="#confirm_user_{{ $user->id }}">
                                         <i class="fa fa-trash mr-1"></i> {{ __('Delete') }}
                                     </x-backend::dropdown.item>
+
+                                    <x-backend::switch-to-user :user="$user"/>
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm

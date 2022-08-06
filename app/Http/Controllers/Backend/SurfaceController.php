@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use App\Models\Tour;
 use App\Models\Surface;
 use Illuminate\Http\Request;
 
 class SurfaceController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Surface::class, 'surface');
+    }
+
     public function index(Tour $tour)
     {
         $data = array();

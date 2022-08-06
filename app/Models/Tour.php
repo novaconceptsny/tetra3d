@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Tour extends Model
@@ -26,5 +27,12 @@ class Tour extends Model
     public function map()
     {
         return $this->hasOne(Map::class);
+    }
+
+    public function scopeRelevant(Builder $builder)
+    {
+        if (user()->isCompanyAdmin()){
+            $builder->where('company_id', user()->company_id);
+        }
     }
 }

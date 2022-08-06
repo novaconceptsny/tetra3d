@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\SurfaceStateController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
+
+    Route::post('login-as/{user}', [UserController::class, 'loginAs'])->name('login.as.user');
+    Route::post('back-to-admin', [UserController::class, 'backToAdmin'])->name('back.to.admin');
+
     Route::get('/', 'HomeController@index')->name('dashboard');
     Route::get('tours/{tour}', 'TourController@show')->name('tours.show');
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
@@ -33,11 +38,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 Route::group([
-    'middleware' => 'auth',
+    'middleware' => ['auth', 'can:access-backend'],
     'prefix' => 'backend',
     'namespace' => 'Backend',
     'as' => 'backend.',
 ], function () {
+
+    Route::redirect('/dashboard', '/backend/projects')->name('dashboard');
 
     Route::controller('SpotConfigurationController')->group(function () {
         Route::get('spot-configuration/{spot}', 'show')
