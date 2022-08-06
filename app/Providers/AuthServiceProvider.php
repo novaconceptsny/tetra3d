@@ -20,6 +20,7 @@ use App\Policies\ArtworkPolicy;
 use App\Policies\CompanyPolicy;
 use App\Policies\MapPolicy;
 use App\Policies\ProjectPolicy;
+use App\Policies\SpotConfigurationPolicy;
 use App\Policies\SpotPolicy;
 use App\Policies\SurfacePolicy;
 use App\Policies\SurfaceVersionPolicy;
@@ -28,6 +29,7 @@ use App\Policies\UserPolicy;
 use App\Policies\WallPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use SpotConfiguration;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -48,6 +50,7 @@ class AuthServiceProvider extends ServiceProvider
         Map::class => MapPolicy::class,
         ArtworkCollection::class => ArtworkCollectionPolicy::class,
         User::class => UserPolicy::class,
+        SpotConfiguration::class => SpotConfigurationPolicy::class,
     ];
 
     /**
@@ -58,6 +61,10 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        Gate::define('perform-admin-actions', function (User $user){
+            return $user->isSuperAdmin();
+        });
 
         Gate::define('access-backend', function (User $user){
             return $user->isCompanyAdmin();

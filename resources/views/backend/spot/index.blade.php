@@ -57,18 +57,19 @@
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$spot">
 
                                     <x-backend::dropdown.item
+                                        permission="perform-admin-actions"
                                         onclick="window.livewire.emit('showModal', 'modals.krpano-tools', {{ $spot->id }})">
                                         <i class="fal fa-toolbox mr-1"></i> {{ __('Krpano Tools') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item
-                                        permission="update" :permission_params="$spot"
+                                        permission="perform-admin-actions"
                                         :route="route('backend.spot-configuration.show', $spot)">
                                         <i class="fal fa-code mr-1"></i> {{ __('Show Configuration') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item
-                                        permission="update" :permission_params="$spot"
+                                        permission="perform-admin-actions"
                                         :route="route('backend.spot-configuration.edit', $spot)">
                                         <i class="fal fa-cog mr-1"></i> {{ __('Configure Spot') }}
                                     </x-backend::dropdown.item>
@@ -88,7 +89,7 @@
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm
-                                permission="edit" :permission_params="$spot"
+                                permission="delete" :permission_params="$spot"
                                 :route="route('backend.spots.destroy', $spot)"
                                 :model="$spot" :button="false"
                             />

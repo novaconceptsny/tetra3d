@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Artwork;
 use App\Models\Spot;
 use App\Models\Surface;
 use App\Services\SpotXmlGenerator;
@@ -10,6 +11,11 @@ use Illuminate\Http\Request;
 
 class SpotConfigurationController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorize('perform-admin-actions');
+    }
+
     public function show(Spot $spot)
     {
         if (!file_exists($spot->xml_path)){

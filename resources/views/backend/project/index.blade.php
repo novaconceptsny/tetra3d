@@ -10,8 +10,10 @@
     <div class="card">
         <div class="card-header">
             <div class="float-end">
+                @can('create', \App\Models\Project::class)
                 <a href="{{ route('backend.projects.create') }}" class="btn btn-sm btn-outline-primary"><i
                         class="fal fa-plus"></i> {{ __('Add New') }}</a>
+                @endcan
             </div>
             <h5 class="mb-0 ">{{ __('Projects') }}</h5>
         </div>
