@@ -25,7 +25,7 @@ class HomeController extends Controller
     public function index()
     {
         $data = array();
-        $data['projects'] = Project::relevant()->get();
+        $data['projects'] = Project::with('tour')->relevant()->get();
 
         return view('dashboard', $data);
     }

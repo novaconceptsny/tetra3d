@@ -31,9 +31,7 @@ class ArtworkPolicy
 
     public function create(User $user)
     {
-        if ($user->isCompanyAdmin()) {
-            return true;
-        }
+        return $user->isCompanyAdmin();
     }
 
     public function update(User $user, Artwork $artwork)

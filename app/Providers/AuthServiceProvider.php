@@ -67,7 +67,9 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('access-backend', function (User $user){
-            return $user->isCompanyAdmin();
+            if ($user->isCompanyAdmin()){
+                return true;
+            }
         });
 
         Gate::after(function (User $user, $ability) {

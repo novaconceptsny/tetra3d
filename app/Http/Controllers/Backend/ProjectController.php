@@ -19,7 +19,7 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $projects = Project::relevant()->paginate(25);
+        $projects = Project::relevant()->withCount('contributors')->paginate(25);
         return view('backend.project.index', compact('projects'));
     }
 
@@ -28,7 +28,7 @@ class ProjectController extends Controller
         $data = array();
         $data['route'] = route('backend.projects.store');
         $data['tours'] = Tour::all();
-        $data['users'] = User::all();
+        $data['users'] = User::forCurrentCompany()->get();
 
         return view('backend.project.form', $data);
     }
@@ -37,7 +37,9 @@ class ProjectController extends Controller
     {
         $request->validate(ValidationRules::storeProject());
 
-        Project::create($request->all());
+        $project = Project::create($request->all());
+
+        $project->contributors()->sync($request->user_ids);
 
         return redirect()->route('backend.projects.index')
             ->with('success', 'Project created successfully');
@@ -52,8 +54,8 @@ class ProjectController extends Controller
     {
         $data = array();
         $data['route'] = route('backend.projects.update', $project);
-        $data['tours'] = Tour::all();
-        $data['users'] = User::all();
+        $data['tours'] = Tour::forCompany($project->company_id)->get();
+        $data['users'] = User::forCompany($project->company_id)->get();
         $data['project'] = $project;
         $data['method'] = 'put';
 
@@ -65,6 +67,7 @@ class ProjectController extends Controller
         $request->validate(ValidationRules::updateProject());
 
         $project->update($request->all());
+        $project->contributors()->sync($request->user_ids);
 
         return redirect()->route('backend.projects.index')
             ->with('success', 'Project updated successfully');

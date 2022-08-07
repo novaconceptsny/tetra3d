@@ -24,7 +24,7 @@
                                 <h3 class="username">Matis Centered</h3>
                                 <div class="tag">Nile Berry | 12/11/2021</div>
                                 <div class="profiles__icons">
-                                    @include('include.partials.contributors')
+                                    {{--@include('include.partials.contributors')--}}
                                 </div>
                             </div>
                         </div>

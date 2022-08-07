@@ -36,7 +36,7 @@ class TourController extends Controller
         }
 
         if ($project_id = request('project_id')){
-            $project = Project::findOrFail($project_id);
+            $project = Project::relevant()->findOrFail($project_id);
         }
 
         $data = array();

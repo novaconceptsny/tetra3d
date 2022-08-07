@@ -37,8 +37,10 @@
                 <x-backend::inputs.select2 name="user_ids[]" label="Users" :multiple="true">
                     @foreach($users as $user)
                         <x-backend::inputs.select-option
+                            :multiple="true"
                             :value="$user->id"
                             :text="$user->name"
+                            :selected="$project->contributors->pluck('id')->toArray()"
                         />
                     @endforeach
                 </x-backend::inputs.select2>

@@ -24,6 +24,7 @@
                     <tr>
                         <th scope="col">{{ __('Tour') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('Contributors') }}</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -32,6 +33,7 @@
                         <tr>
                             <td>{{ $project->tour->name }}</td>
                             <td>{{ $project->name }}</td>
+                            <td>{{ $project->contributors_count }} Contributors</td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$project">
 

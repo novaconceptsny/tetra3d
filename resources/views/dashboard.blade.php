@@ -18,7 +18,7 @@
                             <div class="card-header">
                                 <div class="left">
                                     <h3 class="card__title">{{ $project->name }}</h3>
-                                    <small class="date">May 4th, 2021</small>
+                                    <small class="date">{{ $project->created_at->format('M d, Y') }}</small>
                                 </div>
                                 <div class="right">
                                     <span class="btn btn__stage">Active</span>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="card-body">
                                 <p class="card__text">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    {{ $project->description }}
                                 </p>
                             </div>
                             <div class="card-footer">

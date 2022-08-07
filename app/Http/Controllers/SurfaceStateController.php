@@ -13,7 +13,7 @@ class SurfaceStateController extends Controller
 {
     public function show(Surface $surface)
     {
-        $project = Project::findOrFail(request('project_id'));
+        $project = Project::relevant()->findOrFail(request('project_id'));
 
         if ($spot_id = request('spot_id')){
             $spot = Spot::findOrFail($spot_id);
@@ -32,15 +32,14 @@ class SurfaceStateController extends Controller
         ]);
 
         $data = array();
+        $data['project'] = $project;
         $data['surface'] = $surface;
         $data['surface_data'] = $surfaceData;
         $data['surface_current_state'] = $surface_state;
         $data['spot'] = $spot;
-        $artworks = Artwork::take(30)->get();
         $data['assigned_artworks'] = $assignedArtworks;
         $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
 
-        $data['artworks'] = $artworks;
         return view('pages.editor', $data);
     }
 

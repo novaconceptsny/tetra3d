@@ -14,27 +14,6 @@
         <div class="right">
             <ul class="navbar__nav mini d-none d-lg-flex">
                 @yield('page_actions')
-                {{--<li class="nav__item">
-                    <a href="#" class="nav__link">Configuration C</a>
-                </li>
-                <li class="nav__item">
-                    <a href="#" class="nav__link">
-                        <x-svg.location-dot/>
-                        Map
-                    </a>
-                </li>
-                <li class="nav__item">
-                    <a href="#" class="nav__link">
-                        <x-phosphor-globe-thin height="24" width="24"/>
-                        Return to 360
-                    </a>
-                </li>
-                <li class="nav__item">
-                    <a href="#" class="nav__link">
-                        <x-svg.magnifying-glass-plus/>
-                        97%
-                    </a>
-                </li>--}}
             </ul>
             <div class="contributors d-none d-xl-flex">
                 <div class="text">Contributors:</div>

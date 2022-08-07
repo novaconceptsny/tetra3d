@@ -31,9 +31,7 @@ class ProjectPolicy
 
     public function create(User $user)
     {
-        if ($user->isCompanyAdmin()) {
-            return true;
-        }
+        return $user->isCompanyAdmin();
     }
 
     public function update(User $user, Project $project)

@@ -17,7 +17,7 @@
     $name = dotToHtmlArray($name);
     $placeholder = $placeholder ?? "Select $label";
 
-    if ($multiple){
+    if ($multiple && !str($name)->endsWith('[]')){
         $name .= '[]';
     }
 @endphp

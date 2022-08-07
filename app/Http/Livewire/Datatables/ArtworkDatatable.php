@@ -86,10 +86,16 @@ class ArtworkDatatable extends BaseDatatable
 
     public function getRoutes()
     {
-        return [
+        $routes =  [
             'create' => 'backend.artworks.create',
             'edit' => 'backend.artworks.edit',
             'delete' => 'backend.artworks.destroy',
         ];
+
+        if (user()->cannot('create', Artwork::class)) {
+            unset($routes['create']);
+        }
+
+        return $routes;
     }
 }

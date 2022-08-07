@@ -42,4 +42,9 @@ trait HasCompany
             $builder->where('company_id', $company_id);
         }
     }
+
+    public function scopeForCompany(Builder $builder, $company_id)
+    {
+        $builder->withoutGlobalScope('forCurrentCompany')->where('company_id', $company_id);
+    }
 }

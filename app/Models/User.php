@@ -27,12 +27,17 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class);
     }
 
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
+
     /*** ============= Attributes ============= ***/
 
     public function getAvatarUrlAttribute()
     {
         /*$path = asset('images/defaults/avatar.jpg');*/
-        $path = asset('images/tetra__logo.png');
+        $path = asset('images/defaults/no-avatar.png');
         if ($this->avatar && file_exists($this->avatar)) {
             $path = asset($this->avatar);
         }
@@ -84,5 +89,10 @@ class User extends Authenticatable
     public function isCompanyAdmin()
     {
         return $this->hasRole('company_admin');
+    }
+
+    public function isEmployee()
+    {
+        return $this->hasRole('employee');
     }
 }

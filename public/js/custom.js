@@ -51,7 +51,7 @@ $(document).ready(function () {
     });
 
     $(".collections .card-header").click(function () {
-        $(this).parent().toggleClass("show");
+        $(this).parent().toggleClass("show h-100");
         if ($(window).width() < 992) {
             $(".sidebar").addClass("hide");
             $(this).parent().addClass("hide");

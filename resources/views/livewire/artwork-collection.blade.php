@@ -1,5 +1,4 @@
 <div class="card-body">
-    {{ $artworks->links() }}
     <form action="#" method="post">
         <div class="mb-3 search__box">
             <div class="input-group">
@@ -17,6 +16,7 @@
             <button type="submit" class="btn">Search</button>
         </div>
     </form>
+    {{ $artworks->links() }}
     <div class="photo__collection">
         <ul class="item__list">
             @foreach($artworks as $artwork)
