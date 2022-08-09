@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\HasCompany;
 use Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use HasCompany;
+
     protected $guarded = ['id'];
 
     public static function boot()
