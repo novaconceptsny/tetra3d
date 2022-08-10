@@ -32,9 +32,9 @@ class CompanyController extends Controller
     {
         $request->validate(ValidationRules::storeCompany());
 
-        Company::create([
-            $request->only('name')
-        ]);
+        Company::create($request->only([
+            'name'
+        ]));
 
         return redirect()->route('backend.companies.index')
             ->with('success', 'Company created successfully');
