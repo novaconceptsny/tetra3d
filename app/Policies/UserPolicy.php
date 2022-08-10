@@ -32,6 +32,10 @@ class UserPolicy
 
     public function update(User $user, User $model)
     {
+        if ($model->isSuperAdmin()){
+            return false;
+        }
+
         if ($user->isCompanyAdmin()){
             return $user->company_id == $model->company_id;
         }
@@ -39,6 +43,10 @@ class UserPolicy
 
     public function delete(User $user, User $model)
     {
+        if ($model->isSuperAdmin()){
+            return false;
+        }
+
         if ($user->isCompanyAdmin()){
             return $user->company_id == $model->company_id;
         }

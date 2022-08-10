@@ -22,6 +22,7 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th scope="col">{{ __('Company') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
                         <th scope="col">{{ __('Spots') }}</th>
                         <th scope="col">{{ __('Surfaces') }}</th>
@@ -31,6 +32,7 @@
                     <tbody class="list">
                     @forelse($tours as $tour)
                         <tr>
+                            <td>{{ $tour->company->name }}</td>
                             <td><a href="{{ route('tours.show', $tour) }}" target="_blank">{{ $tour->name }}</a></td>
                             <td><a href="{{ route('backend.tours.spots.index', $tour) }}">{{ $tour->spots_count }} Spots</a></td>
                             <td><a href="{{ route('backend.tours.surfaces.index', $tour) }}">{{ $tour->surfaces_count }} Surfaces</a></td>

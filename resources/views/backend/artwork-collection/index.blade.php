@@ -20,14 +20,18 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th scope="col">{{ __('Company') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('Artworks') }}</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody class="list">
                     @forelse($collections as $collection)
                         <tr>
+                            <td>{{ $collection->company->name }}</td>
                             <td>{{ $collection->name }}</td>
+                            <td>{{ $collection->artworks_count }}</td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$collection">
                                     <x-backend::dropdown.item

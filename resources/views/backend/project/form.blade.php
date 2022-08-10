@@ -40,7 +40,7 @@
                             :multiple="true"
                             :value="$user->id"
                             :text="$user->name"
-                            :selected="$project->contributors->pluck('id')->toArray()"
+                            :selected="$project?->contributors->pluck('id')->toArray()"
                         />
                     @endforeach
                 </x-backend::inputs.select2>

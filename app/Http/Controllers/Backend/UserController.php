@@ -92,6 +92,6 @@ class UserController extends Controller
 
         Auth::loginUsingId($admin_id);
         session()->forget(['applicant_type', 'applicant_id', 'applicant', 'admin_id']);
-        return redirect()->route('backend.dashboard')->with('success', __("You are now logged in as admin"));
+        return redirect()->route('backend.users.index')->with('success', __("You are now logged in as admin"));
     }
 }

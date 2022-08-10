@@ -22,6 +22,7 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th scope="col">{{ __('Company') }}</th>
                         <th scope="col">{{ __('Tour') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
                         <th scope="col">{{ __('Contributors') }}</th>
@@ -31,6 +32,7 @@
                     <tbody class="list">
                     @forelse($projects as $project)
                         <tr>
+                            <td>{{ $project->company->name }}</td>
                             <td>{{ $project->tour->name }}</td>
                             <td>{{ $project->name }}</td>
                             <td>{{ $project->contributors_count }} Contributors</td>

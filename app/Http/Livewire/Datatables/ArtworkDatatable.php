@@ -29,6 +29,7 @@ class ArtworkDatatable extends BaseDatatable
         $data['heading'] = __('Artworks');
 
         $rows = $this->model::query()
+            ->with('collection', 'company', 'media')
             ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
 

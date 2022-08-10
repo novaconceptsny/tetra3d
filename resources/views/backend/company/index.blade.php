@@ -30,6 +30,9 @@
                             <td>{{ $company->name }}</td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$company">
+                                    @if($company->admin)
+                                        <x-backend::switch-to-user :user="$company->admin"/>
+                                    @endif
                                     <x-backend::dropdown.item
                                         permission="update" :permission_params="$company"
                                         :route="route('backend.companies.edit', $company)">

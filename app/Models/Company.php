@@ -12,4 +12,14 @@ class Company extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function admins()
+    {
+        return $this->hasMany(User::class)->role('company_admin');
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(User::class)->role('company_admin');
+    }
 }
