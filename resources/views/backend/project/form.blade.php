@@ -34,6 +34,17 @@
                     @endforeach
                 </x-backend::inputs.select2>
 
+                <x-backend::inputs.select2 name="artwork_collection_ids[]" label="Collections" :multiple="true">
+                    @foreach($artworkCollections as $artworkCollection)
+                        <x-backend::inputs.select-option
+                            :multiple="true"
+                            :value="$artworkCollection->id"
+                            :text="$artworkCollection->name"
+                            :selected="$project?->artworkCollections->pluck('id')->toArray()"
+                        />
+                    @endforeach
+                </x-backend::inputs.select2>
+
                 <x-backend::inputs.select2 name="user_ids[]" label="Users" :multiple="true">
                     @foreach($users as $user)
                         <x-backend::inputs.select-option

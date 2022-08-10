@@ -6,7 +6,7 @@
             <button class="menu__btn d-lg-none">
                 <x-svg.bars/>
             </button>
-            <a href="{{ route('dashboard') }}" class="prev__btn">
+            <a href="{{ route('dashboard') }}" class="prev__btn font-primary">
                 <x-lineawesome-angle-left-solid class="text-dark"/>
                 <span class="navigator">{{  $project?->name }}</span>
             </a>

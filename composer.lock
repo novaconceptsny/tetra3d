@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce64ab7936dfc11be00b0a78217f511f",
+    "content-hash": "0ffd01ac76c0352e29507ad830974515",
     "packages": [
         {
             "name": "andreiio/blade-remix-icon",
@@ -4425,6 +4425,58 @@
                 }
             ],
             "time": "2022-03-10T21:14:19+00:00"
+        },
+        {
+            "name": "staudenmeir/eloquent-has-many-deep",
+            "version": "v1.15.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/eloquent-has-many-deep.git",
+                "reference": "d58289df406b577dd8be599fa4d081a18879bbcf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/eloquent-has-many-deep/zipball/d58289df406b577dd8be599fa4d081a18879bbcf",
+                "reference": "d58289df406b577dd8be599fa4d081a18879bbcf",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^9.0",
+                "php": "^8.0.2"
+            },
+            "require-dev": {
+                "illuminate/pagination": "^9.0",
+                "phpunit/phpunit": "^9.5",
+                "staudenmeir/eloquent-eager-limit": "^1.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\EloquentHasManyDeep\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Laravel Eloquent HasManyThrough relationships with unlimited levels",
+            "support": {
+                "issues": "https://github.com/staudenmeir/eloquent-has-many-deep/issues",
+                "source": "https://github.com/staudenmeir/eloquent-has-many-deep/tree/v1.15.3"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/JonasStaudenmeir",
+                    "type": "custom"
+                }
+            ],
+            "time": "2022-07-02T15:13:12+00:00"
         },
         {
             "name": "symfony/console",

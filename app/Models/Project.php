@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\HasCompany;
-use Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Project extends Model
 {
+    use HasRelationships;
     use HasCompany;
 
     protected $guarded = ['id'];
@@ -16,10 +17,6 @@ class Project extends Model
     public static function boot()
     {
         parent::boot();
-
-        /*if (auth()->check()){
-            Gate::allowIf(fn ($user) => $user->isAdmin());
-        }*/
     }
 
     public function tour()
@@ -35,6 +32,19 @@ class Project extends Model
     public function contributors()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function artworkCollections()
+    {
+        return $this->belongsToMany(ArtworkCollection::class);
+    }
+
+    public function artworks()
+    {
+        return $this->hasManyDeep(
+            Artwork::class,
+            ['artwork_collection_project', ArtworkCollection::class],
+        )->withoutGlobalScope('forCurrentCompany');
     }
 
     public function scopeRelevant(Builder $builder)

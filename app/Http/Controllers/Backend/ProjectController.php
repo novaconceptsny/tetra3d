@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
-use App\Models\Company;
+use App\Models\ArtworkCollection;
 use App\Models\Project;
 use App\Models\Tour;
 use App\Models\User;
@@ -29,6 +29,7 @@ class ProjectController extends Controller
         $data['route'] = route('backend.projects.store');
         $data['tours'] = Tour::all();
         $data['users'] = User::forCurrentCompany()->get();
+        $data['artworkCollections'] = ArtworkCollection::forCurrentCompany()->get();
 
         return view('backend.project.form', $data);
     }
@@ -40,6 +41,7 @@ class ProjectController extends Controller
         $project = Project::create($request->all());
 
         $project->contributors()->sync($request->user_ids);
+        $project->artworkCollections()->sync($request->artwork_collection_ids);
 
         return redirect()->route('backend.projects.index')
             ->with('success', 'Project created successfully');
@@ -56,6 +58,7 @@ class ProjectController extends Controller
         $data['route'] = route('backend.projects.update', $project);
         $data['tours'] = Tour::forCompany($project->company_id)->get();
         $data['users'] = User::forCompany($project->company_id)->get();
+        $data['artworkCollections'] = ArtworkCollection::forCompany($project->company_id)->get();
         $data['project'] = $project;
         $data['method'] = 'put';
 
@@ -68,6 +71,7 @@ class ProjectController extends Controller
 
         $project->update($request->all());
         $project->contributors()->sync($request->user_ids);
+        $project->artworkCollections()->sync($request->artwork_collection_ids);
 
         return redirect()->route('backend.projects.index')
             ->with('success', 'Project updated successfully');

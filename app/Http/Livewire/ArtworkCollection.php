@@ -23,7 +23,8 @@ class ArtworkCollection extends Component
 
     public function render()
     {
-        $artworks = Artwork::forCompany($this->project->company_id)->with('media')->simplePaginate(10);
+        $artworks = $this->project->artworks()
+            ->with('media')->simplePaginate(10);
 
         $data['artworks'] = $artworks;
 

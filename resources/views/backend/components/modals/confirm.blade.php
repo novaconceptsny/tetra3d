@@ -15,7 +15,7 @@
 
 @if($permission == null || user()->can($permission, $permissionParams) )
 @if($button)
-    <button data-toggle="modal" data-target="#confirm_{{$action}}{{ $label }}_{{ $model->id }}"
+    <button data-toggle="modal" data-bs-target="#confirm_{{$action}}{{ $label }}_{{ $model->id }}"
             class="btn btn-sm btn-outline-danger" title="">
         <i class="fa fa-trash"></i>
     </button>

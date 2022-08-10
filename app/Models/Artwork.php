@@ -30,7 +30,7 @@ class Artwork extends Model implements HasMedia
     public function collection()
     {
         return $this->belongsTo(
-            ArtworkCollection::class, 'collection_id'
+            ArtworkCollection::class, 'artwork_collection_id'
         )->withDefault(['name' => 'No Collection']);
     }
 
