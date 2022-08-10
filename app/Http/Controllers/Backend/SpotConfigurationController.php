@@ -11,13 +11,11 @@ use Illuminate\Http\Request;
 
 class SpotConfigurationController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorize('perform-admin-actions');
-    }
 
     public function show(Spot $spot)
     {
+        $this->authorize('perform-admin-actions');
+
         if (!file_exists($spot->xml_path)){
             $spot->generateXml();
         }
@@ -28,6 +26,7 @@ class SpotConfigurationController extends Controller
 
     public function edit(Spot $spot)
     {
+        $this->authorize('perform-admin-actions');
         $spot->load('surfaces.media');
         $data = array();
         $data['spot'] = $spot;
@@ -37,6 +36,7 @@ class SpotConfigurationController extends Controller
 
     public function update(Request $request, Spot $spot)
     {
+        $this->authorize('perform-admin-actions');
         $spot->update([
             'xml' => $request->only([
                 'view', 'surfaces', 'overlays', 'scale_box', 'navigations', 'quick_actions'
