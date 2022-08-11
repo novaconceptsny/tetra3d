@@ -7,6 +7,7 @@ use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Comment;
 use App\Models\Company;
+use App\Models\Like;
 use App\Models\Map;
 use App\Models\Project;
 use App\Models\Spot;
@@ -20,6 +21,7 @@ use App\Policies\ArtworkCollectionPolicy;
 use App\Policies\ArtworkPolicy;
 use App\Policies\CommentPolicy;
 use App\Policies\CompanyPolicy;
+use App\Policies\LikePolicy;
 use App\Policies\MapPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\SpotConfigurationPolicy;
@@ -54,6 +56,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         SpotConfiguration::class => SpotConfigurationPolicy::class,
         Comment::class => CommentPolicy::class,
+        Like::class => LikePolicy::class,
     ];
 
     /**

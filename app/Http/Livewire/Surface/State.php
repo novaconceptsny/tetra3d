@@ -14,7 +14,7 @@ class State extends Component
 
     public function mount()
     {
-        
+
     }
 
     public function render()

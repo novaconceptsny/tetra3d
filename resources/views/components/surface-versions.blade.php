@@ -21,31 +21,13 @@
         </button>
         <div class="tetra__accordion">
             @foreach($surface->states as $state)
-                <div class="accordion__item">
-                    <div class="accordion__header">
-                        <div class="left">
-                            <div class="user__details">
-                                <h3 class="username">{{ $state->name }}</h3>
-                                <div class="tag">{{ $state->user->name }} | {{ $state->created_at->format('m/d/Y') }}</div>
-                            </div>
-                        </div>
-                        <div class="right">
-                            <div class="surface__items">
-                                <a href="#" class="icon accordion__trigger">
-                                    <x-svg.pen-to-square/>
-                                </a>
-                                <a href="#" class="icon">
-                                    <x-svg.trash-can/>
-                                </a>
-                                <a href="#" class="icon">
-                                    <x-svg.thumbs-up/>
-                                </a>
-                                <button type="button" class="icon arrow">
-                                    <x-svg.angle-up/>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="accordion__item" style="cursor: unset">
+                    <x-surface_state.actions
+                        :surface="$surface"
+                        :state="$state"
+                        :project-id="$project->id"
+                        :comments="true"
+                    />
                     <div class="accordion__body">
                         <livewire:comments :commentable="$state"/>
                     </div>

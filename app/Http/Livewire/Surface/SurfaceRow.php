@@ -12,7 +12,9 @@ class SurfaceRow extends Component
     public $projectId;
     public Surface $surface;
 
-    protected $listeners = ['refresh' => '$refresh'];
+    protected $listeners = [
+        'changeActiveState'
+    ];
 
 
     public function mount()

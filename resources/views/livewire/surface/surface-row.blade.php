@@ -23,12 +23,10 @@
             </div>
         </div>
         @foreach($surface->states as $state)
-            <div class="col-md-6 col-lg-3 mb-3" wire:click="changeActiveState({{ $state }})">
-                <livewire:surface.state wire:key="{{$state->id}}"
-                    :state="$state" :surface="$surface" :project-id="$projectId"
-                    wire:click="changeActiveState({{ $state }})"
-                />
-            </div>
+            <livewire:surface.state wire:key="{{$state->id}}"
+                                    :state="$state" :surface="$surface" :project-id="$projectId"
+                                    wire:click="changeActiveState({{ $state }})"
+            />
         @endforeach
     </div>
     <hr>

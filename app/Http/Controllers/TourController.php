@@ -38,6 +38,7 @@ class TourController extends Controller
         $spotQuery = Spot::with([
             'surfaces',
             'surfaces.states.media',
+            'surfaces.states.likes',
             'surfaces.states' => fn($query) => $query->project($project->id),
         ])->where('tour_id', $tour->id);
 

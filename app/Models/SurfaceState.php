@@ -35,6 +35,27 @@ class SurfaceState extends Model implements HasMedia
         return $this->morphMany(Comment::class, 'commentable');
     }
 
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'likeable');
+    }
+
+    public function isLiked()
+    {
+        return $this->likes->where('user_id', auth()->id())->count();
+    }
+
+    public function toggleLike()
+    {
+        if ($this->isLiked()) {
+            $this->likes()->where('user_id', auth()->id())->delete();
+        } else {
+            $this->likes()->create([
+                'user_id' => auth()->id(),
+            ]);
+        }
+    }
+
     public function surface()
     {
         return $this->belongsTo(Surface::class);
