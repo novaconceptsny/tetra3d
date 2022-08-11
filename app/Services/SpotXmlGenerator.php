@@ -76,7 +76,7 @@ class SpotXmlGenerator
         ";
 
         foreach ($this->spot->surfaces as $index => $surface) {
-            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$surface_{$surface->id}%')\n\t";
+            $content .= "set(hotspot[surface_{$surface->id}].url , '%\$surface_{$surface->id}%');\n\t";
             /*$content .= "set(hotspot[surface_{$surface->id}].url , '/krpano/dummy.png')\n\t";*/
 
             if (count($this->spot->surfaces) == $index + 1) {
