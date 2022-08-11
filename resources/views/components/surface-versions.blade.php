@@ -1,31 +1,32 @@
+@props([
+    'surface',
+    'project'
+])
 <div {{ $attributes->class(['surface__sidebar card']) }}>
     <div class="card-body">
         <div class="top">
             <div class="left">
-                <h2 class="surface__title">Surface 031 -</h2>
-                <p class="date__time">Last Edited: S.Lythe | 8/1/2021</p>
+                <h2 class="surface__title">{{ $surface->name }} </h2>
+                {{--<p class="date__time">Last Edited: S.Lythe | 8/1/2021</p>--}}
             </div>
             <div class="right">
-                <button type="button" class="btn">
+                <a href="{{ route('surfaces.show', [$surface, 'project_id' => $project->id, 'new' => 1]) }}" class="btn">
                     <x-svg.plus width="24" height="24"/>
                     Add
-                </button>
+                </a>
             </div>
         </div>
         <button class="btn sidebar__trigger">
             <x-svg.angles-right color="white"/>
         </button>
         <div class="tetra__accordion">
-            @for($i=0; $i<4; $i++)
+            @foreach($surface->states as $state)
                 <div class="accordion__item">
                     <div class="accordion__header">
                         <div class="left">
                             <div class="user__details">
-                                <h3 class="username">Matis Centered</h3>
-                                <div class="tag">Nile Berry | 12/11/2021</div>
-                                <div class="profiles__icons">
-                                    {{--@include('include.partials.contributors')--}}
-                                </div>
+                                <h3 class="username">{{ $state->name }}</h3>
+                                <div class="tag">{{ $state->user->name }} | {{ $state->created_at->format('m/d/Y') }}</div>
                             </div>
                         </div>
                         <div class="right">
@@ -46,26 +47,10 @@
                         </div>
                     </div>
                     <div class="accordion__body">
-                        @for($j=0; $j<3; $j++)
-                            <div class="message">
-                                <h6 class="user__name">Matis</h6>
-                                added some of my daughters left over salmon and avocado roll
-                                with a dap of elk sauce on each one.
-                            </div>
-                        @endfor
-                        <div class="input-group type__message">
-                            <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Type"
-                            />
-                            <button type="submit" class="input-group-text">
-                                <x-svg.plus/>
-                            </button>
-                        </div>
+                        <livewire:comments :commentable="$state"/>
                     </div>
                 </div>
-            @endfor
+            @endforeach
         </div>
     </div>
 </div>

@@ -44,6 +44,7 @@ class Surface extends Model implements HasMedia
         return $this->hasMany(SurfaceState::class);
     }
 
+
     public function getCurrentState($project_id)
     {
         return $this->states()->current($project_id)->first();

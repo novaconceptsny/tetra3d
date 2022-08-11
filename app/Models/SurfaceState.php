@@ -30,6 +30,11 @@ class SurfaceState extends Model implements HasMedia
         return $this->canvas->modelScope();
     }
 
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
     public function surface()
     {
         return $this->belongsTo(Surface::class);

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\ArtowrkCollection;
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
+use App\Models\Comment;
 use App\Models\Company;
 use App\Models\Map;
 use App\Models\Project;
@@ -17,6 +18,7 @@ use App\Models\Wall;
 use App\Policies\ArtowrkCollectionPolicy;
 use App\Policies\ArtworkCollectionPolicy;
 use App\Policies\ArtworkPolicy;
+use App\Policies\CommentPolicy;
 use App\Policies\CompanyPolicy;
 use App\Policies\MapPolicy;
 use App\Policies\ProjectPolicy;
@@ -51,6 +53,7 @@ class AuthServiceProvider extends ServiceProvider
         ArtworkCollection::class => ArtworkCollectionPolicy::class,
         User::class => UserPolicy::class,
         SpotConfiguration::class => SpotConfigurationPolicy::class,
+        Comment::class => CommentPolicy::class,
     ];
 
     /**

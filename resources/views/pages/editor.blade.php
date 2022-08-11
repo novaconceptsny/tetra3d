@@ -12,7 +12,7 @@
     <button class="btn sidebar__trigger fixed">
         <x-svg.angle-right/>
     </button>
-    <x-surface-versions/>
+    <x-surface-versions :surface="$surface" :project="$project"/>
     <div class="dashboard mini" style="margin-left: 27rem!important;">
         <div class="alert alert-danger fade slow w-100 row hide" style="position: absolute; z-index: 200; left: 0.8vw;"
              role="alert" id="error_alert">
