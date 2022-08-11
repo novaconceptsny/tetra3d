@@ -22,7 +22,7 @@
                 @method($method ?? 'POST')
 
                 <div class="row g-3">
-                    <x-backend::inputs.select col="col-6" name="collection_id" label="Collection">
+                    <x-backend::inputs.select col="col-6" name="artwork_collection_id" label="Collection">
                         @foreach($artwork_collections as $collection)
                             <x-backend::inputs.select-option
                                 :value="$collection->id" :text="$collection->name"

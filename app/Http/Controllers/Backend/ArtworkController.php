@@ -35,7 +35,7 @@ class ArtworkController extends Controller
         $request->validate(ValidationRules::storeArtwork());
 
         $artwork = Artwork::create($request->only([
-            'name', 'artist', 'type', 'data', 'collection_id'
+            'name', 'artist', 'type', 'data', 'artwork_collection_id'
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)
@@ -66,7 +66,7 @@ class ArtworkController extends Controller
         $request->validate(ValidationRules::updateArtwork());
 
         $artwork->update($request->only([
-            'name', 'artist', 'type', 'data', 'collection_id'
+            'name', 'artist', 'type', 'data', 'artwork_collection_id'
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)
