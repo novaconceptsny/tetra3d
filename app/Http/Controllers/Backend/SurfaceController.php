@@ -39,8 +39,13 @@ class SurfaceController extends Controller
             'name' => 'required'
         ]);
 
+        $request->merge([
+            'company_id' => $tour->company_id
+        ]);
+
         $surface = $tour->surfaces()->create([
-            'name' => $request->name
+            'name' => $request->name,
+            'company_id' => $request->company_id
         ]);
 
         $surface->addFromMediaLibraryRequest($request->main)

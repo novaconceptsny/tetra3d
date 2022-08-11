@@ -23,6 +23,7 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th scope="col">{{ __('Tour') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
                         <th></th>
                     </tr>
@@ -30,6 +31,7 @@
                     <tbody class="list">
                     @forelse($surfaces as $surface)
                         <tr>
+                            <td>{{ $tour->name }}</td>
                             <td><a href="{{ route('backend.surfaces.edit', $surface) }}">{{ $surface->friendly_name }}</a></td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$surface">

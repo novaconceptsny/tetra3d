@@ -39,8 +39,12 @@ class SpotController extends Controller
     {
         $request->validate(ValidationRules::storeSpot());
 
+        $request->merge([
+            'company_id' => $tour->company_id
+        ]);
+
         $spot = $tour->spots()->create($request->only([
-            'name'
+            'name', 'company_id'
         ]));
 
         $spot->surfaces()->sync($request->surfaces);

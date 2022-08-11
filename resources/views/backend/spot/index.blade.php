@@ -21,7 +21,8 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('Tour') }}</th>
+                        <th scope="col">{{ __('Spot Name') }}</th>
                         <th scope="col">{{ __('Surfaces') }}</th>
                         <th scope="col">{{ __('Panos') }}</th>
                         <th scope="col">{{ __('XML') }}</th>
@@ -32,6 +33,7 @@
                     <tbody class="list">
                     @forelse($spots as $spot)
                         <tr>
+                            <td>{{ $tour->name }}</td>
                             <td>
                                 <a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->friendly_name }}</a>
                             </td>

@@ -15,12 +15,14 @@
             <ul class="navbar__nav mini d-none d-lg-flex">
                 @yield('page_actions')
             </ul>
-            <div class="contributors d-none d-xl-flex">
-                <div class="text">Contributors:</div>
-                <div class="profile__group">
-                    @include('include.partials.contributors')
+            @if($project)
+                <div class="contributors d-none d-xl-flex">
+                    <div class="text">Contributors:</div>
+                    <div class="profile__group">
+                        @include('include.partials.contributors')
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </nav>
 </header>
