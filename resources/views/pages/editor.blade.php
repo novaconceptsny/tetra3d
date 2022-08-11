@@ -19,7 +19,7 @@
             <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
         </div>
         <div class="d-flex fs-5 mb-2">
-            <p class="room_name mb-0">{{ $spot->name }} > {{ $surface_current_state?->name }}</p>
+            <p class="room_name mb-0">{{ $spot->name }} > {{ $surface_current_state ? $surface_current_state->name : 'Untitled' }}</p>
             {{--<p class="ml-2" id="assignment_title">Test</p>--}}
         </div>
         <div class="image__viewer main_content">
@@ -84,18 +84,4 @@
     <script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>
     <script type="module" src="{{ asset('canvas/twbs-pagination/jquery.twbsPagination.min.js') }}"></script>
-
-    <script>
-        /*document.addEventListener('livewire:load', function () {
-            console.log('her');
-            Livewire.on('artworksLoaded', (artwork_scales) => {
-                scaleArr = artwork_scales;
-                console.log(scaleArr);
-            });
-        });*/
-
-        /*window.addEventListener('artworksLoaded', function (){
-            console.log('her');
-        })*/
-    </script>
 @endsection

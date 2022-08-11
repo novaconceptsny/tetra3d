@@ -21,10 +21,14 @@ class SurfaceStateController extends Controller
             $spot = $surface->tour->spots->first();
         }
 
+        $surface_state = null;
+        $create_new_state = request('new');
+
         $surface->background_url = $surface->getFirstMediaUrl('background');
 
-        $surface_state = $surface->getCurrentState($project->id);
-
+        if (!$create_new_state){
+            $surface_state = $surface->getCurrentState($project->id);
+        }
         $assignedArtworks = $surface_state?->artworks;
 
         $surfaceData = $surface->only([

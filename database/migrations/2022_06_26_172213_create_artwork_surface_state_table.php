@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('top_position')->nullable();
             $table->string('left_position')->nullable();
             $table->text('crop_data')->nullable();
-            $table->boolean('override_scale')->default(0);
+            $table->boolean('override_scale')->nullable();
         });
     }
 

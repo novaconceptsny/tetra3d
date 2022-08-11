@@ -18,6 +18,8 @@ class TourController extends Controller
         $data['project'] = $project;
         $data['tour'] = $tour;
         $data['surfaces'] = $tour->surfaces()->with([
+            'states.user',
+            'states.media',
             'states' => fn($query) => $query->project($project->id),
             'media'
         ])->get();
@@ -27,17 +29,20 @@ class TourController extends Controller
 
     public function show(Tour $tour)
     {
-        $request = request();
-
-        if ($spot_id = request('spot_id')){
-            $spot = $tour->spots()->findOrFail($spot_id);
-        } else {
-            $spot = $tour->spots->first();
-        }
+        $spot_id = request('spot_id');
 
         if ($project_id = request('project_id')){
             $project = Project::relevant()->findOrFail($project_id);
         }
+
+        $spotQuery = Spot::with([
+            'surfaces',
+            'surfaces.states.media',
+            'surfaces.states' => fn($query) => $query->project($project->id),
+        ])->where('tour_id', $tour->id);
+
+        $spot = $spot_id ? $spotQuery->findOrFail($spot_id)
+            : $spotQuery->first();
 
         $data = array();
         $data['tour'] = $tour;

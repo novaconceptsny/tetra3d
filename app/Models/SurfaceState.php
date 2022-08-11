@@ -52,6 +52,23 @@ class SurfaceState extends Model implements HasMedia
         ]);
     }
 
+    public function setAsActive()
+    {
+        $this->surface->states()
+            ->where('project_id', $this->project_id)->update([
+                'active' => 0,
+            ]);
+
+        $this->update([
+            'active' => 1
+        ]);
+    }
+
+    public function isActive()
+    {
+        return $this->active;
+    }
+
     public function url(): Attribute
     {
         return Attribute::make(
