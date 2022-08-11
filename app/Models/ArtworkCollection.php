@@ -13,6 +13,6 @@ class ArtworkCollection extends Model
 
     public function artworks()
     {
-        return $this->hasMany(Artwork::class, 'collection_id');
+        return $this->hasMany(Artwork::class);
     }
 }
