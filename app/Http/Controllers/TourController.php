@@ -21,7 +21,7 @@ class TourController extends Controller
             'states.user',
             'states.media',
             'states' => fn($query) => $query->project($project->id),
-            'media'
+            'media',
         ])->get();
 
         return view('pages.surfaces', $data);
@@ -31,7 +31,7 @@ class TourController extends Controller
     {
         $spot_id = request('spot_id');
 
-        if ($project_id = request('project_id')){
+        if ($project_id = request('project_id')) {
             $project = Project::relevant()->findOrFail($project_id);
         }
 
@@ -39,8 +39,9 @@ class TourController extends Controller
             'surfaces',
             'surfaces.states.media',
             'surfaces.states.likes',
+        ])->when($project_id, fn($query) => $query->with([
             'surfaces.states' => fn($query) => $query->project($project->id),
-        ])->where('tour_id', $tour->id);
+        ]))->where('tour_id', $tour->id);
 
         $spot = $spot_id ? $spotQuery->findOrFail($spot_id)
             : $spotQuery->first();

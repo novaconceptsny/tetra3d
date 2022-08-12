@@ -21,7 +21,7 @@
             <a href="#" class="icon me-1" onclick="window.livewire.emit('showModal', 'modals.confirm', {{ $options }})">
                 <i class="fal fa-trash text-danger"></i>
             </a>
-            <livewire:likes :likeable="$state"/>
+            <livewire:likes :likeable="$state" wire:key="{{ $state->id }}"/>
             @if($comments)
                 <button type="button" class="icon arrow">
                     <x-svg.angle-up/>

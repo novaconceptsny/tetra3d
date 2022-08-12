@@ -17,5 +17,6 @@ class Likes extends Component
     public function toggleLike()
     {
         $this->likeable->toggleLike();
+        $this->likeable->refresh();
     }
 }

@@ -1,32 +1,32 @@
 <div>
+    <x-loader message="Switching current state..."/>
     <h4 class="font-secondary section__title">
         {{ $surface->name }}
     </h4>
     <div class="inner__field row mb-4">
-        <div class="col-md-6 col-lg-3 mb-3 ">
-            <div href="#" class="card overflow-hidden">
-                <a href="#" class="overlay__link"></a>
-                <div class="card-body">
-                    <img
-                        src="{{ $surface->getFirstMediaUrl('background') }}"
-                        alt="image"
-                        class="bg__image"
-                    />
-                    <a href="{{ route('surfaces.show', [$surface, 'project_id' => $projectId, 'new' => 1]) }}"
-                       class="add__btn">
-                        <span class="plus__icon">
-                            <x-svg.plus width="35" height="35"/>
-                        </span>
-                        Add New Option
-                    </a>
+        <x-surface_state.add-new :surface="$surface" :project-id="$projectId"/>
+        @foreach($surface->states as $state)
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div href="#" class="card {{ $state->active ? 'shadow border-2 border-success' : '' }}">
+                    <a href="#" class="overlay__link" wire:click="changeActiveState({{ $state }})"></a>
+                    <div class="card-img-top">
+                        <img
+                            src="{{ $state->getFirstMediaUrl('thumbnail') }}"
+                            alt="image"
+                            width="100%"
+                            height="auto"
+                        />
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion__item">
+                            <x-surface_state.actions
+                                :surface="$surface" :state="$state"
+                                :project-id="$projectId"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        @foreach($surface->states as $state)
-            <livewire:surface.state wire:key="{{$state->id}}"
-                                    :state="$state" :surface="$surface" :project-id="$projectId"
-                                    wire:click="changeActiveState({{ $state }})"
-            />
         @endforeach
     </div>
     <hr>
