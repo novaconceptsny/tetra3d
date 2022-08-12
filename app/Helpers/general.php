@@ -1,7 +1,7 @@
 <?php
 
 use Carbon\Carbon;
-
+use \Intervention\Image\Facades\Image;
 function carbon($time)
 {
     return new Carbon($time);
@@ -44,4 +44,14 @@ function str_to_title($string): string
         ->title()
         ->replace(['_', '.'], ' ')
         ->value();
+}
+
+function resizeBase64Image($base64, $scale)
+{
+    $image = Image::make($base64);
+    $image->resize(
+        $scale * $image->width(),
+        $scale * $image->height()
+    );
+    return $image->encode('data-url');
 }

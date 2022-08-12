@@ -85,10 +85,17 @@ class SurfaceStateController extends Controller
             'canvas' => json_decode($request->canvasState, true)
         ]);
 
-        $state->addMediaFromBase64($request->thumbnail)
+        $state->addMediaFromBase64(resizeBase64Image(
+            $request->thumbnail,
+            $request->reverseScale
+        ))
             ->usingFileName('thumbnail.png')
             ->toMediaCollection('thumbnail');
-        $state->addMediaFromBase64($request->hotspot)
+
+        $state->addMediaFromBase64(resizeBase64Image(
+            $request->hotspot,
+            $request->reverseScale
+        ))
             ->usingFileName('hotspot.png')
             ->toMediaCollection('hotspot');
 

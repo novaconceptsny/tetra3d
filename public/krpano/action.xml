@@ -72,7 +72,7 @@
         let surface = args[1];
 
         if(coin == "0"){
-            if (surface == 'main' || surface == 'live'){
+            if (surface == 'live' || surface == 'main'){
                 var scale_shared = caller.scale;
                 var main_w = caller.main_w;
                 var main_h = caller.main_h;
