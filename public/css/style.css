@@ -914,7 +914,7 @@ a {
   position: fixed;
   right: -120%;
   bottom: 0;
-  z-index: 1;
+  z-index: 999;
   height: calc(100vh - 72px);
   transition: 350ms ease-in;
   max-width: 360px;
@@ -977,7 +977,7 @@ a {
   position: fixed;
   left: 100%;
   transform: translateX(-100%);
-  z-index: 0;
+  z-index: 999;
 }
 .sidebar__trigger.fixed svg {
   transform: rotate(180deg);
