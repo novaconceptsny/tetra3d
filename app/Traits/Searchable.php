@@ -12,19 +12,20 @@ trait Searchable
     {
         $term = trim($term);
 
-        $query->orwhere(function ($query) use ($term) {
+        $query->where(function ($query) use ($term, $columns) {
 
+            $table = $this->getTable();
             // If columns are not provided at scope level and set at model level
             if (isset($this->searchable_columns) && !empty($this->searchable_columns) && empty($columns)) {
                 $columns = $this->searchable_columns;
             }
 
             if (empty($columns)) {
-                $columns = Schema::getColumnListing($this->getTable());
+                $columns = Schema::getColumnListing($table);
             }
 
             foreach ($columns as $column) {
-                $query->orWhere($column, 'LIKE', '%' . $term . '%');
+                $query->orWhere("$table.$column", 'LIKE', '%' . $term . '%');
             }
         });
         if (is_array($relations) && !empty($relations)) {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\MediaLibrary\InteractsWithMedia;
 use App\Traits\HasCompany;
+use App\Traits\Searchable;
 use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
 
 class Artwork extends Model implements HasMedia
 {
-    use HasCompany, InteractsWithMedia, Sortable;
+    use HasCompany, InteractsWithMedia, Sortable, Searchable;
 
     protected $guarded = ['id'];
 

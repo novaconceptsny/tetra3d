@@ -1,4 +1,4 @@
-<div class="card-body">
+<div class="card-body position-relative">
     <form action="#" method="post">
         <div class="mb-3 search__box">
             <div class="input-group">
@@ -6,19 +6,23 @@
                     <x-svg.magnifying-glass size="small"/>
                 </span>
                 <input
+                    wire:model="search"
                     id="search_input"
                     type="text"
-                    class="form-control"
+                    class="form-control search"
                     placeholder="Type.."
                     aria-describedby="search__icon"
                 />
             </div>
-            <button type="submit" class="btn">Search</button>
+            <select class="form-control w-50" wire:model="searchBy" id="">
+                <option value="all">All</option>
+                <option value="artist">Artists</option>
+                <option value="name">Artworks</option>
+            </select>
         </div>
     </form>
-    {{ $artworks->links() }}
-    <div class="photo__collection">
-        <ul class="item__list">
+    <div class="photo__collection" style="height: 80%;">
+        <ul class="item__list" wire:loading.remove>
             @foreach($artworks as $artwork)
                 <li class="item artwork-img"
                     data-img-url="{{$artwork->image_url}}"
@@ -40,5 +44,8 @@
                 </li>
             @endforeach
         </ul>
+    </div>
+    <div class="position-relative py-2" style="bottom: 0; left: 25%">
+        {{ $artworks->links() }}
     </div>
 </div>
