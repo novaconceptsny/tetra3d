@@ -69,6 +69,7 @@ async function createSurfaceState(filename, assignedArtwork, screenshots, canvas
         "canvasState": JSON.stringify(canvasState),
         "reverse_scale": reverseScale,
         "user_id": userId,
+        "spot_id": spot_id,
         "new": true,
     };
 
@@ -104,6 +105,7 @@ function updateSurfaceState(versionId, updates, screenshots, canvasState, revers
         "canvasState": JSON.stringify(canvasState),
         "reverseScale": reverseScale,
         "userId": userId,
+        "spot_id": spot_id,
     };
     payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
     payload.added = JSON.stringify(payload.added);

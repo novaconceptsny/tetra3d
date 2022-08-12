@@ -95,7 +95,9 @@ class SurfaceStateController extends Controller
         $state->artworks()->sync($assigned_artworks);
 
         return redirect()->route('tours.show', [
-            $surface->tour, 'project_id' => $request->project_id,
+            $surface->tour,
+            'spot_id' => $request->spot_id,
+            'project_id' => $request->project_id,
             'hlookat' => $request->hlookat,
             'vlookat' => $request->vlookat,
         ]);
