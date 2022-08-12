@@ -882,6 +882,7 @@ a {
 }
 .collections .item__list .item {
   text-align: center;
+  overflow: auto;
 }
 .collections .item__list .item .preview {
   max-width: 128px;
