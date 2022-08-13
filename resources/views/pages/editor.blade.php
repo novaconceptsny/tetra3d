@@ -71,6 +71,7 @@
         let latestState = @json($canvas_state);
         let versionId = 240;
         let assignedArtworks = @json($assigned_artworks);
+        let defaultScales = [];
         /*let scaleArr =  null;*/
         /*let locationId = 4;*/
         /*let artgroupId = 5;*/

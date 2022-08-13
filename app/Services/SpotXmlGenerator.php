@@ -215,7 +215,7 @@ class SpotXmlGenerator
             "main_h" => $this->getSurfaceData($surface, 'main_h'),
             "shared_w" => $this->getSurfaceData($surface, 'shared_w'),
             "shared_h" => $this->getSurfaceData($surface, 'shared_h'),
-            "select" => $this->getSurfaceData($surface, 'shared_h'),
+            "select" => $this->getSurfaceData($surface, 'select'),
             "ox_offset" => $this->getSurfaceData($surface, 'ox_offset'),
             "oy_offset" => $this->getSurfaceData($surface, 'oy_offset'),
             "onloaded" => "setupSurface({$this->getSurfaceBackground($surface)})",

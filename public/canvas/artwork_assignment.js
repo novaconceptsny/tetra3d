@@ -7,6 +7,9 @@ import {
 // The assignedArtwork here is a collection of all placed artworks.
 // If there is any change to any artwork, change the value here.
 // Finally, send it out and let php process it
+
+let restrictBoundaries = false;
+
 const canvasState = {
     savedVersion: false,
     isOverlap: false,
@@ -35,7 +38,6 @@ let imgWidth = surface.data.img_width;
 let imgHeight = surface.data.img_height;
 let baseWidth;
 let baseScale;
-let defaultScales = [];
 
 let $save_btn = $('#save_btn');
 let $remove_btn = $('#remove_btn');
@@ -270,32 +272,40 @@ function addCanvasEvents() {
     });
 
     artworkCanvas.on('object:moving', function (options) {
-        if (options.target) {
+        if (options.target && restrictBoundaries) {
+            // check boundaries
             let object = options.target;
-            // const xyScale = canvas State.defaultScale;c
+
             $crop_btn.css('top', object.top);
             let locLeft = object.left + ($('.left_menu').width() - $crop_btn.width() / 2 - 20);
             $crop_btn.css('left', locLeft);
+
             // target object's right and bottom edge boundaries (originally not provided)
             let xyScale = defaultScales[object.id];
-            const objectBottom = Math.abs(object.top + (object.height * xyScale)),
-                objectRight = Math.abs(object.left + (object.width * xyScale));
+
+            const objectBottom = Math.abs(object.top + (object.height * xyScale));
+            const objectRight = Math.abs(object.left + (object.width * xyScale));
+
             // bounding box's edge boundaries
             const topBound = boundingBox.top,
                 leftBound = boundingBox.left,
                 bottomBound = topBound + boundingBox.height,
                 rightBound = leftBound + boundingBox.width;
+
             // the object's placement is re-assigned with an offset of 2, accounting for border width of the bounding box.
             if (object.top < topBound) {
                 object.set({top: topBound + 2});
             }
+
             if (object.left < leftBound) {
                 object.set({left: leftBound + 2});
             }
+
             if (objectBottom > bottomBound) {
                 let y = bottomBound - Math.abs(object.height * xyScale);
                 object.set({top: y});
             }
+
             if (objectRight > rightBound) {
                 let x = rightBound - Math.abs(object.width * xyScale);
                 object.set({left: x});
