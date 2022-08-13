@@ -195,16 +195,22 @@ class SpotXmlGenerator
     {
         $attributes = [
             'name' => "surface_{$surface->id}",
-            'canvas_url' => route('surfaces.show', [$surface, 'spot_id' => $this->spot]),
+            'canvas_url' => $this->getUrlPath(
+                route('surfaces.show', [
+                    $surface, 'spot_id' => $this->spot,
+                ])
+            ),
             "hotspot_type" => 'artwork',
             "style" => "surface",
             "onclick" => "openCanvas()",
             "coin" => "0",
             "url" => "/krpano/dummy.png",
-            "url_main" => $surface->getFirstMediaUrl('main'),
-            "url_shared" => $surface->getFirstMedia('shared',
-                ['spot_id' => $this->spot->id]
-            )?->getUrl(),
+            "url_main" => $this->getUrlPath($surface->getFirstMediaUrl('main')),
+            "url_shared" => $this->getUrlPath(
+                $surface->getFirstMedia('shared',
+                    ['spot_id' => $this->spot->id]
+                )?->getUrl()
+            ),
             "scale" => $this->getSurfaceData($surface, 'scale'),
             "ath" => $this->getSurfaceData($surface, 'ath'),
             "atv" => $this->getSurfaceData($surface, 'atv'),
@@ -234,7 +240,11 @@ class SpotXmlGenerator
     {
         $attributes = [
             'name' => "surface_{$surface->id}_click",
-            'canvas_url' => route('surfaces.show', [$surface, 'spot_id' => $this->spot]),
+            'canvas_url' => $this->getUrlPath(
+                route('surfaces.show', [
+                    $surface, 'spot_id' => $this->spot,
+                ])
+            ),
             "style" => $this->getSurfaceData($surface, 'style', 'click'),
             "onclick" => "openCanvas()",
         ];
@@ -297,7 +307,11 @@ class SpotXmlGenerator
             'style' => 'artwork_hotspot',
             "rx" => $navigationData['rx'] ?? 75,
             "goto" => $index,
-            "goto_url" => route('tours.show', [$this->spot->tour, 'spot_id' => $index]),
+            "goto_url" => $this->getUrlPath(
+                route('tours.show', [
+                    $this->spot->tour, 'spot_id' => $index,
+                ])
+            ),
             "hlookat" => $navigationData['hlookat'] ?? 0,
             "vlookat" => $navigationData['vlookat'] ?? 0,
             "ath" => $navigationData['ath'] ?? 0,
@@ -386,12 +400,17 @@ class SpotXmlGenerator
 
     private function getKrpanoAsset($asset)
     {
-        return asset("krpano/$asset");
+        return "/krpano/$asset";
     }
 
     private function getSpotAsset($asset)
     {
-        return asset("storage/tours/{$this->spot->tour_id}/{$this->spot->id}/$asset");
+        return "/storage/tours/{$this->spot->tour_id}/{$this->spot->id}/$asset";
+    }
+
+    private function getUrlPath($url)
+    {
+        return str($url)->remove(request()->root());
     }
 
     // Quick Actions
