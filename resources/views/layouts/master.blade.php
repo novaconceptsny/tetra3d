@@ -74,6 +74,21 @@
                 $(this).addClass('active');
             }
         })
+
+        $('body').on('click', '.clipboard-copy', function ($event){
+            let $clipboardContainer = $(this).closest('.clipboard-container');
+            let $clipboardText = $clipboardContainer.find('.clipboard-text');
+            let textToCopy = $clipboardText.val();
+
+            /*let  $temp = $(`<input value='${textToCopy}'>`);
+            $("body").append($temp);
+            $temp.val().select();
+            document.execCommand("copy");
+            alert($temp.val())
+            $temp.remove();*/
+            $clipboardText.select();
+            document.execCommand("copy");
+        });
     })
 </script>
 

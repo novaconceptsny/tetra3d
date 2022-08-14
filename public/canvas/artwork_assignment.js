@@ -179,9 +179,9 @@ function requestCanvasBackgroundProperties(surface, baseScale) {
     renderCanvasBackground(surface['background_url'], baseScale);
     canvasState.background = surface['background_url'];
     canvasState['actualWidthInch'] = data['actual_width_inch'];
-    if (surface['overlay_url'] !== null) {
+    /*if (surface['overlay_url'] !== null) {
         setCanvasOverlay(surface['overlay_url']);
-    }
+    }*/
     setBoundingBoxProperties(
         data['bounding_box_top'] * baseScale, data['bounding_box_left'] * baseScale,
         data['bounding_box_height'] * baseScale, data['bounding_box_width'] * baseScale

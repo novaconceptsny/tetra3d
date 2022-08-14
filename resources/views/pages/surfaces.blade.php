@@ -1,7 +1,12 @@
 @extends('layouts.master')
 
 @section('page_actions')
-    <x-page-action text="Return to 360 view" :url="route('tours.show', [$tour, 'project_id' => $project->id])"/>
+    <x-page-action
+        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}')"
+        text="Share" icon="fal fa-share-nodes"
+    />
+
+    <x-page-action text="Return to 360 view" :url="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"/>
 @endsection
 
 @section('content')

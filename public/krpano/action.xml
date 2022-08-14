@@ -108,6 +108,7 @@
         var vlookat = caller.vlookat;
         var project_id = krpano.project_id;
         var tracker = krpano.tracker;
+        var shared = krpano.shared;
 
         if (project_id){
             url = url + "&#38;project_id=" + project_id
@@ -115,6 +116,11 @@
 
         if (tracker){
             url = url + "&#38;tracker=" + tracker
+        }
+
+        if (shared){
+            url = url + "&#38;shared=" + shared
+            url = url + "&#38;shared_tour_id=" + krpano.shared_tour_id
         }
 
         url = url + "&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;

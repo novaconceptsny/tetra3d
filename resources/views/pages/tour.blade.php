@@ -1,24 +1,32 @@
 @extends('layouts.master')
 
+@php
+    $tour_is_shared = Route::is('shared-tours.show');
+    $shared_tour_id = $shared_tour_id ?? null;
+    $tracker = request('tracker', 0);
+    $parameters = array_merge(request()->all(), ['tour' => $tour]);
+    $parameters['tracker'] = $tracker ? 0 : 1;
+@endphp
+
 @section('page_actions')
-    @php
-        $parameters = array_merge(request()->all(), ['tour' => $tour]);
-        $parameters['tracker'] = request('tracker') ? 0 : 1;
-    @endphp
 
-    <x-page-action
-        :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
-        text="Tracker" icon="fal fa-ruler-combined"
-    />
-
-    @if($project)
+    @if(!$tour_is_shared)
         <x-page-action
-            :url="route('tours.surfaces', [$tour, 'project_id' => $project->id])"
-            text="Versions" icon="fal fa-layer-group"
+            :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
+            text="Tracker" icon="fal fa-ruler-combined"
         />
+        @if($project)
+            <x-page-action
+                onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}')"
+                text="Share" icon="fal fa-share-nodes"
+            />
+            <x-page-action
+                :url="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
+                text="Versions" icon="fal fa-layer-group"
+            />
+        @endif
     @endif
-
-    <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal"  text="Map" icon="fal fa-map-marker-alt" />
+    <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal" text="Map" icon="fal fa-map-marker-alt"/>
 @endsection
 
 @section('content')
@@ -49,7 +57,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <x-tour-map :tour="$tour"/>
+                    @include('include.partials.tour-map')
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -66,8 +74,6 @@
         let krpano = null;
         let hlookat = {{ request('hlookat', 0) }};
         let vlookat = {{ request('vlookat', 0) }};
-        let shareType = {{$shareType}};
-        let hash = "{{$hash}}";
         let spotId = "{{ $spot->id }}";
         let timestamp = Date.now();
 
@@ -85,9 +91,11 @@
                 showerrors: false,
                 project_id: "{{ request('project_id', '') }}",
                 tracker: "{{ request('tracker', '') }}",
+                shared: "{{ $tour_is_shared }}",
+                shared_tour_id: "{{ $shared_tour_id }}",
 
                 @foreach ($spot->surfaces as $surface)
-                    {{ "surface_{$surface->id}" }}: '{{ $surface->getActiveStateUrl(request('project_id')) }}',
+                    {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state) }}',
                 @endforeach
             },
         });
@@ -100,7 +108,6 @@
 
         function setLookat(hlookat, vlookat) {
             if (hlookat != 0 || vlookat != 0) {
-                console.log('in');
                 krpano.call("set(view.hlookat," + hlookat + ")");
                 krpano.call("set(view.vlookat," + vlookat + ")");
             }

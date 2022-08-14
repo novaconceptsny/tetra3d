@@ -28,6 +28,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
 
+    //shared tours
+    Route::get('shared-tours/{shared_tour}', 'SharedTourController@show')->name('shared-tours.show');
+
     Route::controller(SurfaceStateController::class)->group(function () {
         Route::get('surfaces/{surface}', 'show')->name('surfaces.show');
         Route::post('surfaces/{surface}', 'store')->name('surfaces.store');

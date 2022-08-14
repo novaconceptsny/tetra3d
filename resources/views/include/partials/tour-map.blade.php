@@ -7,7 +7,7 @@
         @php
             $parameters = [
                 $tour,
-                 'project_id' => $project?->id,
+                 'project_id' => isset($project) ? $project?->id : null,
                  'shared' => Route::is('shared-tours.show'),
                  'shared_tour_id' => $shared_tour_id ?? null
             ]

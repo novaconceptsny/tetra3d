@@ -95,19 +95,25 @@ class SurfaceState extends Model implements HasMedia
         return $this->active;
     }
 
-    public function url(): Attribute
+    //todo::cleanup: not using anymore
+    /*public function url(): Attribute
     {
         return Attribute::make(
             get: fn () => \Str::replace('public', 'storage', $this->hotspot_url),
         );
-    }
+    }*/
 
-    public function scopeCurrent(Builder $builder, $project_id = 1)
+    public function scopeCurrent(Builder $builder)
     {
-        $builder->where('active', 1)->project($project_id);
+        $builder->where('active', 1);
     }
 
-    public function scopeProject(Builder $builder, $project_id)
+    public function scopeActive(Builder $builder)
+    {
+        $builder->where('active', 1);
+    }
+
+    public function scopeForProject(Builder $builder, $project_id)
     {
         $builder->where('project_id', $project_id);
     }
