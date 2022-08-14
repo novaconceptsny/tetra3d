@@ -1,11 +1,14 @@
 @extends('layouts.master')
 
 @php
-    $tour_is_shared = Route::is('shared-tours.show');
+    $project_id = request('project_id');
     $shared_tour_id = $shared_tour_id ?? null;
+    $shared_spot_id = $shared_spot_id ?? null;
+    $tour_is_shared = Route::is('shared-tours.show');
     $tracker = request('tracker', 0);
     $parameters = array_merge(request()->all(), ['tour' => $tour]);
     $parameters['tracker'] = $tracker ? 0 : 1;
+    $readonly = !$project_id || $shared_tour_id;
 @endphp
 
 @section('page_actions')
@@ -17,7 +20,7 @@
         />
         @if($project)
             <x-page-action
-                onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}')"
+                onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
                 text="Share" icon="fal fa-share-nodes"
             />
             <x-page-action
@@ -35,7 +38,7 @@
             @if ($tracker)
                 <div id="tracker"></div>
             @endif
-            <div class="featured__img" id="pano" >
+            <div class="featured__img" id="pano">
                 <noscript>
                     <table style="width:100%;height:100%;">
                         <tr style="vertical-align:middle;">
@@ -92,10 +95,19 @@
                 project_id: "{{ request('project_id', '') }}",
                 tracker: "{{ request('tracker', '') }}",
                 shared: "{{ $tour_is_shared }}",
-                shared_tour_id: "{{ $shared_tour_id }}",
+                shared_tour_id: "{{ $shared_tour_id }}", // if tour is shared
+                shared_spot_id: "{{ $shared_spot_id }}", // if only single spot is shared
+                readonly: "{{ $readonly }}",
 
                 @foreach ($spot->surfaces as $surface)
-                    {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state) }}',
+                    @php
+                        // if tour is shared, or no project is set, don't show edit icon on surfaces!
+                        $surface_thumbnail = $surface->getStateThumbnail($surface->state, $tour_is_shared);
+                        if (!$tour_is_shared && !$project_id) {
+                            $surface_thumbnail = '';
+                        }
+                    @endphp
+                    {{ "surface_{$surface->id}" }}: '{{ $surface_thumbnail }}',
                 @endforeach
             },
         });
@@ -151,7 +163,7 @@
         }
 
         krpano.call("set(layer['version'].onclick,openurl('/version/management/spot/{{$spot->id}}'))");
-        setLookat(hlookat,vlookat);
+        setLookat(hlookat, vlookat);
 
     </script>
 

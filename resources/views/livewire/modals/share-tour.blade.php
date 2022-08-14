@@ -4,6 +4,17 @@
             <h5>Share Tour</h5>
         </div>
         <div class="modal-body">
+            @if($spotSelectionAllowed)
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="share_tour" value="tour" wire:model="share_type">
+                    <label class="form-check-label" for="share_tour">Share whole tour</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="share_spot" value="spot" wire:model="share_type">
+                    <label class="form-check-label" for="share_spot">Share current spot only</label>
+                </div>
+            @endif
+
             @if($link && $linkCopied)
                 <div class="alert alert-success alert-dismissible py-2 fade show " role="alert">
                    <span><i class="fad fa-check-circle"></i> Link copied to clipboard!</span>

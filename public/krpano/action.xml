@@ -1,18 +1,15 @@
 <krpano>
     <action name="openCanvas" type="javascript">
+        if (krpano.readonly){
+            exitcall();
+        }
+
         var url = caller.canvas_url;
         var hlookat = krpano.view.hlookat;
         var vlookat = krpano.view.vlookat;
         var project_id = krpano.project_id;
-        <!--
-        var spotId = krpano.spot_id;
-        var canvasId = caller.canvas_id;
-        urlStr = "/editor?spotId=" + spotId + "&#38;canvasId=" + canvasId + "&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
-        -->
         urlStr = url + "&#38;project_id=" + project_id +"&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
-        if (project_id){
-            window.location.href = urlStr;
-        }
+        window.location.href = urlStr;
     </action>
 
     <action name="set_tool" type="javascript">
@@ -69,40 +66,51 @@
 
         var coin = caller.coin;
 
+        if (coin == 1){
+            exitcall();
+        }
+
         let surface = args[1];
 
-        if(coin == "0"){
-            if (surface == 'live' || surface == 'main'){
-                var scale_shared = caller.scale;
-                var main_w = caller.main_w;
-                var main_h = caller.main_h;
-                var shared_w = caller.shared_w;
-                var shared_h = caller.shared_h;
-                var select = caller.select;
-                var scale_main;
-                if (select === "w") {
-                    scale_main=scale_shared*(shared_w/main_w);
-                } else {
-                    scale_main=scale_shared*(shared_h/main_h);
-                }
-                caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
-                caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
-
-                caller.scale = scale_main;
+        if (surface == 'live' || surface == 'main'){
+            var scale_shared = caller.scale;
+            var main_w = caller.main_w;
+            var main_h = caller.main_h;
+            var shared_w = caller.shared_w;
+            var shared_h = caller.shared_h;
+            var select = caller.select;
+            var scale_main;
+            if (select === "w") {
+                scale_main=scale_shared*(shared_w/main_w);
+            } else {
+                scale_main=scale_shared*(shared_h/main_h);
             }
+            caller.ox=parseFloat(caller.ox)+parseFloat(caller.ox_offset);
+            caller.oy=parseFloat(caller.oy)+parseFloat(caller.oy_offset);
 
-            if (surface == 'main'){
-                caller.url = caller.url_main;
-            }
-
-            if(surface == 'shared') {
-                caller.url = caller.url_shared;
-            }
-            caller.coin = 1;
+            caller.scale = scale_main;
         }
+
+        if (surface == 'main'){
+            caller.url = caller.url_main;
+        }
+
+        if(surface == 'shared') {
+            caller.url = caller.url_shared;
+        }
+
+        caller.coin = 1;
     </action>
 
     <action name="NavigateTo" type="javascript">
+
+        // if only single spot is shared, disabled all the other navigations
+        if(krpano.shared_spot_id ){
+            if(krpano.shared_spot_id !== caller.goto){
+                exitcall();
+            }
+        }
+
         var url = caller.goto_url;
         var hlookat = caller.hlookat;
         var vlookat = caller.vlookat;

@@ -17,14 +17,24 @@ class ShareTour extends Component
 
     public $projectId;
     public $tourId;
+    public $spotId;
 
     public $link = '';
     public $linkCopied = false;
+    public $share_type = 'tour';
+    public $spotSelectionAllowed = false;
+    public $spot = null;
 
-    public function mount($tourId, $projectId)
+    public function mount($tourId, $projectId, $spotId = null)
     {
         $this->tourId = $tourId;
         $this->projectId = $projectId;
+        $this->spotId = $spotId;
+        $this->spot = Spot::find($this->spotId);
+
+        if($this->spot){
+            $this->spotSelectionAllowed = true;
+        }
     }
 
     public function render()
@@ -48,6 +58,7 @@ class ShareTour extends Component
         }
 
         $sharedTour = SharedTour::updateOrCreate([
+            'spot_id' => $this->share_type == 'spot' ? $this->spot?->id : null,
             'project_id' => $project->id,
             'user_id' => auth()->id(),
             'tour_id' => $tour->id,

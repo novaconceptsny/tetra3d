@@ -84,28 +84,12 @@ class Surface extends Model implements HasMedia
         return $this->belongsTo(Tour::class);
     }
 
-    public function noArtworkImage(): Attribute
+    public function getStateThumbnail($state, $tour_is_shared = false)
     {
-        return Attribute::make(
-            get: fn () => asset('images/defaults/no-artwork.png'),
-        );
-    }
-
-    public function getActiveStateUrl($project_id)
-    {
-        if (!$project_id){
-            return "";
+        if ($tour_is_shared && !$state){
+            return '';
         }
 
-        if (!$this->getCurrentState($project_id)){
-            return asset('images/defaults/no-artwork.png');
-        }
-
-        return $this->getCurrentState($project_id)->getFirstMediaUrl('hotspot');
-    }
-
-    public function getStateThumbnail($state)
-    {
         if (!$state){
             return asset('images/defaults/no-artwork.png');
         }

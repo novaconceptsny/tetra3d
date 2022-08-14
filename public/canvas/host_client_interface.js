@@ -67,7 +67,7 @@ async function createSurfaceState(filename, assignedArtwork, screenshots, canvas
         "thumbnail": screenshots['thumbnail'],
         "hotspot": screenshots['hotspot'],
         "canvasState": JSON.stringify(canvasState),
-        "reverse_scale": reverseScale,
+        "reverseScale": reverseScale,
         "user_id": userId,
         "spot_id": spot_id,
         "new": true,

@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->foreignId('tour_id');
             $table->foreignId('project_id');
             $table->foreignId('user_id');
+            $table->foreignId('spot_id')->nullable();
             $table->json('surface_states')->nullable();
             $table->timestamps();
         });

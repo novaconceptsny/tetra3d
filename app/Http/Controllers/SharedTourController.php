@@ -12,7 +12,11 @@ class SharedTourController extends Controller
         $tour = $sharedTour->tour;
         $project = $sharedTour->project;
 
-        $spot_id = request('spot_id');
+        $spot_id = request('spot_id', $sharedTour->spot_id);
+
+        if ($sharedTour->spot_id && $sharedTour->spot_id != $spot_id){
+            abort(404);
+        }
 
         $spotQuery = Spot::with([
             'surfaces',
@@ -38,7 +42,9 @@ class SharedTourController extends Controller
         $data = array();
         $data['spot'] = $spot;
         $data['tour'] = $tour;
+        $data['project'] = $project;
         $data['shared_tour_id'] = $sharedTour->id;
+        $data['shared_spot_id'] = $sharedTour->spot_id;
 
         return view('pages.tour', $data);
     }

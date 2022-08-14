@@ -48,6 +48,8 @@ function str_to_title($string): string
 
 function resizeBase64Image($base64, $scale)
 {
+    $scale = $scale ?? 1;
+
     $image = Image::make($base64);
     $image->resize(
         $scale * $image->width(),
