@@ -2,7 +2,7 @@
 
 @section('page_actions')
     <x-page-action
-        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}')"
+        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
         text="Share" icon="fal fa-share-nodes"
     />
 
