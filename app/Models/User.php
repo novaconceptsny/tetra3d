@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\MediaLibrary\InteractsWithMedia;
 use App\Traits\HasCompany;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,17 +11,31 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, HasCompany, HasRoles;
+    use
+        HasApiTokens,
+        HasFactory,
+        Notifiable,
+        HasCompany,
+        HasRoles,
+        InteractsWithMedia;
 
     protected $guarded = ['id'];
 
     protected $hidden = ['password', 'remember_token',];
 
     protected $casts = ['email_verified_at' => 'datetime',];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->useFallbackUrl(asset('images/defaults/no-avatar.png'))
+            ->singleFile();
+    }
 
     public function company()
     {
@@ -36,13 +51,7 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute()
     {
-        /*$path = asset('images/defaults/avatar.jpg');*/
-        $path = asset('images/defaults/no-avatar.png');
-        if ($this->avatar && file_exists($this->avatar)) {
-            $path = asset($this->avatar);
-        }
-
-        return $path;
+        return $this->getFirstMediaUrl('avatar');
     }
 
     public function setPasswordAttribute($value)
@@ -66,6 +75,7 @@ class User extends Authenticatable
     public function role(): Attribute
     {
         $role = $this->roles->first();
+
         return Attribute::make(
             get: fn() => $role ? $role->display_name : '-'
         );

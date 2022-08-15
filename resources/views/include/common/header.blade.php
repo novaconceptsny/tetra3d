@@ -34,7 +34,7 @@
             </button>
         </div>
         <div class="search__box ms-auto ms-lg-0">
-            <div class="input-group">
+            {{--<div class="input-group">
                 <span class="input-group-text" id="nav__search__icon">
                     <x-svg.magnifying-glass/>
                 </span>
@@ -44,11 +44,11 @@
                     placeholder="Search"
                     aria-describedby="nav__search__icon"
                 />
-            </div>
+            </div>--}}
         </div>
         <div class="right">
             <ul class="navbar__nav dash__nav">
-                <li class="nav__item">
+                {{--<li class="nav__item">
                     <a href="#" class="nav__link">Help</a>
                 </li>
                 <li class="nav__item">
@@ -60,12 +60,12 @@
                             <span class="visually-hidden">New alerts</span>
                         </span>
                     </a>
-                </li>
+                </li>--}}
                 <li class="nav__item">
-                    <a href="#" class="nav__link">
+                    <a href="{{ route('profile.edit') }}" class="nav__link">
                         <div href="#" class="profile__photo">
                             <img
-                                src="{{ asset('images/profile__photo.png') }}"
+                                src="{{ user()->avatar_url }}"
                                 alt="profile"
                                 width="48"
                                 height="auto"

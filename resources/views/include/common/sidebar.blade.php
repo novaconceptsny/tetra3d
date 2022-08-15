@@ -18,7 +18,7 @@
                 <span class="nav__text hide"> Home </span>
             </a>
         </li>
-        <li class="nav__item">
+        {{--<li class="nav__item">
             <a href="#" class="nav__link">
                 <span class="icon">
                     <x-svg.plus/>
@@ -33,7 +33,7 @@
                 </span>
                 <span class="nav__text hide">Tour</span>
             </a>
-        </li>
+        </li>--}}
         <li class="nav__item">
             <a href="{{ route('artworks.index') }}" class="nav__link">
                 <span class="icon">
@@ -78,7 +78,7 @@
             </form>
         </li>
         <li class="profile__item">
-            <a href="#" class="nav__link mx-2 p-2">
+            <a href="{{ route('profile.edit') }}" class="nav__link mx-2 p-2">
                 <img
                     src="{{ user()->avatar_url }}"
                     alt="profile photo"

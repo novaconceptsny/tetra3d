@@ -33,6 +33,9 @@
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}"/>
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}"/>
     <link rel="stylesheet" href="{{ asset('backend/css/icons.css') }}"/>
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet"/>
+
+    @yield('styles')
     <livewire:styles/>
 
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -64,6 +67,18 @@
 <script src="{{ asset('js/popper.min.js') }}"></script>
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('js/custom.js') }}"></script>
+
+<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
+
+<script>
+    @php($notifications = array('error', 'success', 'warning', 'info'))
+    @foreach($notifications as $notification)
+        @if(session()->has($notification))
+            @php($message = session()->get($notification))
+            {{ "toastr." . $notification }}{!! "('" !!}{{ __($message) }}{!! "')" !!}
+        @endif
+    @endforeach
+</script>
 
 <script>
     $(function (){

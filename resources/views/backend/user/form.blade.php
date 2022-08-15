@@ -18,7 +18,7 @@
         </div>
         <div class="card-body">
 
-            <form class="row g-3" action="{{ $route }}" method="POST">
+            <form class="row g-3" action="{{ $route }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method($method ?? 'POST')
 
@@ -33,6 +33,14 @@
                         <x-backend::inputs.select-option :value="$role->id" :text="$role->display_name" :selected="$user?->roles?->first()?->id"/>
                     @endforeach
                 </x-backend::inputs.select>
+
+                <div class="col-4">
+                    <label>{{ __('Avatar') }}</label>
+                    <x-backend::media-attachment
+                        name="avatar" rules="max:2024"
+                        :media="$user?->getFirstMedia('avatar')"
+                    />
+                </div>
 
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
