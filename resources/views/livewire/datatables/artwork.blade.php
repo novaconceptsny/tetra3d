@@ -21,6 +21,7 @@
                     @endforeach
                 </select>
             </div>
+            @if(isset($columns['company_name']))
             <div class="me-1">
                 <select wire:model="selectedCompany" class="form-control">
                     <option value="">All Companies</option>
@@ -29,6 +30,7 @@
                     @endforeach
                 </select>
             </div>
+            @endif
             {{--<div class="me-1">
                 <select wire:model="selectedArtist" class="form-control">
                     <option value="">All Artists</option>
