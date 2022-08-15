@@ -62,8 +62,15 @@ class UserController extends Controller
         $request->validate(ValidationRules::updateUser($user));
 
         $user->update($request->only([
-            'first_name', 'last_name', 'email', 'password', 'company_id'
+            'first_name', 'last_name', 'email', 'company_id'
         ]));
+
+        // update password
+        if ($request->password){
+            $user->update([
+                'password' => $request->password
+            ]);
+        }
 
         $user->assignRole($request->role);
 

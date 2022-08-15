@@ -22,7 +22,7 @@
                 @csrf
                 @method($method ?? 'POST')
 
-                <x-backend::inputs.company/>
+                <x-backend::inputs.company :value="$user?->company_id"/>
                 <x-backend::inputs.text col="col-6" name="first_name" value="{{ $user?->first_name }}"/>
                 <x-backend::inputs.text col="col-6" name="last_name" value="{{ $user?->last_name }}"/>
                 <x-backend::inputs.text col="col-6" name="email" value="{{ $user?->email }}"/>

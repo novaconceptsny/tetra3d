@@ -12,7 +12,7 @@
                 data-toggle="select2" name="company_id" id="company_id">
             <option value="">{{ __('Select Company') }}</option>
             @foreach($companies as $company)
-                <x-backend::inputs.select-option :text="$company->name" :value="$company->id" field="company_id"/>
+                <x-backend::inputs.select-option :text="$company->name" :value="$company->id" field="company_id" :selected="$value"/>
             @endforeach
         </select>
         <x-backend::error field="company_id"/>
