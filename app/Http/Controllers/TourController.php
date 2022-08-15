@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use App\Models\SharedTour;
 use App\Models\Spot;
 use App\Models\Tour;
 

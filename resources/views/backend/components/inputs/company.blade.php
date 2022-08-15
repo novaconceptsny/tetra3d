@@ -10,6 +10,7 @@
 
         <select class="form-control select2 @error('company_id') is-invalid @enderror"
                 data-toggle="select2" name="company_id" id="company_id">
+            <option value="">{{ __('Select Company') }}</option>
             @foreach($companies as $company)
                 <x-backend::inputs.select-option :text="$company->name" :value="$company->id" field="company_id"/>
             @endforeach

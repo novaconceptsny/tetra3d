@@ -29,6 +29,7 @@
                     </x-slot>
                     <x-backend::tab.content id="tour_form" :active="true">
                         <div class="row g-3">
+                            <x-backend::inputs.company/>
                             <x-backend::inputs.text name="name" value="{{ $tour?->name }}"/>
                         </div>
                     </x-backend::tab.content>

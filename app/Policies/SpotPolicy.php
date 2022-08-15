@@ -38,16 +38,16 @@ class SpotPolicy
 
     public function update(User $user, Spot $spot)
     {
-        if ($user->isCompanyAdmin()) {
+        /*if ($user->isCompanyAdmin()) {
             return $user->company_id == $spot->company_id;
-        }
+        }*/
     }
 
     public function delete(User $user, Spot $spot)
     {
-        if ($user->isCompanyAdmin()) {
+        /*if ($user->isCompanyAdmin()) {
             return $user->company_id == $spot->company_id;
-        }
+        }*/
     }
 
     public function restore(User $user, Spot $spot)

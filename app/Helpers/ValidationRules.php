@@ -5,6 +5,7 @@ namespace App\Helpers;
 
 
 use App\Models\User;
+use App\Rules\RequiredForAdmin;
 use Illuminate\Validation\Rule;
 
 class ValidationRules
@@ -60,6 +61,7 @@ class ValidationRules
     {
         return array_merge([
             'name' => 'required',
+            'company_id' => new RequiredForAdmin()
         ], self::storeMap());
     }
 

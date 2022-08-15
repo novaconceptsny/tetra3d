@@ -34,7 +34,9 @@ class TourController extends Controller
     {
         $request->validate(ValidationRules::storeTour());
 
-        $tour = Tour::create($request->all());
+        $tour = Tour::create($request->only([
+            'name' , 'company_id'
+        ]));
 
         $map = $tour->map()->create($request->map);
 
@@ -67,7 +69,7 @@ class TourController extends Controller
         $request->validate(ValidationRules::updateTour());
 
         $tour->update($request->only([
-            'name'
+            'name' , 'company_id'
         ]));
 
 

@@ -8,6 +8,8 @@ use Illuminate\Validation\Rule as ValidationRule;
 
 class RequiredForAdmin implements Rule
 {
+    private string $message = '';
+
     public function __construct()
     {
         //
@@ -26,13 +28,16 @@ class RequiredForAdmin implements Rule
             return true;
         }
 
-        if (is_null($value)) {
-            return false;
-        } elseif (is_string($value) && trim($value) === '') {
-            return false;
+        $validator = \Validator::make([$attribute => $value], [
+            $attribute => 'required',
+        ]);
+
+        if ($validator->fails()){
+            $this->message = $validator->messages()->first();
         }
 
-        return true;
+        return $validator->passes();
+
     }
 
     /**
@@ -42,6 +47,6 @@ class RequiredForAdmin implements Rule
      */
     public function message()
     {
-        return 'The :attribute field is required';
+        return $this->message;
     }
 }
