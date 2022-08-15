@@ -14,7 +14,8 @@
     </div>
     <div class="right">
         <div class="surface__items">
-            <a href="{{ route('surfaces.show', [$surface, 'project_id' => $projectId]) }}" class="icon me-1" >
+            <a href="{{ route('surfaces.show', [$surface, 'project_id' => $projectId, 'surface_state_id' => $state->id]) }}"
+               class="icon me-1">
                 <i class="fal fa-pencil"></i>
             </a>
             @php($options = json_encode(['route' => route('surfaces.destroy', $state)]))

@@ -29,9 +29,13 @@ class SurfaceStateController extends Controller
         $surface_state = null;
         $create_new_state = request('new');
 
+        if ($surface_state_id = \request('surface_state_id')){
+            $surface_state = SurfaceState::findOrFail($surface_state_id);
+        }
+
         $surface->background_url = $surface->getFirstMediaUrl('background');
 
-        if (!$create_new_state){
+        if (!$create_new_state && !$surface_state_id){
             $surface_state = $surface->getCurrentState($project->id);
         }
         $assignedArtworks = $surface_state?->artworks;
@@ -42,6 +46,7 @@ class SurfaceStateController extends Controller
 
         $data = array();
         $data['project'] = $project;
+        $data['tour'] = $surface->tour;
         $data['surface'] = $surface;
         $data['surface_data'] = $surfaceData;
         $data['surface_current_state'] = $surface_state;

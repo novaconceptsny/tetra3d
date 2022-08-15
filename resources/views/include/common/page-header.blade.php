@@ -2,15 +2,16 @@
 
 <header id="header" class="main__header universal mini">
     <nav id="navbar" class="main__navbar">
-        <div class="left">
+        <div class="left font-system-ui">
             <button class="menu__btn d-lg-none">
                 <x-svg.bars/>
             </button>
+            @if(isset($tour))
+                <span class="navigator">{{  $tour?->name }}</span>
+            @endif
             @if($project)
-                <a href="{{ route('dashboard') }}" class="prev__btn font-primary">
-                    <x-lineawesome-angle-left-solid class="text-dark"/>
-                    <span class="navigator">{{  $project?->name }}</span>
-                </a>
+                <i class="fal fa-angle-right"></i>
+                <span class="navigator">{{  $project?->name }}</span>
             @endif
         </div>
         <div class="right">

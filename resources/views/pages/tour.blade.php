@@ -2,6 +2,7 @@
 
 @php
     $project_id = request('project_id');
+    $project = $project ?? null;
     $shared_tour_id = $shared_tour_id ?? null;
     $shared_spot_id = $shared_spot_id ?? null;
     $tour_is_shared = Route::is('shared-tours.show');
@@ -23,7 +24,7 @@
     />
     <x-page-action
         :visible="$project && !$tour_is_shared"
-        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
+        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project?->id }}', '{{ request('spot_id') }}')"
         text="Share" icon="fal fa-share-nodes"
     />
     <x-page-action
