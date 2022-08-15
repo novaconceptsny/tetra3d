@@ -6,12 +6,13 @@
 
     @foreach($columns as $column => $header)
         @php
+            $moveToStart = isset($header['move_to_start']) ? "data-move-to-start=true" : "";
             $moveAfter = isset($header['move_after']) ? "data-move-after={$header['move_after']}" : "";
             $moveBefore = isset($header['move_before']) ? "data-move-before={$header['move_before']}" : "";
         @endphp
 
         @if($header['visible'])
-            <th class="cursor-pointer td" scope="col" wire:click="sort('{{$column}}')" data-column="{{ $column }}" {{ $moveAfter }} {{ $moveBefore }}>
+            <th class="cursor-pointer td" scope="col" wire:click="sort('{{$column}}')" data-column="{{ $column }}" {{ $moveAfter }} {{ $moveBefore }} {{$moveToStart}}>
                 <span class="d-flex">
                     <span> {{ __($header['name']) }}</span>
                     @if($header['sortable'] ?? false)

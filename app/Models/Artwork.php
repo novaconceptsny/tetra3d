@@ -47,4 +47,11 @@ class Artwork extends Model implements HasMedia
                 ? $this->getFirstMediaUrl('image') : $value
         );
     }
+
+    public function dimensions(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => "{$this->data->width_inch}x{$this->data->height_inch}"
+        );
+    }
 }

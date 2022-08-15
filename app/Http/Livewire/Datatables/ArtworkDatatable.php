@@ -3,14 +3,15 @@
 namespace App\Http\Livewire\Datatables;
 
 use App\Models\Artwork;
+use App\Models\ArtworkCollection;
+use App\Models\Company;
 
 class ArtworkDatatable extends BaseDatatable
 {
-    public $columns = [];
-    public $routes = [];
     public $model = Artwork::class;
-    public $columnsToggleable = false;
-    public $bulkDeleteEnabled = false;
+    public $selectedCollection = '';
+    public $selectedCompany = '';
+    public $selectedArtist = '';
 
     public function mount()
     {
@@ -28,8 +29,31 @@ class ArtworkDatatable extends BaseDatatable
 
         $data['heading'] = __('Artworks');
 
+        $data['collections'] = ArtworkCollection::latest('name')->get();
+        $data['companies'] = Company::latest('name')->get();
+        $data['artists'] = Artwork::groupBy('artist')->pluck('artist');
+
         $rows = $this->model::query()
             ->with('collection', 'company', 'media')
+            ->when(
+                $this->selectedCollection,
+                fn($query) => $query->where(
+                    'artwork_collection_id', $this->selectedCollection
+                )
+            )
+            ->when(
+                $this->selectedCompany,
+                fn($query) => $query->where(
+                    'company_id', $this->selectedCompany
+                )
+            )
+            ->when(
+                $this->selectedArtist,
+                fn($query) => $query->where(
+                    'artist', $this->selectedArtist
+                )
+            )
+            ->whereAnyColumnLike($this->search)
             ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
 
@@ -47,7 +71,11 @@ class ArtworkDatatable extends BaseDatatable
 
     public function resetFilters()
     {
-        $this->reset(['perPage']);
+        $this->reset([
+            'perPage', 'selectedCollection',
+            'search', 'selectedCompany', 'selectedArtist',
+            'sortBy', 'sortOrder'
+        ]);
 
     }
 
@@ -65,22 +93,33 @@ class ArtworkDatatable extends BaseDatatable
             'name' => [
                 'name' => 'Name',
                 'visible' => true,
+                'sortable' => true,
+            ],
+            'dimensions' => [
+                'name' => 'Dimensions in Inch (w x h)',
+                'visible' => true,
             ],
             'artist' => [
                 'name' => 'Artist',
                 'visible' => true,
+                'sortable' => true,
             ],
             'type' => [
                 'name' => 'Type',
                 'visible' => true,
+                'sortable' => true,
             ],
             'img' => [
                 'name' => 'Image',
                 'visible' => true,
                 'render' => false,
-                'move_before' => 'company_name'
+                'move_to_start' => true
             ],
         ];
+
+        if (!user()->isAdmin()){
+            unset($columns['company_name']);
+        }
 
         return $columns;
     }

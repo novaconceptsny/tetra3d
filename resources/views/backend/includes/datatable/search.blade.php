@@ -5,6 +5,6 @@
         @endforeach
     </select>
 </div>
-<div class="ml-auto">
+<div class="me-1">
     <input wire:model="search" class="form-control" type="text" placeholder="{{ __('Search') }}">
 </div>

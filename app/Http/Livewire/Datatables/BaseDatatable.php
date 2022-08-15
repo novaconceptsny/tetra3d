@@ -16,9 +16,11 @@ class BaseDatatable extends Component
     public $search = '';
     public $sortBy = 'id';
     public $sortOrder = 'desc';
-    public $bulkDeleteEnabled = true;
-    public $columnsToggleable = true;
+    public $bulkDeleteEnabled = false;
+    public $columnsToggleable = false;
     public $selectedRows = [];
+    public $columns = [];
+    public $routes = [];
 
     public function mount()
     {

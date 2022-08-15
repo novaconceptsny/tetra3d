@@ -20,6 +20,11 @@
                     let $column = $(this);
                     let move_after = $column.data('move-after');
                     let move_before = $column.data('move-before');
+                    let move_to_start = $column.data('move-to-start');
+
+                    if (move_to_start !== undefined && move_to_start === true) {
+                        $column.insertBefore( $row.find(`.td:first`));
+                    }
 
                     if (move_after !== undefined) {
                         let $moveAfterColumn = $row.find(`.td[data-column="${move_after}"]`)
