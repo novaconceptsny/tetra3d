@@ -81,6 +81,7 @@ class SurfaceState extends Model implements HasMedia
     public function setAsActive()
     {
         $this->surface->states()
+            ->whereNot('id', $this->id)
             ->where('project_id', $this->project_id)->update([
                 'active' => 0,
             ]);

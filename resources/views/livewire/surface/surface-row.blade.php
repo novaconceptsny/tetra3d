@@ -1,14 +1,16 @@
 <div>
     <x-loader message="Switching current state..."/>
     <h4 class="font-secondary section__title">
-        {{ $surface->name }}
+        <livewire:surface-title :surface="$surface"/>
     </h4>
     <div class="inner__field row mb-4">
         <x-surface_state.add-new :surface="$surface" :project-id="$projectId"/>
         @foreach($surface->states as $state)
             <div class="col-md-6 col-lg-3 mb-3">
                 <div href="#" class="card {{ $state->active ? 'shadow border-2 border-success' : '' }}">
-                    <a href="#" class="overlay__link" wire:click="changeActiveState({{ $state }})"></a>
+                    @if(!$state->active)
+                        <a href="#" class="overlay__link" wire:click="changeActiveState({{ $state }})"></a>
+                    @endif
                     <div class="card-img-top">
                         <img
                             src="{{ $state->getFirstMediaUrl('thumbnail') }}"

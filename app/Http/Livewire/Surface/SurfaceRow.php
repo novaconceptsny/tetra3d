@@ -25,6 +25,10 @@ class SurfaceRow extends Component
 
     public function changeActiveState(SurfaceState $state)
     {
+        if($state->isActive()){
+            return false;
+        }
+
         $state->setAsActive();
         $this->surface->refresh();
     }
