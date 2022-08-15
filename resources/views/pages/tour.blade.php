@@ -9,26 +9,28 @@
     $parameters = array_merge(request()->all(), ['tour' => $tour]);
     $parameters['tracker'] = $tracker ? 0 : 1;
     $readonly = !$project_id || $shared_tour_id;
+
+    // only admins can see tracker
+    $tracker = user()->can('perform-admin-actions') ? $tracker : 0;
 @endphp
 
 @section('page_actions')
-
-    @if(!$tour_is_shared)
-        <x-page-action
-            :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
-            text="Tracker" icon="fal fa-ruler-combined"
-        />
-        @if($project)
-            <x-page-action
-                onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
-                text="Share" icon="fal fa-share-nodes"
-            />
-            <x-page-action
-                :url="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
-                text="Versions" icon="fal fa-layer-group"
-            />
-        @endif
-    @endif
+    <x-page-action
+        :visible="!$tour_is_shared"
+        :visible="$tour_is_shared" permission="perform-admin-actions"
+        :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
+        text="Tracker" icon="fal fa-ruler-combined"
+    />
+    <x-page-action
+        :visible="$project && !$tour_is_shared"
+        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
+        text="Share" icon="fal fa-share-nodes"
+    />
+    <x-page-action
+        :visible="$project && !$tour_is_shared"
+        :url="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
+        text="Versions" icon="fal fa-layer-group"
+    />
     <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal" text="Map" icon="fal fa-map-marker-alt"/>
 @endsection
 

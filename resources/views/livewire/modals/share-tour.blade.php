@@ -4,7 +4,7 @@
             <h5>Share Tour</h5>
         </div>
         <div class="modal-body">
-            @if($spotSelectionAllowed)
+            @if($spotSelectionAllowed && !$link)
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" id="share_tour" value="tour" wire:model="share_type">
                     <label class="form-check-label" for="share_tour">Share whole tour</label>
