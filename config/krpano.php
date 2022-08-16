@@ -8,7 +8,7 @@ return [
         'previewpath' => '%OUTPUTPATH%/panos/preview.jpg',
         'preview' => 'true',
         'html' => 'false',
-        'xml' => 'false',
+        'xml' => 'true',
         'makethumb' => 'false',
     ),
 

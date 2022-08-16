@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('tour_id');
             $table->string('name');
             $table->json('xml')->nullable();
+            $table->json('metadata')->nullable();
             $table->timestamps();
         });
     }

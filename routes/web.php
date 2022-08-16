@@ -52,6 +52,7 @@ Route::group([
 
     Route::redirect('/dashboard', '/backend/projects')->name('dashboard');
 
+    //Route::resource('spot-configuration', 'SpotConfigurationController');
     Route::controller('SpotConfigurationController')->group(function () {
         Route::get('spot-configuration/{spot}', 'show')
             ->name('spot-configuration.show');

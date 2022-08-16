@@ -29,6 +29,8 @@ class KrpanoTools extends Component
 
     public function runCommand()
     {
+        set_time_limit(-1);
+
         $this->output = false;
 
         if (!file_exists($this->spot->getFirstMediaPath('image_360'))){
@@ -55,12 +57,13 @@ class KrpanoTools extends Component
         }
 
         if (File::isDirectory($this->spot->tour_path)){
-            File::deleteDirectory("{$this->spot->tour_path}/panos", true);
+            File::deleteDirectory("{$this->spot->tour_path}", true);
         }
 
         $command = $this->getKrpanoCommand();
 
         $process = new Process($command);
+        $process->getStatus();
 
         $processOutput = '';
 
@@ -76,6 +79,9 @@ class KrpanoTools extends Component
             $this->output = $processOutput;
         }
 
+        if ($process->isSuccessful()){
+            $this->cleanup();
+        }
     }
 
     public function confirm(){
@@ -103,5 +109,37 @@ class KrpanoTools extends Component
         $command[] = $this->spot->getFirstMediaPath('image_360');
 
         return $command;
+    }
+
+    private function cleanup()
+    {
+        $spot = $this->spot;
+
+        try {
+            $objXmlDocument = simplexml_load_file("$spot->tour_path/tour.xml");
+            $cubeAttributes = $objXmlDocument->scene->image->cube->attributes();
+            $panos_url = (string) $cubeAttributes->url;
+
+            $spot->update([
+                'metadata' => [
+                    'multires' => (string) $cubeAttributes->multires,
+                    'panos_url' => $panos_url,
+                ],
+            ]);
+
+            $spot->generateXml();
+
+            // update cache
+            $spot->panoStatus(true);
+
+        } catch (\Exception $exception) {
+            $this->output = 'tour.xml could not be found';
+        }
+
+        // remove skin and plugins folders
+        if (File::isDirectory($this->spot->tour_path)){
+            File::deleteDirectory("{$this->spot->tour_path}/plugins");
+            File::deleteDirectory("{$this->spot->tour_path}/skin");
+        }
     }
 }

@@ -25,6 +25,7 @@ class Spot extends Model implements HasMedia
 
     public $casts = [
         'xml' => SchemalessAttributes::class,
+        'metadata' => SchemalessAttributes::class,
     ];
 
     public static function boot() {
@@ -50,6 +51,11 @@ class Spot extends Model implements HasMedia
     public function scopeWithXml(): Builder
     {
         return $this->xml->modelScope();
+    }
+
+    public function scopeWithMetadata(): Builder
+    {
+        return $this->metadata->modelScope();
     }
 
     public function tour()
@@ -90,7 +96,7 @@ class Spot extends Model implements HasMedia
 
     public function xmlPath(): Attribute
     {
-        $path = "{$this->tour_path}/pano.xml";
+        $path = "{$this->tour_path}/tour.xml";
         return Attribute::make(
             get: fn() => $path
         );
@@ -99,7 +105,7 @@ class Spot extends Model implements HasMedia
     public function xmlUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => asset("storage/tours/{$this->tour_id}/{$this->id}/pano.xml")
+            get: fn() => asset("storage/tours/{$this->tour_id}/{$this->id}/tour.xml")
         );
     }
 
@@ -128,7 +134,7 @@ class Spot extends Model implements HasMedia
                     return PanoStatus::NOT_PRESENT;
                 }
 
-                if (count(\File::allFiles($pano_dir)) !== 415) {
+                if (count(\File::allFiles($pano_dir)) < 415) {
                     return PanoStatus::INVALID;
                 }
 

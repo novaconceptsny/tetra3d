@@ -45,9 +45,9 @@ class SpotXmlGenerator
         $dom->preserveWhiteSpace = true;
         $dom->formatOutput = true;
         $dom->loadXML($this->xml->asXML());
-        $dom->save("$dir/pano.xml");
+        $dom->save("$dir/tour.xml");
 
-        /*$this->xml->saveXML("$dir/pano.xml");*/
+        /*$this->xml->saveXML("$dir/tour.xml");*/
     }
 
     private function addIncludes()
@@ -121,10 +121,14 @@ class SpotXmlGenerator
 
     private function addImage()
     {
+        $spot_metadata = $this->spot->metadata;
+        $panos_url = $spot_metadata->panos_url ?? "panos/%s/l%l/%v/l%l_%s_%v_%h.jpg";
+        $multires = $spot_metadata->multires ?? "512,768,1664,3200";
+
         $image = $this->xml->addChild('image');
         $cube = $image->addChild('cube');
-        $cube->addAttribute('url', $this->getSpotAsset('panos/%s/l%l/%v/l%l_%s_%v_%h.jpg'));
-        $cube->addAttribute('multires', '512,768,1664,3200');
+        $cube->addAttribute('url', $this->getSpotAsset($panos_url));
+        $cube->addAttribute('multires', $multires);
     }
 
     private function addScaleBox()
