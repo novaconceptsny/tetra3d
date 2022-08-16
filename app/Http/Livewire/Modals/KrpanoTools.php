@@ -36,7 +36,7 @@ class KrpanoTools extends Component
             return;
         }
 
-        if ($this->spot->panoStatus() == PanoStatus::PRESENT && !$this->confirmed){
+        if ($this->spot->panoStatus(true) !== PanoStatus::NOT_PRESENT && !$this->confirmed){
             $this->output = "Panos already exists";
             $this->confirmation_required = true;
             return;

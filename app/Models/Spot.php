@@ -112,13 +112,15 @@ class Spot extends Model implements HasMedia
         return XmlStatus::PRESENT;
     }
 
-    public function panoStatus()
+    public function panoStatus($reset_cache = false)
     {
-        // todo::improvement: might have performance issues!
-
         $base_dir = $this->tour_path;
         $pano_dir = "$base_dir/panos";
         $cache_key = "pano_{$this->id}_status";
+
+        if ($reset_cache){
+            Cache::forget($cache_key);
+        }
 
         return Cache::remember($cache_key, now()->addMinutes(10),
             function () use ($pano_dir) {
