@@ -59,11 +59,11 @@
     position: unset;
 }
 
-.main__header.universal .right .navbar__nav .nav__link{
+.main__header.universal .right .navbar__nav .nav__link {
     background-color: white;
 }
 
-.hide{
+.hide {
     display: none;
 }
 
@@ -79,12 +79,21 @@
     left: 50%;
 }
 
-.error{
+.error {
     display: block;
     color: #B00020;
-    font-size: 1rem!important;
+    font-size: 1rem !important;
 }
 
 .font-system-ui {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+
+.editor-container {
+    margin-left: 27rem !important;
+    margin-right: 21rem !important;
+}
+
+.editor-container .image__viewer {
+    height: 95% !important;
 }

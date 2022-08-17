@@ -18,8 +18,8 @@
     <button class="btn sidebar__trigger fixed">
         <x-svg.angle-right/>
     </button>
-    <x-surface-versions :surface="$surface" :project="$project"/>
-    <div class="dashboard mini" style="margin-left: 27rem!important;">
+    <x-surface-versions :surface="$surface" :project="$project" :current_state_id="$current_surface_state?->id"/>
+    <div class="dashboard mini editor-container">
         <div class="alert alert-danger fade slow w-100 row hide" style="position: absolute; z-index: 200; left: 0.8vw;"
              role="alert" id="error_alert">
             <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
@@ -27,8 +27,8 @@
         <div class="d-flex fs-5 mb-2">
             <p class="room_name mb-0">
                 {{ $spot->name }} >
-                @if($surface_current_state)
-                    <livewire:surface-state-title :state="$surface_current_state"/>
+                @if($current_surface_state)
+                    <livewire:surface-state-title :state="$current_surface_state"/>
                 @else
                     <span>Untitled</span>
                 @endif

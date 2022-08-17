@@ -1,8 +1,9 @@
 @props([
     'surface',
-    'project'
+    'project',
+    'current_state_id'
 ])
-<div {{ $attributes->class(['surface__sidebar card']) }}>
+<div {{ $attributes->class(['surface__sidebar card show']) }}>
     <div class="card-body">
         <div class="top">
             <div class="left">
@@ -21,14 +22,15 @@
         </button>
         <div class="tetra__accordion">
             @foreach($surface->states as $state)
-                <div class="accordion__item" style="cursor: unset">
+                @php($is_active = $state->id == $current_state_id)
+                <div class="accordion__item {{ $is_active ? 'active' : ''}}" style="cursor: unset" >
                     <x-surface_state.actions
                         :surface="$surface"
                         :state="$state"
                         :project-id="$project->id"
                         :comments="true"
                     />
-                    <div class="accordion__body">
+                    <div class="accordion__body {{ $is_active ? 'd-block' : '' }}">
                         <livewire:comments :commentable="$state"/>
                     </div>
                 </div>

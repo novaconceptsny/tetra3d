@@ -55,7 +55,7 @@ class SurfaceStateController extends Controller
         $data['tour'] = $surface->tour;
         $data['surface'] = $surface;
         $data['surface_data'] = $surfaceData;
-        $data['surface_current_state'] = $surface_state;
+        $data['current_surface_state'] = $surface_state;
         $data['spot'] = $spot;
         $data['assigned_artworks'] = $assignedArtworks;
         $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
