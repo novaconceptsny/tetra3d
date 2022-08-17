@@ -359,52 +359,54 @@ function applyAdaptiveRescale(image, scale, overrideScale) {
 function placeSelectedImage(artSelection, topPos = boundingBox.top, leftPos = boundingBox.left) {
 
     let imgUrl = artSelection.imgUrl;
-    let notSelected = !isAlreadySelected(artSelection.artworkId);
-    if (notSelected) {
-        // $('#loadingModal').modal('show');
-        fabric.Image.fromURL(imgUrl, function (myImg) {
-            if (myImg._element == null) {
-                alert("Image could not be loaded...");
-            }
 
-            let img1 = myImg.set({
-                originX: "left",
-                originY: "top",
-                id: artSelection.artworkId,
-                top: topPos,
-                left: leftPos,
-                angle: 0,
-                hasControls: true,
-                selectable: true,
-                selection: true,
-                // lockScalingX: true,
-                // lockScalingY: true,
-                borderColor: 'red',
-                borderScaleFactor: 1,
-                hasRotatingPoint: true,
-                noScaleCache: false
-            });
-            /*let scale = scaleArr[artSelection.artworkId];*/
-            let scale = artSelection.scale;
+    /*if(isAlreadySelected(artSelection.artworkId)){
+        return;
+    }*/
 
-            let overrideScale = artSelection.overrideScale;
+    // $('#loadingModal').modal('show');
+    fabric.Image.fromURL(imgUrl, function (myImg) {
+        if (myImg._element == null) {
+            alert("Image could not be loaded...");
+        }
 
-            if (scale == null) {
-                scale = 96;
-            }
-            applyAdaptiveRescale(img1, scale, overrideScale);
-            artworkCanvas.add(img1);
-
-            artworkCanvas.renderAll();
-            // displayLoadingImageModal();
-        }.bind(this), {
-            crossOrigin: 'anonymous'
+        let img1 = myImg.set({
+            originX: "left",
+            originY: "top",
+            id: artSelection.artworkId,
+            top: topPos,
+            left: leftPos,
+            angle: 0,
+            hasControls: true,
+            selectable: true,
+            selection: true,
+            // lockScalingX: true,
+            // lockScalingY: true,
+            borderColor: 'red',
+            borderScaleFactor: 1,
+            hasRotatingPoint: true,
+            noScaleCache: false
         });
+        /*let scale = scaleArr[artSelection.artworkId];*/
+        let scale = artSelection.scale;
 
-        //在這地方canvasState拿到它需要的assignedArwork資料
-        //一放置一個新的artwork，就將之推送到assignedartwork物件裡存起來
-        canvasState.assignedArtwork.push(artSelection);
-    }
+        let overrideScale = artSelection.overrideScale;
+
+        if (scale == null) {
+            scale = 96;
+        }
+        applyAdaptiveRescale(img1, scale, overrideScale);
+        artworkCanvas.add(img1);
+
+        artworkCanvas.renderAll();
+        // displayLoadingImageModal();
+    }.bind(this), {
+        crossOrigin: 'anonymous'
+    });
+
+    //Here canvasState gets the assignedArwork data it needs
+    // when a new artwork is placed, it is pushed to the assignedartwork object and stored
+    canvasState.assignedArtwork.push(artSelection);
 }
 
 
