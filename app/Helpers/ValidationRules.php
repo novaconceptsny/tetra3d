@@ -48,7 +48,7 @@ class ValidationRules
     {
         return [
             'name' => 'required',
-            'tour_id' => 'required'
+            'tour_ids' => 'required|array'
         ];
     }
 

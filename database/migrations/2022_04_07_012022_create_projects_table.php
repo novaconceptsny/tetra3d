@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id');
-            $table->foreignId('tour_id');
             $table->string('name');
             $table->timestamps();
         });

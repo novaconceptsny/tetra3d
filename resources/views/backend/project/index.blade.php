@@ -23,7 +23,7 @@
                     <thead>
                     <tr>
                         <th scope="col">{{ __('Company') }}</th>
-                        <th scope="col">{{ __('Tour') }}</th>
+                        <th scope="col">{{ __('Tours') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
                         <th scope="col">{{ __('Contributors') }}</th>
                         <th></th>
@@ -33,7 +33,13 @@
                     @forelse($projects as $project)
                         <tr>
                             <td>{{ $project->company->name }}</td>
-                            <td>{{ $project->tour->name }}</td>
+                            <td>
+                                @foreach($project->tours as $tour)
+                                    <a href="{{ route('tours.show', [$tour, 'project_id' => $project->id]) }}" target="_blank">
+                                        <span class="badge badge-info-lighten px-2 py-1">{{ $tour->name }}</span>
+                                    </a>
+                                @endforeach
+                            </td>
                             <td>{{ $project->name }}</td>
                             <td>{{ $project->contributors_count }} Contributors</td>
                             <td>

@@ -19,7 +19,9 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $projects = Project::relevant()->withCount('contributors')->paginate(25);
+        $projects = Project::relevant()->with([
+            'company', 'tours'
+        ])->withCount('contributors')->paginate(25);
         return view('backend.project.index', compact('projects'));
     }
 
@@ -38,9 +40,12 @@ class ProjectController extends Controller
     {
         $request->validate(ValidationRules::storeProject());
 
-        $project = Project::create($request->all());
+        $project = Project::create($request->only([
+            'name'
+        ]));
 
         $project->contributors()->sync($request->user_ids);
+        $project->tours()->sync($request->tour_ids);
         $project->artworkCollections()->sync($request->artwork_collection_ids);
 
         return redirect()->route('backend.projects.index')
@@ -69,7 +74,10 @@ class ProjectController extends Controller
     {
         $request->validate(ValidationRules::updateProject());
 
-        $project->update($request->all());
+        $project->update($request->only([
+            'name'
+        ]));
+        $project->tours()->sync($request->tour_ids);
         $project->contributors()->sync($request->user_ids);
         $project->artworkCollections()->sync($request->artwork_collection_ids);
 

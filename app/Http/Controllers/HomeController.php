@@ -26,7 +26,7 @@ class HomeController extends Controller
     {
         $data = array();
         $data['projects'] = Project::with([
-            'tour', 'contributors.media'
+            'tours', 'contributors.media'
         ])->relevant()->get();
 
         return view('dashboard', $data);

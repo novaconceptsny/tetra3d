@@ -19,9 +19,14 @@ class Project extends Model
         parent::boot();
     }
 
-    public function tour()
+    /*public function tour()
     {
         return $this->belongsTo(Tour::class);
+    }*/
+
+    public function tours()
+    {
+        return $this->belongsToMany(Tour::class);
     }
 
     public function users()

@@ -24,12 +24,13 @@
 
                 <x-backend::inputs.text name="name" value="{{ $project ? $project->name : '' }}"/>
 
-                <x-backend::inputs.select2 name="tour_id" label="Tour">
+                <x-backend::inputs.select2 name="tour_ids[]" field="tour_ids" label="Tours" :multiple="true">
                     @foreach($tours as $tour)
                         <x-backend::inputs.select-option
-                            :selected="$project?->tour_id"
+                            :multiple="true"
                             :value="$tour->id"
                             :text="$tour->name"
+                            :selected="$project?->tours->pluck('id')->toArray()"
                         />
                     @endforeach
                 </x-backend::inputs.select2>

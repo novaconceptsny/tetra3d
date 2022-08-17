@@ -3,12 +3,7 @@
 @section('content')
     <div class="dashboard mini">
         <div class="mb-3">
-            <select class="form-select">
-                <option selected>All</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
+            <!-- filters !-->
         </div>
         <div class="inner__field">
             <div class="row">
@@ -21,7 +16,7 @@
                                     <small class="date">{{ $project->created_at->format('M d, Y') }}</small>
                                 </div>
                                 <div class="right">
-                                    <span class="btn btn__stage">Active</span>
+                                    {{--<span class="btn btn__stage">Active</span>
                                     <div class="dropdown">
                                         <a href="javascript:void(0)" class="dropdown-toggle " id=""
                                            data-bs-toggle="dropdown" aria-expanded="false">
@@ -29,25 +24,39 @@
                                         </a>
                                         <ul class="dropdown-menu" aria-labelledby="">
                                             <li>
-                                                <a class="dropdown-item"
+                                                --}}{{--<a class="dropdown-item"
                                                    href="{{ route('tours.surfaces', [$project->tour, 'project_id' => $project->id]) }}">
                                                     Surfaces
-                                                </a>
+                                                </a>--}}{{--
                                             </li>
                                         </ul>
-                                    </div>
+                                    </div>--}}
                                 </div>
                             </div>
                             <div class="card-body">
                                 <p class="card__text">
                                     {{ $project->description }}
                                 </p>
+                                <p>
+                                    @if($project->tours->count() > 1)
+                                        <span class="d-block">Select Tour</span>
+                                    @endif
+                                    @forelse($project->tours as $tour)
+                                        <a href="{{ route('tours.show', [$tour, 'project_id' => $project->id]) }}">
+                                            <span class="badge bg-info px-2 py-1">
+                                                {{ $tour->name }}
+                                            </span>
+                                        </a>
+                                    @empty
+                                    <span class="text-center d-block">No tours configured</span>
+                                    @endforelse
+                                </p>
                             </div>
-                            <div class="card-footer">
+                            <div class="card-footer" style="min-height: 47px;">
                                 @include('include.partials.contributors')
-                                <a href="{{ route('tours.show', [$project->tour, 'project_id' => $project->id]) }}" class="btn next__btn">
+                                {{--<a href="{{ route('tours.show', [$project->tour, 'project_id' => $project->id]) }}" class="btn next__btn">
                                     <x-svg.angle-right/>
-                                </a>
+                                </a>--}}
                             </div>
                         </div>
                     </div>
