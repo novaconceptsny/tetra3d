@@ -1,10 +1,16 @@
 @extends('layouts.master')
 
 @section('page_actions')
+    @php
+        $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
+    @endphp
+
     <x-page-action id="save_btn" text="{{ __('Save') }}" type="button" class="hide"/>
     <x-page-action  data-bs-toggle="modal" data-bs-target="#confirmation_modal"  text="Save As" type="button"/>
     <x-page-action id="remove_btn" text="{{ __('Remove') }}" class="hide"/>
-    <x-page-action text="Return to 360 view" :url="route('tours.show', array_merge(['tour' => $spot->tour_id], request()->all()))"/>
+    <x-page-action text="Return to 360 view" :url="route('tours.show', $query_params)" :visible="!$return_to_versions"/>
+    <x-page-action text="Return to Versions" :url="route('tours.surfaces', $query_params)"
+                   :visible="$return_to_versions"/>
 @endsection
 
 @section('content')
@@ -69,7 +75,7 @@
     <script>
         let user_id = {{ auth()->id() }};
         let project_id = {{ request('project_id') }};
-        let updateCanvasRoute = "{{ route('surfaces.update', $surface) }}"
+        let updateCanvasRoute = "{{ route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]) }}"
 
         let spot_id = {{ $spot->id }};
         let hlookat = {{ request('hlookat', 0) }};

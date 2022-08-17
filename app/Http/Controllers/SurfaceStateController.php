@@ -26,6 +26,12 @@ class SurfaceStateController extends Controller
             $spot = $surface->tour->spots->first();
         }
 
+
+        $referer = str(request()->headers->get('referer'))->before('?');
+        $versions_url = str(
+            route('tours.surfaces', $spot->tour_id)
+        )->before('?');
+
         $surface_state = null;
         $create_new_state = request('new');
 
@@ -53,6 +59,7 @@ class SurfaceStateController extends Controller
         $data['spot'] = $spot;
         $data['assigned_artworks'] = $assignedArtworks;
         $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
+        $data['return_to_versions'] = $referer == $versions_url;
 
         return view('pages.editor', $data);
     }
@@ -106,13 +113,15 @@ class SurfaceStateController extends Controller
 
         $state->artworks()->sync($assigned_artworks);
 
-        return redirect()->route('tours.show', [
+        $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
+
+        return redirect()->route($route, [
             $surface->tour,
             'spot_id' => $request->spot_id,
             'project_id' => $request->project_id,
             'hlookat' => $request->hlookat,
             'vlookat' => $request->vlookat,
-        ]);
+        ])->with('success', 'Surface updated');
     }
 
     public function destroy(SurfaceState $state)
