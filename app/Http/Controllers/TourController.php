@@ -30,15 +30,10 @@ class TourController extends Controller
 
         $spot_id = request('spot_id');
 
-        if (request('shared') && request('shared_tour_id')) {
-            return redirect()->route('shared-tours.show', [
-                request('shared_tour_id'),
-                'spot_id' => $spot_id,
-            ]);
-        }
-
         if ($project_id = request('project_id')) {
             $project = Project::relevant()->findOrFail($project_id);
+        } else {
+            abort_if(!user()->isAdmin(), 404);
         }
 
         $spotQuery = Spot::with([

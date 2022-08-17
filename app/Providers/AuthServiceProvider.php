@@ -56,7 +56,6 @@ class AuthServiceProvider extends ServiceProvider
         Map::class => MapPolicy::class,
         ArtworkCollection::class => ArtworkCollectionPolicy::class,
         User::class => UserPolicy::class,
-        SpotConfiguration::class => SpotConfigurationPolicy::class,
         Comment::class => CommentPolicy::class,
         Like::class => LikePolicy::class,
         SharedTour::class => SharedTourPolicy::class,

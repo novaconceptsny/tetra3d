@@ -17,9 +17,9 @@ class SpotPolicy
 
     public function viewAny(User $user)
     {
-        if ($user->isCompanyAdmin()) {
+        /*if ($user->isCompanyAdmin()) {
             return true;
-        }
+        }*/
     }
 
     public function view(User $user, Spot $spot)
@@ -31,9 +31,9 @@ class SpotPolicy
 
     public function create(User $user)
     {
-        if ($user->isCompanyAdmin()) {
+        /*if ($user->isCompanyAdmin()) {
             return true;
-        }
+        }*/
     }
 
     public function update(User $user, Spot $spot)

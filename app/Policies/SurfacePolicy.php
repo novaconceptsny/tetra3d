@@ -17,9 +17,9 @@ class SurfacePolicy
 
     public function viewAny(User $user)
     {
-        if ($user->isCompanyAdmin()) {
+        /*if ($user->isCompanyAdmin()) {
             return true;
-        }
+        }*/
     }
 
     public function view(User $user, Surface $surface)

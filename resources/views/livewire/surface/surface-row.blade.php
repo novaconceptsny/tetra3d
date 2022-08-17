@@ -1,7 +1,7 @@
 <div>
     <x-loader message="Switching current state..."/>
     <h4 class="font-secondary section__title">
-        <livewire:surface-title :surface="$surface"/>
+        <livewire:editable-field :model="$surface" field="name"/>
     </h4>
     <div class="inner__field row mb-4">
         <x-surface_state.add-new :surface="$surface" :project-id="$projectId"/>

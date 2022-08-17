@@ -28,7 +28,7 @@
             <p class="room_name mb-0">
                 {{ $spot->name }} >
                 @if($current_surface_state)
-                    <livewire:surface-state-title :state="$current_surface_state"/>
+                    <livewire:editable-field :model="$current_surface_state" field="name"/>
                 @else
                     <span>Untitled</span>
                 @endif

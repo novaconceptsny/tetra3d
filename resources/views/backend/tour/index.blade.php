@@ -37,15 +37,15 @@
                             <td><a href="{{ route('backend.tours.spots.index', $tour) }}">{{ $tour->spots_count }} Spots</a></td>
                             <td><a href="{{ route('backend.tours.surfaces.index', $tour) }}">{{ $tour->surfaces_count }} Surfaces</a></td>
                             <td>
-                                <x-backend::dropdown.container permission="update|delete" :permission_params="$tour">
+                                <x-backend::dropdown.container permission="viewany|update|delete" :permission_params="$tour">
                                     <x-backend::dropdown.item
-                                        permission="update" :permission_params="$tour"
+                                        permission="viewany" :permission_params="\App\Models\Surface::class"
                                         :route="route('backend.tours.surfaces.index', $tour)">
                                         <i class="fal fa-rectangle-landscape mr-1"></i> {{ __('Surfaces') }}
                                     </x-backend::dropdown.item>
 
                                     <x-backend::dropdown.item
-                                        permission="update" :permission_params="$tour"
+                                        permission="viewany" :permission_params="\App\Models\Spot::class"
                                         :route="route('backend.tours.spots.index', $tour)">
                                         <i class="fal fa-circle-notch mr-1"></i> {{ __('Spots') }}
                                     </x-backend::dropdown.item>

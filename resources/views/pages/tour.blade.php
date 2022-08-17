@@ -37,6 +37,7 @@
 
 @section('content')
     <div class="dashboard mini">
+        <livewire:editable-field :model="$spot" field="name" element="h5"/>
         <div class="image__viewer">
             @if ($tracker)
                 <div id="tracker"></div>
@@ -51,7 +52,6 @@
                         </tr>
                     </table>
                 </noscript>
-
             </div>
         </div>
     </div>
