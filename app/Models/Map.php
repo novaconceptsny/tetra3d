@@ -12,6 +12,14 @@ class Map extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleted(function(self $model) {
+            $model->spots()->detach();
+        });
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('image')->singleFile();

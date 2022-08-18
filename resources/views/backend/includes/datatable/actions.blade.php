@@ -11,4 +11,5 @@
 <x-backend::modals.confirm
     :route="route($routes['delete'], $row)" :model="$row"
     permission="delete" :permission_params="$row">
-    :button="false"></x-backend::modals.confirm>
+    :button="false">
+</x-backend::modals.confirm>

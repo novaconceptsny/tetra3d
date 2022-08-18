@@ -32,6 +32,11 @@ class Tour extends Model
         return $this->hasOne(Map::class);
     }
 
+    public function maps()
+    {
+        return $this->hasMany(Map::class);
+    }
+
     public function scopeRelevant(Builder $builder)
     {
         if (user()->isCompanyAdmin()){

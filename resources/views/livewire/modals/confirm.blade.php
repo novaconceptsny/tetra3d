@@ -8,12 +8,12 @@
                         <form class="d-inline" action="{{ $route }}" method="post">
                             @csrf
                             @method($method)
-                            <button type="submit" class="btn btn-sm btn-danger">{{ __('Yes') }}</button>
+                            <button type="submit" {!! $confirmBtnAttributes !!} class="btn btn-sm btn-danger">{{ __('Yes') }}</button>
                         </form>
                     @else
-                        <a href="{{ $route }}" class="btn btn-sm btn-danger">{{ __('Yes') }}</a>
+                        <a href="{{ $route ?? '#' }}" {!! $confirmBtnAttributes !!} class="btn btn-sm btn-danger">{{ __('Yes') }}</a>
                     @endif
-                    <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">{{ __('No') }}</button>
+                    <button type="button" class="btn btn-sm btn-primary ms-1" data-bs-dismiss="modal">{{ __('No') }}</button>
                 </div>
             </div>
         </div>

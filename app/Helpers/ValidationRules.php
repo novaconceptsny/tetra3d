@@ -62,7 +62,7 @@ class ValidationRules
         return array_merge([
             'name' => 'required',
             'company_id' => new RequiredForAdmin()
-        ], self::storeMap());
+        ]);
     }
 
     public static function updateTour()

@@ -63,7 +63,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    @include('include.partials.tour-map')
+                    <livewire:tour-map :tour="$tour" :project="$project" :shared_tour_id="$shared_tour_id"/>
+                    {{--@include('include.partials.tour-map')--}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -218,6 +219,10 @@
         });
 
         $(window).resize(function () {
+            setMapScale();
+        });
+
+        Livewire.on('mapChanged', () => {
             setMapScale();
         });
     </script>

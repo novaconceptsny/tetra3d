@@ -38,10 +38,6 @@ class TourController extends Controller
             'name' , 'company_id'
         ]));
 
-        $map = $tour->map()->create($request->map);
-
-        $map->addFromMediaLibraryRequest($request->map_image)
-            ->toMediaCollection('image');
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour created successfully');
@@ -71,17 +67,6 @@ class TourController extends Controller
         $tour->update($request->only([
             'name' , 'company_id'
         ]));
-
-
-        $map = $tour->map()->updateOrCreate([
-            'tour_id' => $tour->id,
-        ], Arr::except($request->map, 'spots'));
-
-
-        $map->spots()->sync(Arr::keyByAndForget($request->map['spots'], 'id'));
-
-        $map->addFromMediaLibraryRequest($request->map_image)
-            ->toMediaCollection('image');
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour updated successfully');
