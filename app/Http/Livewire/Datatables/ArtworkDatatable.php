@@ -96,7 +96,7 @@ class ArtworkDatatable extends BaseDatatable
                 'sortable' => true,
             ],
             'dimensions' => [
-                'name' => 'Dimensions in Inch (w x h)',
+                'name' => 'Dimensions in Inch (h x w)',
                 'visible' => true,
             ],
             'artist' => [

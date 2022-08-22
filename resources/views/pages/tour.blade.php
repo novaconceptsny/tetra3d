@@ -17,8 +17,7 @@
 
 @section('page_actions')
     <x-page-action
-        :visible="!$tour_is_shared"
-        :visible="$tour_is_shared" permission="perform-admin-actions"
+        :visible="!$tour_is_shared" permission="perform-admin-actions"
         :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
         text="Tracker" icon="fal fa-ruler-combined"
     />
@@ -38,7 +37,7 @@
 @section('content')
     <div class="dashboard mini">
         <livewire:editable-field :model="$spot" field="name" element="h5"/>
-        <div class="image__viewer">
+        <div class="image__viewer" style="height: 96%">
             @if ($tracker)
                 <div id="tracker"></div>
             @endif

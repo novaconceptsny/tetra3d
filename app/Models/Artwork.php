@@ -28,6 +28,13 @@ class Artwork extends Model implements HasMedia
         'data' => SchemalessAttributes::class,
     ];
 
+    public static function boot() {
+        parent::boot();
+
+        static::creating(fn($model) => $model->data->scale = $model->calculateScale());
+        static::updating(fn($model) => $model->data->scale = $model->calculateScale());
+    }
+
     public function collection()
     {
         return $this->belongsTo(
@@ -51,7 +58,16 @@ class Artwork extends Model implements HasMedia
     public function dimensions(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => "{$this->data->width_inch}x{$this->data->height_inch}"
+            get: fn($value) => "{$this->data->height_inch}x{$this->data->width_inch}"
         );
+    }
+
+    public function calculateScale()
+    {
+        $maxWidth = $maxHeight = 1000;
+        $scaleWidth = $maxWidth/$this->data->width_inch;
+        $scaleHeight = $maxHeight/$this->data->height_inch;
+
+        return intval(min($scaleWidth, $scaleHeight));
     }
 }
