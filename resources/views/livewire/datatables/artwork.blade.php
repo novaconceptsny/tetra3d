@@ -44,7 +44,7 @@
         @include('backend.includes.datatable.toggle-columns')
     </div>
     <div class="card-body py-0">
-        <div class="mb-3 table-nowrap scrollbar">
+        <div class="mb-3 scrollbar table-responsive">
             <table class="table table-hover fs--1 table-sm">
 
                 @include('backend.includes.datatable.header')

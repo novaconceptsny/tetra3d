@@ -20,7 +20,7 @@
     <label class="form-label" for="{{$id}}">{{ __($label) }}</label>
     <input class="form-control @error($field) is-invalid @enderror" name="{{$name}}"
            placeholder="{{ __($label) }}"
-           id="{{$id}}" type="{{$type}}" value="{{ old($field, $value ?? '') }}"
+           id="{{$id}}" type="{{$type}}" value="{!! old($field, $value ?? '') !!}"
         {{ $attributes->merge() }}>
     <x-backend::error field="{{$field}}"/>
 </div>

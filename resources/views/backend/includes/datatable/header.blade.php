@@ -12,7 +12,8 @@
         @endphp
 
         @if($header['visible'])
-            <th class="cursor-pointer td" scope="col" wire:click="sort('{{$column}}')" data-column="{{ $column }}" {{ $moveAfter }} {{ $moveBefore }} {{$moveToStart}}>
+            <th class="cursor-pointer td" scope="col" wire:click="sort('{{$column}}')"
+                data-column="{{ $column }}" {{ $moveAfter }} {{ $moveBefore }} {{$moveToStart}}>
                 <span class="d-flex">
                     <span> {{ __($header['name']) }}</span>
                     @if($header['sortable'] ?? false)
