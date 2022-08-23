@@ -43,6 +43,7 @@ class CollectorTools extends Component
             $artwork = Artwork::updateOrCreate([
                 'collector_object_id' => $object->objectid,
             ], [
+                'company_id' => $this->company->id,
                 'artwork_collection_id' => $collection->id,
                 'name' => $object->title,
                 'artist' => $object->artistname,
