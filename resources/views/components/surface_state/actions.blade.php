@@ -18,10 +18,12 @@
                class="icon me-1">
                 <i class="fal fa-pencil"></i>
             </a>
+            @if(!$comments)
             @php($options = json_encode(['route' => route('surfaces.destroy', $state)]))
             <a href="#" class="icon me-1" onclick="window.livewire.emit('showModal', 'modals.confirm', {{ $options }})">
                 <i class="fal fa-trash text-danger"></i>
             </a>
+            @endif
             <livewire:likes :likeable="$state" wire:key="{{ $state->id }}"/>
             @if($comments)
                 <button type="button" class="icon arrow">
