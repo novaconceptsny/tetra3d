@@ -22,7 +22,8 @@
                 @csrf
                 @method($method ?? 'POST')
 
-                <x-backend::inputs.text name="name" value="{{ $company ? $company->name : '' }}"/>
+                <x-backend::inputs.text name="name" value="{{ $company?->name }}"/>
+                <x-backend::inputs.text name="collector_subscription_id" value="{{ $company?->collector_subscription_id }}"/>
 
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">

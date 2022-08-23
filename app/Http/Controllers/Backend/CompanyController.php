@@ -33,7 +33,7 @@ class CompanyController extends Controller
         $request->validate(ValidationRules::storeCompany());
 
         Company::create($request->only([
-            'name'
+            'name', 'collector_subscription_id'
         ]));
 
         return redirect()->route('backend.companies.index')
@@ -60,7 +60,7 @@ class CompanyController extends Controller
         $request->validate(ValidationRules::updateCompany());
 
         $company->update($request->only([
-            'name'
+            'name', 'collector_subscription_id',
         ]));
 
         return redirect()->route('backend.companies.index')

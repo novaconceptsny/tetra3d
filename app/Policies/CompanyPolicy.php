@@ -49,4 +49,11 @@ class CompanyPolicy
     {
         //
     }
+
+    public function accessCollector(User $user, Company $company)
+    {
+        if (!$company->hasCollector()){
+            return false;
+        }
+    }
 }

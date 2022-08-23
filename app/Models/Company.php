@@ -22,4 +22,10 @@ class Company extends Model
     {
         return $this->hasOne(User::class)->role('company_admin');
     }
+
+
+    public function hasCollector()
+    {
+        return (bool) $this->collector_subscription_id;
+    }
 }

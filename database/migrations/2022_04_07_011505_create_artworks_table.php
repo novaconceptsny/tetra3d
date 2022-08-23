@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id');
             $table->foreignId('artwork_collection_id')->nullable();
+            $table->unsignedBigInteger('collector_object_id')->nullable();
             $table->string('name');
             $table->string('artist')->nullable();
             $table->string('type')->nullable();

@@ -64,6 +64,10 @@ class Artwork extends Model implements HasMedia
 
     public function calculateScale()
     {
+        if (!$this->data->width_inch || !$this->data->height_inch){
+            return 1;
+        }
+
         $maxWidth = $maxHeight = 1000;
         $scaleWidth = $maxWidth/$this->data->width_inch;
         $scaleHeight = $maxHeight/$this->data->height_inch;

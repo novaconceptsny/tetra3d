@@ -33,6 +33,13 @@
                                     @if($company->admin)
                                         <x-backend::switch-to-user :user="$company->admin"/>
                                     @endif
+
+                                    <x-backend::dropdown.item
+                                        permission="accessCollector" :permission_params="$company"
+                                        onclick="window.livewire.emit('showModal', 'modals.collector-tools', {{ $company->id }})">
+                                        <i class="fal fa-power-off mr-1 text-info"></i> {{ __('Collector Tools') }}
+                                    </x-backend::dropdown.item>
+
                                     <x-backend::dropdown.item
                                         permission="update" :permission_params="$company"
                                         :route="route('backend.companies.edit', $company)">
