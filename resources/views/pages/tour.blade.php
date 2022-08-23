@@ -103,14 +103,7 @@
                 readonly: "{{ $readonly }}",
 
                 @foreach ($spot->surfaces as $surface)
-                    @php
-                        // if tour is shared, or no project is set, don't show edit icon on surfaces!
-                        $surface_thumbnail = $surface->getStateThumbnail($surface->state, $tour_is_shared);
-                        if (!$tour_is_shared && !$project_id) {
-                            $surface_thumbnail = '';
-                        }
-                    @endphp
-                    {{ "surface_{$surface->id}" }}: '{{ $surface_thumbnail }}',
+                    {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared) }}',
                 @endforeach
             },
         });

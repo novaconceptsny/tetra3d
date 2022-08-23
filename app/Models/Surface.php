@@ -86,6 +86,9 @@ class Surface extends Model implements HasMedia
 
     public function getStateThumbnail($state, $tour_is_shared = false)
     {
+        // if the tour is shared tour, and no state present,
+        // we will show blank surface
+
         if ($tour_is_shared && !$state){
             return '';
         }
