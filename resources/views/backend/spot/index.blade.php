@@ -66,7 +66,7 @@
 
                                     <x-backend::dropdown.item
                                         permission="perform-admin-actions"
-                                        :route="route('backend.spot-configuration.show', $spot)" _target="blank">
+                                        :route="route('backend.spot-configuration.show', $spot)" target="_blank">
                                         <i class="fal fa-code mr-1"></i> {{ __('Show Configuration') }}
                                     </x-backend::dropdown.item>
 
