@@ -100,12 +100,8 @@
         }
 
         // if surface is live, and no project is selected , show blank wall
-        if(!krpano.project_id ) {
-            if(!krpano.shared_tour_id){
-                if(surface == 'live') {
-                    caller.url = '';
-                }
-            }
+        if(!krpano.project_id &amp;&amp; !krpano.shared_tour_id &amp;&amp; surface == 'live'){
+            caller.url = '';
         }
 
         caller.coin = 1;
