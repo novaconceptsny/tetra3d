@@ -359,11 +359,12 @@ function applyAdaptiveRescale(image, scale, overrideScale) {
 function placeSelectedImage(artSelection, topPos = boundingBox.top, leftPos = boundingBox.left) {
 
     let imgUrl = artSelection.imgUrl;
-
+    // let imgUrl="https://tetra-gallery.s3.amazonaws.com/artgroup_5/164713872318.png";
     /*if(isAlreadySelected(artSelection.artworkId)){
         return;
     }*/
-
+    imgUrl=imgUrl.replace(/^https:\/\//i, 'http://');
+    console.log("url:"+imgUrl);
     // $('#loadingModal').modal('show');
     fabric.Image.fromURL(imgUrl, function (myImg) {
         if (myImg._element == null) {
