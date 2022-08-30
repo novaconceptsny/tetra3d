@@ -31,6 +31,7 @@
                                 <div class="col-4 mt-4">
                                     <h6>{{ __('Profile Picture') }}</h6>
                                     <x-backend::media-attachment
+                                        :show-filename="false"
                                         name="avatar" rules="max:102400"
                                         :media="$user?->getFirstMedia('avatar')"
                                     />

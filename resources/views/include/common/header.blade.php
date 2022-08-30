@@ -61,7 +61,7 @@
                         </span>
                     </a>
                 </li>--}}
-                <li class="nav__item">
+                {{--<li class="nav__item">
                     <a href="{{ route('profile.edit') }}" class="nav__link">
                         <div href="#" class="profile__photo">
                             <img
@@ -73,7 +73,7 @@
                             />
                         </div>
                     </a>
-                </li>
+                </li>--}}
             </ul>
         </div>
     </nav>
