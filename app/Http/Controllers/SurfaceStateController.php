@@ -44,7 +44,10 @@ class SurfaceStateController extends Controller
         if (!$create_new_state && !$surface_state_id){
             $surface_state = $surface->getCurrentState($project->id);
         }
-        $assignedArtworks = $surface_state?->artworks;
+        $assignedArtworks = $surface_state?->artworks->map(function ($artwork){
+            $artwork->image_url.= "?uuid=". str()->uuid();
+            return $artwork;
+        });
 
         $surfaceData = $surface->only([
             'id', 'name', 'background_url', 'data'
