@@ -9,6 +9,7 @@ use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Intervention\Image\Facades\Image;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
 
@@ -73,5 +74,20 @@ class Artwork extends Model implements HasMedia
         $scaleHeight = $maxHeight/$this->data->height_inch;
 
         return intval(min($scaleWidth, $scaleHeight));
+    }
+
+    public function resizeImage()
+    {
+        $media = $this->getFirstMedia('image');
+
+        $image = Image::make($media->getPath());
+        $image->resize(
+            $this->data->scale * $this->data->width_inch,
+            $this->data->scale * $this->data->height_inch
+        );
+        $this->addMediaFromBase64($image->encode('data-url'))
+            ->usingFileName($media->file_name)
+            ->usingName($media->name)
+            ->toMediaCollection('image');
     }
 }
