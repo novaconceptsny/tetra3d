@@ -19,6 +19,16 @@ class SurfaceState extends Model implements HasMedia
         'canvas' => SchemalessAttributes::class,
     ];
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleted(function(self $model) {
+            $model->artworks()->detach();
+            $model->comments()->delete();
+            $model->likes()->delete();
+        });
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('thumbnail')->singleFile();

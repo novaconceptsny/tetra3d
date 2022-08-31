@@ -76,7 +76,8 @@ class SurfaceStateController extends Controller
 
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
-            $assigned_artworks[$artwork['artworkId']] = array(
+            $assigned_artworks[] = array(
+                'artwork_id' => $artwork['artworkId'],
                 'top_position' => $artwork['topPosition'],
                 'left_position' => $artwork['leftPosition'],
                 'crop_data' => $artwork['cropData'],
@@ -111,7 +112,14 @@ class SurfaceStateController extends Controller
             ->usingFileName('hotspot.png')
             ->toMediaCollection('hotspot');
 
-        $state->artworks()->sync($assigned_artworks);
+        $state->artworks()->detach();
+        foreach ($assigned_artworks as $assigned_artwork){
+            $state->artworks()->attach(
+                $assigned_artwork['artwork_id'],
+                $assigned_artwork
+            );
+        }
+        //$state->artworks()->sync($assigned_artworks);
 
         $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
 
