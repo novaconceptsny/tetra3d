@@ -78,8 +78,8 @@
         let updateCanvasRoute = "{{ route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]) }}"
 
         let spot_id = {{ $spot->id }};
-        let hlookat = {{ request('hlookat', 0) }};
-        let vlookat = {{ request('vlookat', -90) }};
+        let hlookat = {{ request('hlookat', $spot->xml->view['hlookat']) }};
+        let vlookat = {{ request('vlookat', $spot->xml->view['vlookat']) }};
         let surface = @json($surface_data);
         let latestState = @json($canvas_state);
         let versionId = 240;
