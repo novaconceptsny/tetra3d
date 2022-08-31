@@ -11,8 +11,9 @@
 
 @section('content')
     <div class="dashboard gallery mini">
-        @foreach($surfaces as $surface)
+        <livewire:surface.index :project="$project" :tour="$tour"/>
+       {{-- @foreach($surfaces as $surface)
             <livewire:surface.surface-row :project-id="$project->id" :surface="$surface" wire:key="{{$surface->id}}"/>
-        @endforeach
+        @endforeach--}}
     </div>
 @endsection

@@ -11,7 +11,11 @@
                             <button type="submit" {!! $confirmBtnAttributes !!} class="btn btn-sm btn-danger">{{ __('Yes') }}</button>
                         </form>
                     @else
-                        <a href="{{ $route ?? '#' }}" {!! $confirmBtnAttributes !!} class="btn btn-sm btn-danger">{{ __('Yes') }}</a>
+                        @if($button)
+                            <button type="button" {!! $confirmBtnAttributes !!} class="btn btn-sm btn-danger">{{ __('Yes') }}</button>
+                        @else
+                            <a href="{{ $route ?? '#' }}" {!! $confirmBtnAttributes !!} class="btn btn-sm btn-danger">{{ __('Yes') }}</a>
+                        @endif
                     @endif
                     <button type="button" class="btn btn-sm btn-primary ms-1" data-bs-dismiss="modal">{{ __('No') }}</button>
                 </div>

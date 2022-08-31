@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Surface;
 
-use App\Models\Project;
 use App\Models\Surface;
 use App\Models\SurfaceState;
 use Livewire\Component;
@@ -12,11 +11,7 @@ class SurfaceRow extends Component
     public $projectId;
     public Surface $surface;
 
-
-    public function mount()
-    {
-
-    }
+    protected $listeners = ['surfaceStateRemoved'];
 
     public function render()
     {
@@ -30,6 +25,11 @@ class SurfaceRow extends Component
         }
 
         $state->setAsActive();
+        $this->surface->refresh();
+    }
+
+    public function surfaceStateRemoved()
+    {
         $this->surface->refresh();
     }
 }

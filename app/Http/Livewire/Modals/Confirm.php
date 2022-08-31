@@ -17,6 +17,8 @@ class Confirm extends Component
     public $method = 'Delete';
     public $title = "Confirm";
     public $confirmBtnAttributes = "";
+    // use button for confirm, instead of anchor tag
+    public $button = false;
     public $message = "Are you sure you want to perform this action?";
 
 
@@ -31,6 +33,7 @@ class Confirm extends Component
         $this->message = $options['message'] ?? $this->message;
         $this->form = $options['form'] ?? (bool)$this->route;
         $this->confirmBtnAttributes = $options['confirm_btn_attributes'] ?? "";
+        $this->button = $options['button'] ?? (bool)$this->confirmBtnAttributes;
     }
 
 

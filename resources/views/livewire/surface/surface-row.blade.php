@@ -1,5 +1,6 @@
 <div>
-    <x-loader message="Switching current state..."/>
+    <x-loader wire:target="changeActiveState" message="Switching current state..."/>
+
     <h4 class="font-secondary section__title">
         <livewire:editable-field :model="$surface" field="name"/>
     </h4>
