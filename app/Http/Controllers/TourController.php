@@ -10,16 +10,22 @@ class TourController extends Controller
 {
     public function surfaces(Tour $tour)
     {
-        $project = Project::findOrFail(request('project_id'));
+        $project = Project::with('contributors.media')->findOrFail(request('project_id'));
+
+        $tour->load([
+            'surfaces' => fn($query) => $query->with([
+                'states.user',
+                'states.media',
+                'states.likes',
+                'states' => fn($query) => $query->forProject($project->id),
+                'media',
+            ]),
+        ]);
+
         $data = array();
         $data['project'] = $project;
         $data['tour'] = $tour;
-        $data['surfaces'] = $tour->surfaces()->with([
-            'states.user',
-            'states.media',
-            'states' => fn($query) => $query->forProject($project->id),
-            'media',
-        ])->get();
+        $data['surfaces'] = $tour->surfaces;
 
         return view('pages.surfaces', $data);
     }

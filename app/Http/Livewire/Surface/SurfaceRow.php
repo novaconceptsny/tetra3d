@@ -15,6 +15,10 @@ class SurfaceRow extends Component
 
     public function render()
     {
+        $this->surface->load([
+            'states' => fn($query) => $query->forProject($this->projectId)
+        ]);
+
         return view('livewire.surface.surface-row');
     }
 
@@ -25,11 +29,5 @@ class SurfaceRow extends Component
         }
 
         $state->setAsActive();
-        $this->surface->refresh();
-    }
-
-    public function surfaceStateRemoved()
-    {
-        $this->surface->refresh();
     }
 }

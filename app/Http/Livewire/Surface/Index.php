@@ -17,7 +17,13 @@ class Index extends Component
 
     public function mount()
     {
-        $this->surfaces = $this->tour->surfaces;
+        $this->surfaces = $this->tour->surfaces()->with([
+            'states.user',
+            'states.media',
+            'states.likes',
+            'states' => fn($query) => $query->forProject($this->project->id),
+            'media',
+        ])->get();
     }
 
     public function render()
@@ -27,9 +33,8 @@ class Index extends Component
 
     public function removeSurfaceState(SurfaceState $state)
     {
-        $state->delete();
-        $this->emit('surfaceStateRemoved');
         $this->emit('hideModal');
+        $state->delete();
         $this->emit('flashNotification', 'State deleted');
     }
 }
