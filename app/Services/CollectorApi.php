@@ -77,6 +77,10 @@ class CollectorApi
                 );
             }
         }
+
+        Log::channel('collector-sync-report')->info(
+            "*********** Collection Synced Successfully ***********"
+        );
     }
 
     public function syncArtwork($object)
