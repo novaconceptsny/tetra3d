@@ -52,6 +52,8 @@ Route::group([
 
     Route::redirect('/dashboard', '/backend/projects')->name('dashboard');
 
+    Route::view('/collector-sync-report', 'report')->name('collector.report');
+
     //Route::resource('spot-configuration', 'SpotConfigurationController');
     Route::controller('SpotConfigurationController')->group(function () {
         Route::get('spot-configuration/{spot}', 'show')

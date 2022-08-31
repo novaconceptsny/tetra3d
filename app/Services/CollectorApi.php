@@ -2,23 +2,110 @@
 
 namespace App\Services;
 
+use App\Jobs\SyncArtworksJob;
+use App\Models\Artwork;
+use App\Models\ArtworkCollection;
+use App\Models\Company;
 use App\Models\Spot;
 use Arr;
 use Exception;
 use Http;
+use Illuminate\Support\Facades\Log;
 
 class CollectorApi
 {
 
     private string $baseUrl = 'https://api.collectorsystems.com';
 
+    private Company $company;
 
-    function __construct($subscription_id)
+
+    function __construct(Company $company)
     {
+        $this->company = $company;
+        $subscription_id = $company->collector_subscription_id;
+
         $this->baseUrl .= "/$subscription_id";
     }
 
-    public function getObjectById($object_id = '379233')
+    public function syncCollection($collection_id)
+    {
+        if (!$collection_id){
+            throw new Exception("Collection ID can not be null", 403);
+        }
+
+        $request = Http::get("{$this->baseUrl}/collections/$collection_id");
+
+        if (!$request->successful()){
+            throw new Exception("Something went wrong", 404);
+        }
+
+        if (empty($request->object()->data)){
+            throw new Exception("No Collection found", 404);
+        }
+
+        $collection = $request->object()->data[0];
+
+        SyncArtworksJob::dispatch($this, $collection);
+
+        //$this->syncArtworksFromCollection($collection);
+    }
+
+    public function syncArtworksFromCollection($collection)
+    {
+        \File::delete(storage_path('logs/collector.log'));
+
+        $objects = $collection->objects;
+
+        Log::channel('collector-sync-report')->info(
+            "*********** Syncing Collection $collection->collectionname ***********"
+        );
+
+        foreach ($objects as $index => $object){
+            $current = $index + 1;
+
+            Log::channel('collector-sync-report')->info(
+                "Syncing Object $current/$collection->objectcount "
+            );
+
+            try {
+                $this->prepareObject($object);
+                $this->syncArtwork($object);
+            } catch (Exception $exception){
+                Log::channel('collector-sync-report')->error(
+                    "############ Error in Object $object->objectid ############ \n {$exception->getMessage()}"
+                );
+            }
+        }
+    }
+
+    public function syncArtwork($object)
+    {
+        $collection = ArtworkCollection::firstOrCreate([
+            'company_id' => $this->company->id,
+            'name' => $object->collectionname
+        ], []);
+
+        $artwork = Artwork::updateOrCreate([
+            'collector_object_id' => $object->objectid,
+        ], [
+            'company_id' => $this->company->id,
+            'artwork_collection_id' => $collection->id,
+            'name' => $object->title,
+            'artist' => $object->artistname,
+            'type' => $object->objecttype,
+            'data' => [
+                'width_inch' => $object->dimensions['width'],
+                'height_inch' => $object->dimensions['height'],
+            ],
+        ]);
+
+        $artwork->addMediaFromUrl($object->image_url)->toMediaCollection('image');
+
+        return $artwork;
+    }
+
+    public function getObjectById($object_id)
     {
         if (!$object_id){
             throw new Exception("Object ID can not be null", 403);
@@ -34,17 +121,9 @@ class CollectorApi
             throw new Exception("No object found", 404);
         }
 
-        $object = $request->object()->data[0] ;
+        $object = $request->object()->data[0];
 
-        if ( ! property_exists($object, "heightimperial")
-             || ! property_exists($object, "widthimperial")
-        ) {
-            throw new Exception("No dimensions found, artwork not fetched",
-                404);
-        }
-
-        $object->image_url = "{$this->baseUrl}/objects/{$object_id}/mainimage";
-        $object->dimensions = $this->getDimensions($object);
+        $this->prepareObject($object);
 
         return $object;
     }
@@ -70,6 +149,21 @@ class CollectorApi
         $dimensions['width'] = $object_dimension->widthimperial;
 
         return $dimensions;*/
+    }
+
+    private function prepareObject(&$object)
+    {
+        if ( ! property_exists($object, "heightimperial")
+             || ! property_exists($object, "widthimperial")
+        ) {
+            throw new Exception(
+                "No dimensions found, artwork not fetched",
+                404
+            );
+        }
+
+        $object->image_url = "{$this->baseUrl}/objects/$object->objectid/mainimage";
+        $object->dimensions = $this->getDimensions($object);
     }
 
 }

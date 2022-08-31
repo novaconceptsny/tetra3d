@@ -14,7 +14,10 @@ class CollectorTools extends Component
     public $output;
 
     public $objectId ;
+    public $collectionId ;
+    public $syncBy = 'object';
     public ?Artwork $artwork;
+    public $success = false;
 
     public function mount(Company $company)
     {
@@ -26,37 +29,43 @@ class CollectorTools extends Component
         return view('livewire.modals.collector-tools');
     }
 
-    public function getArtwork()
+    public function sync()
     {
         $this->output = false;
         $this->artwork = null;
+        $this->success = false;
 
-        $collector = new CollectorApi($this->company->collector_subscription_id);
+        if ($this->syncBy == 'object'){
+            $this->getArtwork();
+        }
+
+        if ($this->syncBy == 'collection'){
+            $this->getCollection();
+        }
+    }
+
+    public function getArtwork()
+    {
+        $collector = new CollectorApi($this->company);
         try {
             $object = $collector->getObjectById($this->objectId);
+            $this->artwork = $collector->syncArtwork($object);
+            $this->success = true;
+            $this->output = "Artwork synced successfully";
+        } catch (\Exception $exception){
+            $this->output = $exception->getMessage();
+        }
+    }
 
-            $collection = ArtworkCollection::firstOrCreate([
-                'company_id' => $this->company->id,
-                'name' => $object->collectionname
-            ], []);
+    public function getCollection()
+    {
+        $collector = new CollectorApi($this->company);
+        try {
+            $report_url = route('backend.collector.report');
 
-            $artwork = Artwork::updateOrCreate([
-                'collector_object_id' => $object->objectid,
-            ], [
-                'company_id' => $this->company->id,
-                'artwork_collection_id' => $collection->id,
-                'name' => $object->title,
-                'artist' => $object->artistname,
-                'type' => $object->objecttype,
-                'data' => [
-                    'width_inch' => $object->dimensions['width'],
-                    'height_inch' => $object->dimensions['height'],
-                ],
-            ]);
-
-            $artwork->addMediaFromUrl($object->image_url)->toMediaCollection('image');
-            $this->artwork = $artwork;
-
+            $collector->syncCollection($this->collectionId);
+            $this->success = true;
+            $this->output = "Collection has started syncing. Click <a href='$report_url' target='_blank'>here</a> to see report";
         } catch (\Exception $exception){
             $this->output = $exception->getMessage();
         }

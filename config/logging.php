@@ -114,6 +114,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'collector-sync-report' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/collector.log'),
+        ],
     ],
 
 ];

@@ -4,15 +4,27 @@
             <h5>Collector Tools</h5>
         </div>
         <div class="modal-body">
-            <div class="row mb-2">
-                <x-backend::inputs.text name="object_id" wire:model="objectId"/>
+            <div class="row mb-2 g-2">
+                <x-backend::inputs.radio label="Sync By">
+                    <x-backend::inputs.radio-option name="syncBy" label="Object" value="object" wire:model="syncBy" :selected="$syncBy"/>
+                    <x-backend::inputs.radio-option name="syncBy" label="Collection" value="collection" wire:model="syncBy" :selected="$syncBy"/>
+                </x-backend::inputs.radio>
+
+                @if($syncBy == 'collection')
+                    <x-backend::inputs.text name="collection_id" wire:model="collectionId"/>
+                @else
+                    <x-backend::inputs.text name="object_id" wire:model="objectId"/>
+                @endif
             </div>
 
             @if($output)
                 <div class="row">
                     <div class="col-12">
-                        <div class="alert alert-danger" role="alert">
-                            {{ $output }}
+                        <div class="alert alert-{{ $success ? 'success' : 'danger' }}" role="alert">
+                            @if($success)
+                                <i class="fal fa-check-circle"></i>
+                            @endif
+                            {!! $output !!}
                         </div>
                     </div>
                 </div>
@@ -20,14 +32,6 @@
 
             @if($artwork)
                 <div class="row">
-                    <div class="col-12">
-                        <div class="alert alert-success" role="alert">
-                            <strong class="">
-                                <i class="fal fa-check-circle"></i>
-                                Artwork fetched successfully
-                            </strong>
-                        </div>
-                    </div>
                     <div class="col-12">
                         <div class="card">
                             <div class="row g-0 align-items-center border border-success g-0 p-2 rounded">
@@ -63,10 +67,10 @@
 
             <div class="d-flex justify-content-end mt-3">
                 <button type="button" class="btn btn-sm btn-success me-2"
-                        wire:click="getArtwork" wire:loading.class="disabled"
+                        wire:click="sync" wire:loading.class="disabled"
                         wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="getArtwork">Sync Artwork</span>
-                    <span wire:loading wire:target="getArtwork">Fetching Artwork...</span>
+                    <span wire:loading.remove wire:target="sync">Sync</span>
+                    <span wire:loading wire:target="sync">Syncing...</span>
                 </button>
                 <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
                     {{ __('Close') }}
