@@ -25,7 +25,7 @@
         <ul class="item__list" wire:loading.remove>
             @foreach($artworks as $artwork)
                 <li class="item artwork-img"
-                    data-img-url="{{$artwork->image_url}}"
+                    data-img-url="{{ $artwork->image_url. "?uuid=". str()->uuid() }}"
                     data-title="{{$artwork->name}}"
                     data-thumb-url="{{$artwork->image_url}}"
                     data-artwork-id="{{$artwork->id}}"

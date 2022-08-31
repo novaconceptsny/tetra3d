@@ -264,10 +264,8 @@ function addCanvasEvents() {
     });
 
     artworkCanvas.on('object:deselected', function (options) {
-        console.log('i am hidden')
         if (options.target) {
             $remove_btn.hide();
-            console.log('i am hidden')
         }
     });
 
