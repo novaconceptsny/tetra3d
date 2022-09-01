@@ -1,4 +1,4 @@
-import {artworkCanvas, canvasState} from "./artwork_assignment.js";
+import {artworkCanvas, canvasState, positionCropBtn} from "./artwork_assignment.js";
 
 let $cropBtn = $('#crop_btn');
 let pos = [0, 0];
@@ -115,12 +115,8 @@ artworkCanvas.on('object:selected', function (options) {
 
 function showAndMoveBtn(options) {
     if (disabled && !tempLock) {
-        console.log('move');
         let object = options.target;
-        $cropBtn.show();
-        $cropBtn.css('top', object.top);
-        let locLeft = object.left + ($('.left_menu').width() - $cropBtn.width() / 2 - 20);
-        $cropBtn.css('left', locLeft);
+        positionCropBtn(object);
     }
 }
 

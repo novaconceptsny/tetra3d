@@ -270,13 +270,11 @@ function addCanvasEvents() {
     });
 
     artworkCanvas.on('object:moving', function (options) {
+        let object = options.target;
+        positionCropBtn(object);
+
         if (options.target && restrictBoundaries) {
             // check boundaries
-            let object = options.target;
-
-            $crop_btn.css('top', object.top);
-            let locLeft = object.left + ($('.left_menu').width() - $crop_btn.width() / 2 - 20);
-            $crop_btn.css('left', locLeft);
 
             // target object's right and bottom edge boundaries (originally not provided)
             let xyScale = defaultScales[object.id];
@@ -712,4 +710,16 @@ function canvasHasOverlap() {
     return canvasState.isOverlap;
 }
 
-export {artworkCanvas, canvasState, newArtworkSelection, placeSelectedImage};
+function positionCropBtn(object)
+{
+    $crop_btn.show();
+
+    let headerHeight = $('#header').height();
+    $crop_btn.css('top', object.top + headerHeight + 75);
+
+    let sidebarWidth = $('.sidebar .mini').width() + $('.collections').width() + 50;
+    let locLeft = object.left + (sidebarWidth - $crop_btn.width() / 2 - 20);
+    $crop_btn.css('left', locLeft);
+}
+
+export {artworkCanvas, canvasState, newArtworkSelection, placeSelectedImage, positionCropBtn};
