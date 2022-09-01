@@ -1,4 +1,4 @@
-@if($bulkDeleteEnabled && $selectedRows)
+@if($bulkDeleteEnabled && $selectedRows && user()->can('bulkUpdate', $model))
     <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_bulk_delete">
         <i class="fal fa-trash"></i> {{ __('Bulk Delete') }}
     </button>

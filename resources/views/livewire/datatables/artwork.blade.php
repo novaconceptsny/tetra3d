@@ -44,7 +44,7 @@
             @include('backend.includes.datatable.reset-filters')
         </div>
 
-        @if($selectedRows)
+        @if($selectedRows && user()->can('bulkUpdate', \App\Models\Artwork::class))
             <div class="d-flex mt-2 justify-content-end">
                 <div class="me-1 ">
                     <label for="">Move to Collection</label>

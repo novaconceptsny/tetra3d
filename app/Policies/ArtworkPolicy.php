@@ -41,6 +41,13 @@ class ArtworkPolicy
         }
     }
 
+    public function bulkUpdate(User $user)
+    {
+        if ($user->isCompanyAdmin()){
+            return true;
+        }
+    }
+
     public function delete(User $user, Artwork $artwork)
     {
         if ($user->isCompanyAdmin()){
