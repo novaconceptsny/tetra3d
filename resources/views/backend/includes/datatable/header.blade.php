@@ -1,6 +1,6 @@
 <thead class="bg-200 text-900">
 <tr class="dt-row">
-    @if($bulkDeleteEnabled)
+    @if($bulkDeleteEnabled && user()->can('bulkUpdate', $model))
         <th></th>
     @endif
 

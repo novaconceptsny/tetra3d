@@ -1,4 +1,4 @@
-<x-backend::dropdown.container>
+<x-backend::dropdown.container permission="update|delete" :permission-params="$row">
     <x-backend::dropdown.item :route="route($routes['edit'], $row)" permission="update" :permission_params="$row">
         <i class="fal fa-pen mr-1"></i> {{ __('Edit') }}
     </x-backend::dropdown.item>
