@@ -44,7 +44,7 @@ class Spot extends Model implements HasMedia
 
     public function generateXml()
     {
-        $xmlGenerator = new SpotXmlGenerator($this);
+        $xmlGenerator = new SpotXmlGenerator($this->fresh());
         $xmlGenerator->createXml();
     }
 
