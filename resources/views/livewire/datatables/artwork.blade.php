@@ -1,4 +1,5 @@
 <div class="card">
+    <x-loader/>
     <div class="card-header d-flex flex-column">
         <div class="d-flex mb-2">
             <h5 class="me-auto">{{ $heading }}</h5>
@@ -21,15 +22,16 @@
                     @endforeach
                 </select>
             </div>
+
             @if(isset($columns['company_name']))
-            <div class="me-1">
-                <select wire:model="selectedCompany" class="form-control">
-                    <option value="">All Companies</option>
-                    @foreach($companies as $company)
-                        <option value="{{$company->id}}">{{$company->name}}</option>
-                    @endforeach
-                </select>
-            </div>
+                <div class="me-1">
+                    <select wire:model="selectedCompany" class="form-control">
+                        <option value="">All Companies</option>
+                        @foreach($companies as $company)
+                            <option value="{{$company->id}}">{{$company->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
             @endif
             {{--<div class="me-1">
                 <select wire:model="selectedArtist" class="form-control">
@@ -41,6 +43,23 @@
             </div>--}}
             @include('backend.includes.datatable.reset-filters')
         </div>
+
+        @if($selectedRows)
+            <div class="d-flex mt-2 justify-content-end">
+                <div class="me-1 ">
+                    <label for="">Move to Collection</label>
+                    <select wire:model="targetCollection" class="form-control">
+                        <option value="">Select Collection</option>
+                        @foreach($collections as $collection)
+                            <option value="{{$collection->id}}">{{$collection->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="align-self-end ms-2">
+                    <button class="btn btn-primary {{ !$targetCollection ? 'disabled' : '' }}" wire:click="updateCollection">{{ __('Move') }}</button>
+                </div>
+            </div>
+        @endif
         @include('backend.includes.datatable.toggle-columns')
     </div>
     <div class="card-body py-0">
@@ -52,12 +71,14 @@
                 <tbody class="list">
                 @foreach($rows as $row)
                     <tr class="dt-row">
-                        @include('backend.includes.datatable.content')
+                        @include('backend.includes.datatable.bulk-selection')
 
-                        <!-- Extended Columns -->
-                        <td class="td" data-move-to-start="true">
+                        <!-- pre columns !-->
+                        <td class="td">
                             <img src="{{ $row->image_url }}" alt="" width="50">
                         </td>
+
+                        @include('backend.includes.datatable.content')
 
                         <td>
                             @include('backend.includes.datatable.actions')

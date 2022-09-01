@@ -18,6 +18,7 @@ class BaseDatatable extends Component
     public $sortOrder = 'desc';
     public $bulkDeleteEnabled = false;
     public $columnsToggleable = false;
+    public $bulkDeleteMessage = "Selected rows deleted";
     public $selectedRows = [];
     public $columns = [];
     public $routes = [];
@@ -48,6 +49,8 @@ class BaseDatatable extends Component
     public function deleteSelectedRows()
     {
         $this->model::destroy($this->selectedRows);
+        $this->reset('selectedRows');
+        $this->emit('flashNotification', $this->bulkDeleteMessage);
         $this->emit('rowsDeleted');
     }
 }

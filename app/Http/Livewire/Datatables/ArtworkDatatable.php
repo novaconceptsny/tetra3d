@@ -12,6 +12,8 @@ class ArtworkDatatable extends BaseDatatable
     public $selectedCollection = '';
     public $selectedCompany = '';
     public $selectedArtist = '';
+    public $bulkDeleteEnabled = true;
+    public $targetCollection = '';
 
     public function mount()
     {
@@ -79,9 +81,27 @@ class ArtworkDatatable extends BaseDatatable
 
     }
 
+    public function updateCollection()
+    {
+        if(!$this->targetCollection || !$this->selectedRows){
+            return;
+        }
+
+        $this->model::whereIn('id', $this->selectedRows)->update([
+            'artwork_collection_id' => $this->targetCollection
+        ]);
+
+        $this->emit('flashNotification', 'Collection updated');
+    }
+
     public function getColumns()
     {
         $columns = [
+            'img' => [
+                'name' => 'Image',
+                'visible' => true,
+                'render' => false,
+            ],
             'company_name' => [
                 'name' => 'Company',
                 'visible' => true,
@@ -108,12 +128,6 @@ class ArtworkDatatable extends BaseDatatable
                 'name' => 'Type',
                 'visible' => true,
                 'sortable' => true,
-            ],
-            'img' => [
-                'name' => 'Image',
-                'visible' => true,
-                'render' => false,
-                'move_to_start' => true
             ],
         ];
 
