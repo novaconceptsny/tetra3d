@@ -22,9 +22,9 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th scope="col">{{ __('Name') }}</th>
                         <th scope="col">{{ __('Company') }}</th>
                         <th scope="col">{{ __('Tours') }}</th>
-                        <th scope="col">{{ __('Name') }}</th>
                         <th scope="col">{{ __('Contributors') }}</th>
                         <th></th>
                     </tr>
@@ -32,6 +32,7 @@
                     <tbody class="list">
                     @forelse($projects as $project)
                         <tr>
+                            <td>{{ $project->name }}</td>
                             <td>{{ $project->company->name }}</td>
                             <td>
                                 @foreach($project->tours as $tour)
@@ -40,7 +41,6 @@
                                     </a>
                                 @endforeach
                             </td>
-                            <td>{{ $project->name }}</td>
                             <td>{{ $project->contributors_count }} Contributors</td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$project">

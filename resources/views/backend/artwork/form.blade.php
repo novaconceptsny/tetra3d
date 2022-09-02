@@ -34,7 +34,7 @@
                     <x-backend::inputs.text col="col-6" name="name" value="{!! $artwork?->name !!}"/>
                     <x-backend::inputs.text col="col-6" name="artist" value="{{ $artwork?->artist }}"/>
                     <x-backend::inputs.text col="col-6" name="type" value="{{ $artwork?->type }}"/>
-                    <x-backend::inputs.text col="col-4" name="data.scale" value="{{ $artwork?->data->scale }}"/>
+                    <x-backend::inputs.text col="col-4" disabled name="data.scale" value="{{ $artwork?->data->scale }}"/>
                     <x-backend::inputs.text col="col-4" name="data.width_inch" value="{{ $artwork?->data->width_inch }}"/>
                     <x-backend::inputs.text col="col-4" name="data.height_inch" value="{{ $artwork?->data->height_inch }}"/>
                     <div class="col-12">
