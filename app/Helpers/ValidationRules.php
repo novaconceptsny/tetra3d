@@ -103,6 +103,9 @@ class ValidationRules
             'name' => 'required',
             'artist' => 'required',
             'type' => 'required',
+            'data.width_inch' => 'required|numeric',
+            'data.height_inch' => 'required|numeric',
+            'image' => 'required',
         ];
     }
 

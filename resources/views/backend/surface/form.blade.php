@@ -11,7 +11,7 @@
 @section('content')
     @php($surface = $surface ?? null)
     @php($edit_mode = (bool)$surface)
-    @php($heading = $heading ?? ( $surface ? __('Edit Surface') : __('Add New Surface') ))
+    @php($heading = $heading ?? ( $surface ? __("Edit Surface ($surface->name)") : __('Add New Surface') ))
 
     <div class="card mb-3">
         <div class="card-header">

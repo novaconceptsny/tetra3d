@@ -41,6 +41,9 @@ class ArtworkController extends Controller
         $artwork->addFromMediaLibraryRequest($request->image)
             ->toMediaCollection('image');
 
+        // refresh model, to ensure the media is attached!
+        $artwork->refresh();
+
         $artwork->resizeImage();
 
         return redirect()->back()->with('success', 'Artwork created successfully');
@@ -74,6 +77,8 @@ class ArtworkController extends Controller
         $artwork->addFromMediaLibraryRequest($request->image)
             ->toMediaCollection('image');
 
+        // refresh model, to ensure the media is attached!
+        $artwork->refresh();
         $artwork->resizeImage();
 
 
