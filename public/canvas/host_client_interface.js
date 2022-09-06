@@ -39,7 +39,7 @@ async function createSurfaceState(filename, assignedArtwork, screenshots, canvas
 
 /**
  * Sends a PUT request to server with data of modifications made to the currently saved canvas.
- * @param versionId: id of most current saved version.
+ * @param surfaceStateId: id of most current saved version.
  * @param updates: object of added, removed and modified artworks
  * @param screenshots: object of two base64 encoded images: (thumbnail and hotspot), of the modified version.
  * @param canvasState: latest state of the canvas.
@@ -47,10 +47,10 @@ async function createSurfaceState(filename, assignedArtwork, screenshots, canvas
  */
 
 //這邊就是將assignment存起來的地方了。重要!!!
-function updateSurfaceState(versionId, updates, screenshots, canvasState, reverseScale, userId) {
+function updateSurfaceState(surfaceStateId, updates, screenshots, canvasState, reverseScale, userId) {
     const endpoint = updateCanvasRoute;
     let payload = {
-        "version_id": versionId,
+        "surface_state_id": surfaceStateId,
         "assigned_artwork": updates['assignedArtwork'],
         "added": updates["added"],
         "removed": updates["removed"],

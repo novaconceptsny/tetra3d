@@ -501,9 +501,8 @@ function updateSavedVersion(event) {
         disableSaveButton();
 
         let screenshots = exportArtAssignments(canvasState['currentVersionData'].version_name);
-        let theVersionId = versionId; //get from global
-        // const response = await updateSurfaceState(versionId, updates, screenshots, canvasState);
-        updateSurfaceState(theVersionId, updates, screenshots, canvasState, reverseScale, user_id);
+        let surfaceStateId = surface_state_id; //get from global
+        updateSurfaceState(surfaceStateId, updates, screenshots, canvasState, reverseScale, user_id);
     }
 }
 

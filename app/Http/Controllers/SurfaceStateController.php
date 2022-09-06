@@ -88,13 +88,17 @@ class SurfaceStateController extends Controller
             );
         }
 
-        if ($request->new){
+        if ($request->new) {
             $state = $surface->createNewState($request->project_id);
             $state->update([
-                'name' => $request->name
+                'name' => $request->name,
             ]);
         } else {
-            $state = $surface->getCurrentState($request->project_id);
+            $state = $request->get('surface_state_id')
+                ?
+                SurfaceState::findOrFail($request->surface_state_id)
+                :
+                $surface->getCurrentState($request->project_id);
         }
 
         $state->update([
