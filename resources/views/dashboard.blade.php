@@ -51,6 +51,18 @@
                                     <span class="text-center d-block">No tours configured</span>
                                     @endforelse
                                 </p>
+                                <p>
+                                    <span>Collections</span><br>
+                                    @forelse($project->artworkCollections as $collection)
+                                        <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}" target="_blank">
+                                            <span class="badge bg-success px-2 py-1">
+                                                {{ $collection->name }}
+                                            </span>
+                                        </a>
+                                    @empty
+                                        <span class="text-center d-block">No collections selected</span>
+                                    @endforelse
+                                </p>
                             </div>
                             <div class="card-footer" style="min-height: 47px;">
                                 @include('include.partials.contributors')

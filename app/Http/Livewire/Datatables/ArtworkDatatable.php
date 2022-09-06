@@ -14,11 +14,19 @@ class ArtworkDatatable extends BaseDatatable
     public $selectedArtist = '';
     public $bulkDeleteEnabled = true;
     public $targetCollection = '';
+    public $projectId = null;
 
     public function mount()
     {
         $this->columns = $this->getColumns();
         $this->routes = $this->getRoutes();
+        $this->projectId = request('project_id');
+        $this->selectedCollection = request('collection_id');
+        if ($this->projectId){
+            $this->selectedCollection = \DB::table('artwork_collection_project')
+                ->where('project_id', $this->projectId)
+                ->value('artwork_collection_id');
+        }
     }
 
     public function dehydrate(){
