@@ -85,10 +85,6 @@
         let surface_state_id = {{ request('surface_state_id') }};
         let assignedArtworks = @json($assigned_artworks);
         let defaultScales = [];
-        /*let scaleArr =  null;*/
-        /*let locationId = 4;*/
-        /*let artgroupId = 5;*/
-        /*let artworkTotalNum = null;*/
 
         latestState = {};
 

@@ -32,6 +32,12 @@ class SurfaceStateController extends Controller
             route('tours.surfaces', $spot->tour_id)
         )->before('?');
 
+        $return_to_versions = request(
+            'return_to_versions',
+            $referer == $versions_url
+        );
+
+
         $surface_state = null;
         $create_new_state = request('new');
 
@@ -62,7 +68,7 @@ class SurfaceStateController extends Controller
         $data['spot'] = $spot;
         $data['assigned_artworks'] = $assignedArtworks;
         $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
-        $data['return_to_versions'] = $referer == $versions_url;
+        $data['return_to_versions'] = $return_to_versions;
 
         return view('pages.editor', $data);
     }

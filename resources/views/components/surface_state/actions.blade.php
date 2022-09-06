@@ -14,7 +14,7 @@
     </div>
     <div class="right">
         <div class="surface__items">
-            <a href="{{ route('surfaces.show', [$surface, 'project_id' => $projectId, 'surface_state_id' => $state->id]) }}"
+            <a href="{{ route('surfaces.show', [$surface, 'project_id' => $projectId, 'surface_state_id' => $state->id, 'return_to_versions' => true]) }}"
                class="icon me-1">
                 <i class="fal fa-pencil"></i>
             </a>
