@@ -82,7 +82,7 @@
         let vlookat = {{ request('vlookat', $spot->xml->view['vlookat']) }};
         let surface = @json($surface_data);
         let latestState = @json($canvas_state);
-        let surface_state_id = {{ request('surface_state_id') }};
+        let surface_state_id = "{{ request('surface_state_id', null) }}";
         let assignedArtworks = @json($assigned_artworks);
         let defaultScales = [];
 
