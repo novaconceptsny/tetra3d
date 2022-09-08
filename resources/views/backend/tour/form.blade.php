@@ -33,6 +33,13 @@
                         <div class="row g-3">
                             <x-backend::inputs.company :value="$tour?->company_id"/>
                             <x-backend::inputs.text name="name" value="{{ $tour?->name }}"/>
+                            <div class="col-12">
+                                <h5>{{ __('Thumbnail') }}</h5>
+                                <x-backend::media-attachment
+                                    name="thumbnail" rules="max:102400"
+                                    :media="$tour?->getFirstMedia('thumbnail')"
+                                />
+                            </div>
                             <div class="text-end">
                                 <button class="btn btn-primary" type="submit">
                                     {{ $submit_text ?? ( $tour ? __('Update') : __('Create') ) }}

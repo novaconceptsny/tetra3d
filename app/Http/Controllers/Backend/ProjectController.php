@@ -48,6 +48,9 @@ class ProjectController extends Controller
         $project->tours()->sync($request->tour_ids);
         $project->artworkCollections()->sync($request->artwork_collection_ids);
 
+        $project->addFromMediaLibraryRequest($request->thumbnail)
+            ->toMediaCollection('thumbnail');
+
         return redirect()->route('backend.projects.index')
             ->with('success', 'Project created successfully');
     }
@@ -80,6 +83,9 @@ class ProjectController extends Controller
         $project->tours()->sync($request->tour_ids);
         $project->contributors()->sync($request->user_ids);
         $project->artworkCollections()->sync($request->artwork_collection_ids);
+
+        $project->addFromMediaLibraryRequest($request->thumbnail)
+            ->toMediaCollection('thumbnail');
 
         return redirect()->route('backend.projects.index')
             ->with('success', 'Project updated successfully');

@@ -38,6 +38,9 @@ class TourController extends Controller
             'name' , 'company_id'
         ]));
 
+        $tour->addFromMediaLibraryRequest($request->thumbnail)
+            ->toMediaCollection('thumbnail');
+
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour created successfully');
@@ -67,6 +70,9 @@ class TourController extends Controller
         $tour->update($request->only([
             'name' , 'company_id'
         ]));
+
+        $tour->addFromMediaLibraryRequest($request->thumbnail)
+            ->toMediaCollection('thumbnail');
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour updated successfully');

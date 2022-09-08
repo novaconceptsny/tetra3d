@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
+use App\MediaLibrary\InteractsWithMedia;
 use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
 
-class Tour extends Model
+class Tour extends Model implements HasMedia
 {
-    use HasCompany;
+    use HasCompany, InteractsWithMedia;
 
     protected $guarded = ['id'];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('thumbnail')->singleFile();
+    }
 
     public function spots()
     {

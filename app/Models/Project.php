@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\MediaLibrary\InteractsWithMedia;
 use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
-class Project extends Model
+class Project extends Model implements HasMedia
 {
     use HasRelationships;
-    use HasCompany;
+    use HasCompany, InteractsWithMedia;
 
     protected $guarded = ['id'];
 
@@ -19,10 +21,10 @@ class Project extends Model
         parent::boot();
     }
 
-    /*public function tour()
+    public function registerMediaCollections(): void
     {
-        return $this->belongsTo(Tour::class);
-    }*/
+        $this->addMediaCollection('thumbnail')->singleFile();
+    }
 
     public function tours()
     {

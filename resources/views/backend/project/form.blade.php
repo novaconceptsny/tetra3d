@@ -57,6 +57,14 @@
                     @endforeach
                 </x-backend::inputs.select2>
 
+                <div class="col-12">
+                    <h5>{{ __('Thumbnail') }}</h5>
+                    <x-backend::media-attachment
+                        name="thumbnail" rules="max:102400"
+                        :media="$project?->getFirstMedia('thumbnail')"
+                    />
+                </div>
+
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
                         {{ $submit_text ?? ( $project ? __('Update') : __('Create') ) }}
