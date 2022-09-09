@@ -6,6 +6,7 @@ use App\MediaLibrary\InteractsWithMedia;
 use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\HasMedia;
 
 class Tour extends Model implements HasMedia
@@ -17,6 +18,27 @@ class Tour extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('thumbnail')->singleFile();
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function(self $model) {
+            $model->projects()->detach();
+
+            $model->surfaces()->cursor()->each(
+                fn (Surface $surface) => $surface->delete()
+            );
+
+            $model->spots()->cursor()->each(fn (Spot $spot) => $spot->delete());
+            $model->maps()->cursor()->each(fn (Map $map) => $map->delete());
+
+            $tour_dir = public_path("storage/tours/$model->id");
+            if (\File::isDirectory($tour_dir)){
+                \File::deleteDirectory("$tour_dir");
+            }
+        });
     }
 
     public function spots()

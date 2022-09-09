@@ -34,6 +34,15 @@ class Spot extends Model implements HasMedia
         static::created(function(self $spot) {
             $spot->generateXml();
         });
+
+        static::deleted(function(self $model) {
+            $model->surfaces()->detach();
+            $model->maps()->detach();
+
+            if (\File::isDirectory($model->tour_path)){
+                \File::deleteDirectory("$model->tour_path");
+            }
+        });
     }
 
     public function registerMediaCollections(): void
@@ -72,7 +81,6 @@ class Spot extends Model implements HasMedia
     {
         return $this->belongsToMany(Surface::class);
     }
-
 
     public function tourPath(): Attribute
     {

@@ -23,6 +23,7 @@ class Project extends Model implements HasMedia
 
         static::deleted(function(self $model) {
             $model->artworkCollections()->detach();
+            $model->users()->detach();
 
             $model->surfaceStates()->cursor()->each(
                 fn (SurfaceState $state) => $state->delete()

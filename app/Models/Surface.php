@@ -22,6 +22,19 @@ class Surface extends Model implements HasMedia
         'data' => SchemalessAttributes::class,
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function(self $model) {
+            $model->spots()->detach();
+
+            $model->surfaceStates()->cursor()->each(
+                fn (SurfaceState $state) => $state->delete()
+            );
+        });
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('main')->singleFile();
