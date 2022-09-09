@@ -7,6 +7,7 @@ use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Project extends Model implements HasMedia
@@ -19,6 +20,14 @@ class Project extends Model implements HasMedia
     public static function boot()
     {
         parent::boot();
+
+        static::deleted(function(self $model) {
+            $model->artworkCollections()->detach();
+
+            $model->surfaceStates()->cursor()->each(
+                fn (SurfaceState $state) => $state->delete()
+            );
+        });
     }
 
     public function registerMediaCollections(): void
@@ -44,6 +53,11 @@ class Project extends Model implements HasMedia
     public function artworkCollections()
     {
         return $this->belongsToMany(ArtworkCollection::class);
+    }
+
+    public function surfaceStates()
+    {
+        return $this->hasMany(SurfaceState::class);
     }
 
     public function artworks()

@@ -50,4 +50,16 @@ class Tour extends Model implements HasMedia
             $builder->where('company_id', user()->company_id);
         }
     }
+
+    public function reflectCompanyChanges()
+    {
+        $this->spots()->update(['company_id' => $this->company_id]);
+        $this->surfaces()->update(['company_id' => $this->company_id]);
+
+        SurfaceState::whereIn(
+            'surface_id', $this->surfaces()->pluck('id')->toArray()
+        )->cursor()->each(
+            fn (SurfaceState $state) => $state->delete()
+        );
+    }
 }

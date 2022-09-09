@@ -67,9 +67,21 @@ class TourController extends Controller
     {
         $request->validate(ValidationRules::updateTour());
 
+        $company_has_changed = $tour->company_id != $request->company_id;
+
+        if ($company_has_changed && $tour->projects->count()) {
+            return redirect()->back()
+                ->withInput()
+                ->with('remove_projects_alert', true);
+        }
+
         $tour->update($request->only([
             'name' , 'company_id'
         ]));
+
+        if ($company_has_changed){
+            $tour->reflectCompanyChanges();
+        }
 
         $tour->addFromMediaLibraryRequest($request->thumbnail)
             ->toMediaCollection('thumbnail');

@@ -51,7 +51,7 @@ class TourController extends Controller
         ]))->where('tour_id', $tour->id);
 
         $spot = $spot_id ? $spotQuery->findOrFail($spot_id)
-            : $spotQuery->first();
+            : $spotQuery->firstOrFail();
 
         $spot->surfaces->map(function ($surface) use ($project_id) {
             if ( ! $project_id) {

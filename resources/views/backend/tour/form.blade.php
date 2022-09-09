@@ -22,6 +22,20 @@
                 @method($method ?? 'POST')
 
                 <x-backend::error-alert />
+
+                @if(session()->get('remove_projects_alert'))
+                    <div class="alert alert-danger">
+                        <strong>Warning!</strong>
+                        <span>This tour is currently being used in the following projects:</span>
+                        <ul class="my-1">
+                            @foreach($tour->projects as $project)
+                                <li>{{ $project->name }}</li>
+                            @endforeach
+                        </ul>
+                        <span>Unlink all projects from this tour before changing the company</span>
+                    </div>
+                @endif
+
                 <x-backend::tab :padding-x="0">
                     <x-slot name="tabs">
                         <x-backend::tab.item label="Tour" id="tour_form" :active="true"/>
