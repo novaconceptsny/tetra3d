@@ -111,6 +111,9 @@ class ValidationRules
 
     public static function updateArtwork()
     {
-        return self::storeArtwork();
+
+        return array_merge(self::storeArtwork(), [
+            'image' => '',
+        ]);
     }
 }
