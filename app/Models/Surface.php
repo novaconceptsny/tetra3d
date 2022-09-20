@@ -60,7 +60,7 @@ class Surface extends Model implements HasMedia
 
     public function getCurrentState($project_id)
     {
-        return $this->states()->current($project_id)->first();
+        return $this->states()->current()->forProject($project_id)->first();
     }
 
     public function createNewState($project_id)

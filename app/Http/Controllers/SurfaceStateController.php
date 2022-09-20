@@ -13,12 +13,13 @@ class SurfaceStateController extends Controller
 {
     public function show(Surface $surface)
     {
+        $project = Project::relevant()->findOrFail(request('project_id'));
+        
         $surface->load([
+            'states' => fn($query) => $query->forProject($project),
             'states.comments.user',
             'states.likes.user'
         ]);
-
-        $project = Project::relevant()->findOrFail(request('project_id'));
 
         if ($spot_id = request('spot_id')){
             $spot = Spot::findOrFail($spot_id);

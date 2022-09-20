@@ -26,7 +26,7 @@
         </div>
         <div class="d-flex fs-5 mb-2">
             <p class="room_name mb-0">
-                {{ $spot->name }} >
+                {{ $surface->name }} >
                 @if($current_surface_state)
                     <livewire:editable-field :model="$current_surface_state" field="name"/>
                 @else
