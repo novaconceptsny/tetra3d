@@ -14,9 +14,9 @@ class SurfaceStateController extends Controller
     public function show(Surface $surface)
     {
         $project = Project::relevant()->findOrFail(request('project_id'));
-        
+
         $surface->load([
-            'states' => fn($query) => $query->forProject($project),
+            'states' => fn($query) => $query->forProject($project->id),
             'states.comments.user',
             'states.likes.user'
         ]);
