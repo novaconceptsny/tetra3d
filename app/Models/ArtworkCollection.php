@@ -15,4 +15,9 @@ class ArtworkCollection extends Model
     {
         return $this->hasMany(Artwork::class);
     }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }

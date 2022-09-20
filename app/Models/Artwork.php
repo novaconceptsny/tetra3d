@@ -34,6 +34,10 @@ class Artwork extends Model implements HasMedia
 
         static::creating(fn($model) => $model->data->scale = $model->calculateScale());
         static::updating(fn($model) => $model->data->scale = $model->calculateScale());
+
+        static::deleted(function(self $model) {
+            $model->surfaceStates()->detach();
+        });
     }
 
     public function collection()
@@ -46,6 +50,11 @@ class Artwork extends Model implements HasMedia
     public function scopeWithData(): Builder
     {
         return $this->data->modelScope();
+    }
+
+    public function surfaceStates()
+    {
+        return $this->belongsToMany(SurfaceState::class);
     }
 
     public function imageUrl(): Attribute

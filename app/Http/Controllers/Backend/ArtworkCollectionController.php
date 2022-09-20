@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Project;
+use App\Models\SurfaceState;
 use Illuminate\Http\Request;
 
 class ArtworkCollectionController extends Controller
@@ -74,6 +76,11 @@ class ArtworkCollectionController extends Controller
     public function destroy(ArtworkCollection $collection)
     {
         $collection->delete();
+        $collection->projects()->detach();
+        
+        $collection->artworks()->cursor()->each(
+            fn (Artwork $artwork) => $artwork->delete()
+        );
         return redirect()->back()->with('success', 'Collection deleted successfully');
     }
 }
