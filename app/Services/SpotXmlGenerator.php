@@ -123,6 +123,7 @@ class SpotXmlGenerator
     {
         $spot_metadata = $this->spot->metadata;
         $panos_url = $spot_metadata->panos_url ?? "panos/%s/l%l/%v/l%l_%s_%v_%h.jpg";
+        $panos_url.= "?%\$timestamp%";
         $multires = $spot_metadata->multires ?? "512,768,1664,3200";
 
         $image = $this->xml->addChild('image');
