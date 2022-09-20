@@ -73,6 +73,7 @@ class ArtworkCollectionController extends Controller
 
     public function destroy(ArtworkCollection $collection)
     {
-
+        $collection->delete();
+        return redirect()->back()->with('success', 'Collection deleted successfully');
     }
 }
