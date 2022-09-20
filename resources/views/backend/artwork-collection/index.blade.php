@@ -45,7 +45,7 @@
                                     <x-backend::dropdown.item
                                         permission="delete" :permission_params="$collection"
                                         class="text-danger" data-bs-toggle="modal"
-                                        data-bs-target="#confirm_company_{{ $collection->id }}">
+                                        data-bs-target="#confirm_artworkCollection_{{ $collection->id }}">
                                         <i class="fa fa-trash mr-1"></i> {{ __('Delete') }}
                                     </x-backend::dropdown.item>
                                 </x-backend::dropdown.container>
