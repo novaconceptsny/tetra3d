@@ -106,6 +106,11 @@ class CollectorApi
 
         $artwork->addMediaFromUrl($object->image_url)->toMediaCollection('image');
 
+        // refresh model, to ensure the media is attached!
+        $artwork->refresh();
+
+        $artwork->resizeImage();
+
         return $artwork;
     }
 
