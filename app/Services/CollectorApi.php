@@ -53,6 +53,8 @@ class CollectorApi
 
     public function syncArtworksFromCollection($collection)
     {
+        ini_set('memory_limit', -1);
+
         \File::delete(storage_path('logs/collector.log'));
 
         $objects = $collection->objects;
