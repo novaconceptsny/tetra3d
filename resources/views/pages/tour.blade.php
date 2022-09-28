@@ -165,23 +165,15 @@
 
     <script>
         function setMapScale() {
+
+            let $floorPlan = $(".floorPlan");
             let $pin = $('.pin');
             $pin.hide();
 
-            let zoneW;
-            let zoneH;
-            let defaultW;
-            let defaultH;
-
-            $(".floorPlan").each(function () {
-                if ($(this).css('display') === 'block') {
-                    zoneW = $(this).innerWidth();
-                    zoneH = $(this).innerHeight();
-                    defaultW = $(this).attr('defaultWidth');
-                    defaultH = $(this).attr('defaultHeight');
-                }
-            });
-
+            let zoneW = $floorPlan.innerWidth();
+            let zoneH = $floorPlan.innerHeight();
+            let defaultW = $floorPlan.attr('defaultWidth');
+            let defaultH = $floorPlan.attr('defaultHeight');
 
             let scaleW = zoneW / defaultW;
             let scaleH = zoneH / defaultH;
@@ -211,6 +203,11 @@
         });
 
         $(window).resize(function () {
+            setMapScale();
+        });
+
+        let tourModal = document.getElementById('tourMapModal')
+        tourModal.addEventListener('shown.bs.modal', function (event) {
             setMapScale();
         });
 
