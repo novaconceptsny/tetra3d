@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Artwork;
-use App\Models\Company;
 use App\Models\Project;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,6 +15,11 @@ class ArtworkCollection extends Component
     public $searchBy = 'all';
 
     protected $paginationTheme = 'bootstrap';
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
 
     public function mount(Project $project)
     {

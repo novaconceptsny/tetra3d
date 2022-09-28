@@ -6,7 +6,7 @@
                     <x-svg.magnifying-glass size="small"/>
                 </span>
                 <input
-                    wire:model="search"
+                    wire:model.debounce.500ms="search"
                     id="search_input"
                     type="text"
                     class="form-control search"
