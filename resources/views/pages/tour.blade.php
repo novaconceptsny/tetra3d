@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.redesign')
 
 @php
     $project_id = request('project_id');
@@ -34,14 +34,40 @@
     <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal" text="Map" icon="fal fa-map-marker-alt"/>
 @endsection
 
+@section('menu')
+    <x-menu>
+        <x-menu-item text="Projects" icon="fal fa-folders"/>
+        <x-menu-item text="Tours" icon="fal fa-globe-asia"/>
+        <x-menu-item text="Versions" icon="fal fa-clone"/>
+        <x-menu-item text="Comments" icon="fal fa-comment-alt-lines"/>
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette"/>
+        <x-menu-item text="Map" icon="fal fa-map-marked-alt"/>
+        <x-menu-item text="360 View" icon="fal fa-vr-cardboard"/>
+    </x-menu>
+@endsection
+
+@section('breadcrumbs')
+    <x-breadcrumb.breadcrumb>
+        <x-breadcrumb.item :text="$project ? $project->name : 'No Project'"/>
+        <x-breadcrumb.separtator/>
+
+        <x-breadcrumb.item :text="$tour?->name"/>
+        <x-breadcrumb.separtator/>
+
+        <x-breadcrumb.item>
+            <livewire:editable-field :model="$spot" field="name" element="span"/>
+        </x-breadcrumb.item>
+
+    </x-breadcrumb.breadcrumb>
+@endsection
+
 @section('content')
-    <div class="dashboard mini">
-        <livewire:editable-field :model="$spot" field="name" element="h5"/>
-        <div class="image__viewer" style="height: 96%">
+    <div style="height: calc(100vh - 80px);">
+        <div class="h-100">
             @if ($tracker)
                 <div id="tracker"></div>
             @endif
-            <div class="featured__img" id="pano">
+            <div class="w-100 h-100" id="pano">
                 <noscript>
                     <table style="width:100%;height:100%;">
                         <tr style="vertical-align:middle;">

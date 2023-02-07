@@ -21,13 +21,16 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
+        $user = user();
+
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
+            'email' => "required|unique:users,email,$user->id"
         ]);
 
         user()->update($request->only([
-            'first_name', 'last_name'
+            'first_name', 'last_name', 'email'
         ]));
 
         user()->addFromMediaLibraryRequest($request->avatar)

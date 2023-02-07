@@ -15,6 +15,7 @@ class ArtworkDatatable extends BaseDatatable
     public $bulkDeleteEnabled = true;
     public $targetCollection = '';
     public $projectId = null;
+    public $frontend = false;
 
     public function mount()
     {
@@ -76,7 +77,8 @@ class ArtworkDatatable extends BaseDatatable
         $data['rows'] = $rows;
         $data['label'] = 'artwork';
 
-        return view('livewire.datatables.artwork', $data);
+        $view = $this->frontend ? "livewire.datatables.artwork-frontend" : "livewire.datatables.artwork";
+        return view($view, $data);
     }
 
     public function resetFilters()

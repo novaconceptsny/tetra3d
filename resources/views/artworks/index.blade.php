@@ -1,9 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.redesign')
 
 @section('content')
-    <div class="dashboard gallery mini">
-        <div class="inner__table table-responsive p-2 pb-4">
-            <livewire:datatables.artwork-datatable/>
+    <div class="main-intro container-fluid">
+        @include('include.common.greetings')
+        <div class="table-responsive">
+            <livewire:datatables.artwork-datatable :frontend="true"/>
         </div>
     </div>
 @endsection

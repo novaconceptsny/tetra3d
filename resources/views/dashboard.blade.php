@@ -1,6 +1,6 @@
-@extends('layouts.master')
+@extends('layouts.redesign')
 
-@section('content')
+@section('contents')
     <div class="dashboard mini">
         <div class="mb-3">
             <!-- filters !-->
@@ -16,21 +16,6 @@
                                     <small class="date">{{ $project->created_at->format('M d, Y') }}</small>
                                 </div>
                                 <div class="right">
-                                    {{--<span class="btn btn__stage">Active</span>
-                                    <div class="dropdown">
-                                        <a href="javascript:void(0)" class="dropdown-toggle " id=""
-                                           data-bs-toggle="dropdown" aria-expanded="false">
-                                            <x-svg.ellipsis-vertical/>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="">
-                                            <li>
-                                                --}}{{--<a class="dropdown-item"
-                                                   href="{{ route('tours.surfaces', [$project->tour, 'project_id' => $project->id]) }}">
-                                                    Surfaces
-                                                </a>--}}{{--
-                                            </li>
-                                        </ul>
-                                    </div>--}}
                                 </div>
                             </div>
                             <div class="card-body">
@@ -76,4 +61,14 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('content')
+    <section class="main-page">
+        <div class="container-fluid main-intro">
+            @include('include.common.greetings')
+
+            <livewire:projects-list/>
+        </div>
+    </section>
 @endsection

@@ -1,114 +1,75 @@
-<header id="header" class="main__header universal mini">
-    <nav id="navbar" class="main__navbar w-100">
-        <div class="left">
-            <button class="menu__btn d-lg-none">
-                <svg
-                    width="56"
-                    height="56"
-                    viewBox="0 0 56 56"
-                    fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        d="M1 12H1.56 56"
-                        stroke="black"
-                        stroke-width="8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    ></path>
-                    <path
-                        d="M1 28H1.56 56"
-                        stroke="black"
-                        stroke-width="8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    ></path>
-                    <path
-                        d="M1 44H1.56 56"
-                        stroke="black"
-                        stroke-width="8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    ></path>
-                </svg>
+@php($navEnabled = $navEnabled ?? true)
+@php($navbarLight = $navbarLight ?? false)
+<header id="header">
+    <nav class="navbar navbar-expand-lg {{ $navbarLight ? 'navbar-light' : '' }}">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ route('dashboard') }}">
+                <img src="{{ asset('redesign/images/Group-4740 5.svg') }}" alt="dash-logo"/>
+            </a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
             </button>
-        </div>
-        <div class="search__box ms-auto ms-lg-0">
-            {{--<div class="input-group">
-                <span class="input-group-text" id="nav__search__icon">
-                    <x-svg.magnifying-glass/>
-                </span>
-                <input
-                    type="text"
-                    class="form-control d-none d-lg-inline-block"
-                    placeholder="Search"
-                    aria-describedby="nav__search__icon"
-                />
-            </div>--}}
-        </div>
-        <div class="right">
-            <ul class="navbar__nav dash__nav">
-                {{--<li class="nav__item">
-                    <a href="#" class="nav__link">Help</a>
-                </li>
-                <li class="nav__item">
-                    <a href="#" class="nav__link">
-                        Notifications
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle p-1 border border-light rounded-circle badge__notification"
-                        >
-                            <span class="visually-hidden">New alerts</span>
-                        </span>
-                    </a>
-                </li>--}}
-                {{--<li class="nav__item">
-                    <a href="{{ route('profile.edit') }}" class="nav__link">
-                        <div href="#" class="profile__photo">
-                            <img
-                                src="{{ user()->avatar_url }}"
-                                alt="profile"
-                                width="48"
-                                height="auto"
-                                class="avatar"
-                            />
+            <div class="collapse navbar-collapse" id="navbarNav">
+                @if($navEnabled)
+                    <ul class="navbar-nav mx-auto link-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ route('dashboard') }}">{{ __('Projects') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('artworks.index') }}">{{ __('Collection') }}</a>
+                        </li>
+                    </ul>
+                @endif
+
+                @yield('breadcrumbs')
+
+                <div class="navbar-nav menu-nav ms-auto">
+                    <div class="nav-left-btn-div">
+                        @yield('menu')
+                        @yield('page_actions')
+                    </div>
+                    <div class="profile">
+                        <a href="#">
+                            <img class="rounded-circle" src="{{ user()->avatar_url }}" alt="{{ user()->name }}" width="59"/>
+                        </a>
+                        <div class="nav-item dropdown">
+                            <a class="dropdown-link nav-link text-white dropdown-toggle"
+                               href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user()->name }}
+                            </a>
+                            <ul class="dropdown-menu pro-drop" aria-labelledby="navbarDropdown">
+                                <div class="drop-profile">
+                                    <img class="rounded-circle" src="{{ user()->avatar_url }}" alt="drop-img"/>
+                                    <p class="profile-name">{{ user()->name }}</p>
+                                    <small class="profile-email">{{ user()->email }}</small>
+                                </div>
+                                <div class="link">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                            <i class="fa fa-user"></i>
+                                            {{ __('My Profile') }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fa fa-sign-out"></i>
+                                            Logout
+                                        </a>
+                                    </li>
+                                </div>
+                            </ul>
                         </div>
-                    </a>
-                </li>--}}
-            </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
-    <div class="search__box ms-auto ms-lg-0" id="search__box">
-        <div class="input-group">
-            <span class="input-group-text" id="nav__search__icon">
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
-                        stroke="#B5B5B5"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                    <path
-                        d="M20.9999 20.9999L16.6499 16.6499"
-                        stroke="#B5B5B5"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                </svg>
-            </span>
-            <input
-                type="text"
-                class="form-control"
-                placeholder="Search"
-                aria-describedby="nav__search__icon"
-            />
-        </div>
-    </div>
 </header>

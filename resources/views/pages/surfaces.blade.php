@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.redesign')
 
 @section('page_actions')
     <x-page-action
@@ -10,10 +10,9 @@
 @endsection
 
 @section('content')
-    <div class="dashboard gallery mini">
-        <livewire:surface.index :project="$project" :tour="$tour"/>
-       {{-- @foreach($surfaces as $surface)
-            <livewire:surface.surface-row :project-id="$project->id" :surface="$surface" wire:key="{{$surface->id}}"/>
-        @endforeach--}}
-    </div>
+    <section class="version">
+        <div class="container-fluid version-wrapper">
+            <livewire:surface.index :project="$project" :tour="$tour"/>
+        </div>
+    </section>
 @endsection

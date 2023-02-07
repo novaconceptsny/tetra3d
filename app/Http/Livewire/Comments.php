@@ -14,7 +14,7 @@ class Comments extends Component
 
     public function mount()
     {
-        $this->comments = $this->commentable->comments;
+        $this->comments = $this->commentable?->comments;
     }
 
     public function render()

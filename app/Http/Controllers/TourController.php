@@ -69,6 +69,8 @@ class TourController extends Controller
         $data['tour'] = $tour;
         $data['spot'] = $spot;
         $data['project'] = $project ?? null;
+        $data['navEnabled'] = false;
+        $data['navbarLight'] = true;
 
         return view('pages.tour', $data);
     }

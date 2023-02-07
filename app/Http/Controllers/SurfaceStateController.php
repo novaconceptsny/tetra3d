@@ -71,6 +71,9 @@ class SurfaceStateController extends Controller
         $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
         $data['return_to_versions'] = $return_to_versions;
 
+        $data['navEnabled'] = false;
+        $data['navbarLight'] = true;
+
         return view('pages.editor', $data);
     }
 

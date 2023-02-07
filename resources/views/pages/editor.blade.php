@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.redesign')
 
 @section('page_actions')
     @php
@@ -13,32 +13,66 @@
                    :visible="$return_to_versions"/>
 @endsection
 
+@section('breadcrumbs')
+    <x-breadcrumb.breadcrumb>
+        <x-breadcrumb.item :text="$project?->name"/>
+        <x-breadcrumb.separtator/>
+
+        <x-breadcrumb.item :text="$tour?->name"/>
+        <x-breadcrumb.separtator/>
+
+        <x-breadcrumb.item :text="$spot->name"/>
+        <x-breadcrumb.separtator/>
+
+        <x-breadcrumb.item>
+            @if($current_surface_state)
+                <livewire:editable-field :model="$current_surface_state" field="name"/>
+            @else
+                <span>Untitled</span>
+            @endif
+        </x-breadcrumb.item>
+
+    </x-breadcrumb.breadcrumb>
+@endsection
+
+{{--<div class="d-flex fs-5 mb-2">
+    <p class="room_name mb-0">
+        {{ $surface->name }} >
+        @if($current_surface_state)
+            <livewire:editable-field :model="$current_surface_state" field="name"/>
+        @else
+            <span>Untitled</span>
+        @endif
+    </p>
+    --}}{{--<p class="ml-2" id="assignment_title">Test</p>--}}{{--
+</div>--}}
+
+{{--<div class="alert alert-danger fade slow w-100 row hide" style="position: absolute; z-index: 200; left: 0.8vw;"
+     role="alert" id="error_alert">
+    <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
+</div>--}}
+
+
 @section('content')
-    @include('include.partials.collection')
-    <button class="btn sidebar__trigger fixed">
-        <x-svg.angle-right/>
-    </button>
-    <x-surface-versions :surface="$surface" :project="$project" :current_state_id="$current_surface_state?->id"/>
-    <div class="dashboard mini editor-container">
-        <div class="alert alert-danger fade slow w-100 row hide" style="position: absolute; z-index: 200; left: 0.8vw;"
-             role="alert" id="error_alert">
-            <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
+
+    <section class="editor">
+        <div class="container-fluid editor-view ">
+            <div class="row" x-data="{sidebar:'editor'}">
+                {{--<x-surface-versions :surface="$surface" :project="$project" :current_state_id="$current_surface_state?->id"/>--}}
+                <template x-if="sidebar === 'editor'">
+                    <livewire:artwork-collection :project="$project"/>
+                </template>
+                <template x-if="sidebar === 'comments'">
+                    <livewire:comments :commentable="$current_surface_state"/>
+                </template>
+                <div class="col-8 main-col ">
+                    <div class="main_content w-100 h-100">
+                        <canvas id="artwork_canvas" style="z-index: 100;"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="d-flex fs-5 mb-2">
-            <p class="room_name mb-0">
-                {{ $surface->name }} >
-                @if($current_surface_state)
-                    <livewire:editable-field :model="$current_surface_state" field="name"/>
-                @else
-                    <span>Untitled</span>
-                @endif
-            </p>
-            {{--<p class="ml-2" id="assignment_title">Test</p>--}}
-        </div>
-        <div class="image__viewer main_content">
-            <canvas id="artwork_canvas" style="z-index: 100;"></canvas>
-        </div>
-    </div>
+    </section>
 
     <div class="modal fade" id="confirmation_modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
