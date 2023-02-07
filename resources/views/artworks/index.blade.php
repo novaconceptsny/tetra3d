@@ -1,12 +1,14 @@
 @extends('layouts.redesign')
 
 @section('content')
-    <div class="main-intro container-fluid">
-        @include('include.common.greetings')
-        <div class="table-responsive">
-            <livewire:datatables.artwork-datatable :frontend="true"/>
+    <section class="collection">
+        <div class="main-intro container-fluid">
+            @include('include.common.greetings')
+            <div class="table-responsive">
+                <livewire:datatables.artwork-datatable :frontend="true"/>
+            </div>
         </div>
-    </div>
+    </section>
 @endsection
 
 @section('styles')

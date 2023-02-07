@@ -5,7 +5,7 @@
         </div>
         <div class="outside">
             <div class="line"></div>
-            <button class="editor-btn" @click="sidebar = 'editor'">
+            <button class="editor-comment-btn" @click="sidebar = 'editor'">
                 <i class="fal fa-edit"></i>
                 <span>{{ __('Editor') }}</span>
             </button>

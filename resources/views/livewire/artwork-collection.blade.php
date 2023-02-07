@@ -71,7 +71,7 @@
         </div>
         <div class="outside">
             <div class="line"></div>
-            <button class="comment-btn" @click="sidebar = 'comments'">
+            <button class="editor-comment-btn" @click="sidebar = 'comments'">
                 <i class="fal fa-comment-alt-lines"></i>
                 <span>{{ __('Comments') }}</span>
             </button>

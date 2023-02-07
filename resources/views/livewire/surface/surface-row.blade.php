@@ -31,7 +31,10 @@
                 </div>
             </div>--}}
             <div class="col-3">
-                <div class="card p-0">
+                <div class="card p-0 {{ $state->active ? 'shadow border border-2 border-success' : 'border' }}">
+                    @if(!$state->active)
+                        <a href="javascript:void(0)" class="overlay__link" wire:click="changeActiveState({{ $state->id }})"></a>
+                    @endif
                     <div class="card-img">
                         <img
                             src="{{ $state->getFirstMediaUrl('thumbnail') }}"

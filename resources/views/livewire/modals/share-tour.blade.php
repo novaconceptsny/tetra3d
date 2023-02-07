@@ -36,7 +36,7 @@
             <div class="d-flex justify-content-end">
                 <div>
                     @if(!$link)
-                        <button type="button" class="btn btn-sm btn-success" wire:click="generateLink">{{ __('Generate Link') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" wire:click="generateLink">{{ __('Generate Link') }}</button>
                     @endif
                     <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">{{ __('Close') }}</button>
                 </div>
