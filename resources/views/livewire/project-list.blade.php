@@ -61,13 +61,15 @@
                     <span class="text-center d-block">{{ __('No collections selected') }}</span>
                 @endforelse
 
-                <div class="img-container">
+                <div class="img-container d-flex">
                     @forelse($selectedProject->contributors as $contributor)
-                        <img
-                            src="{{ $contributor->avatar_url }}"
-                            alt="{{ $contributor->name }}"
-                            width="50"
-                        />
+                        <div class="name-tip" data-text="{{ $contributor->name }}">
+                            <img
+                                src="{{ $contributor->avatar_url }}"
+                                alt="{{ $contributor->name }}"
+                                width="50"
+                            />
+                        </div>
                     @empty
                         <span class="text-center d-block">{{ __('No contributors') }}</span>
                     @endforelse
