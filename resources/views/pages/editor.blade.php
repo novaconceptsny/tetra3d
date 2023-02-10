@@ -1,21 +1,22 @@
 @extends('layouts.redesign')
 
-@section('page_actions')
+@section('menu')
     @php
         $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
     @endphp
-
-    <x-page-action id="save_btn" text="{{ __('Save') }}" type="button" class="hide"/>
-    <x-page-action  data-bs-toggle="modal" data-bs-target="#confirmation_modal"  text="Save As" type="button"/>
-    <x-page-action id="remove_btn" text="{{ __('Remove') }}" class="hide"/>
-    <x-page-action text="Return to 360 view" :url="route('tours.show', $query_params)" :visible="!$return_to_versions"/>
-    <x-page-action text="Return to Versions" :url="route('tours.surfaces', $query_params)"
-                   :visible="$return_to_versions"/>
+    <x-menu>
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
+        <x-menu-item text="Return to Versions" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
+        <x-menu-item
+            text="Return to 360 view" icon="fal fa-vr-cardboard"
+            :route="route('tours.show', $query_params)" :visible="!$return_to_versions"
+        />
+    </x-menu>
 @endsection
 
 @section('breadcrumbs')
     <x-breadcrumb.breadcrumb>
-        <x-breadcrumb.item :text="$project?->name"/>
+        <x-breadcrumb.item :text="$project ? $project->name : 'No Project'"/>
         <x-breadcrumb.separtator/>
 
         <x-breadcrumb.item :text="$tour?->name"/>
@@ -35,18 +36,6 @@
     </x-breadcrumb.breadcrumb>
 @endsection
 
-{{--<div class="d-flex fs-5 mb-2">
-    <p class="room_name mb-0">
-        {{ $surface->name }} >
-        @if($current_surface_state)
-            <livewire:editable-field :model="$current_surface_state" field="name"/>
-        @else
-            <span>Untitled</span>
-        @endif
-    </p>
-    --}}{{--<p class="ml-2" id="assignment_title">Test</p>--}}{{--
-</div>--}}
-
 {{--<div class="alert alert-danger fade slow w-100 row hide" style="position: absolute; z-index: 200; left: 0.8vw;"
      role="alert" id="error_alert">
     <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
@@ -54,11 +43,9 @@
 
 
 @section('content')
-
     <section class="editor">
         <div class="container-fluid editor-view ">
             <div class="row" x-data="{sidebar:'editor'}">
-                {{--<x-surface-versions :surface="$surface" :project="$project" :current_state_id="$current_surface_state?->id"/>--}}
                 <template x-if="sidebar === 'editor'">
                     <livewire:artwork-collection :project="$project"/>
                 </template>
@@ -66,8 +53,18 @@
                     <livewire:comments :commentable="$current_surface_state"/>
                 </template>
                 <div class="col-8 main-col ">
-                    <div class="main_content w-100 h-100">
-                        <canvas id="artwork_canvas" style="z-index: 100;"></canvas>
+                    <div class="editor-actions d-flex" >
+                        <button class="action btn btn-sm" data-bs-toggle="modal" data-bs-target="#confirmation_modal"
+                                data-text="Save As">
+                            <i class="fa fa-folder-upload"></i>
+                        </button>
+                        <a id="save_btn" class="action btn btn-sm hide" href="javascript:void(0)" data-text="Save Changes"><i
+                                class="fa fa-floppy-disk"></i></a>
+                        <a id="remove_btn" class="action btn btn-sm hide" href="javascript:void(0)" data-text="Remove"><i
+                                class="fa fa-window-close"></i></a>
+                    </div>
+                    <div class="main_content w-100 h-100" style="overflow: hidden;">
+                        <canvas id="artwork_canvas"></canvas>
                     </div>
                 </div>
             </div>

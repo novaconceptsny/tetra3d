@@ -714,9 +714,9 @@ function positionCropBtn(object)
     $crop_btn.show();
 
     let headerHeight = $('#header').height();
-    $crop_btn.css('top', object.top + headerHeight + 75);
+    $crop_btn.css('top', object.top + headerHeight);
 
-    let sidebarWidth = $('.sidebar .mini').width() + $('.collections').width() + 50;
+    let sidebarWidth = $('.editor .side-col').width();
     let locLeft = object.left + (sidebarWidth - $crop_btn.width() / 2 - 20);
     $crop_btn.css('left', locLeft);
 }

@@ -2,10 +2,10 @@
 
 @section('content')
     <section class="collection">
-        <div class="main-intro container-fluid">
+        <div class="main-intro container-fluid artworks-table">
             @include('include.common.greetings')
-            <div class="table-responsive">
-                <livewire:datatables.artwork-datatable :frontend="true"/>
+            <div class="mt-5">
+                <livewire:datatables.artwork-datatable />
             </div>
         </div>
     </section>

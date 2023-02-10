@@ -21,28 +21,21 @@
         :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
         text="Tracker" icon="fal fa-ruler-combined"
     />
-    <x-page-action
-        :visible="$project && !$tour_is_shared"
-        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project?->id }}', '{{ request('spot_id') }}')"
-        text="Share" icon="fal fa-share-nodes"
-    />
-    <x-page-action
-        :visible="$project && !$tour_is_shared"
-        :url="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
-        text="Versions" icon="fal fa-layer-group"
-    />
-    <x-page-action data-bs-toggle="modal" data-bs-target="#tourMapModal" text="Map" icon="fal fa-map-marker-alt"/>
 @endsection
 
 @section('menu')
     <x-menu>
-        <x-menu-item text="Projects" icon="fal fa-folders"/>
-        <x-menu-item text="Tours" icon="fal fa-globe-asia"/>
-        <x-menu-item text="Versions" icon="fal fa-clone"/>
-        <x-menu-item text="Comments" icon="fal fa-comment-alt-lines"/>
-        <x-menu-item text="Artwork Collection" icon="fal fa-palette"/>
-        <x-menu-item text="Map" icon="fal fa-map-marked-alt"/>
-        <x-menu-item text="360 View" icon="fal fa-vr-cardboard"/>
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
+        <x-menu-item
+            text="Versions" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
+            :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
+        />
+        <x-menu-item
+            :visible="$project && !$tour_is_shared"
+            onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project?->id }}', '{{ request('spot_id') }}')"
+            text="Share" icon="fal fa-share-nodes"
+        />
+        <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
     </x-menu>
 @endsection
 
@@ -62,7 +55,7 @@
 @endsection
 
 @section('content')
-    <div style="height: calc(100vh - 80px);">
+    <div style="height: calc(100vh - 83px);">
         <div class="h-100">
             @if ($tracker)
                 <div id="tracker"></div>
@@ -89,7 +82,6 @@
                 </div>
                 <div class="modal-body">
                     <livewire:tour-map :tour="$tour" :project="$project" :shared_tour_id="$shared_tour_id"/>
-                    {{--@include('include.partials.tour-map')--}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>

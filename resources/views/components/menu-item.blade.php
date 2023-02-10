@@ -2,9 +2,18 @@
     'route' => '#',
     'img' => null,
     'icon' => null,
-    'text' => ''
+    'text' => '',
+    'permission' => null,
+    'permissionParams' => null,
+    'visible' => true
 ])
-<a href="{{ $route }}">
+@php
+    $permission = $permission ? explode('|', $permission) : null;
+    $have_permissions = $permission == null || user()->canAny($permission, $permissionParams)
+@endphp
+
+@if($visible && $have_permissions)
+<a href="{{ $route }}" {{ $attributes->merge() }}>
     @if($img)
         <img src="{{ $img }}" alt="menu-item"/>
     @endif
@@ -13,3 +22,4 @@
     @endif
     {{ $text }}
 </a>
+@endif

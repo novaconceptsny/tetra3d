@@ -17,14 +17,14 @@
     <div class="nav-left-btn">
         @if($type == 'button')
 
-            <button {{ $attributes->merge(['class' => 'menu-btn me-2']) }}>
+            <button {{ $attributes->merge(['class' => 'menu-btn me-1']) }}>
                 @if($icon)
                     <i class="{{ $icon }}" style="line-height: inherit"></i>
                 @endif
                 {{ $text }}
             </button>
         @else
-            <a href="{{ $url }}" {{ $attributes->merge(['class' => 'menu-btn me-2']) }}>
+            <a href="{{ $url }}" {{ $attributes->merge(['class' => 'menu-btn me-1']) }}>
                 @if($icon)
                     <i class="{{ $icon }}" style="line-height: inherit"></i>
                 @endif

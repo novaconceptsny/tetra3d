@@ -4,10 +4,10 @@
         <div class="inner-row">
             <div class="row d-flex align-items-center justify-content-between">
                 <h5>{{ __('Your Projects') }}</h5>
-                <a href="#" class="sorted-btn"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.25 15.5833V4.25H15.5833V15.5833H4.25ZM4.25 29.75V18.4167H15.5833V29.75H4.25ZM18.4167 15.5833V4.25H29.75V15.5833H18.4167ZM18.4167 29.75V18.4167H29.75V29.75H18.4167ZM7.08333 12.75H12.75V7.08333H7.08333V12.75ZM21.25 12.75H26.9167V7.08333H21.25V12.75ZM21.25 26.9167H26.9167V21.25H21.25V26.9167ZM7.08333 26.9167H12.75V21.25H7.08333V26.9167Z" fill="#222436"/>
-                    </svg>
-                    Sorted By Dates</a>
+                <button class="sorted-btn {{ $sortByDate ? 'active' : '' }}" wire:click="$set('sortByDate', {{ !$sortByDate }})">
+                    <x-svg.grid-2/>
+                    Sorted By Dates
+                </button>
             </div>
             <div class="row project-cards-wrapper">
                 @foreach($projects as $project)

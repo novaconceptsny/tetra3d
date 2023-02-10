@@ -6,7 +6,7 @@
         {{ __('Menu') }}
     </button>
 
-    <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+    <div class="dropdown-menu pt-0" aria-labelledby="dropdownMenu">
         {{ $slot }}
     </div>
 </div>

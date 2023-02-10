@@ -8,7 +8,6 @@
         <div class="top">
             <div class="left">
                 <h2 class="surface__title">{{ $surface->name }} </h2>
-                {{--<p class="date__time">Last Edited: S.Lythe | 8/1/2021</p>--}}
             </div>
             <div class="right">
                 <a href="{{ route('surfaces.show', [$surface, 'project_id' => $project->id, 'new' => 1]) }}" class="btn">

@@ -8,6 +8,7 @@ use Livewire\Component;
 class ProjectsList extends Component
 {
     public ?Project $selectedProject = null;
+    public $sortByDate = false;
 
     public function mount()
     {
@@ -19,8 +20,10 @@ class ProjectsList extends Component
         $data = array();
 
         $data['projects'] = Project::with([
-            'tours', 'contributors.media'
-        ])->relevant()->get();
+            'tours', 'contributors.media',
+        ])
+            ->when($this->sortByDate, fn($query) => $query->latest('created_at'))
+            ->relevant()->get();
 
         return view('livewire.project-list', $data);
     }

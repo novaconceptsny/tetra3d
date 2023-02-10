@@ -41,7 +41,7 @@ class ArtworkCollection extends Component
                 $this->search && $this->searchBy == 'name',
                 fn($query) => $query->whereAnyColumnLike($this->search, ['name'])
             )
-            ->with('media')->paginate(5);
+            ->with('media')->paginate(25);
 
         $data['artworks'] = $artworks;
 

@@ -10,6 +10,8 @@
             <span>Showing {{ $rows->firstItem() }} to {{ $rows->lastItem() }} of {{ number_format($rows->total()) }}
                 entries</span>
         </p>
-        {{ $rows->appends(request()->query())->links() }}
+        <div class="pagination-div pagination-white">
+            {{ $rows->appends(request()->query())->links() }}
+        </div>
     </div>
 </div>

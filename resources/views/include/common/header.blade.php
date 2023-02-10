@@ -50,14 +50,17 @@
                             </a>
                             <ul class="dropdown-menu pro-drop" aria-labelledby="navbarDropdown">
                                 <div class="drop-profile">
-                                    <img class="rounded-circle" src="{{ user()->avatar_url }}" alt="drop-img"/>
-                                    <p class="profile-name">{{ user()->name }}</p>
-                                    <small class="profile-email">{{ user()->email }}</small>
+                                    <img src="{{ user()->avatar_url }}" alt="{{ user()->name }}">
+                                    <div class="user-detail">
+                                        <h6>{{ user()->name }}</h6>
+                                        {{--<p class="profile-name">Kasia Wink</p>--}}
+                                        <p class="profile-email">{{ user()->email }}</p>
+                                    </div>
                                 </div>
                                 <div class="link">
                                     @can('access-backend')
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                            <a class="dropdown-item" href="{{ route('backend.dashboard') }}">
                                                 <i class="fal fa-user-shield"></i>
                                                 {{ __('Admin Area') }}
                                             </a>
