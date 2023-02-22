@@ -98,3 +98,18 @@
 .editor-container .image__viewer {
     height: 95% !important;
 }
+
+.w-40{
+    width: 40%!important;
+}
+
+.w-10{
+    width: 10%!important;
+}
+
+.artwork-img img{
+    width: 75px!important;
+    height: 75px!important;
+    object-fit: contain;
+}
+

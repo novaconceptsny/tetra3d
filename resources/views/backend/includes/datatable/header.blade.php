@@ -12,7 +12,7 @@
         @endphp
 
         @if($header['visible'])
-            <th class="cursor-pointer td" scope="col" wire:click="sort('{{$column}}')"
+            <th class="cursor-pointer td {{$header['th-classes'] ?? ''}}" scope="col" wire:click="sort('{{$column}}')"
                 data-column="{{ $column }}" {{ $moveAfter }} {{ $moveBefore }} {{$moveToStart}}>
                 <span class="d-flex">
                     <span> {{ __($header['name']) }}</span>

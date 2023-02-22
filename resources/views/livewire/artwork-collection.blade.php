@@ -1,4 +1,4 @@
-<div class="col-4 side-col">
+<div class="col-3 side-col">
     <x-loader/>
     <div class="top-div">
         <div class="search">

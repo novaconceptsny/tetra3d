@@ -8,7 +8,7 @@
         <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
         <x-menu-item text="Return to Versions" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
         <x-menu-item
-            text="Return to 360 view" icon="fal fa-vr-cardboard"
+            text="360 View" icon="fal fa-vr-cardboard"
             :route="route('tours.show', $query_params)" :visible="!$return_to_versions"
         />
     </x-menu>
@@ -52,7 +52,7 @@
                 <template x-if="sidebar === 'comments'">
                     <livewire:comments :commentable="$current_surface_state"/>
                 </template>
-                <div class="col-8 main-col ">
+                <div class="col-9 main-col ">
                     <div class="editor-actions d-flex" >
                         <button class="action btn btn-sm" data-bs-toggle="modal" data-bs-target="#confirmation_modal"
                                 data-text="Save As">

@@ -38,15 +38,9 @@
                         @yield('page_actions')
                     </div>
                     <div class="profile">
-                        <a href="#">
-                            <img class="rounded-circle" src="{{ user()->avatar_url }}" alt="{{ user()->name }}"
-                                 width="59"/>
-                        </a>
                         <div class="nav-item dropdown">
-                            <a class="dropdown-link nav-link text-white dropdown-toggle"
-                               href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                               aria-expanded="false">
-                                {{ user()->name }}
+                            <a class="dropdown-link nav-link text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <img class="user-img-border" src="{{ user()->avatar_url }}" alt="{{ user()->name }}"/>
                             </a>
                             <ul class="dropdown-menu pro-drop" aria-labelledby="navbarDropdown">
                                 <div class="drop-profile">

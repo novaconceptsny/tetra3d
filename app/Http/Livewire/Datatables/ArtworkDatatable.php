@@ -111,19 +111,23 @@ class ArtworkDatatable extends BaseDatatable
                 'name' => 'Image',
                 'visible' => true,
                 'render' => false,
+                'td-classes' => 'artwork-img'
             ],
             'company_name' => [
                 'name' => 'Company',
                 'visible' => true,
+                'th-classes' => 'w-10'
             ],
             'collection_name' => [
                 'name' => 'Collection',
                 'visible' => true,
+                'th-classes' => 'w-10'
             ],
             'name' => [
                 'name' => 'Name',
                 'visible' => true,
                 'sortable' => true,
+                'th-classes' => 'w-40'
             ],
             'dimensions' => [
                 'name' => 'Dimensions (h" x w")',
@@ -133,6 +137,7 @@ class ArtworkDatatable extends BaseDatatable
                 'name' => 'Artist',
                 'visible' => true,
                 'sortable' => true,
+                'th-classes' => 'w-10'
             ],
             'type' => [
                 'name' => 'Type',

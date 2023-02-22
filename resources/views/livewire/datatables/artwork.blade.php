@@ -74,7 +74,7 @@
                         @include('backend.includes.datatable.bulk-selection')
 
                         <!-- pre columns !-->
-                        <td class="td">
+                        <td class="td artwork-img">
                             <img src="{{ $row->image_url }}" alt="" width="50">
                         </td>
 
