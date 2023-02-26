@@ -44,7 +44,7 @@
                             </a>
                             <ul class="dropdown-menu pro-drop" aria-labelledby="navbarDropdown">
                                 <div class="drop-profile">
-                                    <img src="{{ user()->avatar_url }}" alt="{{ user()->name }}">
+                                    <img class="user-img-border" src="{{ user()->avatar_url }}" alt="{{ user()->name }}">
                                     <div class="user-detail">
                                         <h6>{{ user()->name }}</h6>
                                         {{--<p class="profile-name">Kasia Wink</p>--}}
