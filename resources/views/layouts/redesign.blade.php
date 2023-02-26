@@ -38,9 +38,32 @@
 
 @include('include.common.header')
 
-<main id="site__body">
+<main id="site__body" style="margin-top: 85px">
     @yield('content')
     <livewire:modals.base-modal />
+
+    <div class="modal fade" id="tourMapModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tour Map</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @if(isset($tour))
+                        <livewire:tour-map
+                            :tour="$tour"
+                            :project="$project ?? null"
+                            :shared_tour_id="$shared_tour_id ?? null"
+                        />
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <!-- bootstrap script links -->
@@ -99,5 +122,59 @@
 </script>
 
 @yield('scripts')
+
+<!-- Map script -->
+<script>
+    function setMapScale() {
+
+        let $floorPlan = $(".floorPlan");
+        let $pin = $('.pin');
+        $pin.hide();
+
+        let zoneW = $floorPlan.innerWidth();
+        let zoneH = $floorPlan.innerHeight();
+        let defaultW = $floorPlan.attr('defaultWidth');
+        let defaultH = $floorPlan.attr('defaultHeight');
+
+        let scaleW = zoneW / defaultW;
+        let scaleH = zoneH / defaultH;
+
+        let scale;
+        let screenRatio = zoneW / zoneH;
+        let mapRatio = defaultW / defaultH;
+
+        if (screenRatio > mapRatio) {
+            scale = scaleH;
+        } else {
+            scale = scaleW;
+        }
+
+        $pin.each(function () {
+            let top = $(this).attr('top');
+            let left = $(this).attr('left');
+            $(this).css('top', (top * scale - 40 + "px"));
+            $(this).css('left', (left * scale - 20 + "px"));
+        });
+
+        $pin.show();
+    }
+
+    $(document).ready(function () {
+        setMapScale();
+    });
+
+    $(window).resize(function () {
+        setMapScale();
+    });
+
+    let tourModal = document.getElementById('tourMapModal')
+    tourModal.addEventListener('shown.bs.modal', function (event) {
+        setMapScale();
+    });
+
+    Livewire.on('mapChanged', () => {
+        setMapScale();
+    });
+</script>
 </body>
 </html>

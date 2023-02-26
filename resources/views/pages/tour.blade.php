@@ -25,17 +25,17 @@
 
 @section('menu')
     <x-menu>
-        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
         <x-menu-item
             text="Versions" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
         />
+        <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
             :visible="$project && !$tour_is_shared"
             onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project?->id }}', '{{ request('spot_id') }}')"
             text="Share" icon="fal fa-share-nodes"
         />
-        <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
     </x-menu>
 @endsection
 
@@ -73,7 +73,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="tourMapModal" tabindex="-1">
+    {{--<div class="modal fade" id="tourMapModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -88,7 +88,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>--}}
 @endsection
 
 @section('scripts')
@@ -181,7 +181,7 @@
 
     </script>
 
-    <script>
+    {{--<script>
         function setMapScale() {
 
             let $floorPlan = $(".floorPlan");
@@ -232,5 +232,5 @@
         Livewire.on('mapChanged', () => {
             setMapScale();
         });
-    </script>
+    </script>--}}
 @endsection

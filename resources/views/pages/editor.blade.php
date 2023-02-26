@@ -5,12 +5,17 @@
         $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
     @endphp
     <x-menu>
-        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
-        <x-menu-item text="Return to Versions" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
+        <x-menu-item text="Versions" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
         <x-menu-item
             text="360 View" icon="fal fa-vr-cardboard"
             :route="route('tours.show', $query_params)" :visible="!$return_to_versions"
         />
+        <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
+        <x-menu-item
+            onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
+            text="Share" icon="fal fa-share-nodes"
+        />
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
     </x-menu>
 @endsection
 
