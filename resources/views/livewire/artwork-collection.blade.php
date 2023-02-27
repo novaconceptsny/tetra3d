@@ -1,4 +1,4 @@
-<div class="col-3 side-col">
+<div class="col-3 side-col" :class="{ 'd-none': sidebar === 'comments' }">
     <x-loader/>
     <div class="top-div">
         <div class="search">
@@ -46,6 +46,6 @@
         </div>
     </div>
     <div class="pagination-div">
-        {{ $artworks->links() }}
+        {{ $artworks->onEachSide(1)->links() }}
     </div>
 </div>

@@ -1,4 +1,4 @@
-<div class="col-3 side-col">
+<div class="col-3 side-col" :class="{ 'd-none': sidebar === 'editor' }">
     <div class="top-div">
         <div class="text">
             <h6>{{ __('Comments') }}</h6>

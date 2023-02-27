@@ -51,12 +51,8 @@
     <section class="editor">
         <div class="container-fluid editor-view ">
             <div class="row" x-data="{sidebar:'editor'}">
-                <template x-if="sidebar === 'editor'">
-                    <livewire:artwork-collection :project="$project"/>
-                </template>
-                <template x-if="sidebar === 'comments'">
-                    <livewire:comments :commentable="$current_surface_state"/>
-                </template>
+                <livewire:artwork-collection :project="$project" />
+                <livewire:comments :commentable="$current_surface_state"/>
                 <div class="col-9 main-col ">
                     <div class="editor-actions d-flex" >
                         <button class="action btn btn-sm" data-bs-toggle="modal" data-bs-target="#confirmation_modal"
