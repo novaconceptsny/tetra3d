@@ -70,6 +70,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('viewLogViewer', function (?User $user) {
+            return $user->isAdmin();
+        });
+
         Gate::define('perform-admin-actions', function (User $user){
             return $user->isSuperAdmin();
         });

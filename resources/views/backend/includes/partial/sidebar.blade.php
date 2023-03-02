@@ -31,6 +31,11 @@
                 permission="viewAny" :permission-params="\App\Models\ArtworkCollection::class"
             />
 
+            <x-backend::layout.sidebar.nav-item
+                label="Logs" icon="fal fa-bug" route="{{ url(config('log-viewer.route_path')) }}"
+                permission="viewLogViewer"
+            />
+
         </ul>
         <div class="clearfix"></div>
     </div>
