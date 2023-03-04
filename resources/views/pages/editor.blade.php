@@ -8,7 +8,7 @@
         <x-menu-item text="Versions" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
         <x-menu-item
             text="360 View" icon="fal fa-vr-cardboard"
-            :route="route('tours.show', $query_params)" :visible="!$return_to_versions"
+            :route="route('tours.show', $query_params)" 
         />
         <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
@@ -63,6 +63,11 @@
                                 class="fa fa-floppy-disk"></i></a>
                         <a id="remove_btn" class="action btn btn-sm hide" href="javascript:void(0)" data-text="Remove"><i
                                 class="fa fa-window-close"></i></a>
+                        <a class="action btn btn-sm"
+                           href="{{ route('surfaces.show', [$surface, 'project_id' => $project->id, 'new' => 1]) }}"
+                           data-text="Add New Version">
+                            <i class="fa fa-plus"></i>
+                        </a>
                     </div>
                     <div class="main_content w-100 h-100" style="overflow: hidden;">
                         <canvas id="artwork_canvas"></canvas>

@@ -24,24 +24,35 @@
     </div>
     <div class="card-div">
         <div class="card-row row">
-            @foreach($artworks as $artwork)
-            <div class="col-md-12 col-xl-6">
-                <div class="card h-100">
-                    <div class="card-img artwork-img"
-                         data-img-url="{{ $artwork->image_url. "?uuid=". str()->uuid() }}"
-                         data-title="{{$artwork->name}}"
-                         data-thumb-url="{{$artwork->image_url}}"
-                         data-artwork-id="{{$artwork->id}}"
-                         data-scale="{{$artwork->data->scale}}">
-                        <img src="{{ $artwork->image_url }}" alt="card-img" />
-                    </div>
-                    <div class="card-body">
-                        <h6>{{ $artwork->name }}</h6>
-                        <p>{{ $artwork->artist }}</p>
-                        <p>[{{ $artwork->dimensions }}]</p>
-                    </div>
+            @php
+                $firstArtworkColumn = $artworks->getCollection();
+                $secondArtworkColumn = $firstArtworkColumn->splice(0,ceil($firstArtworkColumn->count() / 2));
+
+                $artworkColumns['firstArtworkColumn'] = $firstArtworkColumn;
+                $artworkColumns['secondArtworkColumn'] = $secondArtworkColumn;
+            @endphp
+
+            @foreach($artworkColumns as $artworkColumn)
+                <div class="col-md-12 col-xl-6">
+                    @foreach($artworkColumn as $artwork)
+                        <div class="card mb-3 artwork-img"
+                             data-img-url="{{ $artwork->image_url. "?uuid=". str()->uuid() }}"
+                             data-title="{{$artwork->name}}"
+                             data-thumb-url="{{$artwork->image_url}}"
+                             data-artwork-id="{{$artwork->id}}"
+                             data-scale="{{$artwork->data->scale}}"
+                        >
+                            <div class="card-img">
+                                <img src="{{ $artwork->image_url }}" alt="card-img" />
+                            </div>
+                            <div class="card-body">
+                                <h6>{{ $artwork->name }}</h6>
+                                <p>{{ $artwork->artist }}</p>
+                                <p>[{{ $artwork->dimensions }}]</p>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            </div>
             @endforeach
         </div>
     </div>
