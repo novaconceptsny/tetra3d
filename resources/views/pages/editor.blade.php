@@ -8,7 +8,7 @@
         <x-menu-item text="Versions" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
         <x-menu-item
             text="360 View" icon="fal fa-vr-cardboard"
-            :route="route('tours.show', $query_params)" 
+            :route="route('tours.show', $query_params)"
         />
         <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
@@ -51,8 +51,8 @@
     <section class="editor">
         <div class="container-fluid editor-view ">
             <div class="row" x-data="{sidebar:'editor'}">
-                <livewire:artwork-collection :project="$project" />
                 <livewire:comments :commentable="$current_surface_state"/>
+                <livewire:artwork-collection :project="$project" />
                 <div class="col-9 main-col ">
                     <div class="editor-actions d-flex" >
                         <button class="action btn btn-sm" data-bs-toggle="modal" data-bs-target="#confirmation_modal"

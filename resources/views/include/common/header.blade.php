@@ -4,7 +4,7 @@
     <nav class="navbar navbar-expand-lg {{ $navbarLight ? 'navbar-light' : '' }}">
         <div class="nav-container">
             <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <img src="{{ asset('redesign/images/Group-4740 5.svg') }}" alt="dash-logo"/>
+                <img src="{{ asset('logo.png') }}" alt="dash-logo"/>
             </a>
             <button
                 class="navbar-toggler"
