@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
     Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');
     Route::post('/profile/password', 'ProfileController@updatePassword')->name('profile.password.update');
+    Route::get('/activity', 'ActivityController@index')->name('activity.index');
 
     //shared tours
     Route::get('shared-tours/{shared_tour}', 'SharedTourController@show')->name('shared-tours.show');

@@ -27,6 +27,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('artworks.index') }}">{{ __('Collection') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Activity') }}</a>
+                        </li>
                     </ul>
                 @endif
 

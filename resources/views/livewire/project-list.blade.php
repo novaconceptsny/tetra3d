@@ -98,7 +98,7 @@
                     <div class="collection">
                         <h5>Artwork Collection</h5>
                         @forelse($selectedProject->artworkCollections as $collection)
-                            <a href="{{ route('tours.show', [$tour, 'project_id' => $selectedProject->id]) }}"
+                            <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
                                target="_blank"
                                class="col-btn">{{ $collection->name }}</a>
                         @empty

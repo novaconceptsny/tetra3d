@@ -26,6 +26,7 @@ class SurfaceState extends Model implements HasMedia
             $model->artworks()->detach();
             $model->comments()->delete();
             $model->likes()->delete();
+            $model->addActivity('deleted');
         });
     }
 
@@ -127,5 +128,25 @@ class SurfaceState extends Model implements HasMedia
     public function scopeForProject(Builder $builder, $project_id)
     {
         $builder->where('project_id', $project_id);
+    }
+
+    public function addActivity($action)
+    {
+        $actions = [
+            'created' => 'added',
+            'updated' => 'edited',
+            'deleted' => 'deleted',
+            'new_comment' => 'comment added',
+            'switched_state' => 'selected to display in tour',
+        ];
+
+        $activity = "Surface {$this->surface->name} version '$this->name' ". $actions[$action];
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'project_id' => $this->project_id,
+            'tour_id' => $this->surface?->tour_id,
+            'activity' => $activity,
+        ]);
     }
 }

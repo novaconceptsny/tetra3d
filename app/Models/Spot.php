@@ -35,6 +35,12 @@ class Spot extends Model implements HasMedia
             $spot->generateXml();
         });
 
+        static::updated(function(self $model) {
+            if ($model->isDirty('name')){
+                $model->addActivity('renamed');
+            }
+        });
+
         static::deleted(function(self $model) {
             $model->surfaces()->detach();
             $model->maps()->detach();
@@ -160,5 +166,20 @@ class Spot extends Model implements HasMedia
         }
 
         return $media->getUrl();
+    }
+
+    public function addActivity($action)
+    {
+        $actions = [
+            'renamed' => 'Spot renamed',
+        ];
+
+        $activity = $actions[$action];
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'tour_id' => $this->tour_id,
+            'activity' => $activity,
+        ]);
     }
 }

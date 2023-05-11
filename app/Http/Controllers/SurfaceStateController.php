@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Artwork;
 use App\Models\Project;
 use App\Models\Spot;
@@ -139,6 +140,8 @@ class SurfaceStateController extends Controller
         //$state->artworks()->sync($assigned_artworks);
 
         $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
+
+        $state->addActivity($request->new ? 'created': 'updated');
 
         return redirect()->route($route, [
             $surface->tour,

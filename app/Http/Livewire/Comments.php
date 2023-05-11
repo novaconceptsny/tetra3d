@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Comment;
+use App\Models\SurfaceState;
 use Livewire\Component;
 
 class Comments extends Component
@@ -28,6 +29,10 @@ class Comments extends Component
             'user_id' => auth()->id(),
             'body' => $this->newComment
         ]);
+
+        if (class_basename($this->commentable) == class_basename(SurfaceState::class)){
+            $this->commentable->addActivity('new_comment');
+        }
 
         $this->commentable->refresh();
 

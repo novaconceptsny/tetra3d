@@ -76,4 +76,22 @@ class Project extends Model implements HasMedia
             return $builder->whereIn('id', $project_ids);
         }
     }
+
+    public function addActivity($action)
+    {
+        $actions = [
+            'name_updated' => 'Project name updated',
+            'tours_updated' => 'Project tours updated',
+            'collections_updated' => 'Project collections updated',
+            'users_updated' => 'Project contributors updated',
+        ];
+
+        $activity = $actions[$action];
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'project_id' => $this->id,
+            'activity' => $activity,
+        ]);
+    }
 }

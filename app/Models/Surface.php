@@ -26,6 +26,12 @@ class Surface extends Model implements HasMedia
     {
         parent::boot();
 
+        static::updated(function (self $model) {
+            if ($model->isDirty('name')) {
+                $model->addActivity('renamed');
+            }
+        });
+
         static::deleted(function(self $model) {
             $model->spots()->detach();
 
@@ -111,5 +117,20 @@ class Surface extends Model implements HasMedia
         }
 
         return $state->getFirstMediaUrl('hotspot');
+    }
+
+    public function addActivity($action)
+    {
+        $actions = [
+            'renamed' => 'Surface renamed',
+        ];
+
+        $activity = $actions[$action];
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'tour_id' => $this->tour_id,
+            'activity' => $activity,
+        ]);
     }
 }
