@@ -26,4 +26,9 @@ class Activity extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getUrl()
+    {
+        return $this->url ? url($this->url) : null;
+    }
 }

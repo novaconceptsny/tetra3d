@@ -131,6 +131,7 @@ class Surface extends Model implements HasMedia
             'user_id' => auth()->id(),
             'tour_id' => $this->tour_id,
             'activity' => $activity,
+            'url' => route('surfaces.show', $this->id, false)
         ]);
     }
 }

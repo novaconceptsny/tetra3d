@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Auth::routes();
-
 Route::group(['middleware' => 'auth'], function () {
 
     Route::post('login-as/{user}', [UserController::class, 'loginAs'])->name('login.as.user');

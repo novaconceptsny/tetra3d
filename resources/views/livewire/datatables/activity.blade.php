@@ -50,8 +50,8 @@
                         @include('backend.includes.datatable.content')
 
                         <td>
-                            @if($row->tour_id)
-                            <a href="{{ route('tours.show', ['tour' => $row->tour_id, 'project_id' => $row->project_id]) }}" class="text-decoration-none">View</a>
+                            @if($row->url)
+                            <a href="{{ $row->getUrl() }}" class="text-decoration-none">View</a>
                             @endif
                         </td>
                     </tr>

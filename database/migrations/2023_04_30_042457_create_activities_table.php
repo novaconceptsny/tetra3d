@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->foreignId('project_id')->nullable();
             $table->foreignId('tour_id')->nullable();
             $table->string('activity');
+            $table->string('url')->nullable();
             $table->timestamps();
         });
     }

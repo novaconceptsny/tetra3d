@@ -9,6 +9,7 @@ use Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
@@ -176,10 +177,14 @@ class Spot extends Model implements HasMedia
 
         $activity = $actions[$action];
 
+        $project_id = DB::table('project_tour')->where('tour_id', $this->tour_id)->value('project_id');
+
         Activity::create([
             'user_id' => auth()->id(),
             'tour_id' => $this->tour_id,
+            'project_id' => $project_id,
             'activity' => $activity,
+            'url' => route('tours.show', ['tour' => $this->tour_id, 'project_id' => $project_id], false)
         ]);
     }
 }

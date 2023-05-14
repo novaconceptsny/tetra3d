@@ -142,11 +142,19 @@ class SurfaceState extends Model implements HasMedia
 
         $activity = "Surface {$this->surface->name} version '$this->name' ". $actions[$action];
 
+        $urls = [
+            'created' => route('tours.surfaces', ['tour' => $this->surface?->tour_id, 'project_id' => $this->project_id], false),
+            'updated' => route('surfaces.show', ['surface' => $this->surface_id,'project_id' => $this->project_id], false),
+            'new_comment' => route('surfaces.show', ['surface' => $this->surface_id, 'project_id' => $this->project_id, 'sidebar' => 'comments'], false),
+            'switched_state' => route('tours.show', ['tour' => $this->surface?->tour_id, 'project_id' => $this->project_id], false),
+        ];
+
         Activity::create([
             'user_id' => auth()->id(),
             'project_id' => $this->project_id,
             'tour_id' => $this->surface?->tour_id,
             'activity' => $activity,
+            'url' => $urls[$action] ?? null
         ]);
     }
 }

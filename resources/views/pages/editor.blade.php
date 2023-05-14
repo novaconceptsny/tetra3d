@@ -50,7 +50,8 @@
 @section('content')
     <section class="editor">
         <div class="container-fluid editor-view ">
-            <div class="row" x-data="{sidebar:'editor'}">
+            @php($sidebar = request('sidebar', 'editor'))
+            <div class="row" x-data="{sidebar: '{{$sidebar}}' }">
                 <livewire:comments :commentable="$current_surface_state"/>
                 <livewire:artwork-collection :project="$project" />
                 <div class="col-9 main-col ">
