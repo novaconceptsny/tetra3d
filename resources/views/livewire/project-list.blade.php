@@ -58,8 +58,8 @@
         </div>
     </div>
 
-    <div class="sidebar-div">
-        <div class="sidebar mysidebar">
+    <div class="sidebar-div" x-show="sidebar">
+        <div class="sidebar mysidebar" @click.away="sidebar = false" @keydown.window.escape="sidebar = false">
             <div wire:loading.remove wire:target="selectProject">
                 @if($selectedProject)
                     <div class="preview">

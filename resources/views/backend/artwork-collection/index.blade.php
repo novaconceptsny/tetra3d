@@ -51,7 +51,7 @@
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm
-                                permission="edit" :permission_params="$collection"
+                                permission="delete" :permission_params="$collection"
                                 :route="route('backend.artwork-collections.destroy', $collection)"
                                 :model="$collection" :button="false"
                             />
