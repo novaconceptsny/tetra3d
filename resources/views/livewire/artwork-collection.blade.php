@@ -16,7 +16,7 @@
         </div>
         <div class="outside">
             <div class="line"></div>
-            <button class="editor-comment-btn" @click="sidebar = 'comments'">
+            <button class="editor-comment-btn btn" @click="sidebar = 'comments'">
                 <i class="fal fa-comment-alt-lines"></i>
                 <span>{{ __('Comments') }}</span>
             </button>
@@ -35,7 +35,7 @@
             @foreach($artworkColumns as $artworkColumn)
                 <div class="col-md-12 col-xl-6">
                     @foreach($artworkColumn as $artwork)
-                        <div class="card mb-3 artwork-img"
+                        <div class="card mb-2 artwork-img"
                              data-img-url="{{ $artwork->image_url. "?uuid=". str()->uuid() }}"
                              data-title="{{$artwork->name}}"
                              data-thumb-url="{{$artwork->image_url}}"

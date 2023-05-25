@@ -56,18 +56,18 @@
                 <livewire:artwork-collection :project="$project" />
                 <div class="col-9 main-col ">
                     <div class="editor-actions d-flex" >
-                        <button class="action btn btn-sm" data-bs-toggle="modal" data-bs-target="#confirmation_modal"
+                        <button class="action btn btn-sm px-2" data-bs-toggle="modal" data-bs-target="#confirmation_modal"
                                 data-text="Save As">
-                            <i class="fa fa-folder-upload"></i>
+                            <i class="fa fal fa-folder-upload"></i>
                         </button>
-                        <a id="save_btn" class="action btn btn-sm hide" href="javascript:void(0)" data-text="Save Changes"><i
-                                class="fa fa-floppy-disk"></i></a>
-                        <a id="remove_btn" class="action btn btn-sm hide" href="javascript:void(0)" data-text="Remove"><i
-                                class="fa fa-window-close"></i></a>
-                        <a class="action btn btn-sm"
+                        <a id="save_btn" class="action btn btn-sm hide px-2" href="javascript:void(0)" data-text="Save Changes"><i
+                                class="fa fal fa-floppy-disk"></i></a>
+                        <a id="remove_btn" class="action btn btn-sm hide px-2" href="javascript:void(0)" data-text="Remove"><i
+                                class="fa fal fa-window-close"></i></a>
+                        <a class="action btn btn-sm px-2"
                            href="{{ route('surfaces.show', [$surface, 'project_id' => $project->id, 'new' => 1]) }}"
                            data-text="Add New Version">
-                            <i class="fa fa-plus"></i>
+                            <i class="fa fal fa-plus"></i>
                         </a>
                     </div>
                     <div class="main_content w-100 h-100" style="overflow: hidden;">
