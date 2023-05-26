@@ -5,22 +5,24 @@
     $project = $project ?? null;
     $shared_tour_id = $shared_tour_id ?? null;
     $shared_spot_id = $shared_spot_id ?? null;
-    $tour_is_shared = Route::is('shared-tours.show');
+    $tour_is_shared = Route::is('shared-tours.show') || request('shared');
     $tracker = request('tracker', 0);
     $parameters = array_merge(request()->all(), ['tour' => $tour]);
     $parameters['tracker'] = $tracker ? 0 : 1;
     $readonly = !$project_id || $shared_tour_id;
 
     // only admins can see tracker
-    $tracker = user()->can('perform-admin-actions') ? $tracker : 0;
+    $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
 @endphp
 
 @section('page_actions')
-    <x-page-action
-        :visible="!$tour_is_shared" permission="perform-admin-actions"
-        :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
-        text="Tracker" icon="fal fa-ruler-combined"
-    />
+    @auth
+        <x-page-action
+            :visible="!$tour_is_shared" permission="perform-admin-actions"
+            :url="route('tours.show', $parameters)" :class="$tracker ? 'selected' : ''"
+            text="Tracker" icon="fal fa-ruler-combined"
+        />
+    @endauth
 @endsection
 
 @section('menu')
@@ -118,7 +120,7 @@
                 shared: "{{ $tour_is_shared }}",
                 shared_tour_id: "{{ $shared_tour_id }}", // if tour is shared
                 shared_spot_id: "{{ $shared_spot_id }}", // if only single spot is shared
-                readonly: "{{ $readonly }}",
+                readonly: "{{ $readonly || $tour_is_shared}}",
 
                 @foreach ($spot->surfaces as $surface)
                     {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared) }}',
@@ -181,6 +183,7 @@
 
     </script>
 
+    {{--todo::remove_me--}}
     {{--<script>
         function setMapScale() {
 

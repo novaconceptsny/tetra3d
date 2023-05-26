@@ -23,7 +23,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('back-to-admin', [UserController::class, 'backToAdmin'])->name('back.to.admin');
 
     Route::get('/', 'HomeController@index')->name('dashboard');
-    Route::get('tours/{tour}', 'TourController@show')->name('tours.show');
+    Route::get('tours/{tour}', 'TourController@show')->name('tours.show')->withoutMiddleware(['auth']);
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
@@ -32,7 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/activity', 'ActivityController@index')->name('activity.index');
 
     //shared tours
-    Route::get('shared-tours/{shared_tour}', 'SharedTourController@show')->name('shared-tours.show');
+    Route::get('shared-tours/{shared_tour}', 'SharedTourController@show')->name('shared-tours.show')->withoutMiddleware(['auth']);
 
     Route::controller(SurfaceStateController::class)->group(function () {
         Route::get('surfaces/{surface}', 'show')->name('surfaces.show');

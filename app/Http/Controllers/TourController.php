@@ -32,7 +32,15 @@ class TourController extends Controller
 
     public function show(Tour $tour)
     {
-        $this->redirectIfTourIsShared();
+        // redirect if tour is shared
+        if (request('shared_tour_id')) {
+            return $this->redirectIfTourIsShared();
+        }
+
+        // else, we check auth
+        if (!auth()->check()){
+            return redirect()->route('login');
+        }
 
         $spot_id = request('spot_id');
 
