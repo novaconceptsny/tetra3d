@@ -1,19 +1,20 @@
 <div class="col-3 side-col" :class="{ 'd-none': sidebar === 'comments' }">
     <x-loader/>
     <div class="top-div">
-        <div class="search">
-            <div class="search-bar input-group">
-                <button class="input-group-text p-3 bg-white border-0">
-                    <x-svg.magnifying-glass size="small"/>
-                </button>
-                <input type="text" class="form-control fs-4 border-0" placeholder="Search" wire:model.debounce.500ms="search"/>
-            </div>
-            <select class="form-select all-btn" wire:model="searchBy">
-                <option value="all">All</option>
-                <option value="artist">Artists</option>
-                <option value="name">Artworks</option>
-            </select>
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0" id="basic-addon1">
+                <i class="fas fa-search fa-lg"></i>
+            </span>
+            {{--<button class="input-group-text p-3 bg-white border-0">
+                <x-svg.magnifying-glass size="small"/>
+            </button>--}}
+            <input type="text" class="form-control form-control-md lead border-start-0" placeholder="Search" wire:model.debounce.500ms="search"/>
         </div>
+        <select class="form-select form-control all-btn" wire:model="searchBy">
+            <option value="all">All</option>
+            <option value="artist">Artists</option>
+            <option value="name">Artworks</option>
+        </select>
         <div class="outside">
             <div class="line"></div>
             <button class="editor-comment-btn btn" @click="sidebar = 'comments'">
@@ -46,9 +47,9 @@
                                 <img src="{{ $artwork->image_url }}" alt="card-img" />
                             </div>
                             <div class="card-body">
-                                <h6>{{ $artwork->name }}</h6>
-                                <p>{{ $artwork->artist }}</p>
-                                <p>[{{ $artwork->dimensions }}]</p>
+                                <div class="heading">{{ $artwork->name }}</div>
+                                <div class="paragraph">{{ $artwork->artist }}</div>
+                                <div>[{{ $artwork->dimensions }}]</div>
                             </div>
                         </div>
                     @endforeach
