@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasCompany;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Activity extends Model
 {
     use Searchable, Sortable;
+    use HasCompany;
 
     protected $guarded = ['id'];
 

@@ -54,6 +54,7 @@ class ActivityDatatable extends BaseDatatable
                     'tour_id', $this->selectedTour
                 )
             )
+            ->forCurrentCompany()
             ->whereAnyColumnLike($this->search)
             ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
