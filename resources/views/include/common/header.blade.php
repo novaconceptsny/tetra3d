@@ -67,11 +67,12 @@
                                         @if(session()->has('admin_id'))
                                             <li>
                                                 <a class="dropdown-item" href="javascript:void(0);"
+                                                   target="_blank"
                                                    onclick="event.preventDefault(); document.getElementById('back-to-admin-form').submit();">
                                                     <i class="fal fa-arrow-from-left"></i>
                                                     {{ __('Back to Admin') }}
                                                 </a>
-                                                <form id="back-to-admin-form" class="d-none" action="{{ route('back.to.admin') }}" method="post">
+                                                <form id="back-to-admin-form" target="_blank" class="d-none" action="{{ route('back.to.admin') }}" method="post">
                                                     @csrf
                                                 </form>
                                             </li>

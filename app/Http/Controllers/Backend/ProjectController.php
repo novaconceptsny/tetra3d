@@ -78,7 +78,7 @@ class ProjectController extends Controller
         $request->validate(ValidationRules::updateProject());
 
         if ($project->name !== $request->name){
-            $project->addActivity('name_updated');
+            $project->addActivity('name_updated', ['old_name' => $project->name, 'new_name' => $request->name]);
         }
 
         $project->update($request->only([

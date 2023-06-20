@@ -6,7 +6,7 @@
     @else
         {{ $value }}
         @can($permission)
-            <i class="fal fa-pencil" style="font-size: 0.65em;" wire:click="$set('editing', true)"></i>
+            <i class="fal fa-pencil" style="font-size: 0.65em; cursor: pointer" wire:click="$set('editing', true)"></i>
         @endcan
     @endif
 </span>

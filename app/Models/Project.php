@@ -77,10 +77,13 @@ class Project extends Model implements HasMedia
         }
     }
 
-    public function addActivity($action)
+    public function addActivity($action, $data = [])
     {
+        $oldName = $data['old_name'] ?? '';
+        $newName = $data['new_name'] ?? '';
+
         $actions = [
-            'name_updated' => 'Project name updated',
+            'name_updated' => "Project name changed to $newName from $oldName",
             'tours_updated' => 'Project tours updated',
             'collections_updated' => 'Project collections updated',
             'users_updated' => 'Project contributors updated',

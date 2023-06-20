@@ -75,14 +75,14 @@
                         <h5>Select Tours</h5>
                     </div>
                     @if($selectedTour && $selectedTour->getFirstMediaUrl('thumbnail'))
-                        <div class="sidebar-main-img">
+                        <div class="sidebar-main-img mx-0">
                             <img src="{{ $selectedTour->getFirstMediaUrl('thumbnail') }}" alt="preview-img"/>
                         </div>
                     @endif
 
                     <div class="select-box">
                         <div class="input-group mt-4 border-1">
-                            <select wire:model="selectedTourId" wire:change="selectTour">
+                            <select wire:model="selectedTourId" wire:change="selectTour" >
                                 @foreach($selectedProject->tours as $tour)
                                     <option value="{{ $tour->id}}">{{ $tour->name }}</option>
                                 @endforeach

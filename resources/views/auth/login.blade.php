@@ -15,7 +15,7 @@
     <!-- own css file  -->
     <link rel="stylesheet" href="{{ asset('redesign/css/style.css') }}"/>
 </head>
-<body>
+<body class="login_body">
 
 <main class="login">
     <div class="container-fluid">
@@ -52,7 +52,7 @@
                         </div>
                         <div class="check-main w-100">
                             <div class="checkbox">
-                                <input class="form-control" type="checkbox" id="checkbox" class="m-0 p-0"/>
+                                <input class="form-control m-0 p-0" type="checkbox" id="checkbox" />
                                 <label for="checkbox" class="m-0 p-0">Remember me</label>
                             </div>
                         </div>

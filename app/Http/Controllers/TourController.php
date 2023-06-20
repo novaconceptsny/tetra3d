@@ -26,6 +26,7 @@ class TourController extends Controller
         $data['project'] = $project;
         $data['tour'] = $tour;
         $data['surfaces'] = $tour->surfaces;
+        $data['navEnabled'] = false;
 
         return view('pages.surfaces', $data);
     }
