@@ -40,7 +40,7 @@
                     <div class="col-12">
                         <h5>{{ __('Artwork') }}</h5>
                         <x-backend::media-attachment
-                            name="image" rules="max:102400"
+                            name="image" rules="max:20480"
                             :media="$artwork?->getFirstMedia('image')"
                         />
                     </div>
