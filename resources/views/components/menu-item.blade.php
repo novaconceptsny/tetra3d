@@ -13,7 +13,7 @@
 @endphp
 
 @if($visible && $have_permissions)
-<a href="{{ $route }}" {{ $attributes->merge() }}>
+<a href="{{ $route }}" {{ $attributes->merge() }} target="_blank">
     @if($img)
         <img src="{{ $img }}" alt="menu-item"/>
     @endif

@@ -34,7 +34,7 @@
 
 @include('include.common.header')
 
-<main id="site__body" style="margin-top: 56px">
+<main id="site__body" style="margin-top: 46px">
     @yield('content')
     <livewire:modals.base-modal />
 
@@ -69,16 +69,15 @@
     integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
     crossorigin="anonymous"
 ></script>
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
-    crossorigin="anonymous"
-></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 
 
 <script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
 
 <script>
+    toastr.options = {
+        "positionClass": "toast-bottom-right",
+    }
     @php($notifications = array('error', 'success', 'warning', 'info'))
     @foreach($notifications as $notification)
         @if(session()->has($notification))

@@ -8,30 +8,28 @@
                     <span>Sort by:</span>
                     <div class="input-group">
                         <select wire:model="sortBy">
-                            <option value="name">Name A to Z </option>
+                            <option value="name">Name A to Z</option>
                             <option value="created_at">Recently added</option>
                             <option value="updated_at">Recently edited</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <div class="row project-cards-wrapper mb-2">
+            <div class="row project-cards-wrapper">
                 @foreach($projects as $project)
                     <div class="col-sm-6 col-xl-4 col-xxl-3 card-col">
-                        <div class="c-card card">
-                            <div class="card-header border-0">
-                                <div class="card-title fs-2 fw-bolder text-center">{{ $project->name }}</div>
-                                <div class="card-text">
-                                    <div class="c-line"></div>
-                                    <div class="text d-flex justify-content-between text-uppercase">
-                                        <p>{{ $project->tours_count }} {{ str('Tour')->plural($project->tours_count) }}</p>
-                                        <p>{{ $project->artwork_collections_count }} {{ str('Artwork Collection')->plural($project->artwork_collections_count) }}</p>
-                                    </div>
+                        <div class="c-card card ">
+                            <div class="card-header mb-2">{{ $project->name }}</div>
+                            <div class="card-text">
+                                <div class="c-line"></div>
+                                <div class="text">
+                                    <p>{{ $project->tours_count }} {{ str('Tour')->plural($project->tours_count) }}</p>
+                                    <p>{{ $project->artwork_collections_count }} {{ str('Artwork Collection')->plural($project->artwork_collections_count) }}</p>
                                 </div>
                             </div>
-                            <div class="card-body d-flex align-items-center justify-content-center">
+                            <div class="card-body">
                                 <div class="card-imgs">
-                                    <div class="images-container d-flex justify-content-center">
+                                    <div class="images-container">
                                         @forelse($project->contributors as $contributor)
                                             <div class="img-div" data-text="{{ $contributor->name }}">
                                                 <img src="{{ $contributor->avatar_url }}" alt=""/>
@@ -42,12 +40,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
+                            <div class="card-footer">
                                 <p>Created: <span>{{ $project->created_at->format('M d, Y') }}</span></p>
                                 <div class="link-div">
-                                    <a class="text-black" href="javascript:void(0)"
+                                    <a href="javascript:void(0)"
                                        wire:click="selectProject({{$project->id}})" @click="sidebar = true">View more
-                                        <div><i class="text-white fa-solid fa-chevron-right"></i></div>
+                                        <div><i class="fa-solid fa-chevron-right"></i></div>
                                     </a>
                                 </div>
                             </div>
@@ -64,7 +62,7 @@
                 @if($selectedProject)
                     <div class="preview">
                         <h5 class="sidebar-heading">{{ $selectedProject->name }}</h5>
-                        <a href="#"  @click="sidebar = false" class="x text-decoration-none">
+                        <a href="#" @click="sidebar = false" class="x text-decoration-none">
                             <i class="fa-solid fa-xmark"></i>
                         </a>
                     </div>
@@ -82,14 +80,14 @@
 
                     <div class="select-box">
                         <div class="input-group mt-4 border-1">
-                            <select wire:model="selectedTourId" wire:change="selectTour" >
+                            <select wire:model="selectedTourId" wire:change="selectTour" class="form-control">
                                 @foreach($selectedProject->tours as $tour)
                                     <option value="{{ $tour->id}}">{{ $tour->name }}</option>
                                 @endforeach
                             </select>
                             @if($selectedTourId)
                                 <a href="{{ route('tours.show', [$selectedTourId, 'project_id' => $selectedProject->id]) }}"
-                                   class="input-group-text bg-white text-decoration-none" >Enter
+                                   class="input-group-text bg-white text-decoration-none">Enter
                                 </a>
                             @endif
                         </div>

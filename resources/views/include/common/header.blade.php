@@ -58,7 +58,7 @@
                                     <div class="link">
                                         @can('access-backend')
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('backend.dashboard') }}">
+                                                <a class="dropdown-item" href="{{ route('backend.dashboard') }}" target="_blank">
                                                     <i class="fal fa-user-shield"></i>
                                                     {{ __('Admin Area') }}
                                                 </a>
