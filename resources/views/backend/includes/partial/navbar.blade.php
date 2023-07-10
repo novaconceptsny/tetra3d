@@ -10,7 +10,7 @@
                role="button" aria-haspopup="false"
                aria-expanded="false">
                 <span class="account-user-avatar">
-                    <img src="{{ user()->avatar_url }}" alt="user-image" class="rounded-circle">
+                    <img src="{{ user()->avatar_url }}" alt="user-image" class="rounded-circle" style="border: 2px solid #222436 !important;">
                 </span>
                 <span>
                     <span class="account-user-name">{{ user()->name }}</span>
