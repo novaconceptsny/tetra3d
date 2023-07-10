@@ -2,7 +2,7 @@
 @php($navbarLight = $navbarLight ?? false)
 <header id="header">
     <nav class="navbar navbar-expand-lg {{ $navbarLight ? 'navbar-light' : '' }}">
-        <div class="nav-container">
+        <div class="nav-container mb-1">
             <a class="navbar-brand" href="{{ route('dashboard') }}">
                 <img src="{{ asset('logo.png') }}" alt="dash-logo"/>
             </a>

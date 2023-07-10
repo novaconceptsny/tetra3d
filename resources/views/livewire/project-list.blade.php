@@ -19,7 +19,7 @@
                 @foreach($projects as $project)
                     <div class="col-sm-6 col-xl-4 col-xxl-3 card-col">
                         <div class="c-card card ">
-                            <div class="card-header mb-2">{{ $project->name }}</div>
+                            <div class="card-header mb-2 border-0"><h6>{{ $project->name }}</h6></div>
                             <div class="card-text">
                                 <div class="c-line"></div>
                                 <div class="text">
