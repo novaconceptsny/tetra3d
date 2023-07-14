@@ -33,7 +33,7 @@
         />
         <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
-            :visible="$project && !$tour_is_shared"
+            :visible="$project && !$tour_is_shared" target="_self"
             onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project?->id }}', '{{ request('spot_id') }}')"
             text="Share" icon="fal fa-share-nodes"
         />

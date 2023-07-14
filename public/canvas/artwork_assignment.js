@@ -392,6 +392,10 @@ function placeSelectedImage(artSelection, topPos = boundingBox.top, leftPos = bo
             scale = 96;
         }
         applyAdaptiveRescale(img1, scale, overrideScale);
+
+        // disable resizing or image
+        img1.hasControls = false;
+
         artworkCanvas.add(img1);
 
         artworkCanvas.renderAll();
@@ -711,6 +715,9 @@ function canvasHasOverlap() {
 
 function positionCropBtn(object)
 {
+    // disable crop
+    return false;
+    
     $crop_btn.show();
 
     let headerHeight = $('#header').height();
