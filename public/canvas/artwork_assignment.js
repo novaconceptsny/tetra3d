@@ -717,7 +717,7 @@ function positionCropBtn(object)
 {
     // disable crop
     return false;
-    
+
     $crop_btn.show();
 
     let headerHeight = $('#header').height();

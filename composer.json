@@ -14,29 +14,29 @@
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
         "itsgoingd/clockwork": "^5.1",
-        "laravel/framework": "^9.2",
-        "laravel/sanctum": "^2.14.1",
+        "laravel/framework": "^10.0",
+        "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "laravel/ui": "^3.4",
-        "livewire/livewire": "^2.10",
-        "opcodesio/log-viewer": "^2.1",
+        "laravel/ui": "^4.2.0",
+        "livewire/livewire": "^3.1.0",
+        "opcodesio/log-viewer": "^3.1",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-medialibrary": "^10.0.0",
-        "spatie/laravel-medialibrary-pro": "2.0.0",
-        "spatie/laravel-permission": "^5.5",
+        "spatie/laravel-medialibrary-pro": "^3.0.0",
+        "spatie/laravel-permission": "^6.0",
         "spatie/laravel-schemaless-attributes": "^2.3",
         "staudenmeir/belongs-to-through": "^2.12",
         "staudenmeir/eloquent-has-many-deep": "^1.15",
-        "vinkla/hashids": "^10.0"
+        "vinkla/hashids": "^11.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10",
-        "spatie/laravel-ignition": "^1.0"
+        "nunomaduro/collision": "^7.10",
+        "phpunit/phpunit": "^10.4",
+        "spatie/laravel-ignition": "^2.3"
     },
     "autoload": {
         "files": [
