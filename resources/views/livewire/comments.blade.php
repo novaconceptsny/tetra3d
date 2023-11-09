@@ -37,7 +37,7 @@
     @if($commentable)
         <div class="send-comment input-group">
             <input
-                wire:model="newComment"
+                wire:model.live="newComment"
                 type="text"
                 class="form-control"
                 placeholder="Add new comment"

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Surface;
+namespace App\Livewire\Surface;
 
 use App\Models\Project;
 use App\Models\SurfaceState;
@@ -33,8 +33,8 @@ class Index extends Component
 
     public function removeSurfaceState(SurfaceState $state)
     {
-        $this->emit('hideModal');
+        $this->dispatch('hideModal');
         $state->delete();
-        $this->emit('flashNotification', 'State deleted');
+        $this->dispatch('flashNotification', message: 'State deleted');
     }
 }

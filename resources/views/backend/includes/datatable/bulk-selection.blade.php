@@ -1,5 +1,5 @@
 @if($bulkDeleteEnabled && user()->can('bulkUpdate', $model) )
     <td>
-        <input type="checkbox" wire:model="selectedRows" value="{{$row->id}}">
+        <input type="checkbox" wire:model.live="selectedRows" value="{{$row->id}}">
     </td>
 @endif

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\XmlForm;
+namespace App\Livewire\XmlForm;
 
 use Livewire\Component;
 

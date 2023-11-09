@@ -6,11 +6,11 @@
         <div class="modal-body">
             @if($spotSelectionAllowed && !$link)
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input mt-2" type="radio" id="share_tour" value="tour" wire:model="share_type">
+                    <input class="form-check-input mt-2" type="radio" id="share_tour" value="tour" wire:model.live="share_type">
                     <label class="form-check-label" for="share_tour">Share whole tour</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input mt-2" type="radio" id="share_spot" value="spot" wire:model="share_type">
+                    <input class="form-check-input mt-2" type="radio" id="share_spot" value="spot" wire:model.live="share_type">
                     <label class="form-check-label" for="share_spot">Share current spot only</label>
                 </div>
             @endif

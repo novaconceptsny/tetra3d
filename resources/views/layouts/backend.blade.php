@@ -19,11 +19,11 @@
     <link rel="stylesheet" href="{{ asset('backend/css/media-library.css') }}">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.7.1/dist/cdn.min.js"></script>
 
 
     @yield('styles')
-    <livewire:styles/>
+    @livewireStyles
+    @mediaLibraryStyles
 
 </head>
 
@@ -82,7 +82,8 @@
 </script>
 
 @yield('scripts')
-<livewire:scripts/>
+@livewireScripts
+@mediaLibraryScripts
 <script src="{{ asset('js/modals.js') }}"></script>
 
 <script>
@@ -101,5 +102,9 @@
 
 @yield('livewire-scripts')
 
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
 </body>
 </html>

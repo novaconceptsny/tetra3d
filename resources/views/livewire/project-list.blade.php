@@ -7,7 +7,7 @@
                 <div class="sorted-btn">
                     <span>Sort by:</span>
                     <div class="input-group">
-                        <select wire:model="sortBy">
+                        <select wire:model.live="sortBy">
                             <option value="name">Name A to Z</option>
                             <option value="created_at">Recently added</option>
                             <option value="updated_at">Recently edited</option>
@@ -80,7 +80,7 @@
 
                     <div class="select-box">
                         <div class="input-group mt-4 border-1">
-                            <select wire:model="selectedTourId" wire:change="selectTour" class="form-control">
+                            <select wire:model.live="selectedTourId" wire:change="selectTour" class="form-control">
                                 @foreach($selectedProject->tours as $tour)
                                     <option value="{{ $tour->id}}">{{ $tour->name }}</option>
                                 @endforeach

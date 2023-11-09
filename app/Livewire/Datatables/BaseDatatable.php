@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Datatables;
+namespace App\Livewire\Datatables;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -50,7 +50,7 @@ class BaseDatatable extends Component
     {
         $this->model::destroy($this->selectedRows);
         $this->reset('selectedRows');
-        $this->emit('flashNotification', $this->bulkDeleteMessage);
-        $this->emit('rowsDeleted');
+        $this->dispatch('flashNotification', message: $this->bulkDeleteMessage);
+        $this->dispatch('rowsDeleted');
     }
 }

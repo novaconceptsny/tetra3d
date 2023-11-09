@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Datatables;
+namespace App\Livewire\Datatables;
 
 use App\Models\Activity;
 use App\Models\Project;
@@ -28,7 +28,7 @@ class ActivityDatatable extends BaseDatatable
     }
 
     public function dehydrate(){
-        $this->dispatchBrowserEvent('contentChanged');
+        $this->dispatch('contentChanged');
     }
 
     public function render()

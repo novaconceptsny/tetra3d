@@ -8,9 +8,9 @@
             {{--<button class="input-group-text p-3 bg-white border-0">
                 <x-svg.magnifying-glass size="small"/>
             </button>--}}
-            <input type="text" class="form-control form-control-md lead border-start-0" placeholder="Search" wire:model.debounce.500ms="search"/>
+            <input type="text" class="form-control form-control-md lead border-start-0" placeholder="Search" wire:model.live.debounce.500ms="search"/>
         </div>
-        <select class="form-select form-control all-btn" wire:model="searchBy">
+        <select class="form-select form-control all-btn" wire:model.live="searchBy">
             <option value="all">All</option>
             <option value="artist">Artists</option>
             <option value="name">Artworks</option>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Map;
+namespace App\Livewire\Map;
 
 use App\Models\Map;
 use App\Models\Tour;
@@ -82,7 +82,7 @@ class Index extends Component
         $this->clearMedia();
 
         $this->selectMap($this->selectedMap);
-        $this->emit('flashNotification', 'Map updated');
+        $this->dispatch('flashNotification', message: 'Map updated');
     }
 
     public function delete()
@@ -90,8 +90,8 @@ class Index extends Component
         $this->selectedMap->delete();
         $this->tour->refresh();
         $this->selectMap($this->tour->map);
-        $this->emit('hideModal');
-        $this->emit('flashNotification', 'Map deleted');
+        $this->dispatch('hideModal');
+        $this->dispatch('flashNotification', message: 'Map deleted');
     }
 
     public function setMapSpots()

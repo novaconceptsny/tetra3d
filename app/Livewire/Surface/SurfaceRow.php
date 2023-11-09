@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Surface;
+namespace App\Livewire\Surface;
 
 use App\Models\Surface;
 use App\Models\SurfaceState;

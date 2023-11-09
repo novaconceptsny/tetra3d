@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Modals;
+namespace App\Livewire\Modals;
 
 use Livewire\Component;
 
@@ -21,7 +21,7 @@ class BaseModal extends Component
         $this->alias = $alias;
         $this->params = $params;
 
-        $this->emit('showBootstrapModal');
+        $this->dispatch('showBootstrapModal');
     }
 
     public function resetModal()

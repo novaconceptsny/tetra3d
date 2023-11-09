@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Datatables;
+namespace App\Livewire\Datatables;
 
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
@@ -31,7 +31,7 @@ class ArtworkDatatable extends BaseDatatable
     }
 
     public function dehydrate(){
-        $this->dispatchBrowserEvent('contentChanged');
+        $this->dispatch('contentChanged');
     }
 
     public function render()
@@ -101,7 +101,7 @@ class ArtworkDatatable extends BaseDatatable
             'artwork_collection_id' => $this->targetCollection
         ]);
 
-        $this->emit('flashNotification', 'Collection updated');
+        $this->dispatch('flashNotification', message: 'Collection updated');
     }
 
     public function getColumns()

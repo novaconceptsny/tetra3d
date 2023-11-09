@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Map;
 use App\Models\Tour;
@@ -27,6 +27,6 @@ class TourMap extends Component
     public function selectMap(Map $map)
     {
         $this->selectedMap = $map;
-        $this->emit('mapChanged');
+        $this->dispatch('mapChanged');
     }
 }

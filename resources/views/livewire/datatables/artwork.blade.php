@@ -15,7 +15,7 @@
         <div class="d-flex">
             @include('backend.includes.datatable.search')
             <div class="me-1">
-                <select wire:model="selectedCollection" class="form-control">
+                <select wire:model.live="selectedCollection" class="form-control">
                     <option value="">All Collections</option>
                     @foreach($collections as $collection)
                         <option value="{{$collection->id}}">{{$collection->name}}</option>
@@ -25,7 +25,7 @@
 
             @if(isset($columns['company_name']))
                 <div class="me-1">
-                    <select wire:model="selectedCompany" class="form-control">
+                    <select wire:model.live="selectedCompany" class="form-control">
                         <option value="">All Companies</option>
                         @foreach($companies as $company)
                             <option value="{{$company->id}}">{{$company->name}}</option>
@@ -34,7 +34,7 @@
                 </div>
             @endif
             {{--<div class="me-1">
-                <select wire:model="selectedArtist" class="form-control">
+                <select wire:model.live="selectedArtist" class="form-control">
                     <option value="">All Artists</option>
                     @foreach($artists as $artist)
                         <option value="{{$artist}}">{{$artist}}</option>
@@ -48,7 +48,7 @@
             <div class="d-flex mt-2 justify-content-end">
                 <div class="me-1 ">
                     <label for="">Move to Collection</label>
-                    <select wire:model="targetCollection" class="form-control">
+                    <select wire:model.live="targetCollection" class="form-control">
                         <option value="">Select Collection</option>
                         @foreach($collections as $collection)
                             <option value="{{$collection->id}}">{{$collection->name}}</option>

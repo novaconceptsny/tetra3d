@@ -6,14 +6,14 @@
         <div class="modal-body">
             <div class="row mb-2 g-2">
                 <x-backend::inputs.radio label="Sync By">
-                    <x-backend::inputs.radio-option name="syncBy" label="Object" value="object" wire:model="syncBy" :selected="$syncBy"/>
-                    <x-backend::inputs.radio-option name="syncBy" label="Collection" value="collection" wire:model="syncBy" :selected="$syncBy"/>
+                    <x-backend::inputs.radio-option name="syncBy" label="Object" value="object" wire:model.live="syncBy" :selected="$syncBy"/>
+                    <x-backend::inputs.radio-option name="syncBy" label="Collection" value="collection" wire:model.live="syncBy" :selected="$syncBy"/>
                 </x-backend::inputs.radio>
 
                 @if($syncBy == 'collection')
-                    <x-backend::inputs.text name="collection_id" wire:model="collectionId"/>
+                    <x-backend::inputs.text name="collection_id" wire:model.live="collectionId"/>
                 @else
-                    <x-backend::inputs.text name="object_id" wire:model="objectId"/>
+                    <x-backend::inputs.text name="object_id" wire:model.live="objectId"/>
                 @endif
             </div>
 
