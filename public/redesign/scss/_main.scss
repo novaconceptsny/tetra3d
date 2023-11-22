@@ -6,15 +6,9 @@ main{
           padding-top: 50px;
           height: calc(100vh - 83px);
           overflow: auto;
-      
+
           @include intro-row;
           .card-row {
-            &.sidebar-visible {
-              .sidebar-div{
-                display: flex;
-                justify-content: flex-end;
-              }
-            }
             .inner-row {
               padding-inline: 50px;
               h5 {
@@ -42,9 +36,9 @@ main{
                   line-height: 21px;
                   color: $dark-color;
                 }
-                
+
                 .custom-select {
-                  
+
                   position: relative;
                   font-family: $roboto-font;
                   font-weight: 400;
@@ -61,7 +55,7 @@ main{
                     color: $dark-color;
                     padding: 8px 16px;
                     border: 1px solid $dark-color;
-                    
+
                     cursor: pointer;
                     &.select-arrow-active{
 
@@ -92,7 +86,7 @@ main{
                     border-radius: 0px 0px 10px 10px;
                     text-transform: capitalize !important;
                     div{
-                
+
                       color: $dark-color;
                       padding: 8px 16px !important;
                       &:hover,
@@ -105,7 +99,7 @@ main{
                     }
                   }
                 }
-                
+
               }
               .card-col {
                 z-index: 0;
@@ -126,7 +120,7 @@ main{
                           color: $white-color !important;
                         }
                         // vertical-align: baseline;
-                        
+
                       }
                       .card-text{
 
@@ -169,7 +163,7 @@ main{
                       line-height: 35px;
                       text-align: center;
                       color: $dark-color;
-                      
+
                       display: -webkit-box;
                       -webkit-box-pack: center; /* Center horizontally */
                       -webkit-box-align: center; /* Center vertically */
@@ -177,13 +171,13 @@ main{
                       -webkit-box-orient: vertical;
                       overflow: hidden;
                     }
-                                      
+
                   }
                   .card-text{
                     // display: none;
                     margin-inline: 24px;
                     border-top: 1px solid #3D358B !important;
-                    
+
                     .text{
                       // height: 100%;
                       display: flex;
@@ -265,7 +259,7 @@ main{
                           &:nth-child(9){
                             z-index: 2 !important;
                           }
-                          
+
                           img{
                             width: 45px;
                             height: 45px;
@@ -273,11 +267,11 @@ main{
 
                             z-index: 1;
                           }
-                          
+
                         }
                       }
                     }
-                    
+
                   }
                   .card-footer{
                     display: flex;
@@ -326,7 +320,7 @@ main{
                     }
                   }
                 }
-              
+
               }
               .project-cards-wrapper {
                 row-gap: 16px;
@@ -334,9 +328,12 @@ main{
                 width: calc(100vw - 100px);
               }
             }
-      
-            @include sidebar;
+
+
+
           }
         }
   }
 }
+@include sidebar;
+

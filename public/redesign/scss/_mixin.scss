@@ -23,7 +23,7 @@ $dark-color: #222436;
             line-height: 25px;
             padding: 5px 15px;
             // word-break: keep-all;
-            
+
           }
           &.active{
             background: $dark-color;
@@ -234,7 +234,7 @@ $dark-color: #222436;
       img{
         width: 155px;
         height: 155px;
-        object-fit: cover;  
+        object-fit: cover;
         border-radius: 50%;
       }
       .intro {
@@ -242,7 +242,7 @@ $dark-color: #222436;
           display: flex;
           align-items: center;
           gap: 23px;
-          
+
           h2 {
             font-family: "Open Sans";
             font-style: normal;
@@ -391,7 +391,7 @@ $dark-color: #222436;
         border-radius: 0px 0px 10px 10px;
         text-transform: capitalize !important;
         div{
-    
+
           color: $dark-color;
           padding: 8px 16px !important;
           border-bottom: 1px solid #C6C6C6;
@@ -409,7 +409,7 @@ $dark-color: #222436;
       }
     }
     #select-btn{
-      
+
       margin-top: 30px;
       border: none;
       border-left: 1px solid $dark-color;
@@ -427,197 +427,191 @@ $dark-color: #222436;
     }
 }
 @mixin sidebar {
-  .sidebar-div{
-    z-index: 1000;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(34, 36, 54, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 90;
-    display: none;
-    .sidebar {
-      margin: 0px;
-      padding:70px 45px 70px 33px;
-      background-color: $dark-color;
-      
-      color: $white-color;
-      width: 600px;
-      height: calc(100vh);
-      overflow: hidden;
-      overflow-y: auto;
-      .sidebar-main-img{
-        // margin-inline: 20px;
-        border: 2px solid $white-color;
-        border-radius: 10px;
-        overflow: hidden;
-        img{
+    .sidebar-div{
+        height: calc( 100dvh - 80px);
 
-          width: 100%;
-          height: 262px;
-          object-fit: cover;
-        }
-      }
-      .select-box{
-        display: flex;
-        justify-content: center;
-        align-items: start;
-        margin-bottom: 60px;
-        @include custom-select-box();
-      }
-      div {
-        h5 {
-          &.sidebar-heading{
-            text-align: center;
-            max-width: 400px;
-            margin-bottom: 0px;
-            margin-inline: auto;
-          }
-          text-transform: capitalize;
-          font-family: "Roboto";
-          font-style: normal;
-          font-weight: 500;
-          font-size: 30px !important;
-          line-height: 35px;
-          margin-bottom: 16px;
-          color: $white-color;
-        }
-        h6 {
-          text-align: center;
-          margin: 32px 0;
-          font-family: "Roboto";
-          font-style: normal;
-          font-weight: 500 !important;
-          font-size: 18px !important;
-          line-height: 21px;
-          color: #d1d1d1;
-        }
-        .x {
-          width: 33px;
-          height: 33px;
-          border-radius: 50%;
-          background-color: $white-color;
-          font-family: "Roboto";
-          font-style: normal;
-          font-weight: 400;
-          font-size: 22px;
-          line-height: 26px;
-          color: $black-color;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          &:hover {
-            background: $dark-color;
+        .sidebar.mysidebar {
+            margin: 0;
+            //padding:70px 45px 70px 33px;
+            padding-inline: 33px 45px;
+
             color: $white-color;
-          }
-          i{
-            font-size: 20px;
-          }
+            width: 100%;
+
+            .sidebar-main-img{
+                border: 2px solid $white-color;
+                border-radius: 10px;
+                overflow: hidden;
+                img{
+
+                    width: 100%;
+                    height: 262px;
+                    object-fit: cover;
+                }
+            }
+            .select-box{
+                display: flex;
+                justify-content: center;
+                align-items: start;
+                margin-bottom: 60px;
+                @include custom-select-box();
+                //background-color: $dark-color;
+                //color: $white-color;
+            }
+            div {
+                h5 {
+                    &.sidebar-heading{
+                        text-align: center;
+                        max-width: 400px;
+                        margin-bottom: 0;
+                        margin-inline: auto;
+                    }
+                    text-transform: capitalize;
+                    font-family: "Roboto";
+                    font-style: normal;
+                    font-weight: 500;
+                    font-size: 30px !important;
+                    line-height: 35px;
+                    margin-bottom: 16px;
+                    color: $dark-color;
+                }
+                h6 {
+                    text-align: center;
+                    margin: 32px 0;
+                    font-family: "Roboto";
+                    font-style: normal;
+                    font-weight: 500 !important;
+                    font-size: 18px !important;
+                    line-height: 21px;
+                    //color: #d1d1d1;
+                    color: #000;
+                }
+                .x {
+                    width: 33px;
+                    height: 33px;
+                    border-radius: 50%;
+                    background-color: $dark-color;
+                    font-family: "Roboto";
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 22px;
+                    line-height: 26px;
+                    color: $white-color;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    &:hover {
+                        background: $dark-color;
+                        color: $white-color;
+                    }
+                    i{
+                        font-size: 20px;
+                    }
+                }
+                .col-btn{
+                    font-family: $roboto-font;
+                    // margin-left: 15px;
+                    text-decoration: none;
+                    width: 100%;
+                    padding: 12px 20px;
+                    background: $dark-color;
+                    border-radius: 10px;
+                    font-weight: 400;
+                    font-size: 16px;
+                    line-height: 19px;
+                    color: $white-color;
+                    border-radius: 10px;
+                    border: none;
+                    margin-bottom: 16px;
+                    white-space: nowrap;
+                    &:hover {
+                        background: $primary-green;
+                        color: #ffffff;
+                    }
+                }
+            }
+            .preview {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 24px;
+            }
+            .tours {
+                margin-bottom: 42px;
+
+                .dbl {
+                    display: flex;
+                    gap: 16px;
+                    flex-wrap: wrap;
+                }
+            }
+            .contributor {
+                margin-top: 50px;
+                .img-container{
+                    margin-top: 30px;
+                    margin-left: 20px;
+                    .name-tip {
+                        margin-left: -15px;
+                        width: 52px;
+                        height: 52px;
+                        border-radius: 50%;
+                        z-index: 1;
+                        &:hover{
+                            z-index: 10 !important;
+                        }
+                        &:first-child{
+                            margin-left: 0px;
+                            z-index: 10 !important;
+                        }
+
+                        img{
+                            width: 52px;
+                            height: 52px;
+                            border-radius: 50%;
+                            z-index: 1;
+                            &:hover{
+                                transform: scale(1.2);
+                            }
+                        }
+                        position:relative;
+                        border-bottom:1px dashed #000;
+                        &:before {
+                            content: attr(data-text);
+                            position:absolute;
+                            top:61px;
+                            left:-50px;
+                            margin-left:15px;
+                            width: 120px;
+                            padding:5px;
+                            border-radius:10px;
+                            background: $black-color;
+                            color: $white-color;
+                            text-align:center;
+                            flex-wrap: nowrap;
+                            display:none;
+                        }
+                        &::after{
+                            content: "";
+                            position: absolute;
+                            width: 15px;
+                            height: 10px;
+                            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+                            background-color: $black-color;
+                            top: 100%;
+                            left: 15px;
+                            display: none;
+                        }
+                        &:hover {
+                            &:before{
+                                display:block;
+                            }
+                            &:after{
+                                display:block;
+                            }
+                        }
+                    }
+                }
+
+            }
         }
-        .col-btn{
-          font-family: $roboto-font;
-          // margin-left: 15px;
-          text-decoration: none;
-          width: 100%;
-          padding: 12px 20px;
-          background: $white-color;
-          border-radius: 10px;
-          font-weight: 400;
-          font-size: 16px;
-          line-height: 19px;
-          color: $black-color;
-          border-radius: 10px;
-          border: none;
-          margin-bottom: 16px;
-          &:hover {
-            background: $primary-green;
-            color: #ffffff;
-          }
-        }
-      }
-      .preview {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 24px;
-      }
-      .tours {
-        margin-bottom: 42px;
-  
-        .dbl {
-          display: flex;
-          gap: 16px;
-          flex-wrap: wrap;
-        }
-      }
-      .contributor {
-        margin-top: 50px;
-        .img-container{
-          margin-top: 30px;
-          margin-left: 20px;
-          .name-tip {
-            margin-left: -15px;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            z-index: 1;
-            &:hover{
-              z-index: 10 !important;
-            }
-            &:first-child{
-              margin-left: 0px;
-              z-index: 10 !important;
-            }
-            
-            img{
-              width: 52px;
-              height: 52px;
-              border-radius: 50%;
-              z-index: 1;
-              &:hover{
-                transform: scale(1.2);
-              }
-            }
-            position:relative;
-            border-bottom:1px dashed #000;
-            &:before {
-              content: attr(data-text);
-              position:absolute;
-              top:61px;
-              left:-50px;
-              margin-left:15px;
-              width: 120px;
-              padding:5px;
-              border-radius:10px;
-              background: $black-color;
-              color: $white-color;
-              text-align:center;
-              flex-wrap: nowrap;
-              display:none;
-            }
-            &::after{
-              content: "";
-              position: absolute;
-              width: 15px;
-              height: 10px;
-              clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-              background-color: $black-color;
-              top: 100%;
-              left: 15px;
-              display: none;
-            }
-            &:hover {
-              &:before{
-                display:block;
-              }
-              &:after{
-                display:block;
-              }
-            }
-          }
-        }
-      
-      }
     }
-  }
 }

@@ -826,10 +826,6 @@ main section.main-page .main-intro .intro-row .fir-col .sort-btn.active {
   background-color: #222436;
   color: #ffffff;
 }
-main section.main-page .main-intro .card-row.sidebar-visible .sidebar-div {
-  display: flex;
-  justify-content: flex-end;
-}
 main section.main-page .main-intro .card-row .inner-row {
   padding-inline: 50px;
 }
@@ -1109,44 +1105,33 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   transition: 0.3s width;
   width: calc(100vw - 100px);
 }
-main section.main-page .main-intro .card-row .sidebar-div {
-  z-index: 1000;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(34, 36, 54, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 90;
-  display: none;
+
+.sidebar-div {
+  height: calc(100dvh - 80px);
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar {
-  margin: 0px;
-  padding: 70px 45px 70px 33px;
-  background-color: #222436;
+.sidebar-div .sidebar.mysidebar {
+  margin: 0;
+  padding-inline: 33px 45px;
   color: #ffffff;
-  width: 600px;
-  height: 100vh;
-  overflow: hidden;
-  overflow-y: auto;
+  width: 100%;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .sidebar-main-img {
+.sidebar-div .sidebar.mysidebar .sidebar-main-img {
   border: 2px solid #ffffff;
   border-radius: 10px;
   overflow: hidden;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .sidebar-main-img img {
+.sidebar-div .sidebar.mysidebar .sidebar-main-img img {
   width: 100%;
   height: 262px;
   object-fit: cover;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box {
+.sidebar-div .sidebar.mysidebar .select-box {
   display: flex;
   justify-content: center;
   align-items: start;
   margin-bottom: 60px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select {
   font-weight: 400;
   width: 100%;
   height: 100%;
@@ -1156,10 +1141,10 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .
   position: relative;
   font-family: "Roboto", sans-serif;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select select {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select select {
   display: none; /*hide original SELECT element: */
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-selected {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-selected {
   background-color: #ffffff;
   border-radius: 10px 0px 0px 0px;
   text-transform: capitalize;
@@ -1168,13 +1153,13 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .
   border-bottom: 1px solid #C6C6C6;
   cursor: pointer;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-selected.select-arrow-active {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-selected.select-arrow-active {
   border-radius: 10px 0px 0px 10px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-selected.select-arrow-active::before {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-selected.select-arrow-active::before {
   content: url(../images/arrow-down.png);
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-selected::before {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-selected::before {
   position: absolute;
   content: url(../images/arrow-up.png);
   top: 10px;
@@ -1182,7 +1167,7 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .
   width: 10px;
   height: 10px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-items {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-items {
   position: absolute;
   background-color: #ffffff;
   top: 100%;
@@ -1192,21 +1177,21 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .
   border-radius: 0px 0px 10px 10px;
   text-transform: capitalize !important;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-items div {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-items div {
   color: #222436;
   padding: 8px 16px !important;
   border-bottom: 1px solid #C6C6C6;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-items div:last-child {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-items div:last-child {
   border-bottom: none;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-items div:hover, main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-items div.same-as-selected {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-items div:hover, .sidebar-div .sidebar.mysidebar .select-box .custom-select .select-items div.same-as-selected {
   background-color: rgba(0, 0, 0, 0.1);
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box .custom-select .select-items.select-hide {
+.sidebar-div .sidebar.mysidebar .select-box .custom-select .select-items.select-hide {
   display: none;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box #select-btn {
+.sidebar-div .sidebar.mysidebar .select-box #select-btn {
   margin-top: 30px;
   border: none;
   border-left: 1px solid #222436;
@@ -1222,7 +1207,7 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .select-box #
   line-height: 19px;
   font-weight: 400;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div h5 {
+.sidebar-div .sidebar.mysidebar div h5 {
   text-transform: capitalize;
   font-family: "Roboto";
   font-style: normal;
@@ -1230,15 +1215,15 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar div h5 {
   font-size: 30px !important;
   line-height: 35px;
   margin-bottom: 16px;
-  color: #ffffff;
+  color: #222436;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div h5.sidebar-heading {
+.sidebar-div .sidebar.mysidebar div h5.sidebar-heading {
   text-align: center;
   max-width: 400px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
   margin-inline: auto;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div h6 {
+.sidebar-div .sidebar.mysidebar div h6 {
   text-align: center;
   margin: 32px 0;
   font-family: "Roboto";
@@ -1246,70 +1231,71 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar div h6 {
   font-weight: 500 !important;
   font-size: 18px !important;
   line-height: 21px;
-  color: #d1d1d1;
+  color: #000;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div .x {
+.sidebar-div .sidebar.mysidebar div .x {
   width: 33px;
   height: 33px;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: #222436;
   font-family: "Roboto";
   font-style: normal;
   font-weight: 400;
   font-size: 22px;
   line-height: 26px;
-  color: #000000;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div .x:hover {
+.sidebar-div .sidebar.mysidebar div .x:hover {
   background: #222436;
   color: #ffffff;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div .x i {
+.sidebar-div .sidebar.mysidebar div .x i {
   font-size: 20px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div .col-btn {
+.sidebar-div .sidebar.mysidebar div .col-btn {
   font-family: "Roboto", sans-serif;
   text-decoration: none;
   width: 100%;
   padding: 12px 20px;
-  background: #ffffff;
+  background: #222436;
   border-radius: 10px;
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  color: #000000;
+  color: #ffffff;
   border-radius: 10px;
   border: none;
   margin-bottom: 16px;
+  white-space: nowrap;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar div .col-btn:hover {
+.sidebar-div .sidebar.mysidebar div .col-btn:hover {
   background: #32755f;
   color: #ffffff;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .preview {
+.sidebar-div .sidebar.mysidebar .preview {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .tours {
+.sidebar-div .sidebar.mysidebar .tours {
   margin-bottom: 42px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .tours .dbl {
+.sidebar-div .sidebar.mysidebar .tours .dbl {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor {
+.sidebar-div .sidebar.mysidebar .contributor {
   margin-top: 50px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container {
+.sidebar-div .sidebar.mysidebar .contributor .img-container {
   margin-top: 30px;
   margin-left: 20px;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip {
   margin-left: -15px;
   width: 52px;
   height: 52px;
@@ -1318,23 +1304,23 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor 
   position: relative;
   border-bottom: 1px dashed #000;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip:hover {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:hover {
   z-index: 10 !important;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip:first-child {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:first-child {
   margin-left: 0px;
   z-index: 10 !important;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip img {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip img {
   width: 52px;
   height: 52px;
   border-radius: 50%;
   z-index: 1;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip img:hover {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip img:hover {
   transform: scale(1.2);
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip:before {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:before {
   content: attr(data-text);
   position: absolute;
   top: 61px;
@@ -1349,7 +1335,7 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor 
   flex-wrap: nowrap;
   display: none;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip::after {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip::after {
   content: "";
   position: absolute;
   width: 15px;
@@ -1360,10 +1346,10 @@ main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor 
   left: 15px;
   display: none;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip:hover:before {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:hover:before {
   display: block;
 }
-main section.main-page .main-intro .card-row .sidebar-div .sidebar .contributor .img-container .name-tip:hover:after {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:hover:after {
   display: block;
 }
 
