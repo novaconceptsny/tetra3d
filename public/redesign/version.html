@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetra</title>
+    <!-- bootstrap css link  -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <!-- own css file  -->
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- font awesome cdn links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <header id="header">
+      <nav class="navbar navbar-expand-lg navbar-light back-green">
+        <div class="nav-container">
+          <a class="navbar-brand" href="#"
+            ><img src="images/Group-4740 5.svg" alt="dash-logo"
+          /></a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav breadcrumb-div">
+              <a class="breadcrumb-item" aria-current="page" href="#">Pablo Picasso Show</a>
+              <!-- <img src="images/Vector (5).png" alt="arrow-img" class="breadcrumb-separater"/> -->
+              <i class="fa-solid fa-angle-right breadcrumb-separator"></i>
+              <a class="breadcrumb-item" href="#">Configuration C</a>
+              <i class="fa-solid fa-angle-right breadcrumb-separator"></i>
+              <a class="breadcrumb-item" href="#">Point3</a>
+              <i class="fa-solid fa-angle-right breadcrumb-separator"></i>
+              <a class="breadcrumb-item" href="#">Mattis centered<i class="fa-solid fa-pen"></i></a>
+            </div>
+            <div class="navbar-nav menu-nav ms-auto">
+              <div class="nav-left-btn-div">
+                <div class="nav-left-btn">
+                  <button class="menu-btn me-5">super</button>
+                </div>
+                <div class="nav-left-btn">
+                  <button class="menu-btn me-5">super</button>
+                </div>
+                <div class="dropdown nav-left-btn">
+                  <button class="dropdown menu-btn" type="button" id="dropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">Menu</button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                    <a href="#"
+                      ><svg width="33" height="23" viewBox="0 0 33 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24.8497 10.0975H12.4454C12.3509 10.0975 12.3139 10.0814 12.3139 10.0366C12.3139 9.9212 12.3139 9.10398 12.3139 8.93413C12.3139 8.86042 12.3139 8.84119 12.5153 8.84119H27.0897C27.3034 8.84119 27.3363 8.87965 27.3363 8.93734C27.3363 9.22897 27.3363 9.83467 27.3363 9.97248C27.3363 10.0526 27.3363 10.0975 27.1061 10.0975H25.6265H24.8497ZM12.507 15.7122C12.3139 15.7122 12.3139 15.6705 12.3139 15.568C12.3139 15.4045 12.3139 14.7027 12.3139 14.5425C12.3139 14.4848 12.3139 14.4559 12.5317 14.4559H27.0938C27.3322 14.4559 27.3322 14.5104 27.3322 14.5937C27.3322 14.7668 27.3322 15.4334 27.3322 15.5488C27.3322 15.6737 27.2952 15.7122 27.1431 15.7122H12.507ZM33 3.12711C33 2.86752 32.6794 2.88354 32.6794 2.88354C32.6794 2.88354 16.3048 2.89316 17.0528 2.88354C16.5349 2.89316 16.424 2.68485 16.424 2.68485C16.424 2.68485 15.1005 1.22027 14.71 0.736354C14.5374 0.59855 14.2333 0.53125 14.2333 0.53125H0.324698C0.0739816 0.53125 0 0.784426 0 0.784426V22.0192C0 22.3012 0.230165 22.3236 0.230165 22.3236L32.8233 22.3268C32.9877 22.3268 33 22.2243 33 22.2243V3.12711ZM31.3888 20.8494C31.3888 20.9712 31.2655 21.0674 31.1094 21.0674H2.06738C1.75912 21.0674 1.61116 20.7885 1.61116 20.5065L1.60705 1.98942C1.60705 1.93494 1.60705 1.78111 1.80433 1.78111C1.97285 1.78111 12.8276 1.78111 13.2099 1.78111C13.5222 1.78111 13.4935 1.82918 13.6373 1.98301C14.11 2.47974 15.0594 3.46681 15.5033 3.89625C15.7211 4.10776 15.8855 4.11417 16.1897 4.1302L31.0929 4.13981C31.2614 4.13981 31.3888 4.28402 31.3888 4.44106V20.8494Z" fill="white"/>
+                        </svg>
+                        Projects</a
+                    >
+                    <a href="#"
+                      ><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M32.0596 24.3008C33.134 22.0805 33.7048 19.6503 33.7312 17.1839C33.7577 14.7174 33.2391 12.2756 32.2125 10.0328C31.1859 7.78994 29.6767 5.80153 27.7926 4.20956C25.9085 2.61758 23.6961 1.46134 21.3135 0.823437H21.2314C19.8507 0.454477 18.4278 0.266961 16.9986 0.265625C13.0017 0.265436 9.13691 1.69726 6.10487 4.30156C6.03717 4.34732 5.97639 4.40258 5.9244 4.46562C3.38082 6.71556 1.58195 9.6861 0.766714 12.9827C-0.0485182 16.2792 0.15848 19.7458 1.36021 22.922C2.56195 26.0981 4.70154 28.8335 7.49479 30.7647C10.288 32.696 13.6027 33.7317 16.9986 33.7344H17.376C20.4183 33.6624 23.3835 32.763 25.9532 31.1327C28.5228 29.5025 30.5999 27.203 31.9611 24.4813H31.9775L32.0596 24.3008ZM31.7643 17C31.7671 18.8944 31.4051 20.7715 30.6978 22.5289L22.7408 17.6398C22.4723 17.4685 22.1702 17.3566 21.8549 17.3117L18.0978 16.8031C17.6489 16.7502 17.1942 16.8291 16.7893 17.0301C16.3844 17.2311 16.0467 17.5456 15.8174 17.9352H14.226C14.1659 17.9308 14.1078 17.9122 14.0564 17.8808C14.005 17.8494 13.9619 17.8061 13.9307 17.7547L13.3072 16.4586C13.1573 16.1443 12.9374 15.8685 12.6644 15.6524C12.3914 15.4363 12.0725 15.2855 11.7322 15.2117L10.2721 14.9L11.1744 12.7508C11.1956 12.6904 11.2359 12.6385 11.2892 12.603C11.3424 12.5675 11.4058 12.5503 11.4697 12.5539H14.9807C15.3668 12.5552 15.7464 12.4533 16.0799 12.2586L18.0978 11.1594C18.2466 11.0648 18.3891 10.9607 18.5244 10.8477L22.9377 6.86094C23.3258 6.51074 23.5829 6.03862 23.6664 5.52257C23.7499 5.00651 23.6549 4.47741 23.3971 4.02266L23.151 3.57969C25.7219 4.75585 27.9006 6.64613 29.4277 9.02544C30.9547 11.4047 31.7658 14.1728 31.7643 17ZM20.3619 2.62813L21.6908 4.99062C21.7221 5.05495 21.7326 5.12742 21.7208 5.19797C21.7091 5.26853 21.6756 5.33368 21.6252 5.38438L17.1955 9.3875L17.1463 9.43672L15.1283 10.5359C15.0852 10.5669 15.0337 10.5841 14.9807 10.5852H11.4697C11.019 10.5843 10.5781 10.7161 10.2018 10.9641C9.82543 11.212 9.53036 11.5652 9.35331 11.9797L8.30331 14.4734H8.20487C8.15043 14.463 8.10002 14.4375 8.0594 14.3998C8.01878 14.3621 7.9896 14.3137 7.97519 14.2602L6.08847 9.22344C6.05654 9.14451 6.05654 9.05627 6.08847 8.97734L7.46659 5.72891C10.1281 3.46901 13.5071 2.23024 16.9986 2.23438C18.1314 2.23186 19.2604 2.36404 20.3619 2.62813ZM2.233 17C2.23159 14.4342 2.89883 11.9122 4.16894 9.68281L4.25097 9.9125L6.13769 14.9492C6.26951 15.3085 6.49091 15.6282 6.78089 15.878C7.07088 16.1278 7.41984 16.2994 7.79472 16.3766L8.69706 16.5734H8.71347L11.3221 17.1313C11.3682 17.1448 11.4111 17.1678 11.4478 17.1989C11.4846 17.23 11.5144 17.2684 11.5353 17.3117L12.1588 18.6078C12.3499 18.9938 12.6442 19.3193 13.0091 19.5481C13.3741 19.7769 13.7953 19.9001 14.226 19.9039H14.915L13.4549 23.2016C13.2719 23.6118 13.2132 24.0667 13.2861 24.5099C13.359 24.9532 13.5603 25.3653 13.865 25.6953L16.9494 29.0258C16.9817 29.064 17.0056 29.1086 17.0197 29.1566C17.0339 29.2046 17.0378 29.2551 17.0314 29.3047L16.5557 31.7656C12.7196 31.6422 9.0815 30.0333 6.40922 27.2784C3.73694 24.5234 2.23952 20.8381 2.233 17ZM18.5736 31.6836L18.9674 29.682C19.0321 29.3293 19.0139 28.9663 18.9143 28.6218C18.8146 28.2772 18.6362 27.9606 18.3932 27.6969L15.3088 24.35C15.2666 24.3012 15.2382 24.242 15.2267 24.1785C15.2152 24.115 15.2208 24.0496 15.2432 23.9891L17.3432 19.2969L17.4908 18.9523C17.5227 18.8895 17.5724 18.8373 17.6336 18.8023C17.6948 18.7673 17.765 18.751 17.8353 18.7555L21.5924 19.2641C21.6252 19.2805 21.6744 19.2805 21.7072 19.3133L29.8283 24.3008C28.6706 26.3344 27.0467 28.064 25.09 29.3475C23.1334 30.631 20.9 31.4317 18.5736 31.6836Z" fill="white"/>
+                        </svg>
+                        Tours</a
+                    >
+                    <a href="#">
+                        <svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0.5" y="0.5" width="23" height="23" rx="5" fill="#1E604A" stroke="#ffffff"/>
+                        <rect x="7.5" y="6.5" width="23" height="23" rx="5" fill="#1E604A" stroke="#ffffff"/>
+                        </svg>                      
+                        Versions</a
+                    >
+                    <a href="#"
+                      ><svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M31.1512 5.66536C31.1512 4.10703 29.8904 2.83203 28.332 2.83203H5.66536C4.10703 2.83203 2.83203 4.10703 2.83203 5.66536V22.6654C2.83203 24.2237 4.10703 25.4987 5.66536 25.4987H25.4987L31.1654 31.1654L31.1512 5.66536ZM28.332 5.66536V24.3229L26.6745 22.6654H5.66536V5.66536H28.332ZM8.4987 16.9987H25.4987V19.832H8.4987V16.9987ZM8.4987 12.7487H25.4987V15.582H8.4987V12.7487ZM8.4987 8.4987H25.4987V11.332H8.4987V8.4987Z" fill="white"/>
+                        </svg>
+                        Comments</a
+                    >
+                    <a href="#"
+                      ><svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.7285 32.5516H6.27227C4.71484 32.5516 3.44922 31.2859 3.44922 29.7285V6.27227C3.44922 4.71484 4.71484 3.44922 6.27227 3.44922H29.7285C31.2824 3.44922 32.5516 4.71484 32.5516 6.27227V29.7285C32.5516 31.2824 31.2824 32.5516 29.7285 32.5516ZM6.27227 4.57773C5.33711 4.57773 4.57773 5.33711 4.57773 6.27227V29.7285C4.57773 30.6637 5.33711 31.423 6.27227 31.423H29.7285C30.6602 31.423 31.423 30.6637 31.423 29.7285V6.27227C31.423 5.33711 30.6637 4.57773 29.7285 4.57773H6.27227Z" fill="white"/>
+                        <path d="M31.797 17.1786C31.6528 17.1786 31.5087 17.1224 31.3962 17.0134L18.7997 4.41338C18.5782 4.19189 18.5782 3.83682 18.7997 3.61533C19.0212 3.39385 19.3763 3.39385 19.5978 3.61533L32.1942 16.2118C32.4157 16.4333 32.4157 16.7884 32.1942 17.0099C32.0853 17.1224 31.9411 17.1786 31.797 17.1786ZM31.4208 31.7614C31.2767 31.7614 31.1325 31.7052 31.02 31.5962L4.35752 4.93018C4.13604 4.70869 4.13604 4.35361 4.35752 4.13213C4.579 3.91064 4.93408 3.91064 5.15557 4.13213L31.8216 30.7981C32.0431 31.0196 32.0431 31.3747 31.8216 31.5962C31.7091 31.7052 31.5649 31.7614 31.4208 31.7614Z" fill="white"/>
+                        <path d="M11.8728 12.211C11.7286 12.211 11.5845 12.1548 11.472 12.0458C11.2505 11.8243 11.2505 11.4692 11.472 11.2478L19.1044 3.61533C19.3259 3.39385 19.681 3.39385 19.9024 3.61533C20.1239 3.83682 20.1239 4.19189 19.9024 4.41338L12.2735 12.0458C12.161 12.1548 12.0169 12.211 11.8728 12.211ZM4.53564 31.8036C4.3915 31.8036 4.24736 31.7474 4.13486 31.6384C3.91338 31.4169 3.91338 31.0618 4.13486 30.8403L30.8466 4.12861C31.0681 3.90713 31.4231 3.90713 31.6446 4.12861C31.8661 4.3501 31.8661 4.70518 31.6446 4.92666L4.93291 31.6384C4.82393 31.7509 4.67979 31.8036 4.53564 31.8036Z" fill="white"/>
+                        </svg>                      
+                        Artwork
+                      Collection</a
+                    >
+                    <a href="#"
+                      ><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_1699_868)">
+                        <path d="M28.9602 30.001H1.04906C0.884022 30.001 0.721318 29.9593 0.574166 29.8795C0.427015 29.7997 0.299566 29.6839 0.202174 29.5415C0.104782 29.3992 0.0401936 29.2343 0.0136548 29.0603C-0.012884 28.8862 -0.000624276 28.708 0.049438 28.54L3.8122 15.8993C3.87951 15.6734 4.01212 15.4761 4.19097 15.3358C4.36983 15.1955 4.58572 15.1194 4.80762 15.1184L11.7127 15.0877L11.7211 17.3298L5.5799 17.3567L2.48379 27.759H27.5542L24.6413 17.273L18.5373 17.2961L18.5289 15.0541L25.4164 15.0234H25.4206C25.6468 15.0234 25.8669 15.1015 26.0482 15.246C26.2294 15.3905 26.3621 15.5937 26.4265 15.8253L29.9626 28.5571C30.0097 28.7244 30.0196 28.901 29.9914 29.073C29.9633 29.245 29.8979 29.4076 29.8006 29.5478C29.7032 29.6881 29.5765 29.8021 29.4306 29.8808C29.2847 29.9594 29.1236 30.0006 28.9602 30.001Z" fill="white"/>
+                        <path d="M10.0039 28.3651L8.61739 28.1625L9.30783 22.7734L3.08203 22.7861V21.2914L10.1081 21.2772C10.208 21.2772 10.3068 21.3 10.3977 21.3442C10.4887 21.3884 10.5697 21.4528 10.6354 21.5333C10.7011 21.6137 10.7499 21.7083 10.7785 21.8105C10.8071 21.9128 10.8149 22.0204 10.8013 22.1262L10.0039 28.3651ZM15.3902 28.8434L13.9912 28.8187L14.0548 24.7008C14.0579 24.5048 14.133 24.318 14.2639 24.1806C14.3947 24.0431 14.5709 23.9661 14.7544 23.9662L27.0318 23.952V25.4467L15.4413 25.4601L15.3902 28.8434ZM19.4874 21.615C19.3018 21.615 19.1239 21.5363 18.9927 21.3961C18.8615 21.256 18.7878 21.0659 18.7878 20.8677C18.7878 20.6695 18.8615 20.4794 18.9927 20.3392C19.1239 20.1991 19.3018 20.1203 19.4874 20.1203L26.731 20.1024C26.9165 20.1024 27.0944 20.1811 27.2256 20.3213C27.3568 20.4614 27.4305 20.6515 27.4305 20.8497C27.4305 21.0479 27.3568 21.238 27.2256 21.3782C27.0944 21.5183 26.9165 21.5971 26.731 21.5971L19.4874 21.615ZM14.9705 21.9282C14.8215 21.9282 14.6741 21.8942 14.5383 21.8286C14.4025 21.763 14.2813 21.6673 14.1828 21.5478C14.1129 21.4611 12.4123 19.3939 10.6852 16.7901C8.25014 13.1154 7.06584 10.3854 7.06584 8.44452C7.06596 6.20485 7.89883 4.05695 9.38123 2.47331C10.8636 0.889673 12.8741 0 14.9705 0C17.0669 0 19.0774 0.889673 20.5598 2.47331C22.0422 4.05695 22.875 6.20485 22.8752 8.44452C22.8752 10.3876 21.6909 13.1154 19.2544 16.7909C17.5287 19.3947 15.8267 21.4618 15.7568 21.5485C15.6584 21.6677 15.5374 21.7632 15.4019 21.8287C15.2663 21.8941 15.1193 21.928 14.9705 21.9282ZM14.9705 2.24154C13.4311 2.24332 11.9553 2.89742 10.8668 4.06032C9.77834 5.22322 9.16609 6.79994 9.16442 8.44452C9.16442 9.2539 9.58414 11.2441 12.3885 15.4793C13.3497 16.9299 14.3192 18.2288 14.9705 19.0711C15.6211 18.2288 16.5913 16.9292 17.5525 15.4793C20.3569 11.2411 20.7766 9.2539 20.7766 8.44452C20.7749 6.79994 20.1627 5.22322 19.0742 4.06032C17.9857 2.89742 16.5099 2.24332 14.9705 2.24154Z" fill="white"/>
+                        <path d="M14.9693 11.2411C14.3789 11.2411 13.8018 11.0541 13.3109 10.7037C12.8201 10.3533 12.4375 9.85526 12.2116 9.27256C11.9857 8.68986 11.9266 8.04867 12.0417 7.43008C12.1569 6.81149 12.4412 6.24328 12.8586 5.7973C13.2761 5.35132 13.8079 5.0476 14.3869 4.92456C14.9659 4.80151 15.5661 4.86466 16.1115 5.10603C16.6569 5.34739 17.1231 5.75612 17.4511 6.28054C17.7791 6.80495 17.9541 7.4215 17.9541 8.05221C17.9534 8.89773 17.6387 9.70838 17.0791 10.3063C16.5195 10.9041 15.7607 11.2403 14.9693 11.2411ZM14.9693 6.35872C14.6556 6.35872 14.349 6.45809 14.0882 6.64425C13.8274 6.83042 13.6242 7.09502 13.5041 7.4046C13.3841 7.71418 13.3527 8.05484 13.4139 8.38349C13.4751 8.71214 13.6261 9.01402 13.8479 9.25096C14.0697 9.48791 14.3523 9.64927 14.6599 9.71464C14.9675 9.78001 15.2864 9.74646 15.5761 9.61823C15.8659 9.49 16.1136 9.27284 16.2878 8.99423C16.4621 8.71561 16.5551 8.38805 16.5551 8.05296C16.5554 7.83021 16.5146 7.60958 16.435 7.40369C16.3555 7.19779 16.2387 7.01066 16.0914 6.85298C15.9442 6.69529 15.7693 6.57016 15.5767 6.48471C15.3842 6.39926 15.1778 6.35518 14.9693 6.35499V6.35872Z" fill="white"/>
+                        </g>
+                        <defs>
+                        <clipPath id="clip0_1699_868">
+                        <rect width="30" height="30" fill="white"/>
+                        </clipPath>
+                        </defs>
+                        </svg>                      
+                        Map</a
+                    >
+                    <a href="#"
+                      ><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.66667 9.91536H6.70833M6.70833 9.91536C7.24982 9.91536 7.76912 10.1305 8.15201 10.5134C8.5349 10.8962 8.75 11.4155 8.75 11.957C8.75 12.4985 8.5349 13.0178 8.15201 13.4007C7.76912 13.7836 7.24982 13.9987 6.70833 13.9987H3.5M6.70833 9.91536C7.24982 9.91536 7.76912 9.70026 8.15201 9.31737C8.5349 8.93449 8.75 8.41518 8.75 7.8737C8.75 7.33221 8.5349 6.81291 8.15201 6.43002C7.76912 6.04713 7.24982 5.83203 6.70833 5.83203H3.5M24.5 17.4987C24.5 21.365 19.7983 24.4987 14 24.4987C8.20167 24.4987 3.5 21.365 3.5 17.4987M16.3333 5.83203H15.1667C14.2384 5.83203 13.3482 6.20078 12.6918 6.85716C12.0354 7.51353 11.6667 8.40377 11.6667 9.33203V11.6654M16.9167 11.082V11.6654C16.9167 12.2842 16.6708 12.8777 16.2332 13.3153C15.7957 13.7529 15.2022 13.9987 14.5833 13.9987H14C13.3812 13.9987 12.7877 13.7529 12.3501 13.3153C11.9125 12.8777 11.6667 12.2842 11.6667 11.6654V11.082C11.6667 10.4632 11.9125 9.8697 12.3501 9.43212C12.7877 8.99453 13.3812 8.7487 14 8.7487H14.5833C15.2022 8.7487 15.7957 8.99453 16.2332 9.43212C16.6708 9.8697 16.9167 10.4632 16.9167 11.082ZM19.8333 9.91536V8.16536C19.8333 7.54653 20.0792 6.95303 20.5168 6.51545C20.9543 6.07786 21.5478 5.83203 22.1667 5.83203H22.75C23.3688 5.83203 23.9623 6.07786 24.3999 6.51545C24.8375 6.95303 25.0833 7.54653 25.0833 8.16536V11.6654C25.0833 12.2842 24.8375 12.8777 24.3999 13.3153C23.9623 13.7529 23.3688 13.9987 22.75 13.9987H22.1667C21.5478 13.9987 20.9543 13.7529 20.5168 13.3153C20.0792 12.8777 19.8333 12.2842 19.8333 11.6654V9.91536Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        360 view</a
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="profile">
+                <a href="#"
+                  ><img src="images/Ellipse 22.png" alt="profile-img"
+                /></a>
+                <div class="nav-item dropdown">
+                  <a
+                    class="dropdown-link nav-link text-white dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    John Doe
+                  </a>
+                  <ul
+                    class="dropdown-menu pro-drop"
+                    aria-labelledby="navbarDropdown"
+                  >
+                    <div class="drop-profile">
+                      <img src="images/Ellipse 22.png" alt="drop-img" />
+                      <p class="profile-name">John Doe</p>
+                      <small class="profile-email">John Doe@gmail.com</small>
+                    </div>
+                    <div class="link">
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          ><i class="fa-solid fa-user"></i>
+                            My
+                          Profile</a
+                        >
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          ><i class="fa-sharp fa-regular fa-circle-question"></i>
+                            Support</a
+                        >
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">
+                          <i class="fa-solid fa-right-from-bracket"></i>
+                          Logout</a>
+                      </li>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="version">
+        
+        <div class="container-fluid version-wrapper">
+          <div class="row">
+            <div class="col-12">
+              <h4>S1001</h4>
+              <i class="fa-solid fa-pen"></i>
+            </div>
+            <div class="col-3 fir-col">
+              <div class="card border p-0">
+                <a href="#">
+                  <div class="abs-div">
+                    <div class="content">
+                      <div class="plus">
+                        <i class="fa-solid fa-plus"></i>
+                      </div>
+                      <h6>Add New Option</h6>
+                    </div>
+                  </div>
+                </a>
+                <div class="card-img p-0 m-0">
+                  <img
+                    src="images/Capture 3.png"
+                    alt="ver-card-img"
+                    class="w-100 h-100 p-0 m-0"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card border p-0" id="version-card-active">
+                <a href="#">
+
+                  <div class="card-img">
+                    <img
+                      src="images/Capture 3.png"
+                      alt="ver-card-img"
+                      class="w-100 h-100 p-0 m-0"
+                    />
+                </a>
+                </div>
+                <div class="card-body">
+                  <div class="main-card-body">
+                    <div class="text">
+                      <h6>Matise Centered</h6>
+                      <p>Nile Berry 12/11/2021</p>
+                    </div>
+                    <div class="icon">
+                      <button class="card-action">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card border p-0" id="version-card-active">
+                <div class="card-img">
+                  <img
+                    src="images/Capture 3.png"
+                    alt="ver-card-img"
+                    class="w-100 h-100 p-0 m-0"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="main-card-body">
+                    <div class="text">
+                      <h6>Matise Centered</h6>
+                      <p>Nile Berry 12/11/2021</p>
+                    </div>
+                    <div class="icon">
+                      <button class="card-action">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card border p-0" id="version-card-active">
+                <div class="card-img">
+                  <img
+                    src="images/Capture 3.png"
+                    alt="ver-card-img"
+                    class="w-100 h-100 p-0 m-0"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="main-card-body">
+                    <div class="text">
+                      <h6>Matise Centered</h6>
+                      <p>Nile Berry 12/11/2021</p>
+                    </div>
+                    <div class="icon">
+                      <button class="card-action">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card border p-0" id="version-card-active">
+                <div class="card-img">
+                  <img
+                    src="images/Capture 3.png"
+                    alt="ver-card-img"
+                    class="w-100 h-100 p-0 m-0"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="main-card-body">
+                    <div class="text">
+                      <h6>Matise Centered</h6>
+                      <p>Nile Berry 12/11/2021</p>
+                    </div>
+                    <div class="icon">
+                      <button class="card-action">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card border p-0" id="version-card-active">
+                <div class="card-img">
+                  <img
+                    src="images/Capture 3.png"
+                    alt="ver-card-img"
+                    class="w-100 h-100 p-0 m-0"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="main-card-body">
+                    <div class="text">
+                      <h6>Matise Centered</h6>
+                      <p>Nile Berry 12/11/2021</p>
+                    </div>
+                    <div class="icon">
+                      <button class="card-action">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card border p-0" id="version-card-active">
+                <div class="card-img">
+                  <img
+                    src="images/Capture 3.png"
+                    alt="ver-card-img"
+                    class="w-100 h-100 p-0 m-0"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="main-card-body">
+                    <div class="text">
+                      <h6>Matise Centered</h6>
+                      <p>Nile Berry 12/11/2021</p>
+                    </div>
+                    <div class="icon">
+                      <button class="card-action">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card border p-0" id="version-card-active">
+                <div class="card-img">
+                  <img
+                    src="images/Capture 3.png"
+                    alt="ver-card-img"
+                    class="w-100 h-100 p-0 m-0"
+                  />
+                </div>
+                <div class="card-body">
+                  <div class="main-card-body">
+                    <div class="text">
+                      <h6>Matise Centered</h6>
+                      <p>Nile Berry 12/11/2021</p>
+                    </div>
+                    <div class="icon">
+                      <button class="card-action">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                      <button class="card-action">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <svg width="1918" height="1" viewBox="0 0 1918 1" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="4.37114e-08" y1="0.5" x2="1918" y2="0.500168" stroke="url(#paint0_linear_1857_2350)"/>
+              <defs>
+              <linearGradient id="paint0_linear_1857_2350" x1="0" y1="1" x2="1918" y2="1.00017" gradientUnits="userSpaceOnUse">
+              <stop stop-color="white"/>
+              <stop offset="0.505208" stop-color="#222436"/>
+              <stop offset="1" stop-color="white" stop-opacity="0"/>
+              </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <h4>S1002</h4>
+              <i class="fa-solid fa-pen"></i>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+    <!-- bootstrap script links -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+
+    
+  </body>
+</html>

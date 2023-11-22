@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetra</title>
+    <!-- bootstrap css link  -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <!-- own css file  -->
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- font awesome cdn links -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <header id="header">
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="nav-container">
+          <a class="navbar-brand" href="#"
+            ><img src="images/Group-4740 5.svg" alt="dash-logo"
+          /></a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-5 link-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#"
+                  >Projects</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Collection</a>
+              </li>
+            </ul>
+            <div class="navbar-nav menu-nav ms-auto">
+              <div class="dropdown menu-div">
+                <button
+                  class="btn dropdown menu-btn"
+                  type="button"
+                  id="dropdownMenu"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Menu
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                  <a href="#"
+                    ><img
+                      src="images/Vector (2).png"
+                      alt="project-img"
+                    />Projects</a
+                  >
+                  <a href="#"
+                    ><img
+                      src="images/Vector (3).png"
+                      alt="project-img"
+                    />Tours</a
+                  >
+                  <a href="#"
+                    ><img
+                      src="images/Group 4764.png"
+                      alt="project-img"
+                    />Versions</a
+                  >
+                  <a href="#"
+                    ><img
+                      src="images/Vector (4).png"
+                      alt="project-img"
+                    />Comments</a
+                  >
+                  <a href="#"
+                    ><img src="images/art-10 3.png " alt="project-img" />Artwork
+                    Collection</a
+                  >
+                  <a href="#"
+                    ><img src="images/map-162 4.png" alt="project-img" />Map</a
+                  >
+                  <a href="#"
+                    ><img
+                      src="images/iconoir_360-view.png"
+                      alt="project-img"
+                    />360 view</a
+                  >
+                </div>
+              </div>
+              <div class="profile">
+                <div class="nav-item dropdown">
+                  <a class="dropdown-link nav-link text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img class="user-img-border" src="images/Ellipse 22.png" alt="profile-img"/>
+                  </a>
+                  <ul
+                    class="dropdown-menu pro-drop"
+                    aria-labelledby="navbarDropdown"
+                  >
+                    <div class="drop-profile">
+                      <img src="images/dropdown-profile-img.png" alt="drop-img" />
+                      <div class="user-detail">
+                        <h6>K.Wink</h6>
+                        <p class="profile-name">Kasia Wink</p>
+                        <p class="profile-email">Kasia@gmail.com</p>
+                      </div>
+                    </div>
+                    <div class="link">
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          ><i class="fa-solid fa-user"></i>
+                            My
+                          Profile</a
+                        >
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          ><i class="fa-sharp fa-regular fa-circle-question"></i>
+                            Support</a
+                        >
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">
+                          <i class="fa-solid fa-right-from-bracket"></i>
+                          Logout</a>
+                      </li>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="collection">
+        <div class="container-fluid main-intro">
+          <div class="row intro-row">
+            <div class="col fir-col">
+              <img src="images/Ellipse 23.png" alt="dash-img" class="dash-img" />
+              <div class="intro">
+                <div class="hello">
+                  <h2>Hello, John</h2>
+                  <svg
+                    width="62"
+                    height="62"
+                    viewBox="0 0 62 62"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M32.9608 27L9 29.625L11.5 48H35L32.9608 27Z"
+                      fill="#FDD45B"
+                      stroke="#FDD45B"
+                    />
+                    <path
+                      d="M44.9608 27L21 29.625L23.5 48H47L44.9608 27Z"
+                      fill="#FDD45B"
+                      stroke="#FDD45B"
+                    />
+                    <path
+                      d="M49.0844 41.3319L51.3319 11.0165C51.4539 9.59791 51.0139 8.1882 50.1066 7.09094C49.1993 5.99369 47.8973 5.29667 46.4811 5.15C45.0649 5.00333 43.6477 5.41875 42.5348 6.30679C41.4219 7.19483 40.7023 8.48443 40.531 9.89787L38.7511 23.2485M20.6678 28.4152L18.8259 17.3611C18.5955 16.0065 17.8502 14.7935 16.7458 13.976C15.6414 13.1584 14.2636 12.7997 12.9008 12.975C11.538 13.1502 10.2958 13.8458 9.43412 14.9161C8.57249 15.9864 8.15826 17.3486 8.27811 18.7174L10.3344 41.3319M31.0011 33.5819V29.7069C31.0011 28.3366 30.4568 27.0224 29.4878 26.0535C28.5189 25.0845 27.2047 24.5402 25.8344 24.5402C24.4642 24.5402 23.15 25.0845 22.1811 26.0535C21.2121 27.0224 20.6678 28.3366 20.6678 29.7069V38.7485"
+                      fill="#FDD45B"
+                    />
+                    <path
+                      d="M49.0844 41.3319L51.3319 11.0165C51.4539 9.59791 51.0139 8.1882 50.1066 7.09094C49.1993 5.99369 47.8973 5.29667 46.4811 5.15C45.0649 5.00333 43.6477 5.41875 42.5348 6.30679C41.4219 7.19483 40.7023 8.48443 40.531 9.89787L38.7511 23.2485M20.6678 28.4152L18.8259 17.3611C18.5955 16.0065 17.8502 14.7935 16.7458 13.976C15.6414 13.1584 14.2636 12.7997 12.9008 12.975C11.538 13.1502 10.2958 13.8458 9.43412 14.9161C8.57249 15.9864 8.15826 17.3486 8.27811 18.7174L10.3344 41.3319M31.0011 33.5819V29.7069C31.0011 28.3366 30.4568 27.0224 29.4878 26.0535C28.5189 25.0845 27.2047 24.5402 25.8344 24.5402C24.4642 24.5402 23.15 25.0845 22.1811 26.0535C21.2121 27.0224 20.6678 28.3366 20.6678 29.7069V38.7485"
+                      stroke="black"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M41.3333 33.5833V28.4167C41.3333 27.0464 40.789 25.7322 39.8201 24.7633C38.8511 23.7943 37.537 23.25 36.1667 23.25C34.7964 23.25 33.4822 23.7943 32.5133 24.7633C31.5443 25.7322 31 27.0464 31 28.4167V33.5833"
+                      fill="#FDD45B"
+                    />
+                    <path
+                      d="M41.3333 33.5833V28.4167C41.3333 27.0464 40.789 25.7322 39.8201 24.7633C38.8511 23.7943 37.537 23.25 36.1667 23.25C34.7964 23.25 33.4822 23.7943 32.5133 24.7633C31.5443 25.7322 31 27.0464 31 28.4167V33.5833"
+                      stroke="black"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M49.0859 41.332C47.7013 51.6654 40.4111 56.832 29.7109 56.832C19.0108 56.832 10.3359 51.6654 10.3359 41.332"
+                      fill="#FDD45B"
+                    />
+                    <path
+                      d="M49.0859 41.332C47.7013 51.6654 40.4111 56.832 29.7109 56.832C19.0108 56.832 10.3359 51.6654 10.3359 41.332"
+                      stroke="black"
+                      stroke-width="2"
+                    />
+                    <path
+                      d="M35.371 43.9154H28.4167C27.0464 43.9154 25.7322 43.371 24.7633 42.4021C23.7943 41.4331 23.25 40.119 23.25 38.7487C23.25 37.3784 23.7943 36.0643 24.7633 35.0953C25.7322 34.1264 27.0464 33.582 28.4167 33.582H38.75C44.4592 33.582 50.375 38.7487 47.7917 46.4987"
+                      fill="#FDD45B"
+                    />
+                    <path
+                      d="M35.371 43.9154H28.4167C27.0464 43.9154 25.7322 43.371 24.7633 42.4021C23.7943 41.4331 23.25 40.119 23.25 38.7487C23.25 37.3784 23.7943 36.0643 24.7633 35.0953C25.7322 34.1264 27.0464 33.582 28.4167 33.582H38.75C44.4592 33.582 50.375 38.7487 47.7917 46.4987"
+                      stroke="black"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <p>A Great Day In Your Art Gallery</p>
+              </div>
+              <a href="#" class="sorted-btn">
+                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4.25 15.5833V4.25H15.5833V15.5833H4.25ZM4.25 29.75V18.4167H15.5833V29.75H4.25ZM18.4167 15.5833V4.25H29.75V15.5833H18.4167ZM18.4167 29.75V18.4167H29.75V29.75H18.4167ZM7.08333 12.75H12.75V7.08333H7.08333V12.75ZM21.25 12.75H26.9167V7.08333H21.25V12.75ZM21.25 26.9167H26.9167V21.25H21.25V26.9167ZM7.08333 26.9167H12.75V21.25H7.08333V26.9167Z" fill="#222436"/>
+                </svg>
+                Sorted By Dates</a>
+              </div>
+              <svg
+            width="1918"
+            height="1"
+            viewBox="0 0 1918 1"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="4.37114e-08"
+              y1="0.5"
+              x2="1918"
+              y2="0.500168"
+              stroke="url(#paint0_linear_1853_1118)"
+            />
+            <defs>
+              <linearGradient
+                id="paint0_linear_1853_1118"
+                x1="0"
+                y1="1"
+                x2="1918"
+                y2="1.00017"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="white" />
+                <stop offset="0.505208" stop-color="#222436" />
+                <stop offset="1" stop-color="white" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+          </div>
+          <div class="row table-row">
+            <!-- <img src="images/Line 1699.png" alt="" /> -->
+            <!-- <svg
+              width="1918"
+              height="1"
+              viewBox="0 0 1918 1"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line
+                x1="4.37114e-08"
+                y1="0.5"
+                x2="1918"
+                y2="0.500168"
+                stroke="url(#paint0_linear_1853_1118)"
+              />
+              <defs>
+                <linearGradient
+                  id="paint0_linear_1853_1118"
+                  x1="0"
+                  y1="1"
+                  x2="1918"
+                  y2="1.00017"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stop-color="white" />
+                  <stop offset="0.505208" stop-color="#222436" />
+                  <stop offset="1" stop-color="white" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+            </svg> -->
+  
+            
+            <div class="c-form">
+              <div class="form-group custum=group">
+                <input class="form-control" type="search" placeholder="Search" />
+              </div>
+              <div class="dropdown custum-group">
+                <button
+                  class="btn dropdown"
+                  type="button"
+                  id="dropdownMenuButton1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  All collections
+                </button>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="dropdownMenuButton1"
+                >
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </li>
+                </ul>
+              </div>
+  
+              <div class="dropdown custum-group">
+                <button
+                  class="btn dropdown"
+                  type="button"
+                  id="dropdownMenuButton1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  All Companies
+                </button>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="dropdownMenuButton1"
+                >
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="col custum-group">
+                <button class="form-control" type="reset">Reset</button>
+              </div>
+            </div>
+            <!-- </div> -->
+            <table class="w-100 table table-bordered">
+              <thead>
+                <tr>
+                  <th>#No</th>
+                  <th>IMAGE</th>
+                  <th>Collection</th>
+                  <th>Name</th>
+                  <th>Dimension H x W</th>
+                  <th>Artist</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#1</td>
+                  <td><img src="images/Rectangle 2780.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#2</td>
+                  <td><img src="images/Rectangle 2568.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#3</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#4</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#5</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#6</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#7</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#8</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#9</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#10</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#11</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#12</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#13</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#14</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#15</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#16</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#17</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#18</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#19</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#20</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#21</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#22</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#23</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+                <tr>
+                  <td>#24</td>
+                  <td><img src="images/table-img.png" alt="table-img" /></td>
+                  <td>Collection A - D</td>
+                  <td>Testing scale</td>
+                  <td>134 x 24</td>
+                  <td>Guillermo Galindo</td>
+                  <td>Painting</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="pagination-div pagination-white">
+          <nav class="pagination-nav">
+            <div class="d-none flex-sm-fill d-sm-flex align-items-sm-center justify-content-sm-between">
+              <div>
+                <ul class="pagination pagination-lg">
+                  <li class="page-item disabled" aria-disabled="true" aria-label="« Previous">
+                    <span class="page-link" aria-hidden="true">‹</span>
+                  </li>
+  
+                  <li class="page-item active" aria-current="page">
+                    <span class="page-link">1</span>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="http://tetra.local/artworks?page=3">2</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="http://tetra.local/artworks?page=3">3</a>
+                  </li>
+  
+                  <li class="page-item">
+                    <span class="page-link">...</span>
+                  </li>
+  
+                  <li class="page-item">
+                    <a class="page-link" href="http://tetra.local/artworks?page=73">7</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="http://tetra.local/artworks?page=74">8</a>
+                  </li>
+  
+                  <li class="page-item">
+                    <a class="page-link" href="http://tetra.local/artworks?page=2" rel="next" aria-label="Next »">›</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+    <!-- bootstrap script links -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

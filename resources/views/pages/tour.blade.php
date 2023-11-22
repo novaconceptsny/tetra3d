@@ -1,7 +1,7 @@
 @extends('layouts.redesign')
 
 @php
-    $project_id = request('project_id');
+    $layout_id = request('layout_id');
     $project = $project ?? null;
     $shared_tour_id = $shared_tour_id ?? null;
     $shared_spot_id = $shared_spot_id ?? null;
@@ -9,7 +9,7 @@
     $tracker = request('tracker', 0);
     $parameters = array_merge(request()->all(), ['tour' => $tour]);
     $parameters['tracker'] = $tracker ? 0 : 1;
-    $readonly = !$project_id || $shared_tour_id;
+    $readonly = !$layout_id || $shared_tour_id;
 
     // only admins can see tracker
     $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
@@ -116,6 +116,7 @@
                 timestamp: timestamp,
                 showerrors: false,
                 project_id: "{{ request('project_id', '') }}",
+                layout_id: "{{ request('layout_id', '') }}",
                 tracker: "{{ request('tracker', '') }}",
                 shared: "{{ $tour_is_shared }}",
                 shared_tour_id: "{{ $shared_tour_id }}", // if tour is shared
@@ -182,58 +183,4 @@
         setLookat(hlookat, vlookat);
 
     </script>
-
-    {{--todo::remove_me--}}
-    {{--<script>
-        function setMapScale() {
-
-            let $floorPlan = $(".floorPlan");
-            let $pin = $('.pin');
-            $pin.hide();
-
-            let zoneW = $floorPlan.innerWidth();
-            let zoneH = $floorPlan.innerHeight();
-            let defaultW = $floorPlan.attr('defaultWidth');
-            let defaultH = $floorPlan.attr('defaultHeight');
-
-            let scaleW = zoneW / defaultW;
-            let scaleH = zoneH / defaultH;
-
-            let scale;
-            let screenRatio = zoneW / zoneH;
-            let mapRatio = defaultW / defaultH;
-
-            if (screenRatio > mapRatio) {
-                scale = scaleH;
-            } else {
-                scale = scaleW;
-            }
-
-            $pin.each(function () {
-                let top = $(this).attr('top');
-                let left = $(this).attr('left');
-                $(this).css('top', (top * scale - 40 + "px"));
-                $(this).css('left', (left * scale - 20 + "px"));
-            });
-
-            $pin.show();
-        }
-
-        $(document).ready(function () {
-            setMapScale();
-        });
-
-        $(window).resize(function () {
-            setMapScale();
-        });
-
-        let tourModal = document.getElementById('tourMapModal')
-        tourModal.addEventListener('shown.bs.modal', function (event) {
-            setMapScale();
-        });
-
-        Livewire.on('mapChanged', () => {
-            setMapScale();
-        });
-    </script>--}}
 @endsection

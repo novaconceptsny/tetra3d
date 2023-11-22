@@ -23,12 +23,10 @@
     <!-- font awesome cdn links -->
 
     <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ asset('vendor/wire-elements-pro/css/bootstrap-overlay-component.css') }}">
 
     @yield('styles')
-    <livewire:styles/>
-
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
+    @livewireStyles
 </head>
 <body>
 
@@ -108,68 +106,24 @@
     })
 </script>
 
-<livewire:scripts/>
+@livewire('modal-pro')
+@livewire('slide-over-pro')
+
+@livewireScripts
+
 <script src="{{ asset('js/modals.js') }}"></script>
 <script>
-    Livewire.on('flashNotification', (message, type = 'success') => {
-        toastr[type](message)
+    Livewire.on('flashNotification', (event) => {
+        let type = event.type ? event.type : 'success';
+        toastr[type](event.message)
     });
 </script>
 
 @yield('scripts')
 
 <!-- Map script -->
-<script>
-    function setMapScale() {
+<script src="{{ asset('js/map.js') }}"></script>
 
-        let $floorPlan = $(".floorPlan");
-        let $pin = $('.pin');
-        $pin.hide();
-
-        let zoneW = $floorPlan.innerWidth();
-        let zoneH = $floorPlan.innerHeight();
-        let defaultW = $floorPlan.attr('defaultWidth');
-        let defaultH = $floorPlan.attr('defaultHeight');
-
-        let scaleW = zoneW / defaultW;
-        let scaleH = zoneH / defaultH;
-
-        let scale;
-        let screenRatio = zoneW / zoneH;
-        let mapRatio = defaultW / defaultH;
-
-        if (screenRatio > mapRatio) {
-            scale = scaleH;
-        } else {
-            scale = scaleW;
-        }
-
-        $pin.each(function () {
-            let top = $(this).attr('top');
-            let left = $(this).attr('left');
-            $(this).css('top', (top * scale - 40 + "px"));
-            $(this).css('left', (left * scale - 20 + "px"));
-        });
-
-        $pin.show();
-    }
-
-    $(document).ready(function () {
-        setMapScale();
-    });
-
-    $(window).resize(function () {
-        setMapScale();
-    });
-
-    let tourModal = document.getElementById('tourMapModal')
-    tourModal.addEventListener('shown.bs.modal', function (event) {
-        setMapScale();
-    });
-
-    Livewire.on('mapChanged', () => {
-        setMapScale();
-    });
-</script>
+<script src="{{ asset('vendor/wire-elements-pro/js/overlay-component.js') }}"></script>
 </body>
 </html>

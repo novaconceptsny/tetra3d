@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('surface_id');
             $table->foreignId('project_id');
+            $table->foreignId('layout_id');
             $table->string('name');
             $table->json('canvas')->nullable();
             $table->boolean('active')->default(1);

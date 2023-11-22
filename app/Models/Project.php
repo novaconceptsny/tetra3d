@@ -61,6 +61,11 @@ class Project extends Model implements HasMedia
         return $this->hasMany(SurfaceState::class);
     }
 
+    public function layouts()
+    {
+        return $this->hasMany(Layout::class);
+    }
+
     public function artworks()
     {
         return $this->hasManyDeep(

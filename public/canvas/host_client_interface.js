@@ -85,7 +85,7 @@ function fakeFormPost(endpoint, payload) {
         }).appendTo($form);
     });
     $('<input>').attr({type: "hidden", name: "_token", value: token}).appendTo($form);
-    $('<input>').attr({type: "hidden", name: "project_id", value: project_id}).appendTo($form);
+    $('<input>').attr({type: "hidden", name: "layout_id", value: layout_id}).appendTo($form);
     $('<input>').attr({type: "hidden", name: "hlookat", value: hlookat}).appendTo($form);
     $('<input>').attr({type: "hidden", name: "vlookat", value: vlookat}).appendTo($form);
     $form.appendTo('body').submit();

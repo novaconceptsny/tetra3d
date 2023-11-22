@@ -1,0 +1,14 @@
+{
+  "name": "sass",
+  "version": "1.0.0",
+  "description": "install sass",
+  "main": "index.js",
+  "scripts": {
+    "compile:sass": "node-sass scss/style.scss css/style.css -w"
+  },
+  "author": "zia",
+  "license": "ISC",
+  "dependencies": {
+    "node-sass": "^8.0.0"
+  }
+}

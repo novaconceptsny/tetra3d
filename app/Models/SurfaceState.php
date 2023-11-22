@@ -82,6 +82,11 @@ class SurfaceState extends Model implements HasMedia
         return $this->belongsTo(Project::class);
     }
 
+    public function layout()
+    {
+        return $this->belongsTo(Layout::class);
+    }
+
     public function artworks()
     {
         return $this->belongsToMany(Artwork::class)->withPivot([
@@ -93,7 +98,9 @@ class SurfaceState extends Model implements HasMedia
     {
         $this->surface->states()
             ->whereNot('id', $this->id)
-            ->where('project_id', $this->project_id)->update([
+            ->where('project_id', $this->project_id)
+            ->where('layout_id', $this->layout_id)
+            ->update([
                 'active' => 0,
             ]);
 
@@ -115,6 +122,13 @@ class SurfaceState extends Model implements HasMedia
         );
     }*/
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
     public function scopeCurrent(Builder $builder)
     {
         $builder->where('active', 1);
@@ -128,6 +142,11 @@ class SurfaceState extends Model implements HasMedia
     public function scopeForProject(Builder $builder, $project_id)
     {
         $builder->where('project_id', $project_id);
+    }
+
+    public function scopeForLayout(Builder $builder, $layout_id)
+    {
+        $builder->where('layout_id', $layout_id);
     }
 
     public function addActivity($action)

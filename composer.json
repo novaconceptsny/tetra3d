@@ -12,6 +12,10 @@
         {
             "type": "composer",
             "url": "https://wire-elements-pro.composer.sh"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/amshehzad/laravel-form-components"
         }
     ],
     "require": {
@@ -24,6 +28,7 @@
         "laravel/ui": "^4.2.0",
         "livewire/livewire": "^3.1.0",
         "opcodesio/log-viewer": "^3.1",
+        "protonemedia/laravel-form-components": "dev-custom",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-medialibrary": "^10.0.0",
         "spatie/laravel-medialibrary-pro": "^3.0.0",

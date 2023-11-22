@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class MacroServiceProvider extends ServiceProvider
@@ -22,6 +23,11 @@ class MacroServiceProvider extends ServiceProvider
                 }
             }
             return $array;
+        });
+
+
+        Collection::macro('toKeyValuePair', function ($key = 'id', $value = 'name'){
+            return $this->keyBy($key)->pluck($value, $key)->toArray();
         });
     }
 }

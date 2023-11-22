@@ -112,7 +112,8 @@
 @section('scripts')
     <script>
         let user_id = {{ auth()->id() }};
-        let project_id = {{ request('project_id') }};
+        let project_id = {{ $layout->project_id }};
+        let layout_id = {{ $layout->id }};
         let updateCanvasRoute = "{{ route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]) }}"
 
         let spot_id = {{ $spot->id }};

@@ -1,0 +1,13 @@
+{
+    "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
+    "blade": {
+        "components": {
+            "viewPaths": [
+                {
+                    "path": "vendor/protonemedia/laravel-form-components/resources/views/bootstrap-4",
+                    "namespace": ""
+                }
+            ]
+        }
+    }
+}

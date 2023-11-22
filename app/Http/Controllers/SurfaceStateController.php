@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\Artwork;
+use App\Models\Layout;
 use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Surface;
@@ -14,10 +15,11 @@ class SurfaceStateController extends Controller
 {
     public function show(Surface $surface)
     {
-        $project = Project::relevant()->findOrFail(request('project_id'));
+        $layout = Layout::findOrFail(request('layout_id'));
+        $project = Project::findOrFail($layout->project_id);
 
         $surface->load([
-            'states' => fn($query) => $query->forProject($project->id),
+            'states' => fn($query) => $query->forLayout($layout->id),
             'states.comments.user',
             'states.likes.user'
         ]);
@@ -50,7 +52,7 @@ class SurfaceStateController extends Controller
         $surface->background_url = $surface->getFirstMediaUrl('background');
 
         if (!$create_new_state && !$surface_state_id){
-            $surface_state = $surface->getCurrentState($project->id);
+            $surface_state = $surface->getCurrentState($layout->id);
         }
         $assignedArtworks = $surface_state?->artworks->map(function ($artwork){
             $artwork->image_url.= "?uuid=". str()->uuid();
@@ -63,6 +65,7 @@ class SurfaceStateController extends Controller
 
         $data = array();
         $data['project'] = $project;
+        $data['layout'] = $layout;
         $data['tour'] = $surface->tour;
         $data['surface'] = $surface;
         $data['surface_data'] = $surfaceData;
@@ -84,7 +87,7 @@ class SurfaceStateController extends Controller
     public function update(Request $request, Surface $surface)
     {
         $request->validate([
-            'project_id' => 'required'
+            'layout_id' => 'required'
         ]);
 
 
@@ -106,10 +109,8 @@ class SurfaceStateController extends Controller
             ]);
         } else {
             $state = $request->get('surface_state_id')
-                ?
-                SurfaceState::findOrFail($request->surface_state_id)
-                :
-                $surface->getCurrentState($request->project_id);
+                ? SurfaceState::findOrFail($request->surface_state_id)
+                : $surface->getCurrentState($request->layout_id);
         }
 
         $state->update([
@@ -146,7 +147,7 @@ class SurfaceStateController extends Controller
         return redirect()->route($route, [
             $surface->tour,
             'spot_id' => $request->spot_id,
-            'project_id' => $request->project_id,
+            'layout_id' => $request->layout_id,
             'hlookat' => $request->hlookat,
             'vlookat' => $request->vlookat,
         ])->with('success', 'Surface updated');

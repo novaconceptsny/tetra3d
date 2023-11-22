@@ -19,7 +19,9 @@
                 @foreach($projects as $project)
                     <div class="col-sm-6 col-xl-4 col-xxl-3 card-col">
                         <div class="c-card card ">
-                            <div class="card-header mb-2 border-0"><h6>{{ $project->name }}</h6></div>
+                            <div class="card-header mb-2 border-0">
+                                <h6>{{ $project->name }}</h6>
+                            </div>
                             <div class="card-text">
                                 <div class="c-line"></div>
                                 <div class="text">
@@ -44,7 +46,9 @@
                                 <p>Created: <span>{{ $project->created_at->format('M d, Y') }}</span></p>
                                 <div class="link-div">
                                     <a href="javascript:void(0)"
-                                       wire:click="selectProject({{$project->id}})" @click="sidebar = true">View more
+                                       wire:click="selectProject({{$project->id}})" @click="sidebar = true"
+                                       {{--wire:slide-over="tour-switcher, @js(['project' => $project->id])"--}}
+                                       >View more
                                         <div><i class="fa-solid fa-chevron-right"></i></div>
                                     </a>
                                 </div>
@@ -93,6 +97,32 @@
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <table class="table text-white">
+                            <tr>
+                                <th>Layout Name</th>
+                                <th>Tour</th>
+                                <th>Created By</th>
+                                <th></th>
+                            </tr>
+
+                            @foreach($selectedProject->layouts as $layout)
+                                <tr>
+                                    <td>{{ $layout->name }}</td>
+                                    <td>{{ $layout->tour->name }}</td>
+                                    <td>{{ $layout->user->name }}</td>
+                                    <td>
+                                        <a href="{{ route('tours.show', [$layout->tour_id, 'project_id' => $layout->project_id, 'layout_id' => $layout->id]) }}">
+                                            <i class="fa fa-arrow-from-left"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </table>
+                        <button wire:modal="forms.layout-form, @js(['project' => $selectedProject->id])" >
+                            Create Layout
+                        </button>
+                    </div>
                     <div class="collection">
                         <h5>Artwork Collection</h5>
                         @forelse($selectedProject->artworkCollections as $collection)
