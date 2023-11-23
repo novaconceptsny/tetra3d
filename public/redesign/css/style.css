@@ -997,7 +997,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   justify-content: center;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer {
-  margin-top: 60px;
+  margin-top: 30px;
   display: flex;
   justify-content: space-between;
   align-items: end;
