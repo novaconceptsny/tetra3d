@@ -19,8 +19,12 @@
                 @foreach($projects as $project)
                     <div class="col-sm-6 col-xl-4 col-xxl-3 card-col">
                         <div class="c-card card ">
-                            <div class="card-header mb-2 border-0">
-                                <h6>{{ $project->name }}</h6>
+                            <div class="card-head">
+                                <div class="card-header mb-2 border-0">
+                                    <h6>{{ $project->name }}</h6>
+                                </div>
+                                <p>Created: <span>{{ $project->created_at->format('M d, Y') }}</span></p>
+
                             </div>
                             <div class="card-text">
                                 <div class="c-line"></div>
@@ -29,11 +33,14 @@
                                     <p>{{ $project->artwork_collections_count }} {{ str('Artwork Collection')->plural($project->artwork_collections_count) }}</p>
                                 </div>
                             </div>
-                            <div class="card-body">
+{{--                            <div class="card-body">--}}
+
+{{--                            </div>--}}
+                            <div class="card-footer">
                                 <div class="card-imgs">
                                     <div class="images-container">
                                         @forelse($project->contributors as $contributor)
-                                            <div class="img-div" data-text="{{ $contributor->name }}">
+                                            <div class="img-div bg-white" data-text="{{ $contributor->name }}">
                                                 <img src="{{ $contributor->avatar_url }}" alt=""/>
                                             </div>
                                         @empty
@@ -41,13 +48,10 @@
                                         @endforelse
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-footer">
-                                <p>Created: <span>{{ $project->created_at->format('M d, Y') }}</span></p>
                                 <div class="link-div">
                                     <a href="javascript:void(0)"
-                                       wire:click="selectProject({{$project->id}})" @click="sidebar = true"
-                                       {{--wire:slide-over="tour-switcher, @js(['project' => $project->id])"--}}
+                                       {{--wire:click="selectProject({{$project->id}})" @click="sidebar = true"--}}
+                                       wire:slide-over="tour-switcher, @js(['project' => $project->id])"
                                        >View more
                                         <div><i class="fa-solid fa-chevron-right"></i></div>
                                     </a>

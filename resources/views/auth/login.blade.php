@@ -13,66 +13,67 @@
 <body class="login_body">
 
 <main class="login">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xl-6 fir-col">
-                <div class="fir-inner">
-                    <div class="heading">
-                        <img src="{{ asset('redesign/images/logo.png') }}" alt="logo-img"/>
-                        <h3>{{ config('app.name') }}</h3>
-                    </div>
-                    <h4 class="login d-flex align-items-center justify-content-center">
-                        {{ __('Login') }}
-                    </h4>
-                    <p class="text-center">
-                        {{ __('Sign in to access your tours') }}
-                    </p>
-                    <form class="d-flex flex-column align-items-center" method="POST" action="{{ route('login') }}">
-                        @csrf
-                        <div class="form-group login-custum-form-group">
-                            <label for="email">{{ __('Email') }}</label>
-                            <input type="email" id="email"
-                                class="form-control @error('email') is-invalid @enderror" name="email"
-                                value="{{ old('email') }}" required autocomplete="email" autofocus
-                            />
-                            <x-error field="email"/>
-                        </div>
-                        <div class="form-group login-custum-form-group">
-                            <label for="password">{{ __('Password') }}</label>
-                            <input
-                                class="form-control @error('password') is-invalid @enderror"
-                                name="password" id="password" type="password"
-                                required autocomplete="current-password"
-                            >
-                        </div>
-                        <div class="check-main w-100">
-                            <div class="checkbox">
-                                <input class=" m-0 p-0" type="checkbox" id="checkbox" />
-                                <label for="checkbox" class="m-0 p-0">Remember me</label>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-login btn form-control">Login</button>
-                    </form>
-                </div>
+    <div class="inner-div col-lg-6">
+            <div class="heading">
+                <img src="{{ asset('redesign/images/logo.png') }}" alt="logo-img"/>
+                <h3>{{ config('app.name') }}</h3>
             </div>
-            <div class="col-xl-6 sec-col">
-                <div class="ell-img">
-                    <img src="{{ asset('redesign/images/Group 4738.png') }}" alt="sec-bg"/>
+        <div class="fir-inner">
+            <h4 class="login d-flex align-items-center justify-content-center">
+                {{ __('User Login') }}
+            </h4>
+            <p class="text-center">
+                {{ __('Sign in to access your tours') }}
+            </p>
+            <form class="d-flex flex-column align-items-center" method="POST" action="{{ route('login') }}">
+                @csrf
+                <div class="form-group login-custum-form-group">
+                    <label for="email">{{ __('Email') }}</label>
+                    <input type="email" id="email"
+                           class="form-control @error('email') is-invalid @enderror" name="email"
+                           value="{{ old('email') }}" required autocomplete="email" autofocus
+                    />
+                    <x-error field="email"/>
                 </div>
-                <div class="sec-inner">
-                    <div class="ellipse">
-                        <img src="{{ asset('redesign/images/logo.png') }}" alt="ellipse-logo"/>
+                <div class="form-group login-custum-form-group">
+                    <label for="password">{{ __('Password') }}</label>
+                    <input
+                        class="form-control @error('password') is-invalid @enderror"
+                        name="password" id="password" type="password"
+                        required autocomplete="current-password"
+                    >
+                </div>
+                <div class="check-main w-100">
+                    <div class="checkbox">
+                        <input class=" m-0 p-0" type="checkbox" id="checkbox" />
+                        <label for="checkbox" class="m-0 p-0">Remember me</label>
                     </div>
-                    <h1 class="text-white">{{ __('Welcome To Tetra') }}</h1>
-                    <p class="text-white">
-                        {{ __('Tetra3D is a 3D renderer written in Go. It is largely
-                        implemented in software, but uses Ebiten to render the triangles
-                        and perform depth testing through hardware.') }}
-                    </p>
                 </div>
-            </div>
+                <button type="submit" class="btn-login btn form-control">Login</button>
+            </form>
         </div>
     </div>
+{{--    <div class="container-fluid">--}}
+{{--        <div class="row">--}}
+{{--            --}}
+{{--            <div class="col-xl-6 sec-col">--}}
+{{--                <div class="ell-img">--}}
+{{--                    <img src="{{ asset('redesign/images/Group 4738.png') }}" alt="sec-bg"/>--}}
+{{--                </div>--}}
+{{--                <div class="sec-inner">--}}
+{{--                    <div class="ellipse">--}}
+{{--                        <img src="{{ asset('redesign/images/logo.png') }}" alt="ellipse-logo"/>--}}
+{{--                    </div>--}}
+{{--                    <h1 class="text-white">{{ __('Welcome To Tetra') }}</h1>--}}
+{{--                    <p class="text-white">--}}
+{{--                        {{ __('Tetra3D is a 3D renderer written in Go. It is largely--}}
+{{--                        implemented in software, but uses Ebiten to render the triangles--}}
+{{--                        and perform depth testing through hardware.') }}--}}
+{{--                    </p>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 </main>
 
 <!-- bootstrap script links -->

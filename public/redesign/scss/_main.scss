@@ -145,13 +145,30 @@ main{
                       }
                     }
                   }
+                    .card-head{
+                        margin-inline: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        gap: 10px;
+                        p{
+                            white-space: nowrap;
+                            text-align: end;
+                            font-family: 'Roboto';
+                            font-style: normal;
+                            font-weight: 500;
+                            font-size: 16px;
+                            line-height: 19px;
+                            color: $dark-color;
+                            margin: 0;
+                        }
+                    }
                   .card-header{
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     padding: 0;
-                    height: 75px;
-                    margin-inline: 24px;
+                    height: 85px;
                     background: transparent;
                     border: none;
                     h6{
@@ -161,7 +178,7 @@ main{
                       font-weight: 800;
                       font-size: 30px;
                       line-height: 35px;
-                      text-align: center;
+                      //text-align: center;
                       color: $dark-color;
 
                       display: -webkit-box;
@@ -171,6 +188,7 @@ main{
                       -webkit-box-orient: vertical;
                       overflow: hidden;
                     }
+
 
                   }
                   .card-text{
@@ -202,6 +220,18 @@ main{
                     display: flex;
                     align-items: center;
                     justify-content: center;
+
+                  }
+                  .card-footer{
+                      margin-top: 60px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: end;
+                    background-color: transparent;
+                    border: none;
+                    // height: 100%;
+                    padding-inline: 16px;
+
                     .card-imgs{
                       display: flex;
                       align-items: center;
@@ -271,27 +301,9 @@ main{
                         }
                       }
                     }
-
-                  }
-                  .card-footer{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background-color: transparent;
-                    border: none;
-                    // height: 100%;
-                    padding-inline: 16px;
-                    p{
-                      font-family: 'Roboto';
-                      font-style: normal;
-                      font-weight: 500;
-                      font-size: 16px;
-                      line-height: 19px;
-                      color: $dark-color;
-                      margin: 0;
-                    }
                     div{
                       a{
+                          margin-bottom: 10px;
                         display: flex;
                         align-items: center;
                         text-decoration: none;
