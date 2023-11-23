@@ -12,20 +12,19 @@ class TourController extends Controller
     public function surfaces(Tour $tour)
     {
         $layout = Layout::with('project')->findOrFail(request('layout_id'));
-        $project = $layout->project;
 
         $tour->load([
             'surfaces' => fn($query) => $query->with([
                 'states.user',
                 'states.media',
                 'states.likes',
-                'states' => fn($query) => $query->forLayout($project->id),
+                'states' => fn($query) => $query->forLayout($layout->id),
                 'media',
             ]),
         ]);
 
         $data = array();
-        $data['project'] = $project;
+        $data['layout'] = $layout;
         $data['tour'] = $tour;
         $data['surfaces'] = $tour->surfaces;
         $data['navEnabled'] = false;

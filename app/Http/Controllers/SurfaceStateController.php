@@ -49,34 +49,46 @@ class SurfaceStateController extends Controller
             $surface_state = SurfaceState::findOrFail($surface_state_id);
         }
 
-        $surface->background_url = $surface->getFirstMediaUrl('background');
-
         if (!$create_new_state && !$surface_state_id){
             $surface_state = $surface->getCurrentState($layout->id);
         }
+
+        $surface->background_url = $surface->getFirstMediaUrl('background');
         $assignedArtworks = $surface_state?->artworks->map(function ($artwork){
             $artwork->image_url.= "?uuid=". str()->uuid();
             return $artwork;
         });
 
-        $surfaceData = $surface->only([
-            'id', 'name', 'background_url', 'data'
-        ]);
 
         $data = array();
         $data['project'] = $project;
         $data['layout'] = $layout;
         $data['tour'] = $surface->tour;
-        $data['surface'] = $surface;
-        $data['surface_data'] = $surfaceData;
-        $data['current_surface_state'] = $surface_state;
         $data['spot'] = $spot;
-        $data['assigned_artworks'] = $assignedArtworks;
-        $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
-        $data['return_to_versions'] = $return_to_versions;
+        $data['surface'] = $surface;
+        $data['current_surface_state'] = $surface_state;
 
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;
+
+        $canvasData = [
+            'canvasId' => 'artwork_canvas',
+            'surface' => $surface->only([
+                'id', 'name', 'background_url', 'data'
+            ]),
+            'assignedArtworks' => $assignedArtworks,
+            'surfaceStateId' => request('surface_state_id', null),
+            'userId' => auth()->id(),
+            'spotId' => $spot->id,
+            'latestState' => $surface_state ? $surface_state->canvas : [],
+            'layoutId' => $layout->id,
+            'updateEndpoint' => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
+            'hlookat' => request('hlookat', $spot->xml->view['hlookat']),
+            'vlookat' => request('vlookat', $spot->xml->view['vlookat']),
+        ];
+
+
+        $data['canvasData'] = $canvasData;
 
         return view('pages.editor', $data);
     }
@@ -90,7 +102,6 @@ class SurfaceStateController extends Controller
             'layout_id' => 'required'
         ]);
 
-
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
             $assigned_artworks[] = array(
@@ -103,7 +114,7 @@ class SurfaceStateController extends Controller
         }
 
         if ($request->new) {
-            $state = $surface->createNewState($request->project_id);
+            $state = $surface->createNewState($request->layout_id);
             $state->update([
                 'name' => $request->name,
             ]);

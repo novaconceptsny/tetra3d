@@ -69,15 +69,15 @@ class Surface extends Model implements HasMedia
         return $this->states()->current()->forLayout($layout_id)->first();
     }
 
-    public function createNewState($project_id)
+    public function createNewState($layout_id)
     {
-        $this->states()->where('project_id', $project_id)->update([
+        $this->states()->where('layout_id', $layout_id)->update([
             'active' => 0
         ]);
 
         return $this->states()->create([
             'user_id' => auth()->id(),
-            'project_id' => $project_id
+            'layout_id' => $layout_id
         ]);
     }
 

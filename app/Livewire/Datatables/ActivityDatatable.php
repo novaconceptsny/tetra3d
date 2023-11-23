@@ -86,7 +86,7 @@ class ActivityDatatable extends BaseDatatable
     {
         $columns = [
             'project_name' => [
-                'name' => 'Project',
+                'name' => 'Exhibition',
                 'visible' => true,
             ],
             'tour_name' => [
@@ -94,17 +94,17 @@ class ActivityDatatable extends BaseDatatable
                 'visible' => true,
                 'th-classes' => 'w-10'
             ],
-            'activity' => [
-                'name' => 'Activity',
-                'visible' => true,
-                'sortable' => true,
-                'th-classes' => 'w-40'
-            ],
             'user_name' => [
                 'name' => 'User',
                 'visible' => true,
                 'sortable' => true,
                 'th-classes' => 'w-10'
+            ],
+            'activity' => [
+                'name' => 'Activity',
+                'visible' => true,
+                'sortable' => true,
+                'th-classes' => 'w-40'
             ],
             'date' => [
                 'name' => 'Date',

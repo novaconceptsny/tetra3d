@@ -2,20 +2,16 @@
 
 namespace App\Livewire\Modals;
 
-use App\Enums\Spot\PanoStatus;
+use App\Models\Layout;
 use App\Models\Project;
 use App\Models\SharedTour;
 use App\Models\Spot;
 use App\Models\Tour;
-use Illuminate\Support\Facades\File;
-use Livewire\Component;
-use Pusher\Pusher;
-use Symfony\Component\Process\Process;
+use WireElements\Pro\Components\Modal\Modal;
 
-class ShareTour extends Component
+class ShareTour extends Modal
 {
-
-    public $projectId;
+    public $layoutId;
     public $tourId;
     public $spotId;
 
@@ -25,10 +21,10 @@ class ShareTour extends Component
     public $spotSelectionAllowed = false;
     public $spot = null;
 
-    public function mount($tourId, $projectId, $spotId = null)
+    public function mount($tourId, $layoutId, $spotId = null)
     {
         $this->tourId = $tourId;
-        $this->projectId = $projectId;
+        $this->layoutId = $layoutId;
         $this->spotId = $spotId;
         $this->spot = Spot::find($this->spotId);
 
@@ -45,10 +41,10 @@ class ShareTour extends Component
     public function generateLink()
     {
         $tour = Tour::findOrFail($this->tourId);
-        $project = Project::findOrFail($this->projectId);
+        $layout = Layout::findOrFail($this->layoutId);
 
         $surfaces = $tour->surfaces()->with([
-            'states' => fn($query) => $query->forProject($project->id)->active(),
+            'states' => fn($query) => $query->forLayout($layout->id)->active(),
         ])->get();
 
         $surface_states = [];
@@ -59,7 +55,7 @@ class ShareTour extends Component
 
         $sharedTour = SharedTour::updateOrCreate([
             'spot_id' => $this->share_type == 'spot' ? $this->spot?->id : null,
-            'project_id' => $project->id,
+            'layout_id' => $layout->id,
             'user_id' => auth()->id(),
             'tour_id' => $tour->id,
             'surface_states' => json_encode($surface_states),

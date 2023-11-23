@@ -107,3 +107,6 @@
     width: 10%!important;
 }
 
+.wep-slide-over {
+    z-index: 39 !important;
+}

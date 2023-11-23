@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class SurfaceRow extends Component
 {
-    public $projectId;
+    public $layoutId;
     public Surface $surface;
 
     protected $listeners = ['surfaceStateRemoved'];
@@ -16,7 +16,8 @@ class SurfaceRow extends Component
     public function render()
     {
         $this->surface->load([
-            'states' => fn($query) => $query->forProject($this->projectId)
+            'states.media',
+            'states' => fn($query) => $query->forLayout($this->layoutId)
         ]);
 
         return view('livewire.surface.surface-row');

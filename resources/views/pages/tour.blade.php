@@ -28,15 +28,22 @@
 @section('menu')
     <x-menu>
         <x-menu-item
-            text="Versions" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
+            text="List View" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
         />
-        <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
-            :visible="$project && !$tour_is_shared" target="_self"
-            onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project?->id }}', '{{ request('spot_id') }}')"
-            text="Share" icon="fal fa-share-nodes"
+            route="#"
+            target="_self"
+            text="Map"
+            icon="fal fa-map-marked-alt"
+            onclick="Livewire.dispatch('modal.open', {component: 'tour-map', arguments: {'tour': {{$tour->id}} }})"
+            {{--data-bs-toggle="modal" data-bs-target="#tourMapModal"--}}
         />
+        {{--<x-menu-item
+            :visible="$layout && !$tour_is_shared" target="_self"
+            wire:modal="modals.share-tour, @js(['tourId' => $tour->id, 'layoutId' => $layout->id, 'spotId' => request('spot_id')])"
+            text="Share" icon="fal fa-share-nodes"
+        />--}}
         <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
     </x-menu>
 @endsection

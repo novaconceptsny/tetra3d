@@ -1,7 +1,7 @@
 @props([
     'surface',
     'state',
-    'projectId',
+    'layoutId',
     'comments' => false
 ])
 
@@ -12,7 +12,7 @@
             <p>{{ $state->user->name }} | {{ $state->created_at->format('m/d/Y') }}</p>
         </div>
         <div class="icon">
-            <a href="{{ route('surfaces.show', [$surface, 'project_id' => $projectId, 'surface_state_id' => $state->id, 'return_to_versions' => true]) }}"
+            <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layoutId, 'surface_state_id' => $state->id, 'return_to_versions' => true]) }}"
                class="me-1">
                 <i class="fal fa-pencil"></i>
             </a>

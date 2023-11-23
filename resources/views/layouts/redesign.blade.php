@@ -36,7 +36,7 @@
     @yield('content')
     <livewire:modals.base-modal />
 
-    <div class="modal fade" id="tourMapModal" tabindex="-1">
+    {{--<div class="modal fade" id="tourMapModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>--}}
 </main>
 
 <!-- bootstrap script links -->

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Surface;
 
+use App\Models\Layout;
 use App\Models\Project;
 use App\Models\SurfaceState;
 use App\Models\Tour;
@@ -11,7 +12,7 @@ class Index extends Component
 {
     public Tour $tour;
     public $surfaces;
-    public Project $project;
+    public Layout $layout;
 
     protected $listeners = ['removeSurfaceState'];
 
@@ -21,7 +22,7 @@ class Index extends Component
             'states.user',
             'states.media',
             'states.likes',
-            'states' => fn($query) => $query->forProject($this->project->id),
+            'states' => fn($query) => $query->forLayout($this->layout->id),
             'media',
         ])->get();
     }

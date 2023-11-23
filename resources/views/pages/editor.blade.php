@@ -12,7 +12,8 @@
         />
         <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
-            onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
+            target="_self"
+            wire:modal="modals.share-tour, @js(['tourId' => $tour->id, 'layoutId' => $layout->id, 'spotId' => request('spot_id')])"
             text="Share" icon="fal fa-share-nodes"
         />
         <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
@@ -54,22 +55,9 @@
             <div class="row" x-data="{sidebar: '{{$sidebar}}' }">
                 <livewire:comments :commentable="$current_surface_state"/>
                 <livewire:artwork-collection :project="$project" />
+
                 <div class="col-9 main-col ">
-                    <div class="editor-actions d-flex" >
-                        <button class="action btn btn-sm px-2" data-bs-toggle="modal" data-bs-target="#confirmation_modal"
-                                data-text="Save As">
-                            <i class="fa fal fa-folder-upload text-black"></i>
-                        </button>
-                        <a id="save_btn" class="action btn btn-sm hide px-2" href="javascript:void(0)" data-text="Save Changes"><i
-                                class="fa fal fa-floppy-disk text-black"></i></a>
-                        <a id="remove_btn" class="action btn btn-sm hide px-2" href="javascript:void(0)" data-text="Remove"><i
-                                class="fa fal fa-window-close text-black"></i></a>
-                        <a class="action btn btn-sm px-2"
-                           href="{{ route('surfaces.show', [$surface, 'project_id' => $project->id, 'new' => 1]) }}"
-                           data-text="Add New Version">
-                            <i class="fa fal fa-plus text-black"></i>
-                        </a>
-                    </div>
+                    <x-editor-actions :surface-id="$surface->id" :layout-id="$layout->id"/>
                     <div class="main_content w-100 h-100" style="overflow: hidden;">
                         <canvas id="artwork_canvas"></canvas>
                     </div>
@@ -111,26 +99,11 @@
 
 @section('scripts')
     <script>
-        let user_id = {{ auth()->id() }};
-        let project_id = {{ $layout->project_id }};
-        let layout_id = {{ $layout->id }};
-        let updateCanvasRoute = "{{ route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]) }}"
 
-        let spot_id = {{ $spot->id }};
-        let hlookat = {{ request('hlookat', $spot->xml->view['hlookat']) }};
-        let vlookat = {{ request('vlookat', $spot->xml->view['vlookat']) }};
-        let surface = @json($surface_data);
-        let latestState = @json($canvas_state);
-        let surface_state_id = "{{ request('surface_state_id', null) }}";
-        let assignedArtworks = @json($assigned_artworks);
-        let defaultScales = [];
-
-        latestState = {};
+        let canvasData = @json($canvasData);
 
     </script>
-    <script type="module" src="{{ asset('canvas/crop_functions.js') }}"></script>
-    <script type="module" src="{{ asset('canvas/artwork_assignment.js') }}"></script>
-    <script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>
-    <script type="module" src="{{ asset('canvas/twbs-pagination/jquery.twbsPagination.min.js') }}"></script>
+    <script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
+
 @endsection

@@ -3,7 +3,6 @@
 @section('content')
     <section class="collection">
         <div class="main-intro container-fluid artworks-table">
-            @include('include.common.greetings')
             <div class="mt-5">
                 <livewire:datatables.activity-datatable />
             </div>

@@ -1,11 +1,11 @@
 @props([
     'surface',
-    'projectId',
+    'layoutId',
 ])
 
 <div class="col-3 fir-col">
     <div class="card p-0">
-        <a href="{{ route('surfaces.show', [$surface, 'project_id' => $projectId, 'new' => 1]) }}">
+        <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layoutId, 'new' => 1]) }}">
             <div class="abs-div">
                 <div class="content">
                     <div class="plus p-3 rounded-circle bg-success">

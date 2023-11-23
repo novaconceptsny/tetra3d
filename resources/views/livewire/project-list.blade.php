@@ -33,9 +33,7 @@
                                     <p>{{ $project->artwork_collections_count }} {{ str('Artwork Collection')->plural($project->artwork_collections_count) }}</p>
                                 </div>
                             </div>
-{{--                            <div class="card-body">--}}
 
-{{--                            </div>--}}
                             <div class="card-footer">
                                 <div class="card-imgs">
                                     <div class="images-container">

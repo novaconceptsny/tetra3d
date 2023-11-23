@@ -63,8 +63,8 @@
         @include('backend.includes.datatable.toggle-columns')
     </div>
     <div class="card-body py-0">
-        <div class="mb-3 scrollbar table-responsive">
-            <table class="table table-hover fs--1 table-sm">
+        <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
+            <table class="table table-hover fs--1 table-sm" >
 
                 @include('backend.includes.datatable.header')
 
@@ -75,7 +75,12 @@
 
                         <!-- pre columns !-->
                         <td class="td artwork-img">
-                            <img src="{{ $row->image_url }}" alt="" width="50">
+                            <img
+                                @click="artworkImage = @js($row->image_url);"
+                                src="{{ $row->image_url }}"
+                                alt="" width="50"
+                                data-bs-toggle="modal" data-bs-target="#artworkImage"
+                            >
                         </td>
 
                         @include('backend.includes.datatable.content')
@@ -87,7 +92,20 @@
                 @endforeach
                 </tbody>
             </table>
+            <div class="modal fade" id="artworkImage" tabindex="-1" >
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img :src="artworkImage">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
     @include('backend.includes.datatable.footer')
 </div>

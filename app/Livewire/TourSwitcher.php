@@ -28,4 +28,11 @@ class TourSwitcher extends SlideOver
     {
         $this->selectedTour = $this->project->tours->where('id', $this->selectedTourId)->first();
     }
+
+    public static function attributes(): array
+    {
+        return [
+            'size' => '2xl'
+        ];
+    }
 }

@@ -5,10 +5,11 @@ namespace App\Livewire;
 use App\Models\Map;
 use App\Models\Tour;
 use Livewire\Component;
+use WireElements\Pro\Components\Modal\Modal;
 
-class TourMap extends Component
+class TourMap extends Modal
 {
-    public $tour;
+    public int|Tour $tour;
     public $shared_tour_id;
     public $project;
     public $selectedMap;
@@ -28,5 +29,12 @@ class TourMap extends Component
     {
         $this->selectedMap = $map;
         $this->dispatch('mapChanged');
+    }
+
+    public static function attributes(): array
+    {
+        return [
+            'size' => '7xl'
+        ];
     }
 }
