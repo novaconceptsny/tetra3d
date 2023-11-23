@@ -56,11 +56,23 @@
                 <livewire:comments :commentable="$current_surface_state"/>
                 <livewire:artwork-collection :project="$project" />
 
-                <div class="col-9 main-col ">
+                <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$current_surface_state->id") }">
                     <x-editor-actions :surface-id="$surface->id" :layout-id="$layout->id"/>
-                    <div class="main_content w-100 h-100" style="overflow: hidden;">
-                        <canvas id="artwork_canvas"></canvas>
+
+                    <div class="d-flex w-full">
+                        @foreach($canvases as $canvas)
+                            <div class="btn btn-light" @click="activeCanvas = @js($canvas['canvasId'])">
+                                {{ $canvas['surfaceStateName'] }}
+                            </div>
+                        @endforeach
                     </div>
+
+                    @foreach($canvases as $canvas)
+                        <div x-show="activeCanvas === @js($canvas['canvasId'])" class="main_content w-100"
+                             style="overflow: hidden; height: calc(100% - 38px)">
+                            <canvas id="{{ $canvas['canvasId'] }}"></canvas>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -99,9 +111,7 @@
 
 @section('scripts')
     <script>
-
-        let canvasData = @json($canvasData);
-
+        let canvases = @json($canvases);
     </script>
     <script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>
     <script type="module" src="{{ asset('canvas/canvas.js') }}"></script>

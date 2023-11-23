@@ -41,7 +41,6 @@ class SurfaceStateController extends Controller
             $referer == $versions_url
         );
 
-
         $surface_state = null;
         $create_new_state = request('new');
 
@@ -54,10 +53,6 @@ class SurfaceStateController extends Controller
         }
 
         $surface->background_url = $surface->getFirstMediaUrl('background');
-        $assignedArtworks = $surface_state?->artworks->map(function ($artwork){
-            $artwork->image_url.= "?uuid=". str()->uuid();
-            return $artwork;
-        });
 
 
         $data = array();
@@ -71,24 +66,35 @@ class SurfaceStateController extends Controller
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;
 
-        $canvasData = [
-            'canvasId' => 'artwork_canvas',
-            'surface' => $surface->only([
-                'id', 'name', 'background_url', 'data'
-            ]),
-            'assignedArtworks' => $assignedArtworks,
-            'surfaceStateId' => request('surface_state_id', null),
-            'userId' => auth()->id(),
-            'spotId' => $spot->id,
-            'latestState' => $surface_state ? $surface_state->canvas : [],
-            'layoutId' => $layout->id,
-            'updateEndpoint' => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
-            'hlookat' => request('hlookat', $spot->xml->view['hlookat']),
-            'vlookat' => request('vlookat', $spot->xml->view['vlookat']),
-        ];
+        $canvases = array();
+
+        foreach ($surface->states as $surfaceState){
+
+            $assignedArtworks = $surfaceState?->artworks->map(function ($artwork){
+                $artwork->image_url.= "?uuid=". str()->uuid();
+                return $artwork;
+            });
 
 
-        $data['canvasData'] = $canvasData;
+            $canvases[$surfaceState->id] = [
+                'canvasId' => "artwork_canvas_{$surfaceState->id}",
+                'surface' => $surface->only([
+                    'id', 'name', 'background_url', 'data'
+                ]),
+                'assignedArtworks' => $assignedArtworks,
+                'surfaceStateId' => request('surface_state_id', null),
+                'userId' => auth()->id(),
+                'spotId' => $spot->id,
+                'latestState' => $surfaceState ? $surfaceState->canvas : [],
+                'layoutId' => $layout->id,
+                'updateEndpoint' => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
+                'hlookat' => request('hlookat', $spot->xml->view['hlookat']),
+                'vlookat' => request('vlookat', $spot->xml->view['vlookat']),
+                'surfaceStateName' => $surfaceState->name
+            ];
+        }
+
+        $data['canvases'] = $canvases;
 
         return view('pages.editor', $data);
     }

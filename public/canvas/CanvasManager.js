@@ -3,6 +3,8 @@ import CanvasApi from "./CanvasApi.js";
 
 class CanvasManager {
     constructor(data) {
+        this.active = false;
+
         this.canvasId = data.canvasId;
 
         this.spot_id = data.spotId;
@@ -148,6 +150,10 @@ class CanvasManager {
 
     registerArtworkSelectionEvent() {
         $('#site__body').on('click', '.artwork-img', (el) => {
+            if (!this.active) {
+                return false
+            }
+
             let target = el.currentTarget;
             let newSelection = this.newArtworkSelection(target);
             this.placeSelectedImage(newSelection);

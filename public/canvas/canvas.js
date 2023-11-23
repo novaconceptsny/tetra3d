@@ -1,4 +1,9 @@
 import CanvasManager from "./CanvasManager.js";
 
-let manager1 = new CanvasManager(canvasData)
+Object.keys(canvases).forEach(canvasId => {
+    let canvas = new CanvasManager(canvases[canvasId])
+    if (canvasId == '866'){
+        canvas.active = true;
+    }
 
+});

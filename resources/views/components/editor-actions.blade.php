@@ -2,7 +2,7 @@
     'surfaceId',
     'layoutId'
 ])
-<div class="editor-actions d-flex" >
+<div class="editor-actions d-flex" style="top: 92px">
     <button class="action btn btn-sm px-2" data-bs-toggle="modal" data-bs-target="#confirmation_modal"
             data-text="Save As">
         <i class="fa fal fa-folder-upload text-black"></i>
