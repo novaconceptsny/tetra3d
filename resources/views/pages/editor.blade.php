@@ -56,12 +56,13 @@
                 <livewire:comments :commentable="$current_surface_state"/>
                 <livewire:artwork-collection :project="$project" />
 
-                <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$current_surface_state->id") }">
+                @php($canvasId = $current_surface_state ? $current_surface_state->id : 'new')
+                <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions :surface-id="$surface->id" :layout-id="$layout->id"/>
 
                     <div class="d-flex w-full">
                         @foreach($canvases as $canvas)
-                            <div class="btn btn-light" @click="activeCanvas = @js($canvas['canvasId'])">
+                            <div class="btn btn-light" @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 {{ $canvas['surfaceStateName'] }}
                             </div>
                         @endforeach

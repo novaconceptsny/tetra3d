@@ -130,6 +130,14 @@ class CanvasManager {
         this.renderArtworks();
 
         this.registerArtworkSelectionEvent();
+        this.registerCanvasUpdateEvent();
+    }
+
+    registerCanvasUpdateEvent()
+    {
+        document.addEventListener("canvasChanged", (event) => {
+            this.active = event.detail.surfaceStateId === this.surfaceStateId;
+        });
     }
 
     renderArtworks(){
@@ -386,6 +394,10 @@ class CanvasManager {
     }
 
     removeSelectedArtwork() {
+        if (this.isInactive()) {
+            return;
+        }
+
         const selectedObjs = this.artworkCanvas.getActiveObjects();
         selectedObjs.forEach((obj) => {
             this.artworkCanvas.remove(obj);
@@ -409,6 +421,10 @@ class CanvasManager {
     }
 
     updateSavedVersion(event) {
+        if (this.isInactive()){
+            return;
+        }
+
         if (this.canvasHasOverlap()) {
             window.alert('There is an overlap');
             return;
@@ -613,6 +629,14 @@ class CanvasManager {
         };
 
         this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.map(propertize);
+    }
+
+    isInactive() {
+        return !this.isActive()
+    }
+
+    isActive() {
+        return this.active;
     }
 }
 

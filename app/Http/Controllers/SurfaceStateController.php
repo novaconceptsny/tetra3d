@@ -68,6 +68,10 @@ class SurfaceStateController extends Controller
 
         $canvases = array();
 
+        $newState = new SurfaceState();
+
+        $surface->states[] = $newState;
+
         foreach ($surface->states as $surfaceState){
 
             $assignedArtworks = $surfaceState?->artworks->map(function ($artwork){
@@ -75,14 +79,13 @@ class SurfaceStateController extends Controller
                 return $artwork;
             });
 
-
-            $canvases[$surfaceState->id] = [
-                'canvasId' => "artwork_canvas_{$surfaceState->id}",
+            $canvases[$surfaceState->id ?? 'new'] = [
+                'canvasId' => "artwork_canvas_". ($surfaceState->id ?? 'new'),
                 'surface' => $surface->only([
                     'id', 'name', 'background_url', 'data'
                 ]),
                 'assignedArtworks' => $assignedArtworks,
-                'surfaceStateId' => request('surface_state_id', null),
+                'surfaceStateId' => $surfaceState?->id,
                 'userId' => auth()->id(),
                 'spotId' => $spot->id,
                 'latestState' => $surfaceState ? $surfaceState->canvas : [],
@@ -90,7 +93,7 @@ class SurfaceStateController extends Controller
                 'updateEndpoint' => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
                 'hlookat' => request('hlookat', $spot->xml->view['hlookat']),
                 'vlookat' => request('vlookat', $spot->xml->view['vlookat']),
-                'surfaceStateName' => $surfaceState->name
+                'surfaceStateName' => $surfaceState->name ?? 'Untitled',
             ];
         }
 
