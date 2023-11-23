@@ -2042,13 +2042,25 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   display: block;
 }
 
+.tabs-container {
+  background: #e9ecef;
+}
+
 .tab {
   cursor: pointer;
-  padding: 10px 50px;
-  background-color: #d0d2d5;
+  padding: 0 50px;
+  background-color: transparent;
+}
+
+.tab:not(.active):hover {
+  background: #eff2f5;
+  border-radius: 5px 5px 0 0;
+  border-bottom: 0;
 }
 
 .tab.active {
+  color: black;
+  border-radius: 5px 5px 0 0;
   border: 1px solid #d0d2d5;
   border-bottom: 0;
   background-color: #fff;

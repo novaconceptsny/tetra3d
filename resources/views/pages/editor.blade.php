@@ -60,16 +60,16 @@
                 <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions :surface-id="$surface->id" :layout-id="$layout->id"/>
 
-                    <div class="d-flex w-full">
+                    <div class="d-inline-flex tabs-container pt-1 mb-1">
                         @foreach($canvases as $canvas)
-                            <div class="btn btn-light tab"
+                            <div class="tab mt-1"
                                  :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 {{ $canvas['surfaceStateName'] }}
                             </div>
                         @endforeach
-                        <div class="h-full d-flex justify-content-center align-items-center px-2 bg-gray-100">
-                            <i class="fas fa-plus btn text-black"></i>
+                        <div class="h-full d-flex justify-content-center align-items-center px-2 bg-transparent">
+                            <i class="fas fa-plus btn"></i>
                         </div>
                     </div>
 
