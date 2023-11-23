@@ -62,10 +62,15 @@
 
                     <div class="d-flex w-full">
                         @foreach($canvases as $canvas)
-                            <div class="btn btn-light" @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
+                            <div class="btn btn-light tab"
+                                 :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
+                                 @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 {{ $canvas['surfaceStateName'] }}
                             </div>
                         @endforeach
+                        <div class="h-full d-flex justify-content-center align-items-center px-2 bg-gray-100">
+                            <i class="fas fa-plus btn text-black"></i>
+                        </div>
                     </div>
 
                     @foreach($canvases as $canvas)

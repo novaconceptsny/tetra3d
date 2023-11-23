@@ -2034,6 +2034,26 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   color: #222436;
 }
 
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.tab {
+  cursor: pointer;
+  padding: 10px 50px;
+  background-color: #d0d2d5;
+}
+
+.tab.active {
+  border: 1px solid #d0d2d5;
+  border-bottom: 0;
+  background-color: #fff;
+}
+
 img,
 svg {
   max-width: 100%;
