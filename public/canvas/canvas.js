@@ -5,7 +5,7 @@ Object.keys(canvases).forEach(surfaceStateId => {
     let canvas = new CanvasManager(canvasData)
 
     if (canvasData.surfaceStateId){
-        if (canvasData.surfaceStateId === surfaceStateId){
+        if (canvasData.surfaceStateId === selectedSurfaceStateId){
             canvas.active = true;
         }
     } else {
