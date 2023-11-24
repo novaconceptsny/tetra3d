@@ -2050,12 +2050,25 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   cursor: pointer;
   padding: 0 50px;
   background-color: transparent;
+  border-radius: 5px 5px 0 0;
+}
+
+.tab:not(.active) {
+  border-inline: 1px solid #fff;
 }
 
 .tab:not(.active):hover {
   background: #eff2f5;
   border-radius: 5px 5px 0 0;
   border-bottom: 0;
+}
+
+.tab:not(.active):has(~ .tab.active) {
+  border-right: 0;
+}
+
+.tab.active ~ .tab {
+  border-left: 0;
 }
 
 .tab.active {

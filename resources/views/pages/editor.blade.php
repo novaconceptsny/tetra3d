@@ -68,7 +68,7 @@
                                 {{ $canvas['surfaceStateName'] }}
                             </div>
                         @endforeach
-                        <div class="h-full d-flex justify-content-center align-items-center px-2 bg-transparent">
+                        <div class="h-full d-flex justify-content-center align-items-center px-2 bg-transparent text-decoration-none">
                             <i class="fas fa-plus btn"></i>
                         </div>
                     </div>

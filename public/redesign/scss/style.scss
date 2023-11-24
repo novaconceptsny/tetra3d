@@ -31,19 +31,24 @@ $open-font: "Open Sans", sans-serif;
   //color: #fff;
   background-color: transparent;
   //border: 1px solid #fff;
-  //border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
   //margin-right: 5px;
   //background-color: #d0d2d5;
+}
+.tab:not(.active){
+  border-inline: 1px solid #fff;
 }
 .tab:not(.active):hover{
   background: #eff2f5;
   border-radius: 5px 5px 0 0;
-  //border: 1px solid #fff;
   border-bottom: 0;
-
-  //: #fff;
 }
-
+.tab:not(.active):has( ~ .tab.active){
+  border-right: 0;
+}
+.tab.active ~ .tab{
+  border-left: 0;
+}
 .tab.active {
   color: black;
   border-radius: 5px 5px 0 0;
