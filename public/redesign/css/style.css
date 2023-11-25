@@ -687,10 +687,6 @@ main section.collection .main-intro .table-row table tbody tr td img {
   margin-top: 3rem !important;
 }
 
-.artworks-table .card-header div:first-child {
-  display: none !important;
-}
-
 .artworks-table .card-header {
   --bs-bg-opacity: 1;
   background-color: transparent !important;
