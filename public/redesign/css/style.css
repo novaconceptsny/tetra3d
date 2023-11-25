@@ -2030,6 +2030,21 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   color: #222436;
 }
 
+.layout-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #9c9fa5;
+  width: 35%;
+}
+.layout-intro span {
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+}
+
 .tab-content {
   display: none;
 }

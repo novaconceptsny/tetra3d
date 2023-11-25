@@ -1,5 +1,5 @@
 <div>
-    <div class="mb-4">
+    <div class="mb-4 layout-intro">
         <span>{{ $layout->name }}</span>
         <span>{{ $layout->tour->name }}</span>
         <span>{{ $layout->created_at->format('M d, Y') }}</span>
