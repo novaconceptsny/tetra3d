@@ -51,6 +51,8 @@ class SurfaceController extends Controller
             ->toMediaCollection('main');
         $surface->addFromMediaLibraryRequest($request->background)
             ->toMediaCollection('background');
+        $surface->addFromMediaLibraryRequest($request->layout)
+            ->toMediaCollection('layout');
 
         return redirect()
             ->back()
@@ -88,6 +90,8 @@ class SurfaceController extends Controller
             ->toMediaCollection('main');
         $surface->addFromMediaLibraryRequest($request->background)
             ->toMediaCollection('background');
+        $surface->addFromMediaLibraryRequest($request->layout)
+            ->toMediaCollection('layout');
 
         return redirect()
             ->route('backend.tours.surfaces.index', $surface->tour)

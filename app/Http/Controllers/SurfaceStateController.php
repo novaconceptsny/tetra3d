@@ -136,8 +136,10 @@ class SurfaceStateController extends Controller
         }
 
         $state->update([
-            'canvas' => json_decode($request->canvasState, true)
+            'canvas' => json_decode($request->canvasState, true),
         ]);
+
+        $state->setAsActive();
 
         $state->addMediaFromBase64(resizeBase64Image(
             $request->thumbnail,
@@ -165,6 +167,7 @@ class SurfaceStateController extends Controller
         $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
 
         $state->addActivity($request->new ? 'created': 'updated');
+
 
         return redirect()->route($route, [
             $surface->tour,

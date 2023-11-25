@@ -8,6 +8,7 @@ use Livewire\Component;
 
 class SurfaceRow extends Component
 {
+    //todo::remove this component as we are not using it anymore
     public $layoutId;
     public Surface $surface;
 

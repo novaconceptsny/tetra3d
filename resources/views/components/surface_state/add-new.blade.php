@@ -17,7 +17,7 @@
         </a>
         <div class="card-img p-0 m-0">
             <img
-                src="{{ $surface->getFirstMediaUrl('background') }}"
+                src="{{ $surface->getFirstMediaUrl('layout') ? $surface->getFirstMediaUrl('layout') : $surface->getFirstMediaUrl('background') }}"
                 alt="ver-card-img"
                 class="w-100 h-100 p-0 m-0"
             />

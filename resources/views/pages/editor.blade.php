@@ -5,7 +5,7 @@
         $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
     @endphp
     <x-menu>
-        <x-menu-item text="Versions" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
+        <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
         <x-menu-item
             text="360 View" icon="fal fa-vr-cardboard"
             :route="route('tours.show', $query_params)"

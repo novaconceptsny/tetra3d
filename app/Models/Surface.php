@@ -46,6 +46,7 @@ class Surface extends Model implements HasMedia
         $this->addMediaCollection('main')->singleFile();
         $this->addMediaCollection('background')->singleFile();
         $this->addMediaCollection('shared');
+        $this->addMediaCollection('layout');
     }
 
     public function scopeWithData(): Builder

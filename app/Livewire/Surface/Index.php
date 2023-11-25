@@ -18,17 +18,17 @@ class Index extends Component
 
     public function mount()
     {
-        $this->surfaces = $this->tour->surfaces()->with([
-            'states.user',
-            'states.media',
-            'states.likes',
-            'states' => fn($query) => $query->forLayout($this->layout->id),
-            'media',
-        ])->get();
+
     }
 
     public function render()
     {
+        $this->surfaces = $this->tour->surfaces()
+            ->with([
+                'states' => fn($query) => $query->forLayout($this->layout->id)->with(['user', 'media', 'likes']),
+                'media',
+            ])->get();
+
         return view('livewire.surface.index');
     }
 
@@ -37,5 +37,15 @@ class Index extends Component
         $this->dispatch('hideModal');
         $state->delete();
         $this->dispatch('flashNotification', message: 'State deleted');
+    }
+
+    public function changeActiveState(SurfaceState $state)
+    {
+        if($state->isActive()){
+            return false;
+        }
+
+        $state->setAsActive();
+        $state->addActivity('switched_state');
     }
 }
