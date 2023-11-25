@@ -20,6 +20,7 @@ class SurfaceStateController extends Controller
 
         $surface->load([
             'states' => fn($query) => $query->forLayout($layout->id),
+            'states.artworks.media',
             'states.comments.user',
             'states.likes.user'
         ]);
@@ -41,15 +42,15 @@ class SurfaceStateController extends Controller
             $referer == $versions_url
         );
 
-        $surface_state = null;
+        $selectedSurfaceState = null;
         $create_new_state = request('new');
 
-        if ($surface_state_id = \request('surface_state_id')){
-            $surface_state = SurfaceState::findOrFail($surface_state_id);
+        if ($surface_state_id = request('surface_state_id')){
+            $selectedSurfaceState = SurfaceState::findOrFail($surface_state_id);
         }
 
         if (!$create_new_state && !$surface_state_id){
-            $surface_state = $surface->getCurrentState($layout->id);
+            $selectedSurfaceState = $surface->getCurrentState($layout->id);
         }
 
         $surface->background_url = $surface->getFirstMediaUrl('background');
@@ -61,16 +62,16 @@ class SurfaceStateController extends Controller
         $data['tour'] = $surface->tour;
         $data['spot'] = $spot;
         $data['surface'] = $surface;
-        $data['current_surface_state'] = $surface_state;
+        $data['selectedSurfaceState'] = $selectedSurfaceState;
 
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;
 
         $canvases = array();
 
-        $newState = new SurfaceState();
-
-        $surface->states[] = $newState;
+        if (!$surface->states->count() || $create_new_state){
+            $surface->states[] = new SurfaceState();
+        }
 
         foreach ($surface->states as $surfaceState){
 
@@ -108,7 +109,8 @@ class SurfaceStateController extends Controller
     public function update(Request $request, Surface $surface)
     {
         $request->validate([
-            'layout_id' => 'required'
+            'layout_id' => 'required',
+            'assigned_artwork' => 'required',
         ]);
 
         $assigned_artworks = array();

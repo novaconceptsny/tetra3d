@@ -32,8 +32,8 @@
         <x-breadcrumb.separtator/>
 
         <x-breadcrumb.item>
-            @if($current_surface_state)
-                <livewire:editable-field :model="$current_surface_state" field="name"/>
+            @if($selectedSurfaceState)
+                <livewire:editable-field :model="$selectedSurfaceState" field="name"/>
             @else
                 <span>Untitled</span>
             @endif
@@ -52,15 +52,15 @@
     <section class="editor">
         <div class="container-fluid editor-view ">
             @php($sidebar = request('sidebar', 'editor'))
-            <div class="row" x-data="{sidebar: '{{$sidebar}}' }">
-                <livewire:comments :commentable="$current_surface_state"/>
+            <div class="row" x-data="{sidebar: @js($sidebar) }">
+                <livewire:comments :commentable="$selectedSurfaceState"/>
                 <livewire:artwork-collection :project="$project" />
 
-                @php($canvasId = $current_surface_state ? $current_surface_state->id : 'new')
+                @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
                 <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$canvasId") }">
-                    <x-editor-actions :surface-id="$surface->id" :layout-id="$layout->id"/>
+                    <x-editor-actions/>
 
-                    <div class="d-inline-flex tabs-container pt-1 mb-1">
+                    <div class="d-inline-flex tabs-container pt-1 mb-1 px-2">
                         @foreach($canvases as $canvas)
                             <div class="tab mt-1"
                                  :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
@@ -68,9 +68,13 @@
                                 {{ $canvas['surfaceStateName'] }}
                             </div>
                         @endforeach
-                        <div class="h-full d-flex justify-content-center align-items-center px-2 bg-transparent text-decoration-none">
-                            <i class="fas fa-plus btn"></i>
-                        </div>
+
+                        @if(!request('new'))
+                            <a href="{{ route('surfaces.show', [$surface->id, 'layout_id' => $layout->id, 'new' => 1]) }}"
+                               class="h-full d-flex justify-content-center align-items-center px-2 bg-transparent text-decoration-none">
+                                <i class="fas fa-plus btn"></i>
+                            </a>
+                        @endif
                     </div>
 
                     @foreach($canvases as $canvas)
@@ -117,6 +121,7 @@
 
 @section('scripts')
     <script>
+        let selectedSurfaceStateId = @js($selectedSurfaceState?->id);
         let canvases = @json($canvases);
     </script>
     <script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>

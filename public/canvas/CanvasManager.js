@@ -4,6 +4,7 @@ import CanvasApi from "./CanvasApi.js";
 class CanvasManager {
     constructor(data) {
         this.active = false;
+        this.unsavedChanges = false;
 
         this.canvasId = data.canvasId;
 
@@ -56,7 +57,7 @@ class CanvasManager {
         this.cropBtn = $('#crop_btn');
         this.cancelBtn = $('#cancel_btn');
         this.saveAsBtn = $('#save_as_btn');
-        this.confirmSaveBtn = $('#confirm_save_btn');
+        this.confirmSaveBtn = $('#confirm_save_btn'); // save new button on modal
         this.fileNameInput = $('#file_name');
         this.confirmationModal = $('#confirmation_modal');
 
@@ -116,9 +117,9 @@ class CanvasManager {
         this.cropBtn.hide();
         this.disableSaveButton();
 
-        this.confirmationModal
+        /*this.confirmationModal
             .on('show.bs.modal', () => this.cropBtn.hide())
-            .on('hidden.bs.modal', () => this.cropBtn.show());
+            .on('hidden.bs.modal', () => this.cropBtn.show());*/
 
 
         this.addCanvasEvents();
@@ -137,6 +138,7 @@ class CanvasManager {
     {
         document.addEventListener("canvasChanged", (event) => {
             this.active = event.detail.surfaceStateId === this.surfaceStateId;
+            this.activeStateUpdated();
         });
     }
 
@@ -165,6 +167,8 @@ class CanvasManager {
             let target = el.currentTarget;
             let newSelection = this.newArtworkSelection(target);
             this.placeSelectedImage(newSelection);
+            this.unsavedChanges = true;
+            this.toggleRemoveButton();
         })
     }
 
@@ -243,15 +247,21 @@ class CanvasManager {
 
     addCanvasEvents() {
         this.artworkCanvas.on('object:selected', (options) => {
+            if (this.isInactive()){
+                return
+            }
+
             if (options.target) {
                 this.removeBtn.show();
             }
         });
 
-        this.artworkCanvas.on('object:deselected', (options) => {
-            if (options.target) {
-                this.removeBtn.hide();
+        this.artworkCanvas.on('selection:cleared', (options) => {
+            if (this.isInactive()){
+                return
             }
+
+            this.removeBtn.hide();
         });
 
         this.artworkCanvas.on('object:moving', function (options) {
@@ -293,10 +303,10 @@ class CanvasManager {
 
     addSavedVersionEvents() {
         let handleModification = (event, msg) => {
-            if (this.canvasState.savedVersion && this.canvasState.currentVersionData !== null) {
-                this.enableSaveButton();
-            }
+            this.unsavedChanges = true;
+            this.toggleSaveButton();
         };
+
         this.artworkCanvas.on({
             'object:modified': handleModification,
             'object:removed': handleModification,
@@ -375,7 +385,7 @@ class CanvasManager {
     handleEnterKeyOnSaveAs(key) {
         if (key.code === 'Enter' || key.code === 'NumpadEnter') {
             key.preventDefault();
-            document.getElementById('confirm_save_btn').click();
+            this.confirmSaveBtn.click();
             return false;
         }
     }
@@ -403,6 +413,8 @@ class CanvasManager {
             this.artworkCanvas.remove(obj);
             this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => art.getArtworkId() !== obj.id);
         });
+
+        this.removeBtn.hide();
     }
 
     removeAllArtwork() {
@@ -514,6 +526,10 @@ class CanvasManager {
     }
 
     async confirmSave() {
+        if (this.isInactive()){
+            return;
+        }
+
         let filenameInput = document.getElementById("file_name");
         let confirmBtn = document.getElementById('confirm_save_btn');
 
@@ -554,12 +570,21 @@ class CanvasManager {
         }
     }
 
-    makeVtourRoute() {
-        window.location.href = "/vtour/post/" + spot_id + "?vlookat=" + vlookat + "&hlookat=" + hlookat;
-    }
+    toggleSaveButton() {
+        if (this.isInactive()){
+            return
+        }
 
-    enableSaveButton() {
-        this.saveBtn.show();
+        if (!this.surfaceStateId) {
+            this.saveBtn.hide();
+            return;
+        }
+
+        if (this.unsavedChanges === true) {
+            this.saveBtn.show();
+        } else {
+            this.saveBtn.hide();
+        }
     }
 
     disableSaveButton() {
@@ -629,6 +654,24 @@ class CanvasManager {
         };
 
         this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.map(propertize);
+    }
+
+    toggleRemoveButton() {
+        if (this.isInactive()){
+            return
+        }
+
+        const selectedObjs = this.artworkCanvas.getActiveObjects();
+        if (selectedObjs.length > 0) {
+            this.removeBtn.show()
+        } else {
+            this.removeBtn.hide()
+        }
+    }
+
+    activeStateUpdated() {
+        this.toggleSaveButton();
+        this.toggleRemoveButton();
     }
 
     isInactive() {
