@@ -82,6 +82,10 @@
             </div>
         </div>
     </div>
+
+    <button class="previous-btn">
+        <i class="fas fa-chevron-left"></i>
+    </button>
     {{--<div class="modal fade" id="tourMapModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
             <div class="modal-content">

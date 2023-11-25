@@ -16,7 +16,33 @@ $open-font: "Open Sans", sans-serif;
 @import "./editor";
 
 
+.previous-btn{
+  border: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 100px;
+  position: fixed;
+  top: calc(50% - 50px);
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  //backdrop-filter: opacity(50%);
+  z-index: 99999999;
+  i{
+    font-size: 40px;
+    font-weight: 600;
+    color: #9c9fa5;
+    &:hover{
+      color: #0a763f;
+    }
+  }
+  &:hover{
+    background: rgba(255, 255, 255, 0.3);
 
+  }
+}
 .layout-intro{
 
   display: flex;
@@ -33,6 +59,7 @@ $open-font: "Open Sans", sans-serif;
 
 
   }
+
 
 
 }

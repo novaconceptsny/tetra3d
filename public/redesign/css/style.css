@@ -2030,6 +2030,32 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   color: #222436;
 }
 
+.previous-btn {
+  border: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 100px;
+  position: fixed;
+  top: calc(50% - 50px);
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 99999999;
+}
+.previous-btn i {
+  font-size: 40px;
+  font-weight: 600;
+  color: #9c9fa5;
+}
+.previous-btn i:hover {
+  color: #0a763f;
+}
+.previous-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .layout-intro {
   display: flex;
   align-items: center;
