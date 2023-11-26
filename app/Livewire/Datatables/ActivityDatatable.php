@@ -61,7 +61,7 @@ class ActivityDatatable extends BaseDatatable
 
         $rows->getCollection()->transform(function ($row){
             $row->project_name = $row->project?->name;
-            $row->tour_name = $row->tour?->name;
+            $row->layout_name = $row->layout?->name;
             $row->user_name = $row->user?->name;
             $row->date = $row->created_at->format('d M Y');
             return $row;
@@ -89,8 +89,8 @@ class ActivityDatatable extends BaseDatatable
                 'name' => 'Exhibition',
                 'visible' => true,
             ],
-            'tour_name' => [
-                'name' => 'Tour',
+            'layout_name' => [
+                'name' => 'Layout',
                 'visible' => true,
                 'th-classes' => 'w-10'
             ],

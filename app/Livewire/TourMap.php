@@ -5,19 +5,23 @@ namespace App\Livewire;
 use App\Models\Map;
 use App\Models\Tour;
 use Livewire\Component;
-use WireElements\Pro\Components\Modal\Modal;
 
-class TourMap extends Modal
+class TourMap extends Component
 {
-    public int|Tour $tour;
+    public $tour;
     public $shared_tour_id;
-    public $project;
+    public $layoutId;
     public $selectedMap;
 
     public function mount(Tour $tour)
     {
         $this->tour = $tour;
         $this->selectedMap = $tour->map;
+    }
+
+    public function dehydrate()
+    {
+        $this->js('setMapScale()');
     }
 
     public function render()
@@ -28,13 +32,6 @@ class TourMap extends Modal
     public function selectMap(Map $map)
     {
         $this->selectedMap = $map;
-        $this->dispatch('mapChanged');
-    }
-
-    public static function attributes(): array
-    {
-        return [
-            'size' => '7xl'
-        ];
+        //$this->dispatch('mapChanged');
     }
 }

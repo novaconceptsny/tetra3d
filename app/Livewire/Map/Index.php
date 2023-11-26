@@ -5,7 +5,7 @@ namespace App\Livewire\Map;
 use App\Models\Map;
 use App\Models\Tour;
 use Livewire\Component;
-use Spatie\MediaLibraryPro\Http\Livewire\Concerns\WithMedia;
+use Spatie\MediaLibraryPro\Livewire\Concerns\WithMedia;
 
 class Index extends Component
 {

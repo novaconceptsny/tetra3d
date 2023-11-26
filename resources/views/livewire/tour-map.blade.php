@@ -1,6 +1,6 @@
-<x-wire-elements-pro::bootstrap.modal>
+<div>
     @if($selectedMap)
-        <div class="tour-map-container" x-data="{ scale: 1, pinVisible: true }" x-init="setMapScale">
+        <div class="tour-map-container" >
             <div class="me-2" style="width: 250px">
                 <ul class="list-group">
                     @foreach($tour->maps as $map)
@@ -10,16 +10,15 @@
                     @endforeach
                 </ul>
             </div>
-            <div class="floorPlan tour-map" x-ref="floorPlan"
+            <div class="floorPlan tour-map" x-intersect="setMapScale" wire:loading.remove
                  defaultwidth="{{$selectedMap->width}}" defaultheight="{{$selectedMap->height}}"
                  style="background-image:url('{{ $selectedMap->getFirstMediaUrl('image') }}')"
-                 x-bind:style="{ transform: 'scale(' + scale + ')' }"
             >
 
                 @php
                     $parameters = [
                         $tour,
-                         'project_id' => isset($project) ? $project?->id : null,
+                         'layout_id' => $layoutId,
                          'shared' => Route::is('shared-tours.show'),
                          'shared_tour_id' => $shared_tour_id ?? null
                     ]
@@ -27,22 +26,17 @@
 
                 @foreach($selectedMap->spots as $spot)
                     <a href="{{ route('tours.show', array_merge($parameters, ['spot_id' => $spot->id]) )}}">
-                        <div
-                            x-data="{
-                                top: @js($spot->pivot->y),
-                                left: @js($spot->pivot->x),
-                            }"
-                            class="pin" top="{{ $spot->pivot->y }}" left="{{ $spot->pivot->x }}"
-                            :style="{ top: ((top * scale) - 40) + 'px', left: (left * (scale) - 20) + 'px' }">
+                        <div class="pin" top="{{ $spot->pivot->y }}" left="{{ $spot->pivot->x }}"
+                             style="top: {{ $spot->pivot->y }}px; left: {{ $spot->pivot->x }}px;">
                         </div>
                     </a>
                 @endforeach
             </div>
+            <div wire:loading class="bg-light rounded-2" style="height: {{$selectedMap->height}}px; width: {{$selectedMap->width}}px"></div>
         </div>
     @else
         <div >
             <p class="text-center mb-0">Map not available</p>
         </div>
     @endif
-
-</x-wire-elements-pro::bootstrap.modal>
+</div>

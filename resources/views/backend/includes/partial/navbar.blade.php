@@ -1,4 +1,4 @@
-<div class="navbar-custom">
+<div class="navbar-custom" style="z-index: 40!important;">
     <ul class="list-unstyled topbar-menu float-end mb-0">
         <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle arrow-none" href="{{ route('dashboard') }}" target="_blank">

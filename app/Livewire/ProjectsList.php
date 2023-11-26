@@ -23,7 +23,7 @@ class ProjectsList extends Component
         $data = array();
 
         $data['projects'] = Project::with(['tours', 'contributors.media',])
-            ->withCount(['tours', 'artworkCollections'])
+            ->withCount(['tours', 'artworkCollections', 'layouts'])
             ->when($this->sortBy == 'created_at', fn($query) => $query->latest('created_at'))
             ->when($this->sortBy == 'updated_at', fn($query) => $query->latest('updated_at'))
             ->when($this->sortBy == 'name', fn($query) => $query->oldest('name'))

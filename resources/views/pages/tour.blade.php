@@ -32,16 +32,13 @@
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
         />
         <x-menu-item
-            route="#"
-            target="_self"
-            text="Map"
+            route="#" target="_self" text="Map"
             icon="fal fa-map-marked-alt"
-            onclick="Livewire.dispatch('modal.open', {component: 'tour-map', arguments: {'tour': {{$tour->id}} }})"
-            {{--data-bs-toggle="modal" data-bs-target="#tourMapModal"--}}
+            data-bs-toggle="modal" data-bs-target="#tourMapModal"
         />
         {{--<x-menu-item
             :visible="$layout && !$tour_is_shared" target="_self"
-            wire:modal="modals.share-tour, @js(['tourId' => $tour->id, 'layoutId' => $layout->id, 'spotId' => request('spot_id')])"
+            onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'tourId': @js($tour->id), 'layoutId': @js(request('layout_id')), 'spotId': @js(request('spot_id')) }})"
             text="Share" icon="fal fa-share-nodes"
         />--}}
         <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
@@ -83,25 +80,12 @@
         </div>
     </div>
 
-    <button class="previous-btn">
-        <i class="fas fa-chevron-left"></i>
-    </button>
-    {{--<div class="modal fade" id="tourMapModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tour Map</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <livewire:tour-map :tour="$tour" :project="$project" :shared_tour_id="$shared_tour_id"/>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>--}}
+    @if($project?->id)
+        <button class="previous-btn" style="z-index: 39"
+                onclick="Livewire.dispatch('slide-over.open', {component: 'tour-switcher', arguments: {'project': {{$project?->id}} }})">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    @endif
 @endsection
 
 @section('scripts')

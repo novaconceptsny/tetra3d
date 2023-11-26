@@ -29,7 +29,7 @@
                             <div class="card-text">
                                 <div class="c-line"></div>
                                 <div class="text">
-                                    <p>{{ $project->tours_count }} {{ str('Tour')->plural($project->tours_count) }}</p>
+                                    <p>{{ $project->layouts_count }} {{ str('Layout')->plural($project->tours_count) }}</p>
                                     <p>{{ $project->artwork_collections_count }} {{ str('Artwork Collection')->plural($project->artwork_collections_count) }}</p>
                                 </div>
                             </div>

@@ -3,14 +3,13 @@
 namespace App\Livewire\Modals;
 
 use App\Models\Artwork;
-use App\Models\ArtworkCollection;
 use App\Models\Company;
 use App\Services\CollectorApi;
-use Livewire\Component;
+use WireElements\Pro\Components\Modal\Modal;
 
-class CollectorTools extends Component
+class CollectorTools extends Modal
 {
-    public Company $company;
+    public Company|int $company;
     public $output;
 
     public $objectId ;

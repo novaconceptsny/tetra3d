@@ -36,7 +36,7 @@
     @yield('content')
     <livewire:modals.base-modal />
 
-    {{--<div class="modal fade" id="tourMapModal" tabindex="-1">
+    <div class="modal fade" id="tourMapModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -47,7 +47,7 @@
                     @if(isset($tour))
                         <livewire:tour-map
                             :tour="$tour"
-                            :project="$project ?? null"
+                            :layout-id="request('layout_id')"
                             :shared_tour_id="$shared_tour_id ?? null"
                         />
                     @endif
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-    </div>--}}
+    </div>
 </main>
 
 <!-- bootstrap script links -->
@@ -125,5 +125,6 @@
 <script src="{{ asset('js/map.js') }}"></script>
 
 <script src="{{ asset('vendor/wire-elements-pro/js/overlay-component.js') }}"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

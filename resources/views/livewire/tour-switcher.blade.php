@@ -49,6 +49,9 @@
                             <td>{{ $layout->tour->name }}</td>
                             <td>{{ $layout->user->name }}</td>
                             <td>
+                                <a class="me-1 text-danger text-decoration-none" href="#" wire:click="deleteLayout({{ $layout->id }})">
+                                    <i class="fal fa-trash"></i>
+                                </a>
                                 <a class="text-dark" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
                                     <i class="fal fa-sign-in"></i>
                                 </a>

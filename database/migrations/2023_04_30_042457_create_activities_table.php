@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->foreignId('company_id')->nullable();
             $table->foreignId('user_id');
             $table->foreignId('project_id')->nullable();
+            $table->foreignId('layout_id')->nullable();
             $table->foreignId('tour_id')->nullable();
             $table->string('activity');
             $table->string('url')->nullable();

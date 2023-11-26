@@ -24,6 +24,11 @@ class Activity extends Model
         return $this->belongsTo(Tour::class);
     }
 
+    public function layout()
+    {
+        return $this->belongsTo(Layout::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

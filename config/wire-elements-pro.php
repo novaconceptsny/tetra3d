@@ -13,7 +13,7 @@ return [
                 'close-on-escape' => false,
                 'close-on-backdrop-click' => false,
                 'trap-focus' => true,
-                'remove-state-on-close' => false,
+                'remove-state-on-close' => true,
             ],
             'default-attributes' => [
                 'size' => 'lg',

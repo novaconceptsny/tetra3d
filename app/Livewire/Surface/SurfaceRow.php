@@ -31,6 +31,5 @@ class SurfaceRow extends Component
         }
 
         $state->setAsActive();
-        $state->addActivity('switched_state');
     }
 }

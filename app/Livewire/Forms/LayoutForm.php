@@ -15,6 +15,8 @@ class LayoutForm extends Modal
     public string $heading;
     public $editing = false;
 
+    public array $tourImages;
+
     public function rules(): array
     {
         return [
@@ -29,6 +31,9 @@ class LayoutForm extends Modal
     {
         $this->project = $project;
         $this->layout = $layout;
+        $this->tourImages = $this->project->tours
+            ->mapWithKeys(fn ($tour) => [$tour->id => $tour->getFirstMediaUrl('thumbnail')])
+            ->all();
 
         $this->heading = 'Create Layout';
 
@@ -45,7 +50,10 @@ class LayoutForm extends Modal
     public function render()
     {
         $data = array();
-        $data['tours'] = $this->project->tours->toKeyValuePair();
+        $data['toursArray'] = $this->project->tours->toKeyValuePair();
+        $data['tourImages'] = $this->project->tours
+            ->mapWithKeys(fn ($tour) => [$tour->id => $tour->getFirstMediaUrl('thumbnail')])
+            ->all();
 
         return view('livewire.forms.layout-form', $data);
     }
@@ -56,7 +64,16 @@ class LayoutForm extends Modal
 
         $this->layout->save();
 
-        $this->close();
-        $this->dispatch('flashNotification', message: __('Layout created'));
+        $this->close(andDispatch: [
+            'refresh',
+            'flashNotification' => ['message' => 'Layout created']
+        ]);
+    }
+
+    public static function attributes(): array
+    {
+        return [
+            'size' => '3xl'
+        ];
     }
 }

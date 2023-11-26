@@ -1,5 +1,4 @@
-/*function setMapScale() {
-
+function setMapScale() {
     let $floorPlan = $(".floorPlan");
     let $pin = $('.pin');
     $pin.hide();
@@ -30,64 +29,8 @@
     });
 
     $pin.show();
-}*/
-
-function setMapScale() {
-    let floorPlan = this.$refs.floorPlan
-    //let pin = this.$refs.pin;
-
-    //pin.style.display = 'none';
-
-    let zoneW = parseInt(getComputedStyle(floorPlan).width, 10);
-    let zoneH = parseInt(getComputedStyle(floorPlan).height, 10);
-    let defaultW = floorPlan.getAttribute('defaultwidth');
-    let defaultH = floorPlan.getAttribute('defaultheight');
-
-    let scaleW = zoneW / defaultW;
-    let scaleH = zoneH / defaultH;
-
-    let scale;
-    let screenRatio = zoneW / zoneH;
-    let mapRatio = defaultW / defaultH;
-
-    if (screenRatio > mapRatio) {
-        scale = scaleH;
-    } else {
-        scale = scaleW;
-    }
-
-    this.scale = scale;
-    console.log(scale, scaleH, scaleW, defaultW);
-
-    //pin.style.display = 'block';
 }
-
-function pinStyle(floorPlan, selectedMap, spot) {
-    let pinVisible = this.pinVisible;
-    let pinTop = (floorPlan.clientHeight * (spot.pivot.y / selectedMap.height) - 40) + 'px';
-    let pinLeft = (floorPlan.clientWidth * (spot.pivot.x / selectedMap.width) - 20) + 'px';
-
-    return {
-        top: pinVisible ? pinTop : '-100px', // Adjust -100px based on your off-screen value
-        left: pinVisible ? pinLeft : '-100px',
-    };
-}
-
-/*
-$(document).ready(function () {
-    setMapScale();
-});
 
 $(window).resize(function () {
     setMapScale();
 });
-
-let tourModal = document.getElementById('tourMapModal')
-tourModal.addEventListener('shown.bs.modal', function (event) {
-    setMapScale();
-});
-
-Livewire.on('mapChanged', () => {
-    setMapScale();
-});
-*/
