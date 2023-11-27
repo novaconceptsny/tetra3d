@@ -10,10 +10,11 @@
             </button>--}}
             <input type="text" class="form-control form-control-md lead border-start-0" placeholder="Search" wire:model.live.debounce.500ms="search"/>
         </div>
-        <select class="form-select form-control all-btn" wire:model.live="searchBy">
-            <option value="all">All</option>
-            <option value="artist">Artists</option>
-            <option value="name">Artworks</option>
+        <select class="form-select form-control all-btn" wire:model.live="collectionId">
+            <option value="">All</option>
+            @foreach($collections as $collection)
+                <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+            @endforeach
         </select>
         <div class="outside">
             <div class="line"></div>

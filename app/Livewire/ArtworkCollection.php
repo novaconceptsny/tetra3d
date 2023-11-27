@@ -13,6 +13,7 @@ class ArtworkCollection extends Component
     public Project $project;
     public $search;
     public $searchBy = 'all';
+    public $collectionId;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -28,18 +29,16 @@ class ArtworkCollection extends Component
 
     public function render()
     {
+        $data['collections'] = $this->project->artworkCollections;
+
         $artworks = $this->project->artworks()
             ->when(
-                $this->search && $this->searchBy == 'all',
+                $this->search,
                 fn($query) => $query->whereAnyColumnLike($this->search, ['artist', 'name'])
             )
             ->when(
-                $this->search && $this->searchBy == 'artist',
-                fn($query) => $query->whereAnyColumnLike($this->search, ['artist'])
-            )
-            ->when(
-                $this->search && $this->searchBy == 'name',
-                fn($query) => $query->whereAnyColumnLike($this->search, ['name'])
+                $this->collectionId,
+                fn($query) => $query->where('artworks.artwork_collection_id', $this->collectionId)
             )
             ->with('media')->paginate(25);
 
