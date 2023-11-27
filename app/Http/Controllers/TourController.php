@@ -80,6 +80,7 @@ class TourController extends Controller
         $data['tour'] = $tour;
         $data['spot'] = $spot;
         $data['project'] = $project ?? null;
+        $data['layout'] = $layout ?? null;
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;
 
