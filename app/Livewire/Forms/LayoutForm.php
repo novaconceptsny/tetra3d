@@ -65,6 +65,10 @@ class LayoutForm extends Modal
     {
         $this->validate();
 
+        if($this->layout->id){
+            unset($this->layout->tour_id);
+        }
+
         $this->layout->save();
 
         $this->close(andDispatch: [

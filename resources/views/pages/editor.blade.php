@@ -26,7 +26,7 @@
         <x-breadcrumb.item :text="$project ? $project->name : 'No Project'"/>
         <x-breadcrumb.separtator/>
 
-        <x-breadcrumb.item :text="$tour?->name"/>
+        <x-breadcrumb.item :text="$layout?->name"/>
         <x-breadcrumb.separtator/>
 
         <x-breadcrumb.item :text="$spot->name"/>
