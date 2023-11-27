@@ -72,7 +72,8 @@ header#header {
 
   }
   nav {
-    padding: 0px calc(clamp(2rem, 0.7143rem + 2.0089vw, 31.2px));
+    position: relative;
+    padding: 0 calc(clamp(2rem, 0.7143rem + 2.0089vw, 31.2px));
     background: $white-color;
     // padding: 0px 50px;
 
@@ -139,7 +140,8 @@ header#header {
         }
 
         .menu-nav {
-
+          position: absolute;
+          inset: auto 32px auto auto;
           display: flex;
           align-items: stretch;
           gap: 10px;
@@ -185,9 +187,9 @@ header#header {
 
               .dropdown-menu {
                 position: absolute;
-                padding: 0px;
+                padding: 0;
                 top: calc(100% + 2px);
-                left: 0;
+                left: calc(-100% - 103px);
                 background-color: $white-color;
                 min-width: 223px;
                 border-radius: 0px 0px 10px 10px;
