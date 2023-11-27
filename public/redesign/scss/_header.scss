@@ -23,7 +23,7 @@ header#header {
           font-size: 16px;
           color: #6c6c6c;
         }
-        
+
         .breadcrumb-item {
           cursor: default;
           text-decoration: none;
@@ -36,7 +36,7 @@ header#header {
           font-size: calc(clamp(14px, 0.1786rem + 0.8929vw, 18px)) !important;
           line-height: 1.2;
           color: #6c6c6c;
-         
+
           // &:first-child {
           //   font-size: calc(clamp(14px, 0.1607rem + 1.1161vw, 21px)) !important ;
 
@@ -57,7 +57,7 @@ header#header {
       .menu-nav{
         .nav-left-btn{
           .menu-btn{
-            
+
             background: $white-color !important;
             &.show{
               border: 5px solid $dark-color;
@@ -96,6 +96,10 @@ header#header {
         justify-content: space-between;
         height: 100% !important;
         .navbar-nav {
+          .link-nav{
+
+          margin-inline: auto;
+          }
           // display: flex !important;
           align-items: center !important;
           gap: 117px;
@@ -135,10 +139,10 @@ header#header {
         }
 
         .menu-nav {
-          
+
           display: flex;
           align-items: stretch;
-          gap: 80px;
+          gap: 10px;
           height: 100%;
           .nav-left-btn-div{
             display: flex;
@@ -160,7 +164,7 @@ header#header {
                 border: none;
                 display: flex;
                 align-items: center;
-                gap: 10px;  
+                gap: 10px;
                 position: relative;
                 height: 100%;
                 &:hover {
@@ -178,7 +182,7 @@ header#header {
                   }
                 }
               }
-              
+
               .dropdown-menu {
                 position: absolute;
                 padding: 0px;
@@ -188,7 +192,7 @@ header#header {
                 min-width: 223px;
                 border-radius: 0px 0px 10px 10px;
                 box-shadow: 0px 2px 11px rgba(0, 0, 0, 0.1);
-        
+
                 a {
                   border-top: 1px solid #c6c6c6;
                   padding: 20px 0px 11px 20px;
@@ -208,7 +212,7 @@ header#header {
                     width: 33px;
                     height: 30px;
                   }
-        
+
                   &:first-child {
                     border-top: 0px;
                   }
@@ -216,7 +220,7 @@ header#header {
               }
             }
           }
-      
+
           .profile {
             margin-right: 15px;
             display: flex;
@@ -255,7 +259,7 @@ header#header {
                 box-shadow: 0px 0px 35px rgba(0, 0, 0, 0.15);
                 border-radius: 6px;
                 z-index: 20 !important;
-      
+
                 .drop-profile {
                   padding: 10px 0px 8px 20px;
                   display: flex;
@@ -264,16 +268,16 @@ header#header {
                   gap: 4px;
                   margin-bottom: 16px;
                   border-bottom: 1px solid #000000;
-                  
+
                   img{
                     width: 60px !important;
                     height: 60px !important;
                     border-radius: 50% !important;
                     margin-right: 10px;
                   }
-                  
+
                   .user-detail{
-                    
+
                     h6{
                       font-family: 'Roboto';
                       font-style: normal;
@@ -305,13 +309,13 @@ header#header {
                 }
                 .link {
                   padding-left: 20px;
-                  
+
                   li {
                     // background-color: none;
                     &:hover{
                       background: #e9ecef;
                     }
-                    
+
                     a {
                       text-decoration: none;
                       color: $dark-color;

@@ -86,6 +86,9 @@ header#header nav .nav-container .navbar-collapse .navbar-nav {
   gap: 117px;
   height: 100% !important;
 }
+header#header nav .nav-container .navbar-collapse .navbar-nav .link-nav {
+  margin-inline: auto;
+}
 header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item {
   height: 100%;
 }
@@ -120,7 +123,7 @@ header#header nav .nav-container .navbar-collapse .navbar-nav a {
 header#header nav .nav-container .navbar-collapse .menu-nav {
   display: flex;
   align-items: stretch;
-  gap: 80px;
+  gap: 10px;
   height: 100%;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div {

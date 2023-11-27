@@ -35,7 +35,7 @@
 
                 @yield('breadcrumbs')
 
-                <div class="navbar-nav menu-nav ms-auto">
+                <div class="navbar-nav menu-nav">
                     <div class="nav-left-btn-div">
                         @yield('menu')
                         @yield('page_actions')
