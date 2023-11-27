@@ -37,19 +37,10 @@ class TourSwitcher extends SlideOver
         $this->selectedTour = $this->project->tours->where('id', $this->selectedTourId)->first();
     }
 
-    public function deleteLayout(Layout $layout)
-    {
-        $this->askForConfirmation(function () use ($layout) {
-            $layout->delete();
-            $this->dispatch('refresh');
-            $this->dispatch('flashNotification', message: 'Layout deleted');
-        });
-    }
-
     public static function attributes(): array
     {
         return [
-            'size' => '2xl'
+            'size' => '3xl'
         ];
     }
 }

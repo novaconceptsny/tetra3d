@@ -2,7 +2,12 @@
     <div class="sidebar-div">
         <div class="sidebar mysidebar">
             <div class="preview">
-                <h5 class="sidebar-heading">{{ $project->name }}</h5>
+                <h5 class="sidebar-heading d-flex align-items-center">
+                    <span>{{ $project->name }}</span>
+                    @can('edit', $project)
+                    <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
+                    @endcan
+                </h5>
                 <a href="#"  wire:slide-over="close" class="x text-decoration-none">
                     <i class="fa-solid fa-xmark"></i>
                 </a>
@@ -13,26 +18,6 @@
             <div class="select-tours">
                 <h5>Select Layout</h5>
             </div>
-            {{--@if($selectedTour && $selectedTour->getFirstMediaUrl('thumbnail'))
-                <div class="sidebar-main-img mx-0">
-                    <img src="{{ $selectedTour->getFirstMediaUrl('thumbnail') }}" alt="preview-img"/>
-                </div>
-            @endif
-
-            <div class="select-box">
-                <div class="input-group mt-4 border-1">
-                    <select wire:model.live="selectedTourId" wire:change="selectTour" class="form-control">
-                        @foreach($project->tours as $tour)
-                            <option value="{{ $tour->id}}">{{ $tour->name }}</option>
-                        @endforeach
-                    </select>
-                    @if($selectedTourId)
-                        <a href="{{ route('tours.show', [$selectedTourId, 'project_id' => $project->id]) }}"
-                           class="input-group-text bg-white text-decoration-none">Enter
-                        </a>
-                    @endif
-                </div>
-            </div>--}}
 
             <div class="mb-3">
                 <table class="table">
@@ -40,6 +25,7 @@
                         <th>Layout Name</th>
                         <th>Tour</th>
                         <th>Created By</th>
+                        <th>Created At</th>
                         <th></th>
                     </tr>
 
@@ -47,11 +33,20 @@
                         <tr>
                             <td>{{ $layout->name }}</td>
                             <td>{{ $layout->tour->name }}</td>
-                            <td>{{ $layout->user->name }}</td>
                             <td>
-                                <a class="me-1 text-danger text-decoration-none" href="#" wire:click="deleteLayout({{ $layout->id }})">
-                                    <i class="fal fa-trash"></i>
+                                <span>{{ $layout->user->name }}</span><br>
+                            </td>
+                            <td>
+                                <span>{{ $layout->created_at->format('M d, Y H:i') }}</span>
+                            </td>
+                            <td>
+                                <a class="me-1 text-info text-decoration-none" href="#"
+                                   wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                    <i class="fal fa-edit"></i>
                                 </a>
+                                {{--<a class="me-1 text-danger text-decoration-none" href="#" wire:click="deleteLayout({{ $layout->id }})">
+                                    <i class="fal fa-trash"></i>
+                                </a>--}}
                                 <a class="text-dark" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
                                     <i class="fal fa-sign-in"></i>
                                 </a>
@@ -80,7 +75,9 @@
             </div>
 
             <div class="collection mt-5">
-                <h5>Collections</h5>
+                <h5>
+                    <span>Collections</span>
+                </h5>
                 @forelse($project->artworkCollections as $collection)
                     <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
                        target="_blank" class="col-btn">{{ $collection->name }}</a>

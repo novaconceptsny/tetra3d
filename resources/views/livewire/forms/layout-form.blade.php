@@ -15,11 +15,15 @@
     </div>
 
     <x-slot name="buttons">
+        <button class="btn btn-sm btn-danger" type="button" wire:click="deleteLayout">
+            {{ __('Delete Layout') }}
+        </button>
+
         <button class="btn btn-sm btn-success" type="submit">
             {{ __('Save Changes') }}
         </button>
-        <button class="btn btn-sm btn-primary" type="button" wire:modal="close">
+        {{--<button class="btn btn-sm btn-primary" type="button" wire:modal="close">
             {{ __('Cancel') }}
-        </button>
+        </button>--}}
     </x-slot>
 </x-wire-elements-pro::bootstrap.modal>

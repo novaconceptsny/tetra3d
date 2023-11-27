@@ -7,6 +7,7 @@
     <x-menu>
         <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
         <x-menu-item
+            target="_self"
             text="360 View" icon="fal fa-vr-cardboard"
             :route="route('tours.show', $query_params)"
         />

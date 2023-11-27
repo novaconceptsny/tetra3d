@@ -6,9 +6,12 @@ use App\Models\Layout;
 use App\Models\Project;
 use App\Models\Tour;
 use WireElements\Pro\Components\Modal\Modal;
+use WireElements\Pro\Concerns\InteractsWithConfirmationModal;
 
 class LayoutForm extends Modal
 {
+    use InteractsWithConfirmationModal;
+
     public Project|int $project;
     public Layout|int $layout;
 
@@ -68,6 +71,15 @@ class LayoutForm extends Modal
             'refresh',
             'flashNotification' => ['message' => 'Layout created']
         ]);
+    }
+
+    public function deleteLayout(Layout $layout)
+    {
+        $this->askForConfirmation(function () use ($layout) {
+            $layout->delete();
+            $this->dispatch('refresh');
+            $this->dispatch('flashNotification', message: 'Layout deleted');
+        });
     }
 
     public static function attributes(): array
