@@ -59,7 +59,8 @@ header#header nav.navbar-light .navbar-collapse .menu-nav .nav-left-btn .dropdow
   background-color: #ffffff !important;
 }
 header#header nav {
-  padding: 0px clamp(2rem, 0.7143rem + 2.0089vw, 31.2px);
+  position: relative;
+  padding: 0 clamp(2rem, 0.7143rem + 2.0089vw, 31.2px);
   background: #ffffff;
 }
 header#header nav .nav-container {
@@ -121,6 +122,8 @@ header#header nav .nav-container .navbar-collapse .navbar-nav a {
   gap: 23px;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav {
+  position: absolute;
+  inset: auto 32px auto auto;
   display: flex;
   align-items: stretch;
   gap: 10px;
@@ -163,9 +166,9 @@ header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div .n
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div .nav-left-btn .dropdown-menu {
   position: absolute;
-  padding: 0px;
+  padding: 0;
   top: calc(100% + 2px);
-  left: 0;
+  left: calc(-100% - 103px);
   background-color: #ffffff;
   min-width: 223px;
   border-radius: 0px 0px 10px 10px;
