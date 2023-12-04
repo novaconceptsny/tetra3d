@@ -7,9 +7,12 @@ use App\Models\Project;
 use App\Models\SurfaceState;
 use App\Models\Tour;
 use Livewire\Component;
+use WireElements\Pro\Concerns\InteractsWithConfirmationModal;
 
 class Index extends Component
 {
+    use InteractsWithConfirmationModal;
+
     public Tour $tour;
     public $surfaces;
     public Layout $layout;
@@ -32,11 +35,13 @@ class Index extends Component
         return view('livewire.surface.index');
     }
 
-    public function removeSurfaceState(SurfaceState $state)
+    public function removeSurfaceState(SurfaceState $state): void
     {
-        $this->dispatch('hideModal');
-        $state->delete();
-        $this->dispatch('flashNotification', message: 'State deleted');
+        $this->askForConfirmation(function () use ($state){
+            $this->dispatch('hideModal');
+            $state->delete();
+            $this->dispatch('flashNotification', message: 'State deleted');
+        });
     }
 
     public function changeActiveState(SurfaceState $state)

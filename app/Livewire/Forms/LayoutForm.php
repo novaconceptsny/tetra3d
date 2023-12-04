@@ -81,6 +81,7 @@ class LayoutForm extends Modal
     {
         $this->askForConfirmation(function () use ($layout) {
             $layout->delete();
+            $this->close();
             $this->dispatch('refresh');
             $this->dispatch('flashNotification', message: 'Layout deleted');
         });

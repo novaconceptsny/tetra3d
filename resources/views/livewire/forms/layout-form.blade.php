@@ -20,7 +20,7 @@
 
     <x-slot name="buttons">
         @if($layout->id)
-        <button class="btn btn-sm btn-danger" type="button" wire:click="deleteLayout">
+        <button class="btn btn-sm btn-danger" type="button" wire:click="deleteLayout({{ $layout->id }})">
             {{ __('Delete Layout') }}
         </button>
         @endif

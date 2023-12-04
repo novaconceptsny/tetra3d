@@ -4,12 +4,14 @@ namespace App\Livewire\Modals;
 
 use App\Enums\Spot\PanoStatus;
 use App\Models\Spot;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Pusher\Pusher;
 use Symfony\Component\Process\Process;
+use WireElements\Pro\Components\Modal\Modal;
 
-class KrpanoTools extends Component
+class KrpanoTools extends Modal
 {
     public Spot $spot;
     public $output;
@@ -17,17 +19,17 @@ class KrpanoTools extends Component
     public $confirmation_required = false;
     public $confirmed = false;
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.modals.krpano-tools');
     }
 
-    public function mount(Spot $spot)
+    public function mount(Spot $spot): void
     {
         $this->spot = $spot;
     }
 
-    public function runCommand()
+    public function runCommand(): void
     {
         set_time_limit(-1);
 
@@ -84,13 +86,14 @@ class KrpanoTools extends Component
         }
     }
 
-    public function confirm(){
+    public function confirm(): void
+    {
         $this->confirmed = true;
         $this->output = false;
         $this->runCommand();
     }
 
-    public function getKrpanoCommand()
+    public function getKrpanoCommand(): array
     {
         $panos_path = $this->spot->tour_path;
 
@@ -111,7 +114,7 @@ class KrpanoTools extends Component
         return $command;
     }
 
-    private function cleanup()
+    private function cleanup(): void
     {
         $spot = $this->spot;
 

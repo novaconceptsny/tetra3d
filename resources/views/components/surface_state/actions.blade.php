@@ -17,11 +17,7 @@
                 <i class="fal fa-pencil"></i>
             </a>
             @if(!$comments)
-                @php($options = json_encode([
-                    'confirm_btn_attributes' => "onclick=\"window.livewire.emit('removeSurfaceState', $state->id)\"",
-                    'message' => 'Are you sure you want to delete this version ?'
-                ]))
-                <a href="#" class=" me-1" onclick="window.livewire.emit('showModal', 'modals.confirm', {{ $options }})">
+                <a href="#" class=" me-1" wire:click="removeSurfaceState({{ $state->id }})">
                     <i class="fal fa-trash text-danger"></i>
                 </a>
             @endif

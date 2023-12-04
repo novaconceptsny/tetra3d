@@ -4,7 +4,7 @@
             <div class="preview">
                 <h5 class="sidebar-heading d-flex align-items-center">
                     <span>{{ $project->name }}</span>
-                    @can('edit', $project)
+                    @can('update', $project)
                     <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
                     @endcan
                 </h5>
@@ -44,9 +44,6 @@
                                    wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
                                     <i class="fal fa-edit"></i>
                                 </a>
-                                {{--<a class="me-1 text-danger text-decoration-none" href="#" wire:click="deleteLayout({{ $layout->id }})">
-                                    <i class="fal fa-trash"></i>
-                                </a>--}}
                                 <a class="text-dark" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
                                     <i class="fal fa-sign-in"></i>
                                 </a>
