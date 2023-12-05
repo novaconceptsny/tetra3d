@@ -25,8 +25,8 @@ return [
                 \WireElements\Pro\Components\Modal\Resolvers\EnumPropertyResolver::class,
             ],
             'default-behavior' => [
-                'close-on-escape' => false,
-                'close-on-backdrop-click' => false,
+                'close-on-escape' => true,
+                'close-on-backdrop-click' => true,
                 'trap-focus' => true,
                 'remove-state-on-close' => false,
             ],

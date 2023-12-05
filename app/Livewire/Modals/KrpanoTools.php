@@ -13,7 +13,7 @@ use WireElements\Pro\Components\Modal\Modal;
 
 class KrpanoTools extends Modal
 {
-    public Spot $spot;
+    public Spot|int $spot;
     public $output;
     public $initialized = false;
     public $confirmation_required = false;
