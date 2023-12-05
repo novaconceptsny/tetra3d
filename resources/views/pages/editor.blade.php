@@ -97,7 +97,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Save artwork assignment as:</p>
+                    <p>Save art arrangement as:</p>
                     <form>
                         <div class="form-row">
                             <input type="text" class="form-control ml-2 mr-2" placeholder="assignment1" id="file_name">
