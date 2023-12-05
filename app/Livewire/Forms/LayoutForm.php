@@ -84,6 +84,7 @@ class LayoutForm extends Modal
             $this->close();
             $this->dispatch('refresh');
             $this->dispatch('flashNotification', message: 'Layout deleted');
+            $this->dispatch('layoutDeleted', layoutId: $layout->id);
         });
     }
 

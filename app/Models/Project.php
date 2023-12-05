@@ -28,6 +28,8 @@ class Project extends Model implements HasMedia
             $model->surfaceStates()->cursor()->each(
                 fn (SurfaceState $state) => $state->delete()
             );
+
+            $model->layouts()->delete();
         });
     }
 

@@ -55,7 +55,7 @@
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm
-                                permission="edit" :permission_params="$user"
+                                permission="delete" :permission_params="$user"
                                 :route="route('backend.users.destroy', $user)"
                                 :model="$user" :button="false"
                             />

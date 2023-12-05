@@ -178,4 +178,15 @@
         setLookat(hlookat, vlookat);
 
     </script>
+
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('layoutDeleted', (event) => {
+                let currentLayoutId = new URL(window.location.href).searchParams.get("layout_id");
+                if(currentLayoutId == event.layoutId){
+                    window.location = @js(route('dashboard'));
+                }
+            });
+        });
+    </script>
 @endsection
