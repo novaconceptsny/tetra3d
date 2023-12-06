@@ -22,15 +22,15 @@
                             <div class="card-head">
                                 <div class="card-header mb-2 border-0">
                                     <h6>{{ $project->name }}</h6>
+                                    <p>Created: <span>{{ $project->created_at->format('M d, Y') }}</span></p>
                                 </div>
-                                <p>Created: <span>{{ $project->created_at->format('M d, Y') }}</span></p>
 
                             </div>
                             <div class="card-text">
                                 <div class="c-line"></div>
                                 <div class="text">
                                     <p>{{ $project->layouts_count }} {{ str('Layout')->plural($project->tours_count) }}</p>
-                                    <p>{{ $project->artwork_collections_count }} {{ str('Artwork Collection')->plural($project->artwork_collections_count) }}</p>
+                                    <p>{{ $project->artwork_collections_count }} {{ str('Collection')->plural($project->artwork_collections_count) }}</p>
                                 </div>
                             </div>
 
@@ -49,7 +49,7 @@
                                 <div class="link-div">
                                     <a href="javascript:void(0)"
                                        wire:slide-over="tour-switcher, @js(['project' => $project->id])"
-                                       >View more
+                                       >Enter exhibition
                                         <div><i class="fa-solid fa-chevron-right"></i></div>
                                     </a>
                                 </div>

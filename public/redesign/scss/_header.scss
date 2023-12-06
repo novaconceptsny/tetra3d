@@ -146,6 +146,39 @@ header#header {
           align-items: stretch;
           gap: 10px;
           height: 100%;
+            .menu-links{
+                a{
+                    gap: 8px;
+                    text-decoration: none;
+                    font-size: 18px;
+                    line-height: 1.1;
+                    font-weight: 400;
+                    color: $dark-color;
+                    text-transform: capitalize;
+
+                    &:not(:hover){
+                        span{
+                            display: none;
+                        }
+                    }
+                    i{
+                        font-size: 20px !important;
+                    }
+                }
+
+                svg{
+                    //width: 20px !important;
+                    //aspect-ratio: 1;
+                    rect, line{
+                    //stroke-width: 2px;
+                    stroke: black;
+                    fill: #fff !important;
+                    }
+                    //path{
+                    //    stroke-width: 1px;
+                    //}
+                }
+            }
           .nav-left-btn-div{
             display: flex;
             // gap: 40px;

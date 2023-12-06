@@ -72,8 +72,11 @@
             </div>
 
             <div class="collection mt-5">
-                <h5>
+                <h5 class="d-flex align-items-center">
                     <span>Collections</span>
+                    @can('edit', $project)
+                        <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
+                    @endcan
                 </h5>
                 @forelse($project->artworkCollections as $collection)
                     <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
@@ -84,7 +87,12 @@
             </div>
 
             <div class="contributor">
-                <h5>Contributors</h5>
+                <h5 class="d-flex align-items-center">
+                    <span>Contributors</span>
+                    @can('edit', $project)
+                        <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
+                    @endcan
+                </h5>
                 <div class="img-container d-flex">
                     @forelse($project->contributors as $contributor)
                         <div class="name-tip" data-text="{{ $contributor->name }}">

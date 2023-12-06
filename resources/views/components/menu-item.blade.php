@@ -20,6 +20,8 @@
     @if($icon)
         <i class="{{ $icon }}" style="font-size: 19px;"></i>
     @endif
-    {{ $text }}
+        <span>
+            {{ $text }}
+        </span>
 </a>
 @endif

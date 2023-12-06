@@ -1,7 +1,7 @@
 main{
   section.editor {
     // margin-top: 71px;
-    height: calc(100vh - 46px);
+    height: calc(100dvh - 50px);
     overflow: hidden !important;
     box-sizing: border-box;
     z-index: 2 !important;
@@ -12,23 +12,24 @@ main{
           .side-col {
             // background: $dark-color;
             box-sizing: border-box;
-            height: calc(100vh - 46px);
-            top: 46px;
-            left: 0px;
-            padding: 0px 12px;
+            height: calc(100dvh - 50px);
+            top: 50px;
+            left: 0;
+            padding: 0 12px;
             position: fixed;
             .top-div {
               // height: 57px;
-              padding: 10px 0px 0px ;
+              padding: 10px 0 0;
               display: flex;
               align-items: center !important;
               justify-content: space-between;
               gap: 10px;
               .input-group{
+                  flex-wrap: nowrap;
                 .input-group-text{
-                  border-radius: 5;
-                  border: 1px solid #C6C6C6;
-                  
+                  border-radius: 5px;
+                  border: 1px solid #C6C6C6;;
+
                   i {
                     font-size: 14px;
                     // padding: 1px 12px;
@@ -45,6 +46,7 @@ main{
                   line-height: 20px;
                   color: $black-color;
                   margin-top: auto;
+                    padding-left: 0;
                   &::placeholder{
                     font-size: 18px;
                     font-weight: 500;
@@ -56,12 +58,12 @@ main{
                   }
                 }
               }
-              
+
               .all-btn {
                 height: 100% !important;
                 // padding: unset !important;
                 text-align: center;
-                width: fit-content;
+                width: 50%;
                 // border: none;
                 padding: 8px 3px;
                 background: $white-color;
@@ -88,7 +90,7 @@ main{
               //   display: flex;
               //   align-items: center;
               //   justify-content: space-between;
-                
+
               // }
               .text {
                 // padding-top: 10px;
@@ -121,23 +123,23 @@ main{
             .card-div {
               margin: 12px;
               border-radius:5px !important;
-              height: calc(100vh - 170px);
+              height: calc(100vh - 160px);
               // padding: 20px;
-              
-              
+
+
               .card-row {
                 border: 1px solid $dark-color;
                 overflow-x: hidden;
                 overflow-y: auto;
                 border-radius: 5px;
-                
+
                 // height: calc(100vh - 250px);
                 height: 100%;
                 background-color: $white-color;
                 padding: 10px 2px;
                 cursor: pointer;
-                
-    
+
+
                 .card {
                   // padding: 10px;
                   border-radius: 12px;
@@ -146,12 +148,12 @@ main{
                   &:hover{
                     // .card-body{
                     //   opacity: 1;
-                      
+
                     // }
                     -webkit-box-shadow:  0 .5rem 1rem rgba(0,0,0,.15)!important;
                     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
                   }
-    
+
                   .card-img {
                     padding: 0;
                     img {
@@ -186,15 +188,22 @@ main{
               }
             }
             @include pagination;
+              .pagination-div{
+                  margin-top: 0 !important;
+                  margin-left: 12px;
+                  ul{
+                      margin-bottom: 0 !important;
+                  }
+              }
             // comment view sidebar style
             .comment-div {
               margin-top: 10px;
               background-color: $white-color;
               // border-radius:10px !important;
-              height: calc(100vh - 170px);
+              height: calc(100dvh - 170px);
               border-radius: 5px;
-              
-              
+
+
               .comments {
                 height: 100%;
                 display: flex;
@@ -203,7 +212,7 @@ main{
                 overflow-x: hidden;
                 overflow-y: auto;
                 // justify-content: center;
-    
+
                 // gap: 10px;
                 background-color: $white-color;
                 border: 1px solid $dark-color;
@@ -231,7 +240,7 @@ main{
                       font-weight: 400;
                       font-size: 13px;
                       line-height: 15px;
-    
+
                       color: #bcbcbc;
                     }
                   }
@@ -256,7 +265,7 @@ main{
                 display: flex;
                 align-items: center;
                 color: #3c3b3c;
-    
+
                 &:focus {
                   outline: none;
                   box-shadow: none;
@@ -275,7 +284,7 @@ main{
                 line-height: 18px;
                 display: flex;
                 align-items: center;
-    
+
                 color: $white-color;
               }
             }
@@ -336,13 +345,13 @@ main{
                     left: 5px;
                     display: block;
                   }
-                  
+
                 }
                 i{
                   font-size: 23px;
                   color: $dark-color;
                 }
-              }  
+              }
             }
           }
         }

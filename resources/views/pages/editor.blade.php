@@ -21,6 +21,27 @@
     </x-menu>
 @endsection
 
+@section('menu-outside')
+    @php
+        $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
+    @endphp
+    <div class="menu-links d-flex align-items-center gap-4">
+        <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
+        <x-menu-item
+            target="_self"
+            text="360 View" icon="fal fa-vr-cardboard"
+            :route="route('tours.show', $query_params)"
+        />
+        <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
+        <x-menu-item
+            target="_self"
+            wire:modal="modals.share-tour, @js(['tourId' => $tour->id, 'layoutId' => $layout->id, 'spotId' => request('spot_id')])"
+            text="Share" icon="fal fa-share-nodes"
+        />
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
+    </div>
+@endsection
+
 @section('breadcrumbs')
     <x-breadcrumb.breadcrumb>
         <x-breadcrumb.item :text="$project ? $project->name : 'No Project'"/>

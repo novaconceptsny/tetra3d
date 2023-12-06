@@ -129,6 +129,25 @@ header#header nav .nav-container .navbar-collapse .menu-nav {
   gap: 10px;
   height: 100%;
 }
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a {
+  gap: 8px;
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 1.1;
+  font-weight: 400;
+  color: #222436;
+  text-transform: capitalize;
+}
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a:not(:hover) span {
+  display: none;
+}
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a i {
+  font-size: 20px !important;
+}
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links svg rect, header#header nav .nav-container .navbar-collapse .menu-nav .menu-links svg line {
+  stroke: black;
+  fill: #fff !important;
+}
 header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div {
   display: flex;
 }
@@ -932,33 +951,23 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card.card-h
   color: #ffffff !important;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-head {
+  height: 100%;
   margin-inline: 24px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
 }
-main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-head p {
-  white-space: nowrap;
-  text-align: end;
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 19px;
-  color: #222436;
-  margin: 0;
-}
-main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-header {
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-head .card-header {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  gap: 15px;
+  align-items: flex-start;
+  align-content: center;
+  justify-content: space-between;
   padding: 0;
-  height: 85px;
   background: transparent;
   border: none;
 }
-main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-header h6 {
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-head .card-header h6 {
   margin-bottom: 0;
   font-family: "Roboto";
   font-style: normal;
@@ -972,6 +981,17 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-head .card-header p {
+  white-space: nowrap;
+  text-align: end;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 35px;
+  color: gray;
+  margin: 0;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-text {
   margin-inline: 24px;
@@ -1082,6 +1102,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   font-size: 16px;
   line-height: 19px;
   color: #222436;
+  text-transform: capitalize;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer div a div {
   display: flex;
@@ -1091,7 +1112,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   border-radius: 50%;
   width: 22px;
   height: 22px;
-  background: #3D358B;
+  background: #000000;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer div a div i {
   margin: auto;
@@ -1680,7 +1701,7 @@ main section.version .container-fluid .row .col-3 .card .card-body .main-card-bo
 }
 
 main section.editor {
-  height: calc(100vh - 46px);
+  height: calc(100dvh - 50px);
   overflow: hidden !important;
   box-sizing: border-box;
   z-index: 2 !important;
@@ -1690,21 +1711,24 @@ main section.editor .editor-view .row {
 }
 main section.editor .editor-view .row .side-col {
   box-sizing: border-box;
-  height: calc(100vh - 46px);
-  top: 46px;
-  left: 0px;
-  padding: 0px 12px;
+  height: calc(100dvh - 50px);
+  top: 50px;
+  left: 0;
+  padding: 0 12px;
   position: fixed;
 }
 main section.editor .editor-view .row .side-col .top-div {
-  padding: 10px 0px 0px;
+  padding: 10px 0 0;
   display: flex;
   align-items: center !important;
   justify-content: space-between;
   gap: 10px;
 }
+main section.editor .editor-view .row .side-col .top-div .input-group {
+  flex-wrap: nowrap;
+}
 main section.editor .editor-view .row .side-col .top-div .input-group .input-group-text {
-  border-radius: 5;
+  border-radius: 5px;
   border: 1px solid #C6C6C6;
 }
 main section.editor .editor-view .row .side-col .top-div .input-group .input-group-text i {
@@ -1719,6 +1743,7 @@ main section.editor .editor-view .row .side-col .top-div .input-group input {
   line-height: 20px;
   color: #000000;
   margin-top: auto;
+  padding-left: 0;
 }
 main section.editor .editor-view .row .side-col .top-div .input-group input::placeholder {
   font-size: 18px;
@@ -1732,7 +1757,7 @@ main section.editor .editor-view .row .side-col .top-div .input-group input:focu
 main section.editor .editor-view .row .side-col .top-div .all-btn {
   height: 100% !important;
   text-align: center;
-  width: fit-content;
+  width: 50%;
   padding: 8px 3px;
   background: #ffffff;
   border: 1px solid #C6C6C6;
@@ -1801,7 +1826,7 @@ main section.editor .editor-view .row .side-col .top-div .outside .editor-commen
 main section.editor .editor-view .row .side-col .card-div {
   margin: 12px;
   border-radius: 5px !important;
-  height: calc(100vh - 170px);
+  height: calc(100vh - 160px);
 }
 main section.editor .editor-view .row .side-col .card-div .card-row {
   border: 1px solid #222436;
@@ -1893,10 +1918,17 @@ main section.editor .editor-view .row .side-col .pagination-div.pagination-white
 main section.editor .editor-view .row .side-col .pagination-div.pagination-white .pagination .page-item.active .page-link {
   color: #ffffff;
 }
+main section.editor .editor-view .row .side-col .pagination-div {
+  margin-top: 0 !important;
+  margin-left: 12px;
+}
+main section.editor .editor-view .row .side-col .pagination-div ul {
+  margin-bottom: 0 !important;
+}
 main section.editor .editor-view .row .side-col .comment-div {
   margin-top: 10px;
   background-color: #ffffff;
-  height: calc(100vh - 170px);
+  height: calc(100dvh - 170px);
   border-radius: 5px;
 }
 main section.editor .editor-view .row .side-col .comment-div .comments {
