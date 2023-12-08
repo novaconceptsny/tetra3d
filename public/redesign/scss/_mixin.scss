@@ -16,7 +16,7 @@ $dark-color: #222436;
             background-color: transparent;
             border: none;
             color: $dark-color;
-            font-family: 'Poppins';
+            font-family: 'Mona-Sans';
             font-style: normal;
             font-weight: 600;
             font-size: 16px;
@@ -48,7 +48,7 @@ $dark-color: #222436;
         }
         &.active{
           background-color: $dark-color !important;
-          border-radius: 0px;
+          border-radius: 0;
           .page-link{
             color: $white-color;
           }
@@ -62,7 +62,7 @@ $dark-color: #222436;
   background: $white-color;
   // border: 1px solid $dark-color;
   border-radius: 10px;
-  font-family: "Open Sans";
+  font-family: 'Mona-Sans';
   font-style: normal;
   font-weight: 600;
   font-size: 18px !important;
@@ -96,7 +96,7 @@ $dark-color: #222436;
       position: relative;
       button {
         padding: 12px 24px;
-        font-family: "Roboto";
+        font-family: 'Mona-Sans';
         font-style: normal;
         font-weight: 400;
         font-size: 22px;
@@ -106,7 +106,7 @@ $dark-color: #222436;
         color: $white-color;
         border: none;
         &:hover {
-          background: $inter-font;
+          background: 'Mona-Sans';
         }
       }
       .d-menu-btn {
@@ -123,7 +123,7 @@ $dark-color: #222436;
           display: block;
           border-top: 1px solid #c6c6c6;
           padding: 20px 0px 11px 20px;
-          font-family: "Roboto";
+          font-family: 'Mona-Sans';
           font-style: normal;
           font-weight: 400;
           font-size: 16px;
@@ -151,7 +151,7 @@ $dark-color: #222436;
       position: relative;
       .dropdown {
         a {
-          font-family: "Open Sans";
+          font-family: 'Mona-Sans';
           font-style: normal;
           font-weight: 400;
           font-size: 16px;
@@ -177,7 +177,7 @@ $dark-color: #222436;
               height: 41px;
             }
             .profile-name {
-              font-family: "Inter";
+              font-family: 'Mona-Sans';
               font-style: normal;
               font-weight: 500;
               font-size: 16px;
@@ -186,7 +186,7 @@ $dark-color: #222436;
             }
             .profile-email {
               display: block;
-              font-family: "Inter";
+              font-family: 'Mona-Sans';
               font-style: normal;
               font-weight: 400;
               font-size: 14px;
@@ -207,7 +207,7 @@ $dark-color: #222436;
                 align-items: center;
                 gap: 11px;
                 padding: 10px 3px;
-                font-family: "Inter";
+                font-family: 'Mona-Sans';
                 font-style: normal;
                 font-weight: 400;
                 font-size: 14px;
@@ -244,7 +244,7 @@ $dark-color: #222436;
           gap: 23px;
 
           h2 {
-            font-family: "Open Sans";
+            font-family: 'Mona-Sans';
             font-style: normal;
             font-weight: 600;
             font-size: 64px;
@@ -253,7 +253,7 @@ $dark-color: #222436;
           }
         }
         p {
-          font-family: "Open Sans";
+          font-family: 'Mona-Sans';
           font-style: normal;
           font-weight: 400;
           font-size: 18px;
@@ -267,7 +267,7 @@ $dark-color: #222436;
         display: flex;
         align-items: center;
         gap: 20px;
-        font-family: "Open Sans";
+        font-family: 'Mona-Sans';
         font-style: normal;
         font-weight: 600;
         font-size: 18px;
@@ -299,7 +299,7 @@ $dark-color: #222436;
     h5 {
       margin-top: 71px;
       margin-bottom: 38px;
-      font-family: "Inter";
+      font-family: 'Mona-Sans';
       font-style: normal;
       font-weight: 700;
       font-size: 40px;
@@ -354,7 +354,7 @@ $dark-color: #222436;
       line-height: 19px;
       margin-top: 30px;
       position: relative;
-      font-family: $roboto-font;
+      font-family: 'Mona-Sans';
       select {
         display: none; /*hide original SELECT element: */
       }
@@ -419,7 +419,7 @@ $dark-color: #222436;
       padding: 12.25px;
       background-color: $white-color;
       text-transform: capitalize;
-      font-family: $roboto-font;
+      font-family: 'Mona-Sans';
       font-size: 16px;
       color: $dark-color;
       line-height: 19px;
@@ -470,7 +470,7 @@ $dark-color: #222436;
                         margin-inline: auto;
                     }
                     text-transform: capitalize;
-                    font-family: "Roboto";
+                    font-family: 'Mona-Sans';
                     font-style: normal;
                     font-weight: 500;
                     font-size: 30px !important;
@@ -481,7 +481,7 @@ $dark-color: #222436;
                 h6 {
                     text-align: center;
                     margin: 32px 0;
-                    font-family: "Roboto";
+                    font-family: 'Mona-Sans';
                     font-style: normal;
                     font-weight: 500 !important;
                     font-size: 18px !important;
@@ -498,7 +498,7 @@ $dark-color: #222436;
                     height: 33px;
                     border-radius: 50%;
                     background-color: $dark-color;
-                    font-family: "Roboto";
+                    font-family: 'Mona-Sans';
                     font-style: normal;
                     font-weight: 400;
                     font-size: 22px;
@@ -516,7 +516,7 @@ $dark-color: #222436;
                     }
                 }
                 .col-btn{
-                    font-family: $roboto-font;
+                    font-family: 'Mona-Sans';
                     // margin-left: 15px;
                     text-decoration: none;
                     width: 100%;

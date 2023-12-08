@@ -16,7 +16,7 @@ main{
                   display: block;
                   background-color: $dark-color;
                   color: $white-color;
-                  font-family: "Roboto";
+                  font-family: 'Mona-Sans';
                   font-style: normal;
                   font-weight: 400;
                   font-size: 22px;
@@ -29,12 +29,12 @@ main{
                   gap: 30px;
                   // flex-direction: column;
                   gap: 30px;
-                  
+
                   .custum-form-group {
                     margin-bottom: 28px;
                     // width: 50%;
                     label {
-                      font-family: "Roboto";
+                      font-family: 'Mona-Sans';
                       font-style: normal;
                       font-weight: 400;
                       font-size: 18px;
@@ -45,15 +45,15 @@ main{
                       // width: 100%;
                       padding: 18px 22px 14px 22px;
                       border: 1px solid #3c3b3c;
-                      font-family: "Roboto";
+                      font-family: 'Mona-Sans';
                       font-style: normal;
                       font-weight: 400;
                       font-size: 14px;
                       line-height: 16px;
-      
+
                       color: $black-color;
                     }
-      
+
                     .pic-button {
                       display: flex;
                       gap: 12px;
@@ -75,7 +75,7 @@ main{
                         background-color: $white-color;
                         border: 1px dashed #3c3b3c;
                         height: fit-content;
-                        font-family: "Roboto";
+                        font-family: 'Mona-Sans';
                         font-style: normal;
                         font-weight: 400;
                         font-size: 14px;
@@ -101,7 +101,7 @@ main{
                       background: transparent;
                       border: 1px solid $dark-color;
                       border-radius: 8px;
-                      font-family: "Roboto";
+                      font-family: 'Mona-Sans';
                       font-style: normal;
                       font-weight: 400;
                       font-size: 22px;
@@ -127,11 +127,11 @@ main{
                   // vertical-align: middle;
                   background-color: $dark-color;
                   color: $white-color;
-                  font-family: "Roboto";
+                  font-family: 'Mona-Sans';
                   font-style: normal;
                   font-weight: 400;
                   font-size: 22px;
-                  line-height: 26px;  
+                  line-height: 26px;
                   padding: 18px;
                 }
                 form {
@@ -141,7 +141,7 @@ main{
                   gap: 30px;
                   .custum-form-group {
                     label {
-                      font-family: "Roboto";
+                      font-family: 'Mona-Sans';
                       font-style: normal;
                       font-weight: 400;
                       font-size: 18px;
@@ -164,7 +164,7 @@ main{
                       background: transparent;
                       border: 1px solid $dark-color;
                       border-radius: 8px;
-                      font-family: "Roboto";
+                      font-family: 'Mona-Sans';
                       font-style: normal;
                       font-weight: 400;
                       font-size: 22px;

@@ -40,7 +40,7 @@ main{
                 .custom-select {
 
                   position: relative;
-                  font-family: $roboto-font;
+                  font-family: 'Mona-Sans';
                   font-weight: 400;
                   font-size: 16px;
                   line-height: 19px;
@@ -165,7 +165,7 @@ main{
 
                             h6 {
                                 margin-bottom: 0;
-                                font-family: 'Roboto';
+                                font-family: 'Mona-Sans';
                                 font-style: normal;
                                 font-weight: 800;
                                 font-size: 30px;
@@ -185,7 +185,7 @@ main{
 
                                 white-space: nowrap;
                                 text-align: end;
-                                font-family: 'Roboto';
+                                font-family: 'Mona-Sans';
                                 font-style: normal;
                                 font-weight: 500;
                                 font-size: 14px;
@@ -210,7 +210,7 @@ main{
                       margin-top: 12px;
 
                       p {
-                        font-family: "Roboto";
+                        font-family: 'Mona-Sans';
                         font-style: normal;
                         font-weight: 300;
                         font-size: 16px;
@@ -251,7 +251,7 @@ main{
                           text-transform: capitalize;
                           font-size: 24px;
                           font-weight: 600;
-                          font-family: $roboto-font;
+                          font-family: 'Mona-Sans';
                         }
                         .img-div {
                           // height: 100%;
@@ -313,7 +313,7 @@ main{
                         display: flex;
                         align-items: center;
                         text-decoration: none;
-                        font-family: 'Roboto';
+                        font-family: 'Mona-Sans';
                         font-style: normal;
                         font-weight: 500;
                         font-size: 16px;
