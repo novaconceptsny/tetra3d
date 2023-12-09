@@ -91,8 +91,9 @@
 <script src="{{ asset('js/modals.js') }}"></script>
 
 <script>
-    Livewire.on('flashNotification', (message, type = 'success') => {
-        toastr[type](message)
+    Livewire.on('flashNotification', (event) => {
+        let type = event.type ? event.type : 'success';
+        toastr[type](event.message)
     });
 
     Echo.channel('shell')

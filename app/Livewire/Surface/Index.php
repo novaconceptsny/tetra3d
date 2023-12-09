@@ -40,6 +40,14 @@ class Index extends Component
         $this->askForConfirmation(function () use ($state){
             $this->dispatch('hideModal');
             $state->delete();
+
+            if ($state->isActive()){
+                $stateToActive = SurfaceState::query()
+                    ->where('surface_id', $state->surface_id)
+                    ->where('layout_id', $state->layout_id)
+                    ->first();
+                $stateToActive?->setAsActive();
+            }
             $this->dispatch('flashNotification', message: 'State deleted');
         });
     }

@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Overlay extends Component
 {
-    public $overlays = [];
+    public array $overlays = [];
     public $spot;
 
     public function render()
@@ -22,7 +22,7 @@ class Overlay extends Component
     public function add()
     {
         $this->overlays[] = [
-            'uuid' => str()->uuid(),
+            'uuid' => str()->uuid()->toString(),
             'ath' => 0,
             'atv' => 0,
             'scale' => 1,

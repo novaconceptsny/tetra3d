@@ -6,21 +6,20 @@ use App\Models\Map;
 use App\Models\Tour;
 use Livewire\Component;
 use Spatie\MediaLibraryPro\Livewire\Concerns\WithMedia;
+use WireElements\Pro\Concerns\InteractsWithConfirmationModal;
 
 class Index extends Component
 {
     use WithMedia;
+    use InteractsWithConfirmationModal;
 
     public Tour $tour;
     public Map $selectedMap;
     public $creatingNewMap = false;
     public $spots = array();
-    public $mapImage;
-    public $deleteOptions = array(
-        'confirm_btn_attributes' => "wire:click.prevent=\"\$emit('delete')\""
-    );
 
-    public $mediaComponentNames = ['mapImage'];
+    public $mapImage = [];
+
     protected $listeners = ['delete'];
 
     protected $rules = [
@@ -61,6 +60,7 @@ class Index extends Component
         $this->creatingNewMap = true;
         $this->selectedMap = new Map;
         $this->selectedMap->tour_id = $this->tour->id;
+        $this->mapImage = [];
         $this->setMapSpots();
     }
 
@@ -79,19 +79,19 @@ class Index extends Component
 
         $this->tour->refresh();
 
-        $this->clearMedia();
-
         $this->selectMap($this->selectedMap);
         $this->dispatch('flashNotification', message: 'Map updated');
     }
 
     public function delete()
     {
-        $this->selectedMap->delete();
-        $this->tour->refresh();
-        $this->selectMap($this->tour->map);
-        $this->dispatch('hideModal');
-        $this->dispatch('flashNotification', message: 'Map deleted');
+        $this->askForConfirmation(function (){
+            $this->selectedMap->delete();
+            $this->tour->refresh();
+            $this->selectMap($this->tour->map);
+            $this->dispatch('hideModal');
+            $this->dispatch('flashNotification', message: 'Map deleted');
+        });
     }
 
     public function setMapSpots()

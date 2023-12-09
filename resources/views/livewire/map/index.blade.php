@@ -21,10 +21,9 @@
             <x-backend::inputs.text col="col-6" name="selectedMap.height" wire:model.live="selectedMap.height"/>
             <div class="col-12">
                 <h5>{{ __('Map Image') }}</h5>
-
-                <x-backend::media-attachment
-                    name="mapImage" rules="max:102400"
-                    :media="$selectedMap?->getFirstMedia('image')"
+                <livewire:media-library
+                    wire:model="mapImage" rules="max:102400" collection="image"
+                    :model="$selectedMap" :multiple="false" :editable-name="false"
                 />
             </div>
 
@@ -48,7 +47,7 @@
 
             <div class="text-end">
                 @if(!$creatingNewMap)
-                <button class="btn btn-danger me-2" type="button" wire:click="$dispatch('showModal', {alias: 'modals.confirm', params: @json($deleteOptions)})">
+                <button class="btn btn-danger me-2" type="button" wire:click="delete">
                     {{ __('Delete') }}
                 </button>
                 @endif

@@ -16,13 +16,13 @@
                 <option value="{{ $collection->id }}">{{ $collection->name }}</option>
             @endforeach
         </select>
-{{--        <div class="outside">--}}
-{{--            <div class="line"></div>--}}
-{{--            <button class="editor-comment-btn btn" @click="sidebar = 'comments'">--}}
-{{--                <i class="fal fa-comment-alt-lines"></i>--}}
-{{--                <span>{{ __('Comments') }}</span>--}}
-{{--            </button>--}}
-{{--        </div>--}}
+        {{--<div class="outside">
+            <div class="line"></div>
+            <button class="editor-comment-btn btn" @click="sidebar = 'comments'">
+                <i class="fal fa-comment-alt-lines"></i>
+                <span>{{ __('Comments') }}</span>
+            </button>
+        </div>--}}
     </div>
     <div class="card-div">
         <div class="card-row row">
