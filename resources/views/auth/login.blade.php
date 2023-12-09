@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"/>
     <!-- own css file  -->
     <link rel="stylesheet" href="{{ asset('redesign/css/style.css') }}"/>
+    @include('backend.includes.partial.favicon')
 </head>
 <body class="login_body">
 
 <main class="login">
     <div class="inner-div col-lg-6">
             <div class="heading">
-                <img src="{{ asset('redesign/images/logo.png') }}" alt="logo-img"/>
-                <h3>{{ config('app.name') }}</h3>
+                <img src="{{ asset('logo.png') }}" alt="logo-img"/>
             </div>
         <div class="fir-inner">
             <h4 class="login d-flex align-items-center justify-content-center">

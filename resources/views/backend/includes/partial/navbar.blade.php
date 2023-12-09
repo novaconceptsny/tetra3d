@@ -18,12 +18,10 @@
                 </span>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
-                <!-- item-->
                 <div class=" dropdown-header noti-title">
                     <h6 class="text-overflow m-0">{{ __('Welcome') }} {{ user()->name }}!</h6>
                 </div>
 
-                <!-- item-->
                 @if(session()->has('admin_id'))
                     <form class="d-inline" action="{{ route('back.to.admin') }}" method="post">
                         @csrf

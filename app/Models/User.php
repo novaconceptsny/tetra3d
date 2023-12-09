@@ -37,6 +37,7 @@ class User extends Authenticatable implements HasMedia
         static::deleted(function(self $model) {
             $model->projects()->detach();
             $model->layouts()->delete();
+            $model->surfaceStates()->delete();
         });
     }
 
@@ -60,6 +61,11 @@ class User extends Authenticatable implements HasMedia
     public function layouts()
     {
         return $this->hasMany(Layout::class);
+    }
+
+    public function surfaceStates()
+    {
+        return $this->hasMany(SurfaceState::class);
     }
 
     /*** ============= Attributes ============= ***/
