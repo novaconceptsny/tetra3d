@@ -154,7 +154,11 @@ header#header nav .nav-container .navbar-collapse .menu-nav {
   gap: 10px;
   height: 100%;
 }
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links {
+  margin-right: 40px;
+}
 header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a {
+  position: relative;
   gap: 8px;
   text-decoration: none;
   font-size: 18px;
@@ -163,11 +167,36 @@ header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a {
   color: #222436;
   text-transform: capitalize;
 }
-header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a:not(:hover) span {
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a span {
   display: none;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a i {
   font-size: 20px !important;
+}
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a svg {
+  width: 24px;
+  height: 24px;
+}
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a::before {
+  content: attr(data-content);
+  width: fit-content;
+  padding: 5px 12px;
+  background: #222436;
+  font-family: "Mona-Sans";
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  white-space: nowrap;
+  border-radius: 4px;
+  border-top-left-radius: 0;
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 9999;
+}
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a:hover::before {
+  display: block;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .menu-links svg rect, header#header nav .nav-container .navbar-collapse .menu-nav .menu-links svg line {
   stroke: black;
@@ -212,7 +241,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div .n
   position: absolute;
   padding: 0;
   top: calc(100% + 2px);
-  left: calc(-100% - 103px);
+  left: calc(-100% - 97px);
   background-color: #ffffff;
   min-width: 223px;
   border-radius: 0px 0px 10px 10px;
@@ -379,7 +408,7 @@ main.login .inner-div .heading {
 main.login .inner-div .heading h3 {
   margin-bottom: 0;
   color: #222436;
-  font-family: "Roboto";
+  font-family: "Mona-Sans";
   font-size: 50px;
   font-style: normal;
   font-weight: 500;
@@ -387,6 +416,10 @@ main.login .inner-div .heading h3 {
 main.login .inner-div .heading svg {
   width: 55px !important;
   height: 55px !important;
+}
+main.login .inner-div .heading img {
+  object-fit: cover;
+  height: 55px;
 }
 main.login .inner-div .login {
   color: #000000;
@@ -788,7 +821,7 @@ main section.main-page {
   position: relative;
 }
 main section.main-page .main-intro {
-  padding-top: 50px;
+  margin-top: 50px;
   height: calc(100vh - 83px);
   overflow: auto;
 }
@@ -865,21 +898,20 @@ main section.main-page .main-intro .card-row .inner-row {
 main section.main-page .main-intro .card-row .inner-row h5 {
   width: fit-content;
   display: inline !important;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  font-family: "Inter";
+  margin-bottom: 16px;
+  font-family: "Mona-Sans";
   font-style: normal;
   font-weight: 700;
-  font-size: 40px;
-  line-height: 90px;
+  font-size: 30px;
+  line-height: 1.3;
   color: #222436;
 }
 main section.main-page .main-intro .card-row .inner-row .sorted-btn {
-  margin: 20px 0px;
+  margin-bottom: 16px;
   width: fit-content;
   display: flex;
   align-items: center;
-  gap: 0px;
+  gap: 0;
 }
 main section.main-page .main-intro .card-row .inner-row .sorted-btn span {
   width: 105px;
@@ -997,8 +1029,8 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   font-family: "Mona-Sans";
   font-style: normal;
   font-weight: 800;
-  font-size: 30px;
-  line-height: 35px;
+  font-size: 20px;
+  line-height: 1.2;
   color: #222436;
   display: -webkit-box;
   -webkit-box-pack: center; /* Center horizontally */
@@ -1013,8 +1045,8 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   font-family: "Mona-Sans";
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 35px;
+  font-size: 12px;
+  line-height: 24px;
   color: gray;
   margin: 0;
 }

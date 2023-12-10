@@ -148,7 +148,9 @@ header#header {
           gap: 10px;
           height: 100%;
             .menu-links{
+                margin-right: 40px;
                 a{
+                    position: relative;
                     gap: 8px;
                     text-decoration: none;
                     font-size: 18px;
@@ -156,15 +158,44 @@ header#header {
                     font-weight: 400;
                     color: $dark-color;
                     text-transform: capitalize;
-
-                    &:not(:hover){
-                        span{
-                            display: none;
-                        }
+                    span{
+                        display: none;
                     }
+
                     i{
                         font-size: 20px !important;
                     }
+
+                    svg{
+                        width: 24px;
+                        height: 24px;
+                    }
+
+                    &::before{
+                        content: attr(data-content);
+                        width: fit-content;
+                        padding: 5px 12px;
+                        background: $dark-color;
+                        font-family: 'Mona-Sans';
+                        font-weight: 500;
+                        font-size: 12px;
+                        color: #fff;
+                        white-space: nowrap;
+                        border-radius: 4px;
+                        border-top-left-radius: 0;
+                        display: none;
+                        position: absolute;
+                        top: calc(100% + 4px);
+                        left: 0;
+                        z-index: 9999;
+
+                    }
+                    &:hover{
+                        &::before{
+                            display: block;
+                        }
+                    }
+
                 }
 
                 svg{
@@ -223,7 +254,7 @@ header#header {
                 position: absolute;
                 padding: 0;
                 top: calc(100% + 2px);
-                left: calc(-100% - 103px);
+                left: calc(-100% - 97px);
                 background-color: $white-color;
                 min-width: 223px;
                 border-radius: 0px 0px 10px 10px;

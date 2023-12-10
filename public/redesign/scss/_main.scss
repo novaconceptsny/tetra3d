@@ -3,7 +3,7 @@ main{
     overflow: hidden;
     position: relative;
       .main-intro {
-          padding-top: 50px;
+          margin-top: 50px;
           height: calc(100vh - 83px);
           overflow: auto;
 
@@ -11,24 +11,24 @@ main{
           .card-row {
             .inner-row {
               padding-inline: 50px;
+
               h5 {
                 width: fit-content;
                 display: inline !important;
-                margin-top: 30px;
-                margin-bottom: 30px;
-                font-family: "Inter";
+                  margin-bottom: 16px;
+                font-family: 'Mona-Sans';
                 font-style: normal;
                 font-weight: 700;
-                font-size: 40px;
-                line-height: 90px;
+                font-size: 30px;
+                line-height: 1.3;
                 color: $dark-color;
               }
               .sorted-btn {
-                margin: 20px 0px;
+                  margin-bottom: 16px;
                 width: fit-content;
                 display: flex;
                 align-items: center;
-                gap: 0px;
+                gap: 0;
                 span{
                   width: 105px;
                   font-weight: 700;
@@ -168,8 +168,8 @@ main{
                                 font-family: 'Mona-Sans';
                                 font-style: normal;
                                 font-weight: 800;
-                                font-size: 30px;
-                                line-height: 35px;
+                                font-size: 20px;
+                                line-height: 1.2;
                                 //text-align: center;
                                 color: $dark-color;
 
@@ -188,8 +188,8 @@ main{
                                 font-family: 'Mona-Sans';
                                 font-style: normal;
                                 font-weight: 500;
-                                font-size: 14px;
-                                line-height: 35px;
+                                font-size: 12px;
+                                line-height: 24px;
                                 color: gray;
                                 margin: 0;
                             }
