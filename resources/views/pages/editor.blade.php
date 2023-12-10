@@ -5,6 +5,13 @@
         $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
     @endphp
     <div class="menu-links d-flex align-items-center gap-4">
+        <x-menu-item
+            text="Current Surface" icon="fal fa-question"
+            :route="route('tours.surfaces', $query_params)"
+            data-bs-toggle="modal" data-bs-target="#mapImage"
+            :visible="$surface->getFirstMediaUrl('layout')"
+        />
+
         <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
         <x-menu-item
             target="_self"
@@ -42,12 +49,6 @@
 
     </x-breadcrumb.breadcrumb>
 @endsection
-
-{{--<div class="alert alert-danger fade slow w-100 row hide" style="position: absolute; z-index: 200; left: 0.8vw;"
-     role="alert" id="error_alert">
-    <strong>Cannot save! &nbsp</strong>Overlap detected on canvas between 2 or more images.
-</div>--}}
-
 
 @section('content')
     <section class="editor">
@@ -118,6 +119,20 @@
     </div>
 
     <x-editor.crop-button/>
+
+    <div class="modal fade" id="mapImage" tabindex="-1" >
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Current Wall</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ $surface->getFirstMediaUrl('layout') }}">
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
