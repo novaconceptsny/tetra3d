@@ -53,13 +53,16 @@ class TourController extends Controller
             abort_if(!user()->isAdmin(), 404);
         }
 
-        $spotQuery = Spot::with([
-            'surfaces',
-            'surfaces.states.media',
-            'surfaces.states.likes',
-        ])->when($layout_id, fn($query) => $query->with([
-            'surfaces.states' => fn($query) => $query->forLayout($layout->id),
-        ]))->where('tour_id', $tour->id);
+        $spotQuery = Spot::query()
+            ->with([
+                'surfaces',
+                'surfaces.states.media',
+                'surfaces.states.likes',
+            ])
+            ->when($layout_id, fn($query) => $query->with([
+                'surfaces.states' => fn($query) => $query->forLayout($layout->id),
+            ]))
+            ->where('tour_id', $tour->id);
 
         $spot = $spot_id ? $spotQuery->findOrFail($spot_id)
             : $spotQuery->firstOrFail();

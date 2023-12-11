@@ -74,7 +74,9 @@ class SurfaceState extends Model implements HasMedia
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault([
+            'first_name' => 'Guest'
+        ]);
     }
 
     public function project()

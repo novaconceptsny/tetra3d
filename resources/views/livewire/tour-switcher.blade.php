@@ -29,7 +29,7 @@
                         <th></th>
                     </tr>
 
-                    @forelse($project->layouts as $layout)
+                    @forelse($project->layouts()->latest()->get() as $layout)
                         <tr>
                             <td>{{ $layout->name }}</td>
                             <td>{{ $layout->tour->name }}</td>

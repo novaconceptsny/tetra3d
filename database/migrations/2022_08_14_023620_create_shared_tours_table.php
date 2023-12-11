@@ -10,11 +10,11 @@ return new class extends Migration {
         Schema::create('shared_tours', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->nullable();
-            $table->foreignId('tour_id');
-            $table->foreignId('project_id');
+            $table->foreignId('layout_id');
+            $table->foreignId('project_id'); //todo:: remove column
             $table->foreignId('user_id');
-            $table->foreignId('spot_id')->nullable();
-            $table->json('surface_states')->nullable();
+            $table->foreignId('spot_id')->nullable(); //todo:: remove column
+            $table->json('surface_states')->nullable(); //todo:: remove column
             $table->timestamps();
         });
     }

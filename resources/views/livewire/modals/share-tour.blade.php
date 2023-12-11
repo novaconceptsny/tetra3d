@@ -1,8 +1,6 @@
 <x-wire-elements-pro::bootstrap.modal>
-    <div class="modal-header">
-        <h5>Share Tour</h5>
-    </div>
-    <div class="modal-body">
+    <x-slot name="title">Share Tour</x-slot>
+    <div>
         @if($spotSelectionAllowed && !$link)
             <div class="form-check form-check-inline">
                 <input class="form-check-input mt-2" type="radio" id="share_tour" value="tour" wire:model.live="share_type">
@@ -31,14 +29,15 @@
                 </p>
             </div>
         @endif
+    </div>
 
-        <div class="d-flex justify-content-end">
-            <div>
-                @if(!$link)
-                    <button type="button" class="btn btn-sm btn-secondary" wire:click="generateLink">{{ __('Generate Link') }}</button>
-                @endif
-                <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal">{{ __('Close') }}</button>
-            </div>
-        </div>
+    <div>
+        @if(!$link)
+            <button type="button" class="btn btn-sm btn-secondary" wire:click="generateLink">{{ __('Generate Link') }}</button>
+        @endif
+
+        <button class="btn btn-sm btn-primary" type="button" wire:click="$dispatch('modal.close')">
+            {{ __('Close') }}
+        </button>
     </div>
 </x-wire-elements-pro::bootstrap.modal>

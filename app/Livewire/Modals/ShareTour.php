@@ -11,7 +11,7 @@ use WireElements\Pro\Components\Modal\Modal;
 
 class ShareTour extends Modal
 {
-    public $layoutId;
+    public Layout|int $layout;
     public $tourId;
     public $spotId;
 
@@ -21,10 +21,9 @@ class ShareTour extends Modal
     public $spotSelectionAllowed = false;
     public $spot = null;
 
-    public function mount($tourId, $layoutId, $spotId = null)
+    public function mount(Layout $layout, $spotId = null)
     {
-        $this->tourId = $tourId;
-        $this->layoutId = $layoutId;
+        $this->layout = $layout;
         $this->spotId = $spotId;
         $this->spot = Spot::find($this->spotId);
 
@@ -40,10 +39,9 @@ class ShareTour extends Modal
 
     public function generateLink()
     {
-        $tour = Tour::findOrFail($this->tourId);
-        $layout = Layout::findOrFail($this->layoutId);
+        $layout = $this->layout;
 
-        $surfaces = $tour->surfaces()->with([
+        /*$surfaces = $layout->surfaces()->with([
             'states' => fn($query) => $query->forLayout($layout->id)->active(),
         ])->get();
 
@@ -51,13 +49,14 @@ class ShareTour extends Modal
 
         foreach ($surfaces as $surface) {
             $surface_states[$surface->id] = $surface->states->first()?->id;
-        }
+        }*/
+
+        $surface_states = $layout->surfaceStates->pluck('id')->toArray();
 
         $sharedTour = SharedTour::updateOrCreate([
             'spot_id' => $this->share_type == 'spot' ? $this->spot?->id : null,
             'layout_id' => $layout->id,
             'user_id' => auth()->id(),
-            'tour_id' => $tour->id,
             'surface_states' => json_encode($surface_states),
         ], []);
 

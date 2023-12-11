@@ -36,12 +36,12 @@
             icon="fal fa-map-marked-alt"
             data-bs-toggle="modal" data-bs-target="#tourMapModal"
         />
-        {{--<x-menu-item
+        <x-menu-item
             :visible="$layout && !$tour_is_shared" target="_self"
-            onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'tourId': @js($tour->id), 'layoutId': @js(request('layout_id')), 'spotId': @js(request('spot_id')) }})"
+            onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
             text="Share" icon="fal fa-share-nodes"
-        />--}}
-        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
+        />
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')" :visible="!$tour_is_shared"/>
     </x-menu>
 @endsection
 
