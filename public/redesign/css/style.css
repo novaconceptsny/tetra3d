@@ -98,7 +98,7 @@ header#header nav .nav-container .navbar-brand {
   padding: 0;
 }
 header#header nav .nav-container .navbar-brand img {
-  height: 40px;
+  height: 35px;
 }
 header#header nav .nav-container .navbar-collapse {
   display: flexbox;
@@ -138,7 +138,7 @@ header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-lin
   height: 5px;
   position: absolute;
   background-color: #222436;
-  top: calc(100% + 6px);
+  top: calc(100% + 5px);
   left: 0;
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav a {
@@ -297,10 +297,11 @@ header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown a
   border-radius: 50% !important;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown ul.dropdown-menu {
+  margin-top: 0;
   width: 230px;
   position: absolute;
   left: -170px;
-  top: calc(100% + 2px);
+  top: calc(100% + 3px);
   padding: 10px;
   background: #ffffff;
   box-shadow: 0px 0px 35px rgba(0, 0, 0, 0.15);
@@ -1304,7 +1305,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
 }
 .sidebar-div .sidebar.mysidebar div h6 {
   text-align: center;
-  margin: 32px 0;
+  margin: 0 0 32px;
   font-family: "Mona-Sans";
   font-style: normal;
   font-weight: 500 !important;
@@ -1359,7 +1360,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
 .sidebar-div .sidebar.mysidebar .preview {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 .sidebar-div .sidebar.mysidebar .tours {
   margin-bottom: 42px;

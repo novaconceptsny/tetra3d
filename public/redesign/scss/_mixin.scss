@@ -480,7 +480,7 @@ $dark-color: #222436;
                 }
                 h6 {
                     text-align: center;
-                    margin: 32px 0;
+                    margin: 0 0 32px;
                     font-family: 'Mona-Sans';
                     font-style: normal;
                     font-weight: 500 !important;
@@ -540,7 +540,7 @@ $dark-color: #222436;
             .preview {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 24px;
+                margin-bottom: 10px;
             }
             .tours {
                 margin-bottom: 42px;

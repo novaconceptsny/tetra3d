@@ -87,7 +87,7 @@ header#header {
         padding: 0;
         img {
           // width: 73px;
-          height: 40px;
+          height: 35px;
           // margin-right: 28rem;
         }
       }
@@ -127,7 +127,7 @@ header#header {
                   // border: 5px solid #FFFFFF;
                   position: absolute;
                   background-color: $dark-color;
-                  top: calc(100% + 6px);
+                  top: calc(100% + 5px);
                   left: 0;
                 }
               }
@@ -316,10 +316,11 @@ header#header {
                 }
               }
               ul.dropdown-menu {
+                  margin-top: 0;
                 width: 230px;
                 position: absolute;
                 left: -170px;
-                top: calc(100% + 2px);
+                top: calc(100% + 3px);
                 padding: 10px;
                 background: $white-color;
                 // width: 180px;
