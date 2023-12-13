@@ -80,25 +80,27 @@
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 <div>
                                     <span>
-                                        <span>{{ $canvas['surfaceStateName'] }}</span>
-                                        <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning"></i>
+                                        <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
+                                        <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
 
                                         @if($canvas['surfaceStateId'])
-                                            <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}">
+                                            <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}" class="surface-active">
                                                 <i class="fal fa-right-to-bracket"></i>
                                             </a>
                                         @endif
+
                                     </span>
                                     @if($canvas['surfaceStateId'])
                                         <form class="d-inline" method="post"
                                               action="{{ route('surfaces.destroy', $canvas['surfaceStateId']) }}">
                                             @method('delete')
                                             @csrf
-                                            <button class="btn" onclick="return confirm('Are you sure you?');"
+                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you?');"
                                                     style="line-height: 0"><i class="fal fa-times"></i>
                                             </button>
                                         </form>
                                     @endif
+
                                 </div>
                             </div>
                         @endforeach

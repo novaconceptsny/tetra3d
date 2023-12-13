@@ -2184,6 +2184,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 
 .tab {
+  position: relative;
   cursor: pointer;
   padding: 0 50px;
   background-color: transparent;
@@ -2214,6 +2215,17 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   border: 1px solid #d0d2d5;
   border-bottom: 0;
   background-color: #fff;
+}
+
+.tab .surface-active {
+  position: absolute;
+  inset: auto auto auto 6px;
+}
+
+.tab .cross-btn {
+  position: absolute;
+  inset: 0 0 0 auto;
+  padding: 0 6px;
 }
 
 img,
