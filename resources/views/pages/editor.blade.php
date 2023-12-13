@@ -51,21 +51,55 @@
 @section('content')
     <section class="editor">
         <div class="container-fluid editor-view ">
+
             @php($sidebar = request('sidebar', 'editor'))
             <div class="row" x-data="{sidebar: @js($sidebar) }">
                 <livewire:comments :commentable="$selectedSurfaceState"/>
-                <livewire:artwork-collection :project="$project" />
+                <livewire:artwork-collection :project="$project"/>
 
                 @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
                 <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions/>
-
                     <div class="d-inline-flex tabs-container pt-1 mb-1 px-2">
                         @foreach($canvases as $canvas)
                             <div class="tab mt-1"
                                  :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
+                                 {{--@onCanvasUpdated.window="console.log('foo was dispatched')"--}}
+                                 x-data="{
+                                    hasChanges: false,
+                                    surfaceStateId: @js($canvas['surfaceStateId']),
+
+                                    init(){
+                                        document.addEventListener('onCanvasUpdated', (e) => {
+                                            if (e.detail.surfaceStateId == this.surfaceStateId){
+                                                this.hasChanges = true;
+                                            }
+                                        })
+                                    }
+                                 }"
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
-                                {{ $canvas['surfaceStateName'] }}
+                                <div>
+                                    <span>
+                                        <span>{{ $canvas['surfaceStateName'] }}</span>
+                                        <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning"></i>
+
+                                        @if($canvas['surfaceStateId'])
+                                            <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}">
+                                                <i class="fal fa-right-to-bracket"></i>
+                                            </a>
+                                        @endif
+                                    </span>
+                                    @if($canvas['surfaceStateId'])
+                                        <form class="d-inline" method="post"
+                                              action="{{ route('surfaces.destroy', $canvas['surfaceStateId']) }}">
+                                            @method('delete')
+                                            @csrf
+                                            <button class="btn" onclick="return confirm('Are you sure you?');"
+                                                    style="line-height: 0"><i class="fal fa-times"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                         @endforeach
 
@@ -118,7 +152,7 @@
 
     <x-editor.crop-button/>
 
-    <div class="modal fade" id="mapImage" tabindex="-1" >
+    <div class="modal fade" id="mapImage" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">

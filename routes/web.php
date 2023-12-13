@@ -38,6 +38,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('surfaces/{surface}', 'show')->name('surfaces.show');
         Route::post('surfaces/{surface}', 'store')->name('surfaces.store');
         Route::post('surfaces/{surface}', 'update')->name('surfaces.update');
+
+        // surface state
+        Route::get('surfaces/{state}/active', 'SurfaceStateController@active')->name('surfaces.active');
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
     });
 });

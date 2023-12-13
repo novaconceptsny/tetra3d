@@ -37,27 +37,15 @@ class Index extends Component
 
     public function removeSurfaceState(SurfaceState $state): void
     {
-        $this->askForConfirmation(function () use ($state){
+        $this->askForConfirmation(function () use ($state) {
             $this->dispatch('hideModal');
-            $state->delete();
-
-            if ($state->isActive()){
-                $stateToActive = SurfaceState::query()
-                    ->where('surface_id', $state->surface_id)
-                    ->where('layout_id', $state->layout_id)
-                    ->first();
-                $stateToActive?->setAsActive();
-            }
+            $state->remove();
             $this->dispatch('flashNotification', message: 'State deleted');
         });
     }
 
-    public function changeActiveState(SurfaceState $state)
+    public function changeActiveState(SurfaceState $state): void
     {
-        if($state->isActive()){
-            return false;
-        }
-
         $state->setAsActive();
     }
 }

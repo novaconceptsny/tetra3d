@@ -581,6 +581,16 @@ class CanvasManager {
         }
 
         if (this.unsavedChanges === true) {
+            const onCanvasUpdatedEvent = new CustomEvent("onCanvasUpdated", {
+                detail: {
+                    surfaceStateId: this.surfaceStateId
+                },
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+            });
+            document.dispatchEvent(onCanvasUpdatedEvent)
+
             this.saveBtn.show();
         } else {
             this.saveBtn.hide();

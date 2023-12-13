@@ -180,7 +180,13 @@ class SurfaceStateController extends Controller
 
     public function destroy(SurfaceState $state)
     {
-        $state->delete();
+        $state->remove();
         return redirect()->back()->with('success', 'State removed');
+    }
+
+    public function active(SurfaceState $state)
+    {
+        $state->setAsActive();
+        return redirect()->back()->with('success', 'Active set updated');
     }
 }

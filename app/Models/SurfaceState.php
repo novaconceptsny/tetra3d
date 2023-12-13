@@ -98,6 +98,10 @@ class SurfaceState extends Model implements HasMedia
 
     public function setAsActive()
     {
+        if ($this->isActive()) {
+            return false;
+        }
+
         $this->surface->states()
             ->whereNot('id', $this->id)
             ->where('project_id', $this->project_id)
@@ -116,6 +120,19 @@ class SurfaceState extends Model implements HasMedia
     public function isActive()
     {
         return $this->active;
+    }
+
+    public function remove(): void
+    {
+        $this->delete();
+
+        if ($this->isActive()){
+            $stateToActive = SurfaceState::query()
+                ->where('surface_id', $this->surface_id)
+                ->where('layout_id', $this->layout_id)
+                ->first();
+            $stateToActive?->setAsActive();
+        }
     }
 
     //todo::cleanup: not using anymore
