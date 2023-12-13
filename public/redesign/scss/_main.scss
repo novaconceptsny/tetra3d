@@ -3,13 +3,14 @@ main{
     overflow: hidden;
     position: relative;
       .main-intro {
-          margin-top: 50px;
-          height: calc(100vh - 83px);
+          margin-top: 0;
+          height: calc(100dvh - 46px);
           overflow: auto;
 
           @include intro-row;
           .card-row {
             .inner-row {
+                margin-top: 30px;
               padding-inline: 50px;
 
               h5 {

@@ -78,6 +78,7 @@ header#header {
     // padding: 0px 50px;
 
     .nav-container {
+        position: relative;
       display: flex;
       align-items: center;
       justify-content: space-evenly;
@@ -97,9 +98,10 @@ header#header {
         justify-content: space-between;
         height: 100% !important;
         .navbar-nav {
-          .link-nav{
-
-          margin-inline: auto;
+          &.link-nav{
+          position: absolute !important;
+          inset: 0 90px 0 120px !important;
+          justify-content: center !important;
           }
           // display: flex !important;
           align-items: center !important;
@@ -127,7 +129,7 @@ header#header {
                   // border: 5px solid #FFFFFF;
                   position: absolute;
                   background-color: $dark-color;
-                  top: calc(100% + 5px);
+                  top: calc(100%);
                   left: 0;
                 }
               }

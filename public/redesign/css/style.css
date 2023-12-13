@@ -88,6 +88,7 @@ header#header nav {
   background: #ffffff;
 }
 header#header nav .nav-container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -111,8 +112,10 @@ header#header nav .nav-container .navbar-collapse .navbar-nav {
   gap: 117px;
   height: 100% !important;
 }
-header#header nav .nav-container .navbar-collapse .navbar-nav .link-nav {
-  margin-inline: auto;
+header#header nav .nav-container .navbar-collapse .navbar-nav.link-nav {
+  position: absolute !important;
+  inset: 0 90px 0 120px !important;
+  justify-content: center !important;
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item {
   height: 100%;
@@ -138,7 +141,7 @@ header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-lin
   height: 5px;
   position: absolute;
   background-color: #222436;
-  top: calc(100% + 5px);
+  top: 100%;
   left: 0;
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav a {
@@ -822,8 +825,8 @@ main section.main-page {
   position: relative;
 }
 main section.main-page .main-intro {
-  margin-top: 50px;
-  height: calc(100vh - 83px);
+  margin-top: 0;
+  height: calc(100dvh - 46px);
   overflow: auto;
 }
 main section.main-page .main-intro .intro-row {
@@ -894,6 +897,7 @@ main section.main-page .main-intro .intro-row .fir-col .sort-btn.active {
   color: #ffffff;
 }
 main section.main-page .main-intro .card-row .inner-row {
+  margin-top: 30px;
   padding-inline: 50px;
 }
 main section.main-page .main-intro .card-row .inner-row h5 {
@@ -1769,8 +1773,8 @@ main section.editor .editor-view .row {
 }
 main section.editor .editor-view .row .side-col {
   box-sizing: border-box;
-  height: calc(100dvh - 50px);
-  top: 50px;
+  height: calc(100dvh - 46px);
+  top: 46px;
   left: 0;
   padding: 0 12px;
   position: fixed;
