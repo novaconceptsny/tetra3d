@@ -12,7 +12,7 @@
             :visible="$surface->getFirstMediaUrl('layout')"
         />
 
-        <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"/>
+        <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self"/>
         <x-menu-item
             text="360 View" :img="asset('redesign/images/360.svg')" target="_self"
             :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
@@ -83,7 +83,7 @@
                                         <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
                                         <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
 
-                                        @if($canvas['surfaceStateId'])
+                                        @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
                                             <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}" class="surface-active">
                                                 <i class="fal fa-right-to-bracket"></i>
                                             </a>

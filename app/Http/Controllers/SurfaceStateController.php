@@ -63,6 +63,7 @@ class SurfaceStateController extends Controller
         $data['spot'] = $spot;
         $data['surface'] = $surface;
         $data['selectedSurfaceState'] = $selectedSurfaceState;
+        $data['currentSurfaceStateId'] = $surface->getCurrentState($layout->id)?->id;
 
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;

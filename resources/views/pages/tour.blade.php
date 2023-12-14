@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    @if($project?->id)
+    @if($project?->id && !$tour_is_shared)
         <button class="previous-btn" style="z-index: 39"
                 onclick="Livewire.dispatch('slide-over.open', {component: 'tour-switcher', arguments: {'project': {{$project?->id}} }})">
             <i class="fas fa-chevron-left"></i>
