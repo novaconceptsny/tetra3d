@@ -20,12 +20,12 @@
 
     <x-slot name="buttons">
         @if($layout->id)
-        <button class="btn btn-sm btn-danger" type="button" wire:click="deleteLayout({{ $layout->id }})">
+        <button class="btn btn-sm btn-outline-dark rounded-0" type="button" wire:click="deleteLayout({{ $layout->id }})">
             {{ __('Delete Layout') }}
         </button>
         @endif
 
-        <button class="btn btn-sm btn-success" type="submit">
+        <button class="btn btn-sm btn-outline-dark rounded-0" type="submit">
             {{ __('Save Changes') }}
         </button>
         {{--<button class="btn btn-sm btn-primary" type="button" wire:modal="close">

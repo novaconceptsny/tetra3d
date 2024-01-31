@@ -31,7 +31,13 @@
 
                     @forelse($project->layouts()->latest()->get() as $layout)
                         <tr>
-                            <td>{{ $layout->name }}</td>
+                            <td class="layout-table-title">
+                                <span>{{ $layout->name }}</span>
+                                <a class="edit-btn ms-1 text-info text-decoration-none" href="#"
+                                   wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                    <i class="fal fa-edit"></i>
+                                </a>
+                            </td>
                             <td>{{ $layout->tour->name }}</td>
                             <td>
                                 <span>{{ $layout->user->name }}</span><br>
@@ -40,10 +46,7 @@
                                 <span>{{ $layout->created_at->format('M d, Y H:i') }}</span>
                             </td>
                             <td>
-                                <a class="me-1 text-info text-decoration-none" href="#"
-                                   wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
-                                    <i class="fal fa-edit"></i>
-                                </a>
+
                                 <a class="text-dark" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
                                     <i class="fal fa-sign-in"></i>
                                 </a>

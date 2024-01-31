@@ -15,12 +15,11 @@ main{
               gap: 6px;
               margin-bottom: 23px;
               h4 {
-                font-family: 'Mona-Sans';
-                font-style: normal;
-                font-weight: 700;
-                font-size: 35px;
-                line-height: 24px;
-                text-align: center;
+                  font-family: var(--main-font-family);
+                  font-size: 24px;
+                  font-style: normal;
+                  font-weight: 400;
+                  line-height: 24px; /* 100% */
                 letter-spacing: 0.3px;
                 color: $dark-color;
               }
@@ -59,15 +58,16 @@ main{
                     .plus {
                       padding: 35px 38px;
                       border-radius: 50%;
-                      background-color: $white-color;
+                      background-color: $black-color !important;
                       width: fit-content;
                       i{
                         font-size: 35px;
-                        color: $dark-color;
+                        color: $white-color;
                       }
                     }
                     h6 {
-                      font-family: 'Mona-Sans';
+                        display: none;
+                        font-family: var(--main-font-family);
                       font-style: normal;
                       font-weight: 550;
                       font-size: 22px;
@@ -86,7 +86,9 @@ main{
                 height: 100% !important;
                 padding: 0;
                 margin: 0;
-                border: 0;
+                  margin-right: 30px;
+                  border: 1px solid $black-color !important;
+                  border-radius: 0;
                 .card-img{
                   display: flex;
                   align-items: center;
@@ -109,23 +111,21 @@ main{
                     .text {
                       h6 {
                         width: fit-content;
-                        font-family: 'Mona-Sans';
-                        font-style: normal;
-                        font-weight: 400;
-                        font-size: 22px;
-                        line-height: 24px;
-                        text-align: center;
-                        letter-spacing: 0.3px;
+                          font-family: var(--main-font-family);
+                          font-size: 22px;
+                          font-style: normal;
+                          font-weight: 300;
+                          line-height: 24px; /* 109.091% */
+                          letter-spacing: 0.3px;
                         color: $dark-color;
                       }
                       p {
-                        font-family: 'Mona-Sans';
-                        font-style: normal;
-                        font-weight: 400;
-                        font-size: 14px;
-                        line-height: 16px;
-                        text-align: center;
-                        letter-spacing: 0.0494836px;
+                          font-family: var(--main-font-family);
+                          font-size: 14px;
+                          font-style: normal;
+                          font-weight: 300;
+                          line-height: normal;
+                          letter-spacing: 0.049px;
                         color: #787878;
                         width: fit-content;
                       }
@@ -134,23 +134,34 @@ main{
                       display: flex;
                       align-items: center;
                       gap: 6.5px;
+                        button svg{
+                            stroke-color: $dark-color !important;
+                        }
                       .card-action{
                         border: none;
                         background: transparent;
+
                         i{
+                            &.text-danger,
+                            &.text-success,
+                            &.text-info{
+                            color: $dark-color !important;
+
+                            }
+                            color: $dark-color !important;
                           font-size: 16px;
                           // width: 18px;
                           // height: 18px;
                           height: fit-content;
-                          &.fa-pen{
-                            color: $primary-green;
-                          }
-                          &.fa-trash-can{
-                            color: #F83535;
-                          }
-                          &.fa-thumbs-up{
-                            color: #222436;
-                          }
+                          //&.fa-pen{
+                          //  color: $primary-green;
+                          //}
+                          //&.fa-trash-can{
+                          //  color: #F83535;
+                          //}
+                          //&.fa-thumbs-up{
+                          //  color: #222436;
+                          //}
                         }
                       }
                     }
@@ -161,4 +172,20 @@ main{
           }
         }
   }
+}
+
+.layout-intro{
+    border: 1px solid #000;
+    background: #E3E3E3;
+    padding: 12px 40px;
+        border-radius: 0 !important;
+    span{
+        color: $black-color;
+
+        font-family: var(--main-font-family);
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 300;
+        line-height: normal;
+    }
 }

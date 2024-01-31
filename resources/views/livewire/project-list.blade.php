@@ -6,8 +6,9 @@
                 <h5>{{ __('Exhibitions') }}</h5>
                 <div class="sorted-btn">
                     <span>Sort by:</span>
-                    <div class="input-group">
-                        <select wire:model.live="sortBy">
+                    <div class="input-group custom-select">
+
+                        <select  wire:model.live="sortBy" class="form-select c-select" aria-label="Default select example">
                             <option value="name">Name A to Z</option>
                             <option value="created_at">Recently added</option>
                             <option value="updated_at">Recently edited</option>
@@ -49,8 +50,8 @@
                                 <div class="link-div">
                                     <a href="javascript:void(0)"
                                        wire:slide-over="tour-switcher, @js(['project' => $project->id])"
-                                       >Enter exhibition
-                                        <div><i class="fa-solid fa-chevron-right"></i></div>
+                                       >Enter
+{{--                                        <div><i class="fa-solid fa-chevron-right"></i></div>--}}
                                     </a>
                                 </div>
                             </div>

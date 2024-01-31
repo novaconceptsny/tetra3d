@@ -55,7 +55,7 @@
                 </div>
             </div>
             <!-- </div> -->
-            <table class="w-100 table table-bordered">
+            <table class="w-100  collection-table table table-bordered">
                 <thead>
                 <tr>
                     <th style="width: 4%"></th>

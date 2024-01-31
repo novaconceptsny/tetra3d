@@ -16,7 +16,7 @@ $dark-color: #222436;
             background-color: transparent;
             border: none;
             color: $dark-color;
-            font-family: 'Mona-Sans';
+              font-family: var(--main-font-family);
             font-style: normal;
             font-weight: 600;
             font-size: 16px;
@@ -62,7 +62,7 @@ $dark-color: #222436;
   background: $white-color;
   // border: 1px solid $dark-color;
   border-radius: 10px;
-  font-family: 'Mona-Sans';
+    font-family: var(--main-font-family);
   font-style: normal;
   font-weight: 600;
   font-size: 18px !important;
@@ -96,7 +96,7 @@ $dark-color: #222436;
       position: relative;
       button {
         padding: 12px 24px;
-        font-family: 'Mona-Sans';
+          font-family: var(--main-font-family);
         font-style: normal;
         font-weight: 400;
         font-size: 22px;
@@ -120,10 +120,10 @@ $dark-color: #222436;
         box-shadow: 0px 2px 11px rgba(0, 0, 0, 0.1);
 
         a {
-          display: block;
+          //display: block;
           border-top: 1px solid #c6c6c6;
           padding: 20px 0px 11px 20px;
-          font-family: 'Mona-Sans';
+            font-family: var(--main-font-family);
           font-style: normal;
           font-weight: 400;
           font-size: 16px;
@@ -151,7 +151,7 @@ $dark-color: #222436;
       position: relative;
       .dropdown {
         a {
-          font-family: 'Mona-Sans';
+            font-family: var(--main-font-family);
           font-style: normal;
           font-weight: 400;
           font-size: 16px;
@@ -177,7 +177,7 @@ $dark-color: #222436;
               height: 41px;
             }
             .profile-name {
-              font-family: 'Mona-Sans';
+                font-family: var(--main-font-family);
               font-style: normal;
               font-weight: 500;
               font-size: 16px;
@@ -186,7 +186,7 @@ $dark-color: #222436;
             }
             .profile-email {
               display: block;
-              font-family: 'Mona-Sans';
+                font-family: var(--main-font-family);
               font-style: normal;
               font-weight: 400;
               font-size: 14px;
@@ -207,7 +207,7 @@ $dark-color: #222436;
                 align-items: center;
                 gap: 11px;
                 padding: 10px 3px;
-                font-family: 'Mona-Sans';
+                  font-family: var(--main-font-family);
                 font-style: normal;
                 font-weight: 400;
                 font-size: 14px;
@@ -244,7 +244,7 @@ $dark-color: #222436;
           gap: 23px;
 
           h2 {
-            font-family: 'Mona-Sans';
+              font-family: var(--main-font-family);
             font-style: normal;
             font-weight: 600;
             font-size: 64px;
@@ -253,7 +253,7 @@ $dark-color: #222436;
           }
         }
         p {
-          font-family: 'Mona-Sans';
+            font-family: var(--main-font-family);
           font-style: normal;
           font-weight: 400;
           font-size: 18px;
@@ -267,7 +267,7 @@ $dark-color: #222436;
         display: flex;
         align-items: center;
         gap: 20px;
-        font-family: 'Mona-Sans';
+          font-family: var(--main-font-family);
         font-style: normal;
         font-weight: 600;
         font-size: 18px;
@@ -299,7 +299,7 @@ $dark-color: #222436;
     h5 {
       margin-top: 71px;
       margin-bottom: 38px;
-      font-family: 'Mona-Sans';
+        font-family: var(--main-font-family);
       font-style: normal;
       font-weight: 700;
       font-size: 40px;
@@ -324,7 +324,7 @@ $dark-color: #222436;
       //   .card-body {
       //     .card-title {
       //       margin-top: 19px;
-      //       font-family: "Roboto";
+      //  font-family: var(--main-font-family);
       //       font-style: normal;
       //       font-weight: 500;
       //       font-size: 21px;
@@ -332,8 +332,8 @@ $dark-color: #222436;
       //       color: $white-color;
       //     }
       //     p {
-      //       font-family: "Roboto";
-      //       font-style: normal;
+      //  font-family: var(--main-font-family);
+             //font-style: normal;
       //       font-weight: 500;
       //       font-size: 16px;
       //       line-height: 19px;
@@ -354,7 +354,7 @@ $dark-color: #222436;
       line-height: 19px;
       margin-top: 30px;
       position: relative;
-      font-family: 'Mona-Sans';
+      font-family: var(--main-font-family);
       select {
         display: none; /*hide original SELECT element: */
       }
@@ -419,7 +419,7 @@ $dark-color: #222436;
       padding: 12.25px;
       background-color: $white-color;
       text-transform: capitalize;
-      font-family: 'Mona-Sans';
+        font-family: var(--main-font-family);
       font-size: 16px;
       color: $dark-color;
       line-height: 19px;
@@ -429,7 +429,14 @@ $dark-color: #222436;
 @mixin sidebar {
     .sidebar-div{
         height: calc( 100dvh - 80px);
-
+    table{
+        .edit-btn{
+            display: none;
+        }
+        tr:has(td.layout-table-title):hover .edit-btn{
+            display: inline-block !important;
+        }
+    }
         .sidebar.mysidebar {
             margin: 0;
             //padding:70px 45px 70px 33px;
@@ -470,7 +477,7 @@ $dark-color: #222436;
                         margin-inline: auto;
                     }
                     text-transform: capitalize;
-                    font-family: 'Mona-Sans';
+                    font-family: var(--main-font-family);
                     font-style: normal;
                     font-weight: 500;
                     font-size: 30px !important;
@@ -481,7 +488,7 @@ $dark-color: #222436;
                 h6 {
                     text-align: center;
                     margin: 0 0 32px;
-                    font-family: 'Mona-Sans';
+                    font-family: var(--main-font-family);
                     font-style: normal;
                     font-weight: 500 !important;
                     font-size: 18px !important;
@@ -498,7 +505,7 @@ $dark-color: #222436;
                     height: 33px;
                     border-radius: 50%;
                     background-color: $dark-color;
-                    font-family: 'Mona-Sans';
+                    font-family: var(--main-font-family);
                     font-style: normal;
                     font-weight: 400;
                     font-size: 22px;
@@ -516,24 +523,24 @@ $dark-color: #222436;
                     }
                 }
                 .col-btn{
-                    font-family: 'Mona-Sans';
-                    // margin-left: 15px;
                     text-decoration: none;
                     width: 100%;
                     padding: 8px 20px;
-                    background: $dark-color;
+                    background: $white-color;
                     //border-radius: 10px;
-                    font-weight: 400;
-                    font-size: 14px;
-                    line-height: 19px;
-                    color: $white-color;
-                    border-radius: 5px;
-                    border: none;
+                    font-family: var(--main-font-family);
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 300;
+                    line-height: normal;
+                    color: $black-color;
+                    border-radius: 0;
+                    border: 1px solid $black-color;
                     margin-bottom: 16px;
                     white-space: nowrap;
                     &:hover {
-                        background: $primary-green;
-                        color: #ffffff;
+                        background: $black-color;
+                        color: $white-color;
                     }
                 }
             }

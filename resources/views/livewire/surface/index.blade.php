@@ -16,7 +16,7 @@
                 <x-surface_state.add-new :surface="$surface" :layout-id="$layout->id"/>
                 @foreach($surface->states as $state)
                     <div class="col-3" wire:key="surface_{{$surface->id}}_card">
-                        <div class="card p-0 {{ $state->active ? 'shadow border border-2 border-success' : 'border' }}">
+                        <div class="card p-0 {{ $state->active ? '' : 'border' }}">
                             <div class="card-img" wire:click="changeActiveState({{ $state->id }})">
                                 <img
                                     src="{{ $state->getFirstMediaUrl('thumbnail') }}"

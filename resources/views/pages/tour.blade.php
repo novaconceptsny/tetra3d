@@ -25,8 +25,8 @@
     @endauth
 @endsection
 
-@section('menu')
-    <x-menu>
+@section('outside-menu')
+    <div class="menu-links d-flex align-items-center gap-4">
         <x-menu-item
             text="List View" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
@@ -42,7 +42,7 @@
             text="Share" icon="fal fa-share-nodes"
         />
         <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')" :visible="!$tour_is_shared"/>
-    </x-menu>
+    </div>
 @endsection
 
 @section('breadcrumbs')

@@ -16,7 +16,7 @@ main{
                   display: block;
                   background-color: $dark-color;
                   color: $white-color;
-                  font-family: 'Mona-Sans';
+                    font-family: var(--main-font-family);
                   font-style: normal;
                   font-weight: 400;
                   font-size: 22px;
@@ -34,7 +34,7 @@ main{
                     margin-bottom: 28px;
                     // width: 50%;
                     label {
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
                       font-weight: 400;
                       font-size: 18px;
@@ -45,7 +45,7 @@ main{
                       // width: 100%;
                       padding: 18px 22px 14px 22px;
                       border: 1px solid #3c3b3c;
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
                       font-weight: 400;
                       font-size: 14px;
@@ -75,7 +75,7 @@ main{
                         background-color: $white-color;
                         border: 1px dashed #3c3b3c;
                         height: fit-content;
-                        font-family: 'Mona-Sans';
+                          font-family: var(--main-font-family);
                         font-style: normal;
                         font-weight: 400;
                         font-size: 14px;
@@ -101,7 +101,7 @@ main{
                       background: transparent;
                       border: 1px solid $dark-color;
                       border-radius: 8px;
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
                       font-weight: 400;
                       font-size: 22px;
@@ -127,7 +127,7 @@ main{
                   // vertical-align: middle;
                   background-color: $dark-color;
                   color: $white-color;
-                  font-family: 'Mona-Sans';
+                    font-family: var(--main-font-family);
                   font-style: normal;
                   font-weight: 400;
                   font-size: 22px;
@@ -141,7 +141,7 @@ main{
                   gap: 30px;
                   .custum-form-group {
                     label {
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
                       font-weight: 400;
                       font-size: 18px;
@@ -164,7 +164,7 @@ main{
                       background: transparent;
                       border: 1px solid $dark-color;
                       border-radius: 8px;
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
                       font-weight: 400;
                       font-size: 22px;

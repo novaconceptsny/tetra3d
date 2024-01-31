@@ -14,11 +14,11 @@
         <div class="icon">
             <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layoutId, 'surface_state_id' => $state->id, 'return_to_versions' => true]) }}"
                class="me-1">
-                <i class="fal fa-pencil"></i>
+                <i class="fal fa-pencil text-dark"></i>
             </a>
             @if(!$comments)
                 <a href="#" class=" me-1" wire:click="removeSurfaceState({{ $state->id }})">
-                    <i class="fal fa-trash text-danger"></i>
+                    <i class="fal fa-trash text-dark"></i>
                 </a>
             @endif
             <livewire:likes :likeable="$state" wire:key="{{ $state->id }}"/>

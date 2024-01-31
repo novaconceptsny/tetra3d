@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Abel&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
 @font-face {
@@ -34,7 +34,19 @@ $roboto-font: "Roboto", sans-serif;
 $inter-font: "Inter", sans-serif;
 $poppins-font: "Poppins", sans-serif;
 $open-font: "Open Sans", sans-serif;
+:root{
+    --main-font-family: "Roboto Condensed", sans-serif;
+    --extra-thin-font: 100;
+    --thin-font: 200;
+    --light: 300;
+    --regular-font: 400;
+    --medium-font: 500;
+    --semibold-font: 600;
+    --bold-font: 700;
+    --bolder-font: 800;
+    --boldest-font: 900;
 
+}
 @import "./header";
 @import "./login";
 @import "./collection";
@@ -82,10 +94,8 @@ $open-font: "Open Sans", sans-serif;
   width: 35%;
   span{
     font-size: 18px;
-    font-weight: 500;
+    font-weight: var(--medium-font);
     color: #fff;
-
-
   }
 
 
@@ -124,11 +134,26 @@ $open-font: "Open Sans", sans-serif;
   border-left: 0;
 }
 .tab.active {
+    position: relative;
+    clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
   color: black;
-  border-radius: 5px 5px 0 0;
-  border: 1px solid #d0d2d5;
-  border-bottom: 0;
-  background-color: #fff;
+  border-radius: 0;
+    width: min(120px);
+    padding: 0 12px !important;
+  //border: 1px solid $black-color;
+  //border-bottom: 0;
+  background-color: #000;
+    //z-index: -3;
+}
+.tab.active::after {
+    content: "";
+    //width: 190px;
+    //height: 190px;
+    position: absolute;
+    inset: 1px;
+    background-color: white;
+    clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
+    z-index: -5;
 }
 .tab .surface-active{
     position: absolute;
@@ -155,8 +180,8 @@ h3 {
 }
 h4 {
   font-style: normal;
-  font-weight: 600;
-  font-size: 45px;
+    font-weight: var(--bold-font);
+    font-size: 45px;
   line-height: 112.7%;
 }
 p {
@@ -164,8 +189,8 @@ p {
 }
 label {
   display: block;
-  font-weight: 400;
-  font-size: 18px;
+    font-weight: var(--regular-font);
+    font-size: 18px;
   line-height: 190.2%;
 }
 label#checkbox {
@@ -187,17 +212,17 @@ input#checkbox {
 //   overflow-x: hidden;
 // }
 ::-webkit-scrollbar{
-  width: 10px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track{
   background-color: #f1f1f1;
-  border-radius: 50px;
+  border-radius: 0;
 
 
 }
 ::-webkit-scrollbar-thumb{
   background-color: #c4c2bf;
-  border-radius: 5px;
+  border-radius: 0;
 }
 
 .overlay__link{
@@ -283,7 +308,7 @@ main{
 // .custom-select {
 //   margin-top: 30px;
 //   position: relative;
-//   font-family: $roboto-font;
+//font-family: var(--main-font-family);
 //   // border-radius: 10px !important;
 //   select {
 //     display: none; /*hide original SELECT element: */
