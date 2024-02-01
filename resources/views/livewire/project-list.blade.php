@@ -18,7 +18,7 @@
             </div>
             <div class="row project-cards-wrapper">
                 @foreach($projects as $project)
-                    <div class="col-sm-6 col-xl-4 col-xxl-3 card-col">
+                    <div class="col-sm-6 col-xl-4 col-xxl-3 card-col" wire:key="{{ $project->id }}">
                         <div class="c-card card ">
                             <div class="card-head">
                                 <div class="card-header mb-2 border-0">
@@ -30,7 +30,7 @@
                             <div class="card-text">
                                 <div class="c-line"></div>
                                 <div class="text">
-                                    <p>{{ $project->layouts_count }} {{ str('Layout')->plural($project->tours_count) }}</p>
+                                    <p>{{ $project->layouts_count }} {{ str('Layout')->plural($project->layouts_count) }}</p>
                                     <p>{{ $project->artwork_collections_count }} {{ str('Collection')->plural($project->artwork_collections_count) }}</p>
                                 </div>
                             </div>

@@ -4,10 +4,6 @@
         <div class="d-flex mb-2">
             <h5 class="me-auto">{{ $heading }}</h5>
             <div class="float-end">
-{{--                @if(isset($routes['create']))--}}
-{{--                    <a href="{{ route($routes['create']) }}" class="btn btn-sm btn-primary"><i--}}
-{{--                            class="fal fa-plus"></i> {{ __('Add New') }}</a>--}}
-{{--                @endif--}}
                 @include('backend.includes.datatable.bulk-delete')
             </div>
         </div>

@@ -77,7 +77,7 @@
             <div class="collection mt-5">
                 <h5 class="d-flex align-items-center">
                     <span>Collections</span>
-                    @can('edit', $project)
+                    @can('update', $project)
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
                     @endcan
                 </h5>
@@ -92,7 +92,7 @@
             <div class="contributor">
                 <h5 class="d-flex align-items-center">
                     <span>Contributors</span>
-                    @can('edit', $project)
+                    @can('update', $project)
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
                     @endcan
                 </h5>

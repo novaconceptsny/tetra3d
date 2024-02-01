@@ -71,7 +71,21 @@ class SurfaceStateController extends Controller
         $canvases = array();
 
         if (!$surface->states->count() || $create_new_state){
-            $surface->states[] = new SurfaceState();
+            $newState = new SurfaceState();
+
+            // initialize new state
+            if (!$create_new_state){
+                $newState->user_id = auth()->id();
+                $newState->layout_id = $layout->id;
+                $newState->surface_id = $surface->id;
+                $newState->name = 'Default';
+                $newState->save();
+
+                $data['currentSurfaceStateId'] = $newState->id;
+                $data['selectedSurfaceState'] = $newState;
+            }
+
+            $surface->states[] = $newState;
         }
 
         foreach ($surface->states as $surfaceState){

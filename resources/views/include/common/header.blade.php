@@ -37,7 +37,7 @@
                                href="{{ route('dashboard') }}">{{ __('Projects') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('artworks.index') }}">{{ __('Collection') }}</a>
+                            <a class="nav-link" href="{{ route('artworks.index') }}">{{ __('Inventory') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Activity') }}</a>

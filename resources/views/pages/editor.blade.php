@@ -6,6 +6,11 @@
     @endphp
     <div class="menu-links d-flex align-items-center gap-4">
         <x-menu-item
+            text="360 View" :img="asset('redesign/images/360.svg')" target="_self"
+            :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
+        />
+
+        <x-menu-item
             text="Current Surface" icon="fal fa-question"
             :route="route('tours.surfaces', $query_params)"
             data-bs-toggle="modal" data-bs-target="#mapImage"
@@ -13,10 +18,6 @@
         />
 
         <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self"/>
-        <x-menu-item
-            text="360 View" :img="asset('redesign/images/360.svg')" target="_self"
-            :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
-        />
         <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
             target="_self" text="Share" icon="fal fa-share-nodes" :visible="$layout"
@@ -95,7 +96,7 @@
                                               action="{{ route('surfaces.destroy', $canvas['surfaceStateId']) }}">
                                             @method('delete')
                                             @csrf
-                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you?');"
+                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you want to delete this version?');"
                                                     style="line-height: 0"><i class="fal fa-times"></i>
                                             </button>
                                         </form>
