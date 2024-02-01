@@ -61,7 +61,7 @@
 @endsection
 
 @section('content')
-    <div style="height: calc(100vh - 46px);">
+    <div style="height: calc(100vh - 52px);">
         <div class="h-100">
             @if ($tracker)
                 <div id="tracker"></div>
