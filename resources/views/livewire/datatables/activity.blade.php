@@ -34,7 +34,7 @@
     </div>
     <div class="card-body py-0">
         <div class="mb-3 scrollbar table-responsive">
-            <table class="table table-hover fs--1 table-sm">
+            <table class="table table-hover fs--1 table-sm activity-table">
 
                 @include('backend.includes.datatable.header')
 

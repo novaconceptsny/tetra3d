@@ -49,9 +49,13 @@
                                             <p>No Contributors Yet</p>
                                         @endforelse
                                         @if(count($project->contributors) > 4)
+                                            @foreach($project->contributors as $contributor)
+
                                             <div class="more-btn">
+                                                <span>{{ $loop->iteration - 4 }}</span>
                                                 <i class="fas fa-plus"></i>
                                             </div>
+                                            @endforeach
                                         @endif
                                                 <div class="contributors-list">
                                                     @foreach($project->contributors as $contributor)

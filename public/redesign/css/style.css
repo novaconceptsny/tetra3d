@@ -823,10 +823,6 @@ main section.collection .main-intro .table-row .c-form .reset-btn {
   line-height: 23px;
   color: #ffffff;
 }
-main section.collection .main-intro .table-row .c-form .reset-btn:hover {
-  color: #ffffff;
-  background-color: #222436;
-}
 
 .collection-table {
   border-collapse: separate;
@@ -842,7 +838,7 @@ main section.collection .main-intro .table-row .c-form .reset-btn:hover {
   text-align: center;
   color: #FFF;
   font-family: var(--main-font-family);
-  font-size: 32px;
+  font-size: 23px;
   font-style: normal;
   font-weight: var(--regular-font);
   line-height: normal;
@@ -950,6 +946,13 @@ select.form-control::placeholder {
   font-size: 20px;
   line-height: 23px;
   color: #ffffff;
+}
+.reset-btn:hover {
+  color: #fff !important;
+}
+
+.activity-table thead th span.justify-content-center {
+  justify-content: start !important;
 }
 
 main section.main-page {
@@ -1201,7 +1204,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   z-index: 1000;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .more-btn {
-  width: 30px;
+  min-width: 25px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: #000;
@@ -1214,8 +1217,16 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .more-btn i {
   color: #fff;
-  font-size: 16px;
+  font-size: 10px;
   text-align: center;
+  margin-bottom: 2px !important;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .more-btn span {
+  color: #fff;
+  line-height: 14px !important;
+  font-family: var(--main-font-family);
+  font-size: 12px;
+  font-weight: var(--semibold-font);
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .more-btn:hover ~ .contributors-list {
   display: block;
@@ -2470,6 +2481,11 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 .tab .surface-active {
   position: absolute;
   inset: auto auto auto 6px;
+}
+
+.tab .change-icon {
+  vertical-align: middle;
+  margin-top: 1px;
 }
 
 .row {
