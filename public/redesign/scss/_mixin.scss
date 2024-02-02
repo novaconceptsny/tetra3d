@@ -18,7 +18,7 @@ $dark-color: #222436;
             color: $dark-color;
               font-family: var(--main-font-family);
             font-style: normal;
-            font-weight: 600;
+            font-weight: var(--semibold-font);
             font-size: 16px;
             line-height: 25px;
             padding: 5px 15px;
@@ -64,7 +64,7 @@ $dark-color: #222436;
   border-radius: 10px;
     font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 18px !important;
   line-height: 25px;
   display: flex;
@@ -98,7 +98,7 @@ $dark-color: #222436;
         padding: 12px 24px;
           font-family: var(--main-font-family);
         font-style: normal;
-        font-weight: 400;
+        font-weight: var(--regular-font);
         font-size: 22px;
         line-height: 26px;
         background: #181921;
@@ -125,7 +125,7 @@ $dark-color: #222436;
           padding: 20px 0px 11px 20px;
             font-family: var(--main-font-family);
           font-style: normal;
-          font-weight: 400;
+          font-weight: var(--regular-font);
           font-size: 16px;
           line-height: 19px;
           text-decoration: none;
@@ -138,7 +138,7 @@ $dark-color: #222436;
           }
 
           &:first-child {
-            border-top: 0px;
+            border-top: 0;
           }
         }
       }
@@ -153,7 +153,7 @@ $dark-color: #222436;
         a {
             font-family: var(--main-font-family);
           font-style: normal;
-          font-weight: 400;
+          font-weight: var(--regular-font);
           font-size: 16px;
           line-height: 22px;
         }
@@ -163,7 +163,7 @@ $dark-color: #222436;
           padding: 16px;
           background: $white-color;
           min-width: 245px;
-          box-shadow: 0px 0px 35px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 0 35px rgba(0, 0, 0, 0.15);
           border-radius: 6px;
 
           .drop-profile {
@@ -179,7 +179,7 @@ $dark-color: #222436;
             .profile-name {
                 font-family: var(--main-font-family);
               font-style: normal;
-              font-weight: 500;
+              font-weight: var(--medium-font);
               font-size: 16px;
               line-height: 24px;
               color: $white-color;
@@ -188,7 +188,7 @@ $dark-color: #222436;
               display: block;
                 font-family: var(--main-font-family);
               font-style: normal;
-              font-weight: 400;
+              font-weight: var(--regular-font);
               font-size: 14px;
               line-height: 22px;
               color: $black-color;
@@ -209,7 +209,7 @@ $dark-color: #222436;
                 padding: 10px 3px;
                   font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 400;
+                font-weight: var(--regular-font);
                 font-size: 14px;
                 line-height: 22px;
               }
@@ -246,7 +246,7 @@ $dark-color: #222436;
           h2 {
               font-family: var(--main-font-family);
             font-style: normal;
-            font-weight: 600;
+            font-weight: var(--semibold-font);
             font-size: 64px;
             line-height: 87px;
             color: $dark-color;
@@ -255,7 +255,7 @@ $dark-color: #222436;
         p {
             font-family: var(--main-font-family);
           font-style: normal;
-          font-weight: 400;
+          font-weight: var(--regular-font);
           font-size: 18px;
           line-height: 25px;
           color: #464646;
@@ -269,7 +269,7 @@ $dark-color: #222436;
         gap: 20px;
           font-family: var(--main-font-family);
         font-style: normal;
-        font-weight: 600;
+        font-weight: var(--semibold-font);
         font-size: 18px;
         line-height: 25px;
         border: 1px solid $dark-color;
@@ -301,7 +301,7 @@ $dark-color: #222436;
       margin-bottom: 38px;
         font-family: var(--main-font-family);
       font-style: normal;
-      font-weight: 700;
+      font-weight: var(--bold-font);
       font-size: 40px;
       line-height: 90px;
       color: $dark-color;
@@ -326,7 +326,7 @@ $dark-color: #222436;
       //       margin-top: 19px;
       //  font-family: var(--main-font-family);
       //       font-style: normal;
-      //       font-weight: 500;
+      //       font-weight: var(--medium-font);
       //       font-size: 21px;
       //       line-height: 25px;
       //       color: $white-color;
@@ -334,7 +334,7 @@ $dark-color: #222436;
       //     p {
       //  font-family: var(--main-font-family);
              //font-style: normal;
-      //       font-weight: 500;
+      //       font-weight: var(--medium-font);
       //       font-size: 16px;
       //       line-height: 19px;
       //       color: $white-color;
@@ -347,7 +347,7 @@ $dark-color: #222436;
 
 @mixin custom-select-box{
   .custom-select {
-      font-weight: 400;
+      font-weight: var(--regular-font);
       width: 100%;
       height: 100%;
       font-size: 16px;
@@ -360,7 +360,7 @@ $dark-color: #222436;
       }
       .select-selected {
         background-color: $white-color;
-        border-radius: 10px 0px 0px 0px;
+        border-radius: 10px 0 0 0;
         text-transform: capitalize;
         color: $dark-color;
         padding: 12px;
@@ -423,18 +423,39 @@ $dark-color: #222436;
       font-size: 16px;
       color: $dark-color;
       line-height: 19px;
-      font-weight: 400;
+      font-weight: var(--regular-font);
     }
 }
 @mixin sidebar {
     .sidebar-div{
         height: calc( 100dvh - 80px);
     table{
+        font-family: var(--main-font-family);
+        td{
+            font-size: 16px;
+            font-weight: var(--light-font);
+        }
         .edit-btn{
             display: none;
         }
+        tr{
+            padding-block: 8px !important;
+            td:first-of-type,
+            th:first-of-type{
+                width: 30% !important;
+            }
+        }
+        th{
+            font-family: var(--main-font-family);
+            font-size: 20px;
+            font-weight: var(--regular-font);
+        }
         tr:has(td.layout-table-title):hover .edit-btn{
             display: inline-block !important;
+        }
+        .tour-show{
+            padding: 6px 12px;
+            border: 1px solid #000;
         }
     }
         .sidebar.mysidebar {
@@ -471,6 +492,8 @@ $dark-color: #222436;
             div {
                 h5 {
                     &.sidebar-heading{
+                        font-size: 30px;
+                        font-weight: var(--light-font);
                         text-align: center;
                         max-width: 400px;
                         margin-bottom: 0;
@@ -479,8 +502,8 @@ $dark-color: #222436;
                     text-transform: capitalize;
                     font-family: var(--main-font-family);
                     font-style: normal;
-                    font-weight: 500;
-                    font-size: 30px !important;
+                    font-weight: var(--medium-font);
+                    font-size: 24px !important;
                     line-height: 35px;
                     margin-bottom: 16px;
                     color: $dark-color;
@@ -490,7 +513,7 @@ $dark-color: #222436;
                     margin: 0 0 32px;
                     font-family: var(--main-font-family);
                     font-style: normal;
-                    font-weight: 500 !important;
+                    font-weight: var(--light-font) !important;
                     font-size: 18px !important;
                     line-height: 21px;
                     //color: #d1d1d1;
@@ -507,7 +530,7 @@ $dark-color: #222436;
                     background-color: $dark-color;
                     font-family: var(--main-font-family);
                     font-style: normal;
-                    font-weight: 400;
+                    font-weight: var(--regular-font);
                     font-size: 22px;
                     line-height: 26px;
                     color: $white-color;
@@ -531,7 +554,7 @@ $dark-color: #222436;
                     font-family: var(--main-font-family);
                     font-size: 16px;
                     font-style: normal;
-                    font-weight: 300;
+                    font-weight: var(--light-font);
                     line-height: normal;
                     color: $black-color;
                     border-radius: 0;
@@ -561,7 +584,7 @@ $dark-color: #222436;
             .contributor {
                 margin-top: 50px;
                 .img-container{
-                    margin-top: 30px;
+                    margin-top: 5px;
                     margin-left: 20px;
                     .name-tip {
                         margin-left: -15px;
@@ -573,7 +596,7 @@ $dark-color: #222436;
                             z-index: 10 !important;
                         }
                         &:first-child{
-                            margin-left: 0px;
+                            margin-left: 0;
                             z-index: 10 !important;
                         }
 
@@ -586,35 +609,38 @@ $dark-color: #222436;
                                 transform: scale(1.2);
                             }
                         }
-                        position:relative;
-                        border-bottom:1px dashed #000;
-                        &:before {
-                            content: attr(data-text);
-                            position:absolute;
-                            top:61px;
-                            left:-50px;
-                            margin-left:15px;
-                            width: 120px;
-                            padding:5px;
-                            border-radius:10px;
-                            background: $black-color;
-                            color: $white-color;
-                            text-align:center;
-                            flex-wrap: nowrap;
-                            display:none;
-                        }
-                        &::after{
-                            content: "";
-                            position: absolute;
-                            width: 15px;
-                            height: 10px;
-                            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-                            background-color: $black-color;
-                            top: 100%;
-                            left: 15px;
-                            display: none;
-                        }
                         &:hover {
+                            position:relative;
+                            //border-bottom:1px dashed #000;
+                            &:before {
+                                content: attr(data-text);
+                                position:absolute;
+                                top:61px;
+                                left:-50px;
+                                margin-left:15px;
+                                width: 120px;
+                                padding:5px;
+                                border-radius:10px;
+                                background: $black-color;
+                                color: $white-color;
+                                text-align:center;
+                                flex-wrap: nowrap;
+                                display:none;
+                                font-family: var(--main-font-family);
+                                font-size: 16px;
+                                font-weight: var(--light-font);
+                            }
+                            &::after{
+                                content: "";
+                                position: absolute;
+                                width: 15px;
+                                height: 10px;
+                                clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+                                background-color: $black-color;
+                                top: 100%;
+                                left: 15px;
+                                display: none;
+                            }
                             &:before{
                                 display:block;
                             }

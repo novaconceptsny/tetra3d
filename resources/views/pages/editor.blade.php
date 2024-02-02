@@ -6,11 +6,6 @@
     @endphp
     <div class="menu-links d-flex align-items-center gap-4">
         <x-menu-item
-            text="360 View" :img="asset('redesign/images/360.svg')" target="_self"
-            :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
-        />
-
-        <x-menu-item
             text="Current Surface" icon="fal fa-question"
             :route="route('tours.surfaces', $query_params)"
             data-bs-toggle="modal" data-bs-target="#mapImage"
@@ -61,7 +56,7 @@
                 @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
                 <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions/>
-                    <div class="d-inline-flex tabs-container pt-1 mb-1 px-2">
+                    <div class="d-inline-flex tabs-container mb-1 px-2">
                         @foreach($canvases as $canvas)
                             <div class="tab mt-1"
                                  :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
@@ -91,12 +86,13 @@
                                         @endif
 
                                     </span>
+
                                     @if($canvas['surfaceStateId'])
                                         <form class="d-inline" method="post"
                                               action="{{ route('surfaces.destroy', $canvas['surfaceStateId']) }}">
                                             @method('delete')
                                             @csrf
-                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you want to delete this version?');"
+                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you?');"
                                                     style="line-height: 0"><i class="fal fa-times"></i>
                                             </button>
                                         </form>
@@ -112,11 +108,16 @@
                                 <i class="fas fa-plus btn"></i>
                             </a>
                         @endif
+                            <x-menu-item
+                                text="Return to 360 View" class="view-360" :img="asset('redesign/images/360.svg')" target="_self"
+                                :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
+                            />
+
                     </div>
 
                     @foreach($canvases as $canvas)
                         <div x-show="activeCanvas === @js($canvas['canvasId'])" class="main_content w-100"
-                             style="overflow: hidden; height: calc(100% - 38px)">
+                             style="overflow: hidden; height: calc(100% - 52px)">
                             <canvas id="{{ $canvas['canvasId'] }}"></canvas>
                         </div>
                     @endforeach

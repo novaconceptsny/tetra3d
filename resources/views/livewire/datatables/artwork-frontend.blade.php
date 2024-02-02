@@ -51,7 +51,7 @@
                     </ul>
                 </div>
                 <div class="col custum-group">
-                    <button class="form-control" type="reset">Reset</button>
+                    <button class="form-control reset-btn" type="reset">Reset</button>
                 </div>
             </div>
             <!-- </div> -->

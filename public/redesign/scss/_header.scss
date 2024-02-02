@@ -32,11 +32,13 @@ header#header {
           gap: 10px;
           font-family: var(--main-font-family);
           font-style: normal;
-          font-weight: 400;
-          font-size: calc(clamp(14px, 0.1786rem + 0.8929vw, 18px)) !important;
+          font-weight: var(--light-font);
+          font-size: 20px !important;
           line-height: 1.2;
           color: #6c6c6c;
-
+            &:not(:first-child){
+                color: #000;
+            }
           // &:first-child {
           //   font-size: calc(clamp(14px, 0.1607rem + 1.1161vw, 21px)) !important ;
 
@@ -45,11 +47,10 @@ header#header {
           //   font-size: calc(clamp(15px, 0.1607rem + 1.1161vw, 18px)) !important ;
           // }
           &:last-child {
-            font-weight: 500;
-            color: $dark-color;
+            font-weight: var(--light-font);
           }
           i{
-            font-size: 10px;
+            font-size: 12px;
             color: #6c6c6c;
           }
         }
@@ -74,6 +75,7 @@ header#header {
   nav {
     position: relative;
     padding: 0 calc(clamp(2rem, 0.7143rem + 2.0089vw, 31.2px));
+      padding-left: 0;
     background: $white-color;
     // padding: 0px 50px;
 
@@ -102,8 +104,7 @@ header#header {
               font-family: var(--main-font-family);
               font-size: 24px;
               font-style: normal;
-              letter-spacing: 2.4px;
-              font-weight: 300;
+              font-weight: var(--light-font);
               line-height: normal;
               color: $dark-color;
           }
@@ -131,7 +132,7 @@ header#header {
                 font-family: var(--main-font-family);
                 font-size: 22px;
                 font-style: normal;
-                font-weight: 300;
+                font-weight: var(--light-font);
                 line-height: normal;
                 letter-spacing: 2.2px;
               color: #9f9f9f;
@@ -174,7 +175,7 @@ header#header {
                     text-decoration: none;
                     font-size: 18px;
                     line-height: 1.1;
-                    font-weight: 400;
+                    font-weight: var(--regular-font);
                     color: $dark-color;
                     text-transform: capitalize;
                     span{
@@ -184,7 +185,9 @@ header#header {
                     i{
                         font-size: 20px !important;
                     }
-
+                    img{
+                        max-height: 19px;
+                    }
                     svg{
                         width: 24px;
                         height: 24px;
@@ -196,7 +199,7 @@ header#header {
                         padding: 5px 12px;
                         background: $dark-color;
                         font-family: var(--main-font-family);
-                        font-weight: 500;
+                        font-weight: var(--medium-font);
                         font-size: 12px;
                         color: #fff;
                         white-space: nowrap;
@@ -241,7 +244,7 @@ header#header {
                 padding: 7.5px 10px;
                   font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 400;
+                font-weight: var(--regular-font);
                 font-size: 16px;
                 // line-height: 20dpx;
                 background: $white-color;
@@ -284,7 +287,7 @@ header#header {
                   padding: 20px 0px 11px 20px;
                     font-family: var(--main-font-family);
                   font-style: normal;
-                  font-weight: 400;
+                  font-weight: var(--regular-font);
                   font-size: 16px;
                   line-height: 19px;
                   text-decoration: none;
@@ -321,7 +324,7 @@ header#header {
                 // margin-inline: 50px;
                   font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 400;
+                font-weight: var(--regular-font);
                 font-size: 16px !important;
                 line-height: 22px;
                 &.dropdown-toggle::after{
@@ -368,7 +371,7 @@ header#header {
                     h6{
                         font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 600;
+                      font-weight: var(--semibold-font);
                       font-size: 18px;
                       line-height: 20px;
                       color: $black-color;
@@ -382,7 +385,7 @@ header#header {
                       // display: block;
                         font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 400;
+                      font-weight: var(--regular-font);
                       font-size: 14px;
                       line-height: 18px;
                       color: $black-color;
@@ -416,7 +419,7 @@ header#header {
                       padding: 5px 3px;
                         font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 400;
+                      font-weight: var(--regular-font);
                       font-size: 14px;
                       line-height: 22px;
                     }

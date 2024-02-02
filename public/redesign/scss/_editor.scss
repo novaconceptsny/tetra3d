@@ -1,6 +1,5 @@
 main{
   section.editor {
-      margin-top: 10px !important;
     // margin-top: 71px;
     //height: calc(100dvh - 50px);
     overflow: hidden !important;
@@ -13,14 +12,15 @@ main{
           .side-col {
             // background: $dark-color;
             box-sizing: border-box;
-            height: calc(100dvh - 46px);
-            top: 46px;
+            height: calc(100dvh - 52px);
+            top: 52px;
             left: 0;
             padding: 0 12px;
             position: fixed;
             .top-div {
               // height: 57px;
-              padding: 10px 0 0;
+              padding: 16px 0 0;
+                margin-bottom: 24px;
               display: flex;
               align-items: center !important;
               justify-content: space-between;
@@ -40,7 +40,7 @@ main{
                 input {
                     font-family: var(--main-font-family);
                   font-style: normal;
-                  font-weight: 500;
+                  font-weight: var(--medium-font);
                   font-size: 18px !important;
                   line-height: 20px;
                   color: $black-color;
@@ -51,7 +51,7 @@ main{
                     border-radius: 0 !important;
                   &::placeholder{
                     font-size: 18px;
-                    font-weight: 500;
+                    font-weight: var(--medium-font);
                       border-radius: 0;
                       color: $dark-color;
                   }
@@ -75,7 +75,7 @@ main{
                 border-radius: 0;
                   font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 500;
+                font-weight: var(--medium-font);
                 font-size: 16px !important;
                 line-height: 16px;
                 color: $dark-color;
@@ -101,7 +101,7 @@ main{
                 h6 {
                     font-family: var(--main-font-family);
                   font-style: normal;
-                  font-weight: 700;
+                  font-weight: var(--bold-font);
                   font-size: 20px;
                   // line-height: 25px;
                   color: $dark-color;
@@ -113,11 +113,11 @@ main{
                 display: flex;
                 .line {
                   height: 35px;
-                  width: 0px;
+                  width: 0;
                   border: 1px solid #C6C6C6;
                   // transform: rotate(90deg);
                   padding: 0;
-                  margin: 0px 20px 0px 20px;
+                  margin: 0 20px 0 20px;
                 }
                 .editor-comment-btn{
                   @include editor-comment-btn;
@@ -125,9 +125,9 @@ main{
               }
             }
             .card-div {
-              margin: 12px;
+              margin: 0;
               //border-radius:5px !important;
-              height: calc(100vh - 160px);
+              height: calc(100vh - 210px);
               // padding: 20px;
 
 
@@ -165,8 +165,10 @@ main{
                   .card-img {
                     padding: 0;
                     img {
-                      width: 100%;
+                      //width: 100%;
                       min-height: 150px;
+                        object-fit: contain;
+                        object-position: center center;
                     }
                   }
                   .card-body {
@@ -174,21 +176,21 @@ main{
                     .heading {
                       // width: fit-content;
                         font-family: var(--main-font-family);
-                      font-style: normal;
-                      font-weight: 500;
-                      font-size: 16px;
-                      font-weight: 600;
-                      line-height: 20px;
+                        font-size: 14px;
+                        font-style: italic;
+                      font-weight: var(--regular-font);
+                      line-height: normal;
                       color: $black-color;
                       overflow-wrap: anywhere;
                     }
-                    .paragraph {
+                    .paragraph,
+                    .dimensions{
                       // width: fit-content;
                         font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 400;
+                      font-weight: var(--light-font);
                       font-size: 14px;
-                      line-height: 14px;
+                      line-height: normal;
                       color: $black-color;
                     }
                   }
@@ -197,7 +199,7 @@ main{
             }
             @include pagination;
               .pagination-div{
-                  margin-top: 0 !important;
+                  margin-block: 24px !important;
                   margin-left: 12px;
                   ul{
                       margin-bottom: 0 !important;
@@ -237,7 +239,7 @@ main{
                     h6 {
                         font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 500;
+                      font-weight: var(--medium-font);
                       font-size: 15px;
                       line-height: 16px;
                       color: #3c3b3c;
@@ -245,7 +247,7 @@ main{
                     p {
                         font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 400;
+                      font-weight: var(--regular-font);
                       font-size: 13px;
                       line-height: 15px;
 
@@ -267,7 +269,7 @@ main{
                 border: none;
                   font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 500;
+                font-weight: var(--medium-font);
                 font-size: 16px;
                 line-height: 18px;
                 display: flex;
@@ -287,7 +289,7 @@ main{
                 padding: 10px 27px;
                   font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 500;
+                font-weight: var(--medium-font);
                 font-size: 15px;
                 line-height: 18px;
                 display: flex;
@@ -298,7 +300,7 @@ main{
             }
           }
           .main-col {
-            height: calc(100vh - 56px);
+            height: calc(100vh - 52px);
             position: relative;
             overflow-y: auto;
             overflow-x: hidden;
@@ -306,13 +308,13 @@ main{
             margin-left: 25%;
             box-sizing: border-box;
             img {
-              z-index: -5 !important;
+              //z-index: -5 !important;
               height: 100%;
               width: 100%;
             }
             .editor-actions {
               z-index: 1 !important;
-              top: 100px !important;
+              top: 115px !important;
               left: 26%;
               position: fixed;
               width: fit-content;
@@ -376,21 +378,67 @@ main{
 }
 
 .tabs-container{
+    display: flex;
+    align-items: end;
+    position: relative;
+    //padding-top: 18px;
+    height: 52px;
     background: #e9ecef;
+    width: 100%;
+    margin-bottom: 0 !important;
+    .view-360{
+    position: absolute;
+        inset: 6px 120px auto auto;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 6px;
+        //margin-inline: auto 120px;
+    padding: 4px 8px;
+    background-color: $white-color;
+    color: $black-color;
+    font-family: var(--main-font-family);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: var(--light-font);
+    line-height: normal;
+    border: 1px solid #000 !important;
+        text-decoration: none;
+    &:hover{
+        background-color: $black-color;
+        color: $white-color;
+        img{
+            filter: invert(1);
+        }
+    }
+        img{
+            //all: unset !important;
+            //z-index: unset !important;
+            width: 30px !important;
+            height: 30px !important;
+        }
+}
+}
+.tab .surface-name{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
 }
 .tab {
+    padding-inline: 12px;
     position: relative;
     cursor: pointer;
-    padding: 0 50px;
     background-color: transparent;
-    border-radius: 5px 5px 0 0;
+    //border-radius: 5px 5px 0 0;
 }
-.tab:not(.active){
-    border-inline: 1px solid #fff;
-}
+//.tab:not(.active){
+//    border-inline: 1px solid #fff;
+//}
 .tab:not(.active):hover{
     background: #eff2f5;
-    border-radius: 5px 5px 0 0;
+    //border-radius: 5px 5px 0 0;
     border-bottom: 0;
 }
 .tab:not(.active):has( ~ .tab.active){
@@ -400,12 +448,17 @@ main{
     border-left: 0;
 }
 .tab.active {
+    .surface-name{
+        display: inline-block;
+        vertical-align: middle;
+    width: 100px;
+    }
     position: relative;
     clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
     color: black;
     border-radius: 0;
-    width: min(120px);
-    padding: 0 12px !important;
+    //width: min(120px);
+    padding: 0 24px !important;
     //border: 1px solid $black-color;
     //border-bottom: 0;
     background-color: #000;
@@ -425,9 +478,13 @@ main{
     position: absolute;
     inset: auto auto auto 6px;
 }
-.tab .cross-btn{
-    position: absolute;
-    inset: 0 0 0 auto;
-    padding: 0 6px;
-}
+//.tab .cross-btn{
+//    position: absolute ;
+//    inset: 0 0 0 auto;
+//    padding: 0 6px;
+//}
+
+//.main-col .tabs-container .view-360 img{
+//    z-index: unset !important;
+//}
 

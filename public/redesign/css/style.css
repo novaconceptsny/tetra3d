@@ -3,6 +3,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.cdnfonts.com/css/campton");
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 @font-face {
   font-family: "Mona-Sans";
   src: url("../../fonts/Mona-sans/Mona-Sans.ttf") format("truetype");
@@ -31,7 +41,7 @@
   --main-font-family: "Roboto Condensed", sans-serif;
   --extra-thin-font: 100;
   --thin-font: 200;
-  --light: 300;
+  --light-font: 300;
   --regular-font: 400;
   --medium-font: 500;
   --semibold-font: 600;
@@ -74,17 +84,19 @@ header#header nav.navbar-light .navbar-collapse .breadcrumb-div .breadcrumb-item
   gap: 10px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
-  font-size: clamp(14px, 0.1786rem + 0.8929vw, 18px) !important;
+  font-weight: var(--light-font);
+  font-size: 20px !important;
   line-height: 1.2;
   color: #6c6c6c;
 }
+header#header nav.navbar-light .navbar-collapse .breadcrumb-div .breadcrumb-item:not(:first-child) {
+  color: #000;
+}
 header#header nav.navbar-light .navbar-collapse .breadcrumb-div .breadcrumb-item:last-child {
-  font-weight: 500;
-  color: #222436;
+  font-weight: var(--light-font);
 }
 header#header nav.navbar-light .navbar-collapse .breadcrumb-div .breadcrumb-item i {
-  font-size: 10px;
+  font-size: 12px;
   color: #6c6c6c;
 }
 header#header nav.navbar-light .navbar-collapse .menu-nav .nav-left-btn .menu-btn {
@@ -99,6 +111,7 @@ header#header nav.navbar-light .navbar-collapse .menu-nav .nav-left-btn .dropdow
 header#header nav {
   position: relative;
   padding: 0 clamp(2rem, 0.7143rem + 2.0089vw, 31.2px);
+  padding-left: 0;
   background: #ffffff;
 }
 header#header nav .nav-container {
@@ -126,8 +139,7 @@ header#header nav .nav-container .navbar-brand span {
   font-family: var(--main-font-family);
   font-size: 24px;
   font-style: normal;
-  letter-spacing: 2.4px;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #222436;
 }
@@ -156,7 +168,7 @@ header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-lin
   font-family: var(--main-font-family);
   font-size: 22px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   letter-spacing: 2.2px;
   color: #9f9f9f;
@@ -197,7 +209,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a {
   text-decoration: none;
   font-size: 18px;
   line-height: 1.1;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   color: #222436;
   text-transform: capitalize;
 }
@@ -206,6 +218,9 @@ header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a span {
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a i {
   font-size: 20px !important;
+}
+header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a img {
+  max-height: 19px;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a svg {
   width: 24px;
@@ -217,7 +232,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a::befor
   padding: 5px 12px;
   background: #222436;
   font-family: var(--main-font-family);
-  font-weight: 500;
+  font-weight: var(--medium-font);
   font-size: 12px;
   color: #fff;
   white-space: nowrap;
@@ -248,7 +263,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div .n
   padding: 7.5px 10px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 16px;
   background: #ffffff;
   color: #222436;
@@ -286,7 +301,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div .n
   padding: 20px 0px 11px 20px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 16px;
   line-height: 19px;
   text-decoration: none;
@@ -317,7 +332,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown {
 header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown a {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 16px !important;
   line-height: 22px;
 }
@@ -360,7 +375,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown u
 header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown ul.dropdown-menu .drop-profile .user-detail h6 {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 18px;
   line-height: 20px;
   color: #000000;
@@ -373,7 +388,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown u
 header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown ul.dropdown-menu .drop-profile .user-detail p {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 14px;
   line-height: 18px;
   color: #000000;
@@ -398,7 +413,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown u
   padding: 5px 3px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 14px;
   line-height: 22px;
 }
@@ -453,7 +468,7 @@ main.login .inner-div .logo span {
   font-family: var(--main-font-family);
   font-size: 50px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   letter-spacing: 5px;
   color: #222436;
@@ -464,7 +479,7 @@ main.login .inner-div .login {
   font-family: var(--main-font-family);
   font-size: 45px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   text-align: center;
 }
 main.login .inner-div p {
@@ -473,7 +488,7 @@ main.login .inner-div p {
   font-family: var(--main-font-family);
   font-size: 20px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
 }
 main.login .inner-div form {
@@ -481,22 +496,22 @@ main.login .inner-div form {
 }
 main.login .inner-div .login-custum-form-group {
   width: 100%;
+  margin-bottom: 60px;
 }
 main.login .inner-div .login-custum-form-group label {
   margin-bottom: clamp(0rem, -1.1429rem + 1.7857vw, 10px);
   font-family: var(--main-font-family);
   font-size: 18px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: 1.92;
   color: #000000;
 }
 main.login .inner-div .login-custum-form-group input {
-  margin-bottom: 60px;
   font-family: var(--main-font-family);
   font-size: 18px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: 1.9;
   width: 100%;
   display: flex;
@@ -543,13 +558,13 @@ main.login .inner-div .check-main .checkbox label {
   font-family: var(--main-font-family);
   font-size: 18px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: 1.9;
 }
 main.login .inner-div .check-main .forget a {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 18px;
   line-height: 190.2%;
   color: #32755f;
@@ -562,7 +577,7 @@ main.login .inner-div .btn-login {
   font-family: var(--main-font-family);
   font-size: 19px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: 1.9;
   background: #ffffff;
   border-radius: 0;
@@ -577,14 +592,14 @@ main.login .inner-div .btn-login:hover {
 main.login .inner-div .create {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 18px;
   line-height: 190.2%;
 }
 main.login .inner-div .create a {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 18px;
   line-height: 190.2%;
   color: #32755f;
@@ -621,15 +636,15 @@ main.login .container-fluid .row .sec-col .ellipse {
 main.login .container-fluid .row .sec-col h1 {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 700;
+  font-weight: var(--bold-font);
   color: #ffffff;
-  margin: 35px 0px 25px 26px;
+  margin: 35px 0 25px 26px;
   max-width: 525px;
 }
 main.login .container-fluid .row .sec-col p {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--medium-font);
   margin-left: 88px;
   color: #ffffff;
   max-width: 465px;
@@ -651,7 +666,7 @@ main section.collection .pagination-div .pagination .page-item .page-link {
   color: #222436;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 16px;
   line-height: 25px;
   padding: 5px 15px;
@@ -710,7 +725,7 @@ main section.collection .main-intro .intro-row .fir-col .intro .hello {
 main section.collection .main-intro .intro-row .fir-col .intro .hello h2 {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 64px;
   line-height: 87px;
   color: #222436;
@@ -718,7 +733,7 @@ main section.collection .main-intro .intro-row .fir-col .intro .hello h2 {
 main section.collection .main-intro .intro-row .fir-col .intro p {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 18px;
   line-height: 25px;
   color: #464646;
@@ -731,7 +746,7 @@ main section.collection .main-intro .intro-row .fir-col .sort-btn {
   gap: 20px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 18px;
   line-height: 25px;
   border: 1px solid #222436;
@@ -775,7 +790,7 @@ main section.collection .main-intro .table-row .c-form .search {
   font-family: var(--main-font-family);
   font-size: 20px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #222436;
 }
@@ -787,27 +802,28 @@ main section.collection .main-intro .table-row .c-form select {
   font-family: var(--main-font-family);
   font-size: 20px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #222436;
   background: none;
-  border: 1px solid #222436;
   border-radius: 0 !important;
 }
-main section.collection .main-intro .table-row .c-form button {
+main section.collection .main-intro .table-row .c-form select.form-control {
+  border: 1px solid #000000 !important;
+}
+main section.collection .main-intro .table-row .c-form .reset-btn {
   width: fit-content;
-  background: #ffffff;
-  border: 1px solid #222436;
+  background-color: #000000 !important;
   border-radius: 0;
   padding: 15px 40px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 20px;
   line-height: 23px;
-  color: #222436;
+  color: #ffffff;
 }
-main section.collection .main-intro .table-row .c-form button:hover {
+main section.collection .main-intro .table-row .c-form .reset-btn:hover {
   color: #ffffff;
   background-color: #222436;
 }
@@ -818,7 +834,7 @@ main section.collection .main-intro .table-row .c-form button:hover {
 }
 .collection-table thead {
   padding: 28px 24px;
-  background: #222436;
+  background: #000000;
 }
 .collection-table thead tr th {
   padding: 16px 0;
@@ -828,10 +844,9 @@ main section.collection .main-intro .table-row .c-form button:hover {
   font-family: var(--main-font-family);
   font-size: 32px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   line-height: normal;
   align-items: center;
-  border: 1px solid #000;
 }
 .collection-table thead tr th td:first-child {
   border-left-style: solid;
@@ -850,7 +865,7 @@ main section.collection .main-intro .table-row .c-form button:hover {
   font-family: var(--main-font-family);
   font-size: 20px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   text-align: center;
 }
@@ -876,7 +891,7 @@ main section.collection .main-intro .table-row .c-form button:hover {
 }
 
 .artworks-table .table thead {
-  background: #222436;
+  background: #000;
   color: white;
 }
 
@@ -914,6 +929,29 @@ main section.collection .main-intro .table-row .c-form button:hover {
   object-fit: contain !important;
 }
 
+input[type=text].form-control,
+select.form-control {
+  border: 1px solid #000 !important;
+  border-radius: 0 !important;
+  color: #000;
+}
+input[type=text].form-control::placeholder,
+select.form-control::placeholder {
+  color: #000;
+}
+
+.reset-btn {
+  width: fit-content;
+  background-color: #000000 !important;
+  border-radius: 0;
+  font-family: var(--main-font-family);
+  font-style: normal;
+  font-weight: var(--regular-font);
+  font-size: 20px;
+  line-height: 23px;
+  color: #ffffff;
+}
+
 main section.main-page {
   overflow: hidden;
   position: relative;
@@ -947,7 +985,7 @@ main section.main-page .main-intro .intro-row .fir-col .intro .hello {
 main section.main-page .main-intro .intro-row .fir-col .intro .hello h2 {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 64px;
   line-height: 87px;
   color: #222436;
@@ -955,7 +993,7 @@ main section.main-page .main-intro .intro-row .fir-col .intro .hello h2 {
 main section.main-page .main-intro .intro-row .fir-col .intro p {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 18px;
   line-height: 25px;
   color: #464646;
@@ -968,7 +1006,7 @@ main section.main-page .main-intro .intro-row .fir-col .sort-btn {
   gap: 20px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 18px;
   line-height: 25px;
   border: 1px solid #222436;
@@ -1000,7 +1038,7 @@ main section.main-page .main-intro .card-row .inner-row h5 {
   margin-bottom: 16px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   font-size: 40px;
   letter-spacing: 4px;
   line-height: 2.25;
@@ -1018,7 +1056,7 @@ main section.main-page .main-intro .card-row .inner-row .sorted-btn span {
   font-family: var(--main-font-family);
   font-size: 18px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #222436;
 }
@@ -1028,7 +1066,7 @@ main section.main-page .main-intro .card-row .inner-row .sorted-btn .c-select {
   font-family: var(--main-font-family);
   font-size: 18px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #222436;
   letter-spacing: 1.8px;
@@ -1093,7 +1131,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   font-family: var(--main-font-family);
   font-size: 20px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   line-height: 24px;
   letter-spacing: 2px;
   color: #222436;
@@ -1110,7 +1148,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   font-family: var(--main-font-family);
   font-size: 16px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: 24px;
   color: #000000;
   margin: 0;
@@ -1129,7 +1167,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   font-family: var(--main-font-family);
   font-size: 16px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #222436;
   text-transform: lowercase;
@@ -1159,12 +1197,56 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   align-items: center;
   justify-content: center;
   height: 60px;
+  position: relative;
+  z-index: 1000;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .more-btn {
+  width: 30px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: auto -25px auto auto;
+  z-index: 10;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .more-btn i {
+  color: #fff;
+  font-size: 16px;
+  text-align: center;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .more-btn:hover ~ .contributors-list {
+  display: block;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .contributors-list {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: absolute;
+  inset: auto -100% 25% auto;
+  background: #000;
+  color: #fff;
+  font-family: var(--main-font-family);
+  font-weight: var(--light-font);
+  font-size: 12px;
+  padding: 5px 10px;
+  display: none;
+  z-index: 99999;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container h4 {
   text-transform: capitalize;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-family: var(--main-font-family);
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container > .img-div {
+  display: none;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container > .img-div:nth-child(-n+4) {
+  display: block;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div {
   width: 45px;
@@ -1172,14 +1254,10 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   margin-left: -18px;
   border-radius: 50%;
   z-index: 1;
-  overflow: hidden;
+  position: relative;
 }
-main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div img {
-  border-radius: 50%;
-  border: 1px solid #222436;
-  width: 100%;
-  object-fit: fill;
-  object-position: center;
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div::before, main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div::after {
+  display: none;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div:first-child {
   margin-left: 0px;
@@ -1209,11 +1287,51 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div:nth-child(9) {
   z-index: 2 !important;
 }
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div:hover::before {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  content: attr(data-text);
+  position: absolute;
+  top: 50px;
+  left: -50px;
+  margin-left: 15px;
+  width: 100px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  background: #000000;
+  color: #ffffff;
+  text-align: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  display: block;
+  font-family: var(--main-font-family);
+  font-size: 12px;
+  font-weight: var(--light-font);
+  z-index: 10;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div:hover::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 10px;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background-color: #000000;
+  top: 100%;
+  left: 15px;
+  display: block;
+  z-index: 10;
+}
+main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div img {
+  border-radius: 50%;
+  border: 1px solid #222436;
+  width: 100%;
+  object-fit: fill;
+  object-position: center;
+}
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer .card-imgs .images-container .img-div img {
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  z-index: 1;
 }
 main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-footer div a {
   border: 1px solid #000000;
@@ -1224,7 +1342,7 @@ main section.main-page .main-intro .card-row .inner-row .card-col .c-card .card-
   font-family: var(--main-font-family);
   font-size: 16px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #222436;
   text-transform: capitalize;
@@ -1256,11 +1374,34 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
 .sidebar-div {
   height: calc(100dvh - 80px);
 }
+.sidebar-div table {
+  font-family: var(--main-font-family);
+}
+.sidebar-div table td {
+  font-size: 16px;
+  font-weight: var(--light-font);
+}
 .sidebar-div table .edit-btn {
   display: none;
 }
+.sidebar-div table tr {
+  padding-block: 8px !important;
+}
+.sidebar-div table tr td:first-of-type,
+.sidebar-div table tr th:first-of-type {
+  width: 30% !important;
+}
+.sidebar-div table th {
+  font-family: var(--main-font-family);
+  font-size: 20px;
+  font-weight: var(--regular-font);
+}
 .sidebar-div table tr:has(td.layout-table-title):hover .edit-btn {
   display: inline-block !important;
+}
+.sidebar-div table .tour-show {
+  padding: 6px 12px;
+  border: 1px solid #000;
 }
 .sidebar-div .sidebar.mysidebar {
   margin: 0;
@@ -1285,7 +1426,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   margin-bottom: 60px;
 }
 .sidebar-div .sidebar.mysidebar .select-box .custom-select {
-  font-weight: 400;
+  font-weight: var(--regular-font);
   width: 100%;
   height: 100%;
   font-size: 16px;
@@ -1299,7 +1440,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
 }
 .sidebar-div .sidebar.mysidebar .select-box .custom-select .select-selected {
   background-color: #ffffff;
-  border-radius: 10px 0px 0px 0px;
+  border-radius: 10px 0 0 0;
   text-transform: capitalize;
   color: #222436;
   padding: 12px;
@@ -1358,7 +1499,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   font-size: 16px;
   color: #222436;
   line-height: 19px;
-  font-weight: 400;
+  font-weight: var(--regular-font);
 }
 .sidebar-div .sidebar.mysidebar .preview {
   position: relative;
@@ -1367,13 +1508,15 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   text-transform: capitalize;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500;
-  font-size: 30px !important;
+  font-weight: var(--medium-font);
+  font-size: 24px !important;
   line-height: 35px;
   margin-bottom: 16px;
   color: #222436;
 }
 .sidebar-div .sidebar.mysidebar div h5.sidebar-heading {
+  font-size: 30px;
+  font-weight: var(--light-font);
   text-align: center;
   max-width: 400px;
   margin-bottom: 0;
@@ -1384,7 +1527,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   margin: 0 0 32px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500 !important;
+  font-weight: var(--light-font) !important;
   font-size: 18px !important;
   line-height: 21px;
   color: #000;
@@ -1399,7 +1542,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   background-color: #222436;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 22px;
   line-height: 26px;
   color: #ffffff;
@@ -1422,7 +1565,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   font-family: var(--main-font-family);
   font-size: 16px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   color: #000000;
   border-radius: 0;
@@ -1451,7 +1594,7 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   margin-top: 50px;
 }
 .sidebar-div .sidebar.mysidebar .contributor .img-container {
-  margin-top: 30px;
+  margin-top: 5px;
   margin-left: 20px;
 }
 .sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip {
@@ -1460,14 +1603,12 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   height: 52px;
   border-radius: 50%;
   z-index: 1;
-  position: relative;
-  border-bottom: 1px dashed #000;
 }
 .sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:hover {
   z-index: 10 !important;
 }
 .sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:first-child {
-  margin-left: 0px;
+  margin-left: 0;
   z-index: 10 !important;
 }
 .sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip img {
@@ -1479,7 +1620,10 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
 .sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip img:hover {
   transform: scale(1.2);
 }
-.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:before {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:hover {
+  position: relative;
+}
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:hover:before {
   content: attr(data-text);
   position: absolute;
   top: 61px;
@@ -1493,8 +1637,11 @@ main section.main-page .main-intro .card-row .inner-row .project-cards-wrapper {
   text-align: center;
   flex-wrap: nowrap;
   display: none;
+  font-family: var(--main-font-family);
+  font-size: 16px;
+  font-weight: var(--light-font);
 }
-.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip::after {
+.sidebar-div .sidebar.mysidebar .contributor .img-container .name-tip:hover::after {
   content: "";
   position: absolute;
   width: 15px;
@@ -1534,7 +1681,7 @@ main section.profile .content-container .profile-row .edit-col .edit-profile h4 
   color: #ffffff;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 22px;
   line-height: 26px;
   padding: 18px;
@@ -1551,7 +1698,7 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
 main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group label {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 18px;
   line-height: 21px;
   color: #000000;
@@ -1561,7 +1708,7 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
   border: 1px solid #3c3b3c;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 14px;
   line-height: 16px;
   color: #000000;
@@ -1590,7 +1737,7 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
   height: fit-content;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 14px;
   line-height: 16px;
   color: #000000;
@@ -1615,7 +1762,7 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
   border-radius: 8px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 22px;
   line-height: 26px;
   color: #222436;
@@ -1635,7 +1782,7 @@ main section.profile .content-container .profile-row .pass-col .update-pass h4 {
   color: #ffffff;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 22px;
   line-height: 26px;
   padding: 18px;
@@ -1649,7 +1796,7 @@ main section.profile .content-container .profile-row .pass-col .update-pass form
 main section.profile .content-container .profile-row .pass-col .update-pass form .custum-form-group label {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 18px;
   line-height: 21px;
   color: #000000;
@@ -1672,7 +1819,7 @@ main section.profile .content-container .profile-row .pass-col .update-pass form
   border-radius: 8px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 22px;
   line-height: 26px;
   color: #222436;
@@ -1703,7 +1850,7 @@ main section.version .container-fluid .row .col-12 h4 {
   font-family: var(--main-font-family);
   font-size: 24px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   line-height: 24px; /* 100% */
   letter-spacing: 0.3px;
   color: #222436;
@@ -1753,7 +1900,7 @@ main section.version .container-fluid .row .fir-col .card .abs-div .content h6 {
   display: none;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 550;
+  font-weight: var(--medium-font);
   font-size: 22px;
   line-height: 24px;
   text-align: center;
@@ -1768,8 +1915,11 @@ main section.version .container-fluid .row .col-3 .card {
   padding: 0;
   margin: 0;
   margin-right: 30px;
-  border: 1px solid #000000 !important;
+  border: 1px solid #ECECEC !important;
   border-radius: 0;
+}
+main section.version .container-fluid .row .col-3 .card.border {
+  border-color: #000 !important;
 }
 main section.version .container-fluid .row .col-3 .card .card-img {
   display: flex;
@@ -1797,7 +1947,7 @@ main section.version .container-fluid .row .col-3 .card .card-body .main-card-bo
   font-family: var(--main-font-family);
   font-size: 22px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: 24px; /* 109.091% */
   letter-spacing: 0.3px;
   color: #222436;
@@ -1806,7 +1956,7 @@ main section.version .container-fluid .row .col-3 .card .card-body .main-card-bo
   font-family: var(--main-font-family);
   font-size: 14px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font);
   line-height: normal;
   letter-spacing: 0.049px;
   color: #787878;
@@ -1844,12 +1994,11 @@ main section.version .container-fluid .row .col-3 .card .card-body .main-card-bo
   font-family: var(--main-font-family);
   font-size: 16px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--light-font) !important;
   line-height: normal;
 }
 
 main section.editor {
-  margin-top: 10px !important;
   overflow: hidden !important;
   box-sizing: border-box;
   z-index: 2 !important;
@@ -1859,14 +2008,15 @@ main section.editor .editor-view .row {
 }
 main section.editor .editor-view .row .side-col {
   box-sizing: border-box;
-  height: calc(100dvh - 46px);
-  top: 46px;
+  height: calc(100dvh - 52px);
+  top: 52px;
   left: 0;
   padding: 0 12px;
   position: fixed;
 }
 main section.editor .editor-view .row .side-col .top-div {
-  padding: 10px 0 0;
+  padding: 16px 0 0;
+  margin-bottom: 24px;
   display: flex;
   align-items: center !important;
   justify-content: space-between;
@@ -1885,7 +2035,7 @@ main section.editor .editor-view .row .side-col .top-div .input-group .input-gro
 main section.editor .editor-view .row .side-col .top-div .input-group input {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--medium-font);
   font-size: 18px !important;
   line-height: 20px;
   color: #000000;
@@ -1897,7 +2047,7 @@ main section.editor .editor-view .row .side-col .top-div .input-group input {
 }
 main section.editor .editor-view .row .side-col .top-div .input-group input::placeholder {
   font-size: 18px;
-  font-weight: 500;
+  font-weight: var(--medium-font);
   border-radius: 0;
   color: #222436;
 }
@@ -1916,7 +2066,7 @@ main section.editor .editor-view .row .side-col .top-div .all-btn {
   border-radius: 0;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--medium-font);
   font-size: 16px !important;
   line-height: 16px;
   color: #222436;
@@ -1931,7 +2081,7 @@ main section.editor .editor-view .row .side-col .top-div .all-btn option {
 main section.editor .editor-view .row .side-col .top-div .text h6 {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 700;
+  font-weight: var(--bold-font);
   font-size: 20px;
   color: #222436;
   margin-bottom: 0;
@@ -1941,17 +2091,17 @@ main section.editor .editor-view .row .side-col .top-div .outside {
 }
 main section.editor .editor-view .row .side-col .top-div .outside .line {
   height: 35px;
-  width: 0px;
+  width: 0;
   border: 1px solid #C6C6C6;
   padding: 0;
-  margin: 0px 20px 0px 20px;
+  margin: 0 20px 0 20px;
 }
 main section.editor .editor-view .row .side-col .top-div .outside .editor-comment-btn {
   background: #ffffff;
   border-radius: 10px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 18px !important;
   line-height: 25px;
   display: flex;
@@ -1976,8 +2126,8 @@ main section.editor .editor-view .row .side-col .top-div .outside .editor-commen
   }
 }
 main section.editor .editor-view .row .side-col .card-div {
-  margin: 12px;
-  height: calc(100vh - 160px);
+  margin: 0;
+  height: calc(100vh - 210px);
 }
 main section.editor .editor-view .row .side-col .card-div .card-row {
   border: 1px solid #222436;
@@ -2002,28 +2152,29 @@ main section.editor .editor-view .row .side-col .card-div .card-row .card .card-
   padding: 0;
 }
 main section.editor .editor-view .row .side-col .card-div .card-row .card .card-img img {
-  width: 100%;
   min-height: 150px;
+  object-fit: contain;
+  object-position: center center;
 }
 main section.editor .editor-view .row .side-col .card-div .card-row .card .card-body {
   padding: 10px;
 }
 main section.editor .editor-view .row .side-col .card-div .card-row .card .card-body .heading {
   font-family: var(--main-font-family);
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 20px;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: var(--regular-font);
+  line-height: normal;
   color: #000000;
   overflow-wrap: anywhere;
 }
-main section.editor .editor-view .row .side-col .card-div .card-row .card .card-body .paragraph {
+main section.editor .editor-view .row .side-col .card-div .card-row .card .card-body .paragraph,
+main section.editor .editor-view .row .side-col .card-div .card-row .card .card-body .dimensions {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--light-font);
   font-size: 14px;
-  line-height: 14px;
+  line-height: normal;
   color: #000000;
 }
 main section.editor .editor-view .row .side-col .pagination-div {
@@ -2038,7 +2189,7 @@ main section.editor .editor-view .row .side-col .pagination-div .pagination .pag
   color: #222436;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--semibold-font);
   font-size: 16px;
   line-height: 25px;
   padding: 5px 15px;
@@ -2070,7 +2221,7 @@ main section.editor .editor-view .row .side-col .pagination-div.pagination-white
   color: #ffffff;
 }
 main section.editor .editor-view .row .side-col .pagination-div {
-  margin-top: 0 !important;
+  margin-block: 24px !important;
   margin-left: 12px;
 }
 main section.editor .editor-view .row .side-col .pagination-div ul {
@@ -2105,7 +2256,7 @@ main section.editor .editor-view .row .side-col .comment-div .comments .comment 
 main section.editor .editor-view .row .side-col .comment-div .comments .comment .text h6 {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--medium-font);
   font-size: 15px;
   line-height: 16px;
   color: #3c3b3c;
@@ -2113,7 +2264,7 @@ main section.editor .editor-view .row .side-col .comment-div .comments .comment 
 main section.editor .editor-view .row .side-col .comment-div .comments .comment .text p {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--regular-font);
   font-size: 13px;
   line-height: 15px;
   color: #bcbcbc;
@@ -2131,7 +2282,7 @@ main section.editor .editor-view .row .side-col .send-comment input {
   border: none;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--medium-font);
   font-size: 16px;
   line-height: 18px;
   display: flex;
@@ -2150,7 +2301,7 @@ main section.editor .editor-view .row .side-col .send-comment button {
   padding: 10px 27px;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--medium-font);
   font-size: 15px;
   line-height: 18px;
   display: flex;
@@ -2158,7 +2309,7 @@ main section.editor .editor-view .row .side-col .send-comment button {
   color: #222436;
 }
 main section.editor .editor-view .row .main-col {
-  height: calc(100vh - 56px);
+  height: calc(100vh - 52px);
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
@@ -2167,13 +2318,12 @@ main section.editor .editor-view .row .main-col {
   box-sizing: border-box;
 }
 main section.editor .editor-view .row .main-col img {
-  z-index: -5 !important;
   height: 100%;
   width: 100%;
 }
 main section.editor .editor-view .row .main-col .editor-actions {
   z-index: 1 !important;
-  top: 100px !important;
+  top: 115px !important;
   left: 26%;
   position: fixed;
   width: fit-content;
@@ -2228,24 +2378,61 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 
 .tabs-container {
+  display: flex;
+  align-items: end;
+  position: relative;
+  height: 52px;
   background: #e9ecef;
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+.tabs-container .view-360 {
+  position: absolute;
+  inset: 6px 120px auto auto;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: var(--main-font-family);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: var(--light-font);
+  line-height: normal;
+  border: 1px solid #000 !important;
+  text-decoration: none;
+}
+.tabs-container .view-360:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+.tabs-container .view-360:hover img {
+  filter: invert(1);
+}
+.tabs-container .view-360 img {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.tab .surface-name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .tab {
+  padding-inline: 12px;
   position: relative;
   cursor: pointer;
-  padding: 0 50px;
   background-color: transparent;
-  border-radius: 5px 5px 0 0;
-}
-
-.tab:not(.active) {
-  border-inline: 1px solid #fff;
 }
 
 .tab:not(.active):hover {
   background: #eff2f5;
-  border-radius: 5px 5px 0 0;
   border-bottom: 0;
 }
 
@@ -2262,9 +2449,13 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
   color: black;
   border-radius: 0;
-  width: 120px;
-  padding: 0 12px !important;
+  padding: 0 24px !important;
   background-color: #000;
+}
+.tab.active .surface-name {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100px;
 }
 
 .tab.active::after {
@@ -2281,10 +2472,12 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   inset: auto auto auto 6px;
 }
 
-.tab .cross-btn {
-  position: absolute;
-  inset: 0 0 0 auto;
-  padding: 0 6px;
+.row {
+  margin-inline: 0;
+}
+
+.container-fluid {
+  padding: 0;
 }
 
 .previous-btn {
@@ -2328,72 +2521,8 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   color: #fff;
 }
 
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-.tabs-container {
-  background: #e9ecef;
-}
-
-.tab {
-  position: relative;
-  cursor: pointer;
-  padding: 0 50px;
-  background-color: transparent;
-  border-radius: 5px 5px 0 0;
-}
-
-.tab:not(.active) {
-  border-inline: 1px solid #fff;
-}
-
-.tab:not(.active):hover {
-  background: #eff2f5;
-  border-radius: 5px 5px 0 0;
-  border-bottom: 0;
-}
-
-.tab:not(.active):has(~ .tab.active) {
-  border-right: 0;
-}
-
-.tab.active ~ .tab {
-  border-left: 0;
-}
-
-.tab.active {
-  position: relative;
-  clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
-  color: black;
-  border-radius: 0;
-  width: 120px;
-  padding: 0 12px !important;
-  background-color: #000;
-}
-
-.tab.active::after {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  background-color: white;
-  clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
-  z-index: -5;
-}
-
-.tab .surface-active {
-  position: absolute;
-  inset: auto auto auto 6px;
-}
-
-.tab .cross-btn {
-  position: absolute;
-  inset: 0 0 0 auto;
-  padding: 0 6px;
+.delete-btn:hover {
+  background: red !important;
 }
 
 img,

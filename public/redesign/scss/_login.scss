@@ -45,7 +45,7 @@ main.login{
                 font-family: var(--main-font-family);
                 font-size: 50px;
                 font-style: normal;
-                font-weight: 300;
+                font-weight: var(--light-font);
                 line-height: normal;
                 letter-spacing: 5px;
                 color: $dark-color;
@@ -58,7 +58,7 @@ main.login{
             font-family: var(--main-font-family);
             font-size: 45px;
             font-style: normal;
-            font-weight: 300;
+            font-weight: var(--light-font);
             text-align: center;
         }
         p {
@@ -67,7 +67,7 @@ main.login{
             font-family: var(--main-font-family);
             font-size: 20px;
             font-style: normal;
-            font-weight: 300;
+            font-weight: var(--light-font);
             line-height: normal;
         }
         form{
@@ -75,22 +75,22 @@ main.login{
         }
         .login-custum-form-group {
             width: 100%;
+                margin-bottom: 60px;
             //background-color: green;
             label {
                 margin-bottom: calc(clamp(0rem, -1.1429rem + 1.7857vw, 10px));
                 font-family: var(--main-font-family);
                 font-size: 18px;
                 font-style: normal;
-                font-weight: 300;
+                font-weight: var(--light-font);
                 line-height: 1.92;
                 color: $black-color;
             }
             input {
-                margin-bottom: 60px;
                 font-family: var(--main-font-family);
                 font-size: 18px;
                 font-style: normal;
-                font-weight: 300;
+                font-weight: var(--light-font);
                 line-height: 1.9;
                 width: 100%;
                 display: flex;
@@ -145,7 +145,7 @@ main.login{
                     font-family: var(--main-font-family);
                     font-size: 18px;
                     font-style: normal;
-                    font-weight: 300;
+                    font-weight: var(--light-font);
                     line-height: 1.9;
                 }
             }
@@ -153,7 +153,7 @@ main.login{
                 a {
                     font-family: var(--main-font-family);
                     font-style: normal;
-                    font-weight: 400;
+                    font-weight: var(--regular-font);
                     font-size: 18px;
                     line-height: 190.2%;
                     color: $primary-green;
@@ -168,7 +168,7 @@ main.login{
             font-family: var(--main-font-family);
             font-size: 19px;
             font-style: normal;
-            font-weight: 300;
+            font-weight: var(--light-font);
             line-height: 1.9;
             background: $white-color;
             border-radius: 0;
@@ -184,13 +184,13 @@ main.login{
         .create {
             font-family: var(--main-font-family);
             font-style: normal;
-            font-weight: 400;
+            font-weight: var(--regular-font);
             font-size: 18px;
             line-height: 190.2%;
             a {
                 font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 400;
+                font-weight: var(--regular-font);
                 font-size: 18px;
                 line-height: 190.2%;
                 color: $primary-green;
@@ -249,15 +249,15 @@ main.login{
             h1 {
                 font-family: var(--main-font-family);
               font-style: normal;
-              font-weight: 700;
+              font-weight: var(--bold-font);
               color: $white-color;
-              margin: 35px 0px 25px 26px;
+              margin: 35px 0 25px 26px;
               max-width: 525px;
             }
             p {
                 font-family: var(--main-font-family);
               font-style: normal;
-              font-weight: 500;
+              font-weight: var(--medium-font);
               margin-left: 88px;
               color: $white-color;
               max-width: 465px;

@@ -2,7 +2,7 @@
     <div class="sidebar-div">
         <div class="sidebar mysidebar">
             <div class="preview">
-                <h5 class="sidebar-heading d-flex align-items-center">
+                <h5 class="sidebar-heading d-flex align-items-start">
                     <span>{{ $project->name }}</span>
                     @can('update', $project)
                     <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
@@ -15,14 +15,11 @@
             <div class="date">
                 <h6>{{ $project->created_at->format('M d, Y') }}</h6>
             </div>
-            <div class="select-tours">
-                <h5>Select Layout</h5>
-            </div>
 
             <div class="mb-3">
                 <table class="table">
                     <tr>
-                        <th>Layout Name</th>
+                        <th>Name</th>
                         <th>Tour</th>
                         <th>Created By</th>
                         <th>Created At</th>
@@ -47,7 +44,7 @@
                             </td>
                             <td>
 
-                                <a class="text-dark" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
+                                <a class="text-dark tour-show" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
                                     <i class="fal fa-sign-in"></i>
                                 </a>
                             </td>

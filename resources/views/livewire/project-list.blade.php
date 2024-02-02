@@ -39,12 +39,27 @@
                                 <div class="card-imgs">
                                     <div class="images-container">
                                         @forelse($project->contributors as $contributor)
-                                            <div class="img-div bg-white" data-text="{{ $contributor->name }}">
-                                                <img src="{{ $contributor->avatar_url }}" alt=""/>
-                                            </div>
+                                            @if($loop->iteration <= 4)
+                                                <div class="img-div bg-white" data-text="{{ $contributor->name }}">
+                                                    <img src="{{ $contributor->avatar_url }}" alt=""/>
+                                                </div>
+                                            @endif
+
                                         @empty
                                             <p>No Contributors Yet</p>
                                         @endforelse
+                                        @if(count($project->contributors) > 4)
+                                            <div class="more-btn">
+                                                <i class="fas fa-plus"></i>
+                                            </div>
+                                        @endif
+                                                <div class="contributors-list">
+                                                    @foreach($project->contributors as $contributor)
+                                                        @if($loop->iteration > 4)
+                                                            <div>{{ $contributor->name }}</div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
                                     </div>
                                 </div>
                                 <div class="link-div">
