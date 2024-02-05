@@ -432,10 +432,13 @@ $dark-color: #222436;
     table{
         font-family: var(--main-font-family);
         td{
+            position: relative;
             font-size: 16px;
             font-weight: var(--light-font);
         }
         .edit-btn{
+            position: absolute;
+            inset: 8px 0 auto auto;
             display: none;
         }
         tr{
@@ -449,6 +452,10 @@ $dark-color: #222436;
             font-family: var(--main-font-family);
             font-size: 20px;
             font-weight: var(--regular-font);
+            span{
+                display: block;
+                max-width: 80%;
+            }
         }
         tr:has(td.layout-table-title):hover .edit-btn{
             display: inline-block !important;

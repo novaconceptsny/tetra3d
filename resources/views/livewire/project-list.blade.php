@@ -8,7 +8,8 @@
                     <span>Sort by:</span>
                     <div class="input-group custom-select">
 
-                        <select  wire:model.live="sortBy" class="form-select c-select" aria-label="Default select example">
+                        <select wire:model.live="sortBy" class="form-select c-select"
+                                aria-label="Default select example">
                             <option value="name">Name A to Z</option>
                             <option value="created_at">Recently added</option>
                             <option value="updated_at">Recently edited</option>
@@ -18,7 +19,7 @@
             </div>
             <div class="row project-cards-wrapper">
                 @foreach($projects as $project)
-                    <div class="col-sm-6 col-xl-4 col-xxl-3 card-col" wire:key="{{ $project->id }}">
+                    <div class="card-col" wire:key="{{ $project->id }}">
                         <div class="c-card card ">
                             <div class="card-head">
                                 <div class="card-header mb-2 border-0">
@@ -38,39 +39,33 @@
                             <div class="card-footer">
                                 <div class="card-imgs">
                                     <div class="images-container">
-                                        @forelse($project->contributors as $contributor)
-                                            @if($loop->iteration <= 4)
+                                        @forelse($project->contributors->take(4) as $contributor)
                                                 <div class="img-div bg-white" data-text="{{ $contributor->name }}">
                                                     <img src="{{ $contributor->avatar_url }}" alt=""/>
                                                 </div>
-                                            @endif
-
-                                        @empty
+                                            @empty
                                             <p>No Contributors Yet</p>
                                         @endforelse
-                                        @if(count($project->contributors) > 4)
-                                            @foreach($project->contributors as $contributor)
 
+                                        @if($project->contributors->count() > 4)
                                             <div class="more-btn">
-                                                <span>{{ $loop->iteration - 4 }}</span>
                                                 <i class="fas fa-plus"></i>
+                                                <span>{{ $project->contributors->count() - 4 }}</span>
                                             </div>
-                                            @endforeach
+                                            <div class="contributors-list">
+                                                @foreach($project->contributors->skip(4) as $contributor)
+                                                    <div class="contributor-name">{{ $contributor->name }}</div>
+                                                @endforeach
+                                            </div>
                                         @endif
-                                                <div class="contributors-list">
-                                                    @foreach($project->contributors as $contributor)
-                                                        @if($loop->iteration > 4)
-                                                            <div>{{ $contributor->name }}</div>
-                                                        @endif
-                                                    @endforeach
-                                                </div>
+
                                     </div>
                                 </div>
                                 <div class="link-div">
                                     <a href="javascript:void(0)"
                                        wire:slide-over="tour-switcher, @js(['project' => $project->id])"
-                                       >Enter
-{{--                                        <div><i class="fa-solid fa-chevron-right"></i></div>--}}
+                                    >Enter
+                                        {{--                                        <div><i class="fa-solid fa-chevron-right"></i></div>--}}
                                     </a>
                                 </div>
                             </div>
