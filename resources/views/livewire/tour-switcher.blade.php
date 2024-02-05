@@ -27,7 +27,7 @@
                     </tr>
 
                     @forelse($project->layouts()->latest()->get() as $layout)
-                        <tr>
+                        <tr wire:key="{{ $layout->id }}">
                             <td class="layout-table-title">
                                 <span>{{ $layout->name }}</span>
                                 <a class="edit-btn ms-1 text-info text-decoration-none" href="#"
@@ -79,6 +79,8 @@
                     @endcan
                 </h5>
                 @forelse($project->artworkCollections as $collection)
+                    <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
+                       target="_blank" class="col-btn">{{ $collection->name }}</a>
                     <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
                        target="_blank" class="col-btn">{{ $collection->name }}</a>
                 @empty
