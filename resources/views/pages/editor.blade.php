@@ -58,7 +58,7 @@
                     <x-editor-actions/>
                     <div class="d-inline-flex tabs-container mb-1 px-2">
                         @foreach($canvases as $canvas)
-                            <div class="tab mt-1"
+                            <div class="tab"
                                  :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
                                  {{--@onCanvasUpdated.window="console.log('foo was dispatched')"--}}
                                  x-data="{
@@ -76,15 +76,14 @@
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 <div>
                                     <span>
-                                        <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
-                                        <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
-
                                         @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
                                             <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}" class="surface-active">
                                                 <i class="fal fa-right-to-bracket"></i>
                                             </a>
                                         @endif
 
+                                        <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
+                                        <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
                                     </span>
 
                                     @if($canvas['surfaceStateId'])

@@ -168,7 +168,7 @@ main{
                       //width: 100%;
                       min-height: 150px;
                         object-fit: contain;
-                        object-position: center center;
+                        object-position: top center;
                     }
                   }
                   .card-body {
@@ -420,6 +420,7 @@ main{
 }
 }
 .tab .surface-name{
+    margin-left: 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -458,7 +459,7 @@ main{
     color: black;
     border-radius: 0;
     //width: min(120px);
-    padding: 0 24px !important;
+    padding: 0 24px 0 12px !important;
     //border: 1px solid $black-color;
     //border-bottom: 0;
     background-color: #000;
@@ -474,13 +475,30 @@ main{
     clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
     z-index: -5;
 }
+.tab.active .surface-active{
+
+    //position: absolute;
+    //inset: auto auto auto 6px;
+    //margin-inline: 6px 10px;
+    i{
+        vertical-align: middle;
+    }
+}
+//.tab.surface-name{
+//    //margin-left: 20px !important;
+//}
 .tab .surface-active{
-    position: absolute;
-    inset: auto auto auto 6px;
+
+    text-decoration: none;
+    height: 100%;
+    i{
+        vertical-align: middle;
+    }
 }
 .tab .change-icon{
     vertical-align: middle;
     margin-top: 1px;
+    margin-left: 4px;
 }
 //.tab .cross-btn{
 //    position: absolute ;

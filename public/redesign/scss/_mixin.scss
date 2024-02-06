@@ -566,7 +566,7 @@ $dark-color: #222436;
                     color: $black-color;
                     border-radius: 0;
                     border: 1px solid $black-color;
-                    margin-bottom: 16px;
+                    //margin-bottom: 16px;
                     white-space: nowrap;
                     &:hover {
                         background: $black-color;
@@ -662,3 +662,9 @@ $dark-color: #222436;
         }
     }
 }
+.sidebar-collection-btn-wrapper{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+//}

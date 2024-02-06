@@ -37,6 +37,12 @@
   font-family: "Mona-Sans-Light";
   src: url("../../fonts/Mona-sans/Mona-Sans-Light.ttf") format("truetype");
 }
+.sidebar-collection-btn-wrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
 :root {
   --main-font-family: "Roboto Condensed", sans-serif;
   --extra-thin-font: 100;
@@ -1608,7 +1614,6 @@ main section.main-page .main-intro .intro-row .fir-col .sort-btn.active {
   color: #000000;
   border-radius: 0;
   border: 1px solid #000000;
-  margin-bottom: 16px;
   white-space: nowrap;
 }
 .sidebar-div .sidebar.mysidebar div .col-btn:hover {
@@ -2192,7 +2197,7 @@ main section.editor .editor-view .row .side-col .card-div .card-row .card .card-
 main section.editor .editor-view .row .side-col .card-div .card-row .card .card-img img {
   min-height: 150px;
   object-fit: contain;
-  object-position: center center;
+  object-position: top center;
 }
 main section.editor .editor-view .row .side-col .card-div .card-row .card .card-body {
   padding: 10px;
@@ -2455,6 +2460,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 
 .tab .surface-name {
+  margin-left: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -2487,7 +2493,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
   color: black;
   border-radius: 0;
-  padding: 0 24px !important;
+  padding: 0 24px 0 12px !important;
   background-color: #000;
 }
 .tab.active .surface-name {
@@ -2505,14 +2511,22 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   z-index: -5;
 }
 
+.tab.active .surface-active i {
+  vertical-align: middle;
+}
+
 .tab .surface-active {
-  position: absolute;
-  inset: auto auto auto 6px;
+  text-decoration: none;
+  height: 100%;
+}
+.tab .surface-active i {
+  vertical-align: middle;
 }
 
 .tab .change-icon {
   vertical-align: middle;
   margin-top: 1px;
+  margin-left: 4px;
 }
 
 .row {

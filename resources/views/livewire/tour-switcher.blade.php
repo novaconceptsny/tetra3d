@@ -78,14 +78,15 @@
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
                     @endcan
                 </h5>
+                <div class="sidebar-collection-btn-wrapper">
+
                 @forelse($project->artworkCollections as $collection)
-                    <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
-                       target="_blank" class="col-btn">{{ $collection->name }}</a>
                     <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
                        target="_blank" class="col-btn">{{ $collection->name }}</a>
                 @empty
                     <span class="text-center d-block">{{ __('No collections') }}</span>
                 @endforelse
+                </div>
             </div>
 
             <div class="contributor">
