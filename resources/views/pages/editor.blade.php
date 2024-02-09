@@ -109,11 +109,10 @@
                                 <i class="fas fa-plus btn"></i>
                             </a>
                         @endif
-                        <x-menu-item
-                            text="Return to 360 View" class="view-360" :img="asset('redesign/images/360.svg')"
-                            target="_self"
-                            :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
-                        />
+                            <x-menu-item
+                                text="Return to 360 View" class="view-360" :img="asset('redesign/images/360-icon.png')" target="_self"
+                                :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
+                            />
 
                     </div>
 

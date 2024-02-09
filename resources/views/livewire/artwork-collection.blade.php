@@ -50,7 +50,7 @@
                             <div class="card-body">
                                 <div class="paragraph">{{ $artwork->artist }}</div>
                                 <div class="heading">{{ $artwork->name }}</div>
-                                <div>{{ $artwork->dimensions }} inches</div>
+                                <div class="dimensions">{{ $artwork->dimensions }} inches</div>
                             </div>
                         </div>
                     @endforeach

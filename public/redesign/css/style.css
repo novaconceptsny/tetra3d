@@ -63,7 +63,7 @@
 }
 
 header#header {
-  padding: 8px 30px;
+  padding: 8px 50px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -116,8 +116,7 @@ header#header nav.navbar-light .navbar-collapse .menu-nav .nav-left-btn .dropdow
 }
 header#header nav {
   position: relative;
-  padding: 0 clamp(2rem, 0.7143rem + 2.0089vw, 31.2px);
-  padding-left: 0;
+  padding: 0;
   background: #ffffff;
 }
 header#header nav .nav-container {
@@ -162,7 +161,7 @@ header#header nav .nav-container .navbar-collapse .navbar-nav {
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav.link-nav {
   position: absolute !important;
-  inset: 0 90px 0 120px !important;
+  inset: 0 70px 0 120px !important;
   justify-content: center !important;
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item {
@@ -200,7 +199,7 @@ header#header nav .nav-container .navbar-collapse .navbar-nav a {
 }
 header#header nav .nav-container .navbar-collapse .menu-nav {
   position: absolute;
-  inset: auto 32px auto auto;
+  inset: auto 5px auto auto;
   display: flex;
   align-items: stretch;
   gap: 10px;
@@ -326,7 +325,6 @@ header#header nav .nav-container .navbar-collapse .menu-nav .nav-left-btn-div .n
   border-top: 0;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .profile {
-  margin-right: 15px;
   display: flex;
   align-items: center;
   gap: 13px;
@@ -1710,18 +1708,15 @@ main section.profile .content-container {
   padding-inline: 50px;
   margin-block: 50px;
 }
-main section.profile .content-container .profile-row {
-  row-gap: 16px;
-}
 main section.profile .content-container .profile-row .edit-col .edit-profile {
   border: 1px solid #222436;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
 }
 main section.profile .content-container .profile-row .edit-col .edit-profile h4 {
   display: block;
-  background-color: #222436;
-  color: #ffffff;
+  background-color: #000;
+  color: #fff;
   font-family: var(--main-font-family);
   font-style: normal;
   font-weight: var(--regular-font);
@@ -1736,24 +1731,17 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
   gap: 30px;
 }
 main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group {
-  margin-bottom: 28px;
-}
-main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group label {
-  font-family: var(--main-font-family);
-  font-style: normal;
-  font-weight: var(--regular-font);
-  font-size: 18px;
-  line-height: 21px;
-  color: #000000;
+  margin-bottom: 28px !important;
 }
 main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group input {
   padding: 18px 22px 14px 22px;
-  border: 1px solid #3c3b3c;
+  border: 1px solid #000;
   font-family: var(--main-font-family);
   font-style: normal;
   font-weight: var(--regular-font);
   font-size: 14px;
   line-height: 16px;
+  border-radius: 0;
   color: #000000;
 }
 main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group .pic-button {
@@ -1762,7 +1750,7 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
 }
 main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group .pic-button div.picture {
   padding: 18px 45px;
-  border: 1px solid #3c3b3c;
+  border: 1px solid #000;
   width: 221px;
   height: 159px;
 }
@@ -1793,35 +1781,38 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
 }
 main section.profile .content-container .profile-row .edit-col .edit-profile form div.update {
   margin-top: 32px;
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
 }
-main section.profile .content-container .profile-row .edit-col .edit-profile form div.update button {
-  border: none;
-  padding: 9px 59px;
-  background: transparent;
+.profile-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 100px;
+}
+@media (width <= 1150px) {
+  .profile-row {
+    gap: 60px;
+  }
+}
+@media (width <= 1400px) {
+  .profile-row {
+    gap: 30px;
+  }
+}
+@media (width <= 992px) {
+  .profile-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.edit-profile,
+.update-pass {
   border: 1px solid #222436;
-  border-radius: 8px;
-  font-family: var(--main-font-family);
-  font-style: normal;
-  font-weight: var(--regular-font);
-  font-size: 22px;
-  line-height: 26px;
-  color: #222436;
-}
-main section.profile .content-container .profile-row .edit-col .edit-profile form div.update button:hover {
-  color: #ffffff;
-  background-color: #222436;
-}
-main section.profile .content-container .profile-row .pass-col .update-pass {
-  border: 1px solid #222436;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
 }
-main section.profile .content-container .profile-row .pass-col .update-pass h4 {
+.edit-profile h4,
+.update-pass h4 {
   display: block;
-  background-color: #222436;
+  background-color: #000000;
   color: #ffffff;
   font-family: var(--main-font-family);
   font-style: normal;
@@ -1830,46 +1821,53 @@ main section.profile .content-container .profile-row .pass-col .update-pass h4 {
   line-height: 26px;
   padding: 18px;
 }
-main section.profile .content-container .profile-row .pass-col .update-pass form {
+.edit-profile form,
+.update-pass form {
   padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
-main section.profile .content-container .profile-row .pass-col .update-pass form .custum-form-group label {
+
+.custum-form-group label {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: var(--regular-font);
+  font-weight: var(--light-font);
   font-size: 18px;
   line-height: 21px;
   color: #000000;
 }
-main section.profile .content-container .profile-row .pass-col .update-pass form .custum-form-group input {
+.custum-form-group input {
   width: 100%;
   padding: 18px 22px 14px 22px;
   border: 1px solid #3c3b3c;
-}
-main section.profile .content-container .profile-row .pass-col .update-pass form div.update {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-main section.profile .content-container .profile-row .pass-col .update-pass form div.update button {
-  border: none;
-  padding: 9px 59px;
-  background: transparent;
-  border: 1px solid #222436;
-  border-radius: 8px;
+  border-radius: 0;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: var(--regular-font);
+  font-weight: var(--light-font);
+  font-size: 14px;
+  line-height: 16px;
+}
+
+input[type=submit],
+button[type=submit] {
+  display: block;
+  margin-left: auto;
+  padding: 9px 59px;
+  background: transparent;
+  border: 1px solid #000000;
+  border-radius: 0;
+  font-family: var(--main-font-family);
+  font-style: normal;
+  font-weight: var(--light-font);
   font-size: 22px;
   line-height: 26px;
-  color: #222436;
+  color: #000000;
 }
-main section.profile .content-container .profile-row .pass-col .update-pass form div.update button:hover {
+input[type=submit]:hover,
+button[type=submit]:hover {
   color: #ffffff;
-  background-color: #222436;
+  background-color: #000000;
 }
 
 main section.version {
@@ -2078,7 +2076,7 @@ main section.editor .editor-view .row .side-col .top-div .input-group .input-gro
 main section.editor .editor-view .row .side-col .top-div .input-group input {
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: var(--medium-font);
+  font-weight: var(--light-font) !important;
   font-size: 18px !important;
   line-height: 20px;
   color: #000000;
@@ -2090,7 +2088,7 @@ main section.editor .editor-view .row .side-col .top-div .input-group input {
 }
 main section.editor .editor-view .row .side-col .top-div .input-group input::placeholder {
   font-size: 18px;
-  font-weight: var(--medium-font);
+  font-weight: var(--light-font);
   border-radius: 0;
   color: #222436;
 }
@@ -2109,7 +2107,7 @@ main section.editor .editor-view .row .side-col .top-div .all-btn {
   border-radius: 0;
   font-family: var(--main-font-family);
   font-style: normal;
-  font-weight: var(--medium-font);
+  font-weight: var(--light-font);
   font-size: 16px !important;
   line-height: 16px;
   color: #222436;
@@ -2216,7 +2214,7 @@ main section.editor .editor-view .row .side-col .card-div .card-row .card .card-
   font-family: var(--main-font-family);
   font-style: normal;
   font-weight: var(--light-font);
-  font-size: 14px;
+  font-size: 14px !important;
   line-height: normal;
   color: #000000;
 }

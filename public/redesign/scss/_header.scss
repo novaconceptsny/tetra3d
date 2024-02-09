@@ -6,7 +6,7 @@
 }
 
 header#header {
-  padding: 8px 30px;
+  padding: 8px 50px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -74,8 +74,8 @@ header#header {
   }
   nav {
     position: relative;
-    padding: 0 calc(clamp(2rem, 0.7143rem + 2.0089vw, 31.2px));
-      padding-left: 0;
+    //padding: 0 20px;
+      padding: 0;
     background: $white-color;
     // padding: 0px 50px;
 
@@ -117,7 +117,7 @@ header#header {
         .navbar-nav {
           &.link-nav{
           position: absolute !important;
-          inset: 0 90px 0 120px !important;
+          inset: 0 70px 0 120px !important;
           justify-content: center !important;
           }
           // display: flex !important;
@@ -162,7 +162,7 @@ header#header {
 
         .menu-nav {
           position: absolute;
-          inset: auto 32px auto auto;
+          inset: auto 5px auto auto;
           display: flex;
           align-items: stretch;
           gap: 10px;
@@ -311,7 +311,7 @@ header#header {
           }
 
           .profile {
-            margin-right: 15px;
+            //margin-right: 15px;
             display: flex;
             align-items: center;
             gap: 13px;

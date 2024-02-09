@@ -43,7 +43,7 @@
                                                 <div class="img-div bg-white" data-text="{{ $contributor->name }}">
                                                     <img src="{{ $contributor->avatar_url }}" alt=""/>
                                                 </div>
-                                            @empty
+                                                @empty
                                             <p>No Contributors Yet</p>
                                         @endforelse
 
