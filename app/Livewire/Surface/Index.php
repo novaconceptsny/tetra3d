@@ -42,6 +42,7 @@ class Index extends Component
     {
         $this->askForConfirmation(function () use ($state) {
             $state->remove();
+            $this->js("location.reload();");
             $this->dispatch('flashNotification', message: 'State deleted');
         });
     }
