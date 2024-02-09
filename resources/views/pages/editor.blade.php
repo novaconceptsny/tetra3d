@@ -12,7 +12,8 @@
             :visible="$surface->getFirstMediaUrl('layout')"
         />
 
-        <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self"/>
+        <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)"
+                     target="_self"/>
         <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
         <x-menu-item
             target="_self" text="Share" icon="fal fa-share-nodes" :visible="$layout"
@@ -77,7 +78,8 @@
                                 <div>
                                     <span>
                                         @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
-                                            <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}" class="surface-active">
+                                            <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
+                                               class="surface-active">
                                                 <i class="fal fa-right-to-bracket"></i>
                                             </a>
                                         @endif
@@ -107,10 +109,11 @@
                                 <i class="fas fa-plus btn"></i>
                             </a>
                         @endif
-                            <x-menu-item
-                                text="Return to 360 View" class="view-360" :img="asset('redesign/images/360.svg')" target="_self"
-                                :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
-                            />
+                        <x-menu-item
+                            text="Return to 360 View" class="view-360" :img="asset('redesign/images/360.svg')"
+                            target="_self"
+                            :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
+                        />
 
                     </div>
 

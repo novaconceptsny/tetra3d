@@ -32,7 +32,9 @@ class SurfaceState extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('thumbnail')->singleFile();
+        $this->addMediaCollection('thumbnail')
+            ->useFallbackUrl($this->surface ? $this->surface->getFirstMediaUrl('background') : '')
+            ->singleFile();
         $this->addMediaCollection('hotspot')->singleFile();
     }
 
@@ -134,14 +136,6 @@ class SurfaceState extends Model implements HasMedia
             $stateToActive?->setAsActive();
         }
     }
-
-    //todo::cleanup: not using anymore
-    /*public function url(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => \Str::replace('public', 'storage', $this->hotspot_url),
-        );
-    }*/
 
 
     /*

@@ -20,7 +20,7 @@
                 <table class="table">
                     <tr>
                         <th>Name</th>
-                        <th>Tour</th>
+                        <th>Configuration</th>
                         <th>Created By</th>
                         <th>Created At</th>
                         <th></th>

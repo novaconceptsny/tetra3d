@@ -74,11 +74,11 @@ class SurfaceStateController extends Controller
             $newState = new SurfaceState();
 
             // initialize new state
-            if (!$create_new_state){
+            if (!$surface->states->count()){
                 $newState->user_id = auth()->id();
                 $newState->layout_id = $layout->id;
                 $newState->surface_id = $surface->id;
-                $newState->name = 'Default';
+                $newState->name = 'Version 1';
                 $newState->save();
 
                 $data['currentSurfaceStateId'] = $newState->id;

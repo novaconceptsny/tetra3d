@@ -42,7 +42,7 @@
                     <form class="d-flex flex-column align-items-center" method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="form-group login-custum-form-group">
-                            <label for="email">{{ __('Email*') }}</label>
+                            <label for="email">{{ __('Email') }}</label>
                             <input type="email" id="email" placeholder="Email"
                                    class="form-control @error('email') is-invalid @enderror" name="email"
                                    value="{{ old('email') }}" required autocomplete="email" autofocus
@@ -50,7 +50,7 @@
                             <x-error field="email"/>
                         </div>
                         <div class="form-group login-custum-form-group">
-                            <label for="password">{{ __('Password*') }}</label>
+                            <label for="password">{{ __('Password') }}</label>
                             <input
                                 placeholder="Password"
                                 class="form-control @error('password') is-invalid @enderror"
