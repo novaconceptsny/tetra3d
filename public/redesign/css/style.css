@@ -1417,6 +1417,10 @@ main section.main-page .main-intro .intro-row .fir-col .sort-btn.active {
   font-size: 16px;
   font-weight: var(--light-font);
 }
+.sidebar-div table td:first-of-type span {
+  width: calc(100% - 15px);
+  display: block;
+}
 .sidebar-div table .edit-btn {
   position: absolute;
   inset: 8px 0 auto auto;
@@ -1868,6 +1872,34 @@ input[type=submit]:hover,
 button[type=submit]:hover {
   color: #ffffff;
   background-color: #000000;
+}
+
+.name-group {
+  display: flex;
+  gap: 4%;
+}
+
+.first-name,
+.last-name {
+  width: 49%;
+}
+@media (width <= 1200px) {
+  .first-name,
+  .last-name {
+    width: 100%;
+  }
+}
+@media (width <= 992px) {
+  .first-name,
+  .last-name {
+    width: 49%;
+  }
+}
+@media (width <= 650px) {
+  .first-name,
+  .last-name {
+    width: 100% !important;
+  }
 }
 
 main section.version {
@@ -2422,7 +2454,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   display: flex;
   align-items: end;
   position: relative;
-  height: 52px;
+  height: 50px;
   background: #e9ecef;
   width: 100%;
   margin-bottom: 0 !important;
@@ -2467,6 +2499,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 
 .tab {
+  height: 34px;
   padding-inline: 12px;
   position: relative;
   cursor: pointer;

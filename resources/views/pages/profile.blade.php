@@ -16,7 +16,7 @@
                         <form action="{{ route('profile.update') }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="row col-12">
-                                <div class="col-xxl-6 form-group custum-form-group">
+                                <div class="first-name form-group custum-form-group">
                                     <label class="form-label" for="first_name">{{ __('First Name') }}</label>
                                     <input
                                         id="first_name" type="text" class="form-control @error('first_name') is-invalid @enderror"
@@ -25,7 +25,7 @@
                                     <x-error field="first_name"/>
                                 </div>
 
-                                <div class="col-xxl-6 form-group custum-form-group">
+                                <div class="last-name ms-auto form-group custum-form-group">
                                     <label class="form-label" for="last_name">{{ __('Last Name') }}</label>
                                     <input
                                         id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror"
