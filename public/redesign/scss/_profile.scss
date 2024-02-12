@@ -203,6 +203,10 @@ main {
     }
     @media (width <= 992px) {
         grid-template-columns: 1fr;
+        //.first-name,
+        //.last-name{
+        //    width: 49%;
+        //}
 
     }
 }
@@ -275,5 +279,26 @@ button[type='submit'] {
         color: $white-color;
         background-color: $black-color;
     }
+}
+.name-group{
+    display: flex;
+    gap: 4%;
+}
+.first-name,
+.last-name{
+    width: 49%;
+
+    @media (width <= 1200px) {
+        width: 100%;
+    }
+
+    @media (width <= 992px) {
+        width: 49%;
+    }
+
+    @media (width <= 650px) {
+        width: 100% !important;
+    }
+
 }
 
