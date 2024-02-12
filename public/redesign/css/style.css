@@ -1617,6 +1617,7 @@ main section.main-page .main-intro .intro-row .fir-col .sort-btn.active {
   border-radius: 0;
   border: 1px solid #000000;
   white-space: nowrap;
+  text-align: center;
 }
 .sidebar-div .sidebar.mysidebar div .col-btn:hover {
   background: #000000;
