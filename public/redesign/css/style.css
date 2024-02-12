@@ -2462,7 +2462,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 .tabs-container .view-360 {
   position: absolute;
-  inset: 6px 120px auto auto;
+  inset: 5px 153px auto auto;
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
@@ -2486,6 +2486,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   filter: invert(1);
 }
 .tabs-container .view-360 img {
+  filter: contrast(2);
   width: 30px !important;
   height: 30px !important;
 }

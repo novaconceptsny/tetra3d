@@ -426,7 +426,7 @@ main {
 
     .view-360 {
         position: absolute;
-        inset: 6px 120px auto auto;
+        inset: 5px 153px auto auto;
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
@@ -447,12 +447,14 @@ main {
             background-color: $black-color;
             color: $white-color;
 
-            img {
-                filter: invert(1);
+            img{
+                    filter: invert(1);
             }
+
         }
 
         img {
+                filter: contrast(2);
             //all: unset !important;
             //z-index: unset !important;
             width: 30px !important;
