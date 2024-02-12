@@ -1,11 +1,5 @@
 @extends('layouts.redesign')
 
-@section('outside-menu')
-    <div class="menu-links d-flex align-items-center gap-4">
-        <x-menu-item text="Projects" :img="asset('redesign/images/project-img.svg')"/>
-    </div>
-@endsection
-
 @section('content')
     <section class="profile">
         <div class="container-fluid content-container">
