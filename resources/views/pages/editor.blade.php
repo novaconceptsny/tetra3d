@@ -93,7 +93,7 @@
                                               action="{{ route('surfaces.destroy', $canvas['surfaceStateId']) }}">
                                             @method('delete')
                                             @csrf
-                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you?');"
+                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you want to delete this version?');"
                                                     style="line-height: 0"><i class="fal fa-times"></i>
                                             </button>
                                         </form>
