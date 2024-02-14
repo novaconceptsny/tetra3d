@@ -55,7 +55,7 @@
                     @endif
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary c-btn-primary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

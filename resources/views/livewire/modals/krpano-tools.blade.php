@@ -17,7 +17,7 @@
             @if($confirmation_required && !$confirmed)
                 <p class=" mt-2">{{ __('Do you want to re-create panos ?') }}</p>
                 <div>
-                    <button class="btn btn-sm btn-danger me-2" wire:click="confirm">{{ __('Yes') }}</button>
+                    <button class="btn btn-sm btn-danger rounded-0 me-2" wire:click="confirm">{{ __('Yes') }}</button>
                     <button class="btn btn-sm btn-success" data-bs-dismiss="modal">{{ __('No') }}</button>
                 </div>
             @endif

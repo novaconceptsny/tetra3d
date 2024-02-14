@@ -832,28 +832,6 @@ main section.collection .main-intro .table-row .c-form .reset-btn {
   border-collapse: separate;
   border-spacing: 0;
 }
-.collection-table thead {
-  padding: 28px 24px;
-  background: #000000;
-}
-.collection-table thead tr th {
-  padding: 16px 0;
-  vertical-align: middle;
-  text-align: center;
-  color: #FFF;
-  font-family: var(--main-font-family);
-  font-size: 23px;
-  font-style: normal;
-  font-weight: var(--regular-font);
-  line-height: normal;
-  align-items: center;
-}
-.collection-table thead tr th td:first-child {
-  border-left-style: solid;
-}
-.collection-table thead tr th span {
-  text-align: center;
-}
 .collection-table tbody tr {
   border: none;
 }
@@ -955,8 +933,35 @@ select.form-control::placeholder {
   color: #fff !important;
 }
 
-.activity-table thead th span.justify-content-center {
-  justify-content: start !important;
+.activity-table thead,
+.collection-table thead {
+  padding: 28px 24px;
+  background: #000000;
+}
+.activity-table thead tr th,
+.collection-table thead tr th {
+  padding: 16px 0;
+  vertical-align: middle;
+  text-align: center;
+  color: #FFF;
+  font-family: var(--main-font-family);
+  font-size: 23px;
+  font-style: normal;
+  font-weight: var(--regular-font);
+  line-height: normal;
+  align-items: center;
+}
+.activity-table thead tr th td:first-child,
+.collection-table thead tr th td:first-child {
+  border-left-style: solid;
+}
+.activity-table thead tr th span,
+.collection-table thead tr th span {
+  text-align: center;
+}
+
+.activity-table td {
+  text-align: center;
 }
 
 main section.main-page {
@@ -1853,9 +1858,8 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
   font-size: 14px;
   line-height: 16px;
 }
-
-input[type=submit],
-button[type=submit] {
+.custum-form-group input[type=submit],
+.custum-form-group button[type=submit] {
   display: block;
   margin-left: auto;
   padding: 9px 59px;
@@ -1869,8 +1873,8 @@ button[type=submit] {
   line-height: 26px;
   color: #000000;
 }
-input[type=submit]:hover,
-button[type=submit]:hover {
+.custum-form-group input[type=submit]:hover,
+.custum-form-group button[type=submit]:hover {
   color: #ffffff;
   background-color: #000000;
 }
@@ -2722,6 +2726,17 @@ input#checkbox {
 .list-group-item.active {
   background-color: #222436 !important;
   border-color: #222436 !important;
+}
+
+.c-btn-primary {
+  border: 1px solid #000 !important;
+  background-color: #fff !important;
+  border-radius: 0;
+  color: #222436 !important;
+}
+.c-btn-primary:hover {
+  background-color: #222436 !important;
+  color: #ffffff !important;
 }
 
 main section.view-3d {

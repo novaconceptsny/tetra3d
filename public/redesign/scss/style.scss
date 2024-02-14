@@ -222,6 +222,30 @@ input#checkbox {
   }
 }
 
+.c-btn-primary{
+    border: 1px solid #000 !important;
+    background-color: #fff !important;
+    border-radius: 0;
+    //padding: 12px 44px;
+    //margin-bottom: 10px;
+    //display: flex;
+    //align-items: center;
+    //text-decoration: none;
+    //font-family: var(--main-font-family);
+
+    //font-size: 16px;
+    //font-style: normal;
+    //font-weight: var(--light-font);
+    //line-height: normal;
+    color: $dark-color !important;
+    //text-transform: capitalize;
+
+    &:hover {
+        background-color: $dark-color !important;
+        color: $white-color !important;
+    }
+}
+
 // .tooltip {
 //   position: relative;
 //   display: inline-block;
