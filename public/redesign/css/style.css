@@ -2740,6 +2740,17 @@ input#checkbox {
   color: #ffffff !important;
 }
 
+.tour-map-container .list-group-item {
+  border: 1px solid #000 !important;
+  background-color: #fff !important;
+  border-radius: 0;
+  color: #222436 !important;
+}
+.tour-map-container .list-group-item:hover {
+  background-color: #222436 !important;
+  color: #ffffff !important;
+}
+
 main section.view-3d {
   height: calc(100vh - 83px);
   overflow: auto;
