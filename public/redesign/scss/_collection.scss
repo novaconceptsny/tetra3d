@@ -97,46 +97,46 @@ main{
     // border-radius: 10px !important;
     border-collapse: separate;
     border-spacing: 0;
-    thead {
-        padding: 28px 24px;
-        background: $black-color;
-        // border-radius: 9px 10px 0px 0px;
-        tr {
-            //&:first-child th:first-child {
-            //    border-top-left-radius: 10px;
-            //}
-            //&:first-child th:last-child {
-            //    border-top-right-radius: 10px;
-            //}
-            //&:first-child td {
-            //    border-top-style: solid;
-            //}
-
-            th {
-                padding: 16px 0;
-                vertical-align: middle;
-                td:first-child {
-                    border-left-style: solid;
-                }
-                //border: 1px solid #9c9c9c;
-
-                text-align: center;
-                    color: #FFF;
-                font-family: var(--main-font-family);
-                    font-size: 23px;
-                    font-style: normal;
-                    font-weight: var(--regular-font);
-                    line-height: normal;
-                    align-items: center;
-                    //border: 1px solid #000;
-                span{
-                    text-align: center;
-                }
-                //border-style: solid solid solid solid;
-                // padding: 10px;
-            }
-        }
-    }
+    //thead {
+    //    padding: 28px 24px;
+    //    background: $black-color;
+    //    // border-radius: 9px 10px 0px 0px;
+    //    tr {
+    //        //&:first-child th:first-child {
+    //        //    border-top-left-radius: 10px;
+    //        //}
+    //        //&:first-child th:last-child {
+    //        //    border-top-right-radius: 10px;
+    //        //}
+    //        //&:first-child td {
+    //        //    border-top-style: solid;
+    //        //}
+    //
+    //        th {
+    //            padding: 16px 0;
+    //            vertical-align: middle;
+    //            td:first-child {
+    //                border-left-style: solid;
+    //            }
+    //            //border: 1px solid #9c9c9c;
+    //
+    //            text-align: center;
+    //                color: #FFF;
+    //            font-family: var(--main-font-family);
+    //                font-size: 23px;
+    //                font-style: normal;
+    //                font-weight: var(--regular-font);
+    //                line-height: normal;
+    //                align-items: center;
+    //                //border: 1px solid #000;
+    //            span{
+    //                text-align: center;
+    //            }
+    //            //border-style: solid solid solid solid;
+    //            // padding: 10px;
+    //        }
+    //    }
+    //}
     tbody {
         tr {
             border: none;
@@ -260,7 +260,56 @@ select.form-control{
 
 
 }
+//
+//.activity-table thead th span.justify-content-center{
+//    justify-content: start !important;
+//}
 
-.activity-table thead th span.justify-content-center{
-    justify-content: start !important;
+.activity-table,
+.collection-table{
+    thead {
+        padding: 28px 24px;
+        background: $black-color;
+        // border-radius: 9px 10px 0px 0px;
+        tr {
+            //&:first-child th:first-child {
+            //    border-top-left-radius: 10px;
+            //}
+            //&:first-child th:last-child {
+            //    border-top-right-radius: 10px;
+            //}
+            //&:first-child td {
+            //    border-top-style: solid;
+            //}
+
+            th {
+                padding: 16px 0;
+                vertical-align: middle;
+                td:first-child {
+                    border-left-style: solid;
+                }
+                //border: 1px solid #9c9c9c;
+
+                text-align: center;
+                color: #FFF;
+                font-family: var(--main-font-family);
+                font-size: 23px;
+                font-style: normal;
+                font-weight: var(--regular-font);
+                line-height: normal;
+                align-items: center;
+                //border: 1px solid #000;
+                span{
+                    text-align: center;
+                }
+                //border-style: solid solid solid solid;
+                // padding: 10px;
+            }
+        }
+    }
+}
+.activity-table{
+    td{
+        text-align: center;
+    }
 }

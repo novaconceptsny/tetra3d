@@ -222,6 +222,31 @@ input#checkbox {
   }
 }
 
+.c-btn-primary{
+    border: 1px solid #000 !important;
+    background-color: #fff !important;
+    border-radius: 0;
+
+    color: $dark-color !important;
+
+    &:hover {
+        background-color: $dark-color !important;
+        color: $white-color !important;
+    }
+}
+.tour-map-container .list-group-item{
+    border: 1px solid #000 !important;
+    background-color: #fff !important;
+    border-radius: 0;
+
+    color: $dark-color !important;
+
+    &:hover {
+        background-color: $dark-color !important;
+        color: $white-color !important;
+    }
+}
+
 // .tooltip {
 //   position: relative;
 //   display: inline-block;

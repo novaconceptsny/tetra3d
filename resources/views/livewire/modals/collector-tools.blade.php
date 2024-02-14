@@ -63,14 +63,14 @@
         @endif
     </div>
     <x-slot name="buttons">
-        <button type="submit" class="btn btn-sm btn-success me-2"
+        <button type="submit" class="btn btn-sm btn-success c-btn-primary me-2"
                 wire:click="sync" wire:loading.class="disabled"
                 wire:loading.attr="disabled">
             <span wire:loading.remove wire:target="sync">Sync</span>
             <span wire:loading wire:target="sync">Syncing...</span>
         </button>
 
-        <button class="btn btn-sm btn-primary" type="button" wire:click="$dispatch('modal.close')">
+        <button class="btn btn-sm btn-primary c-btn-primary" type="button" wire:click="$dispatch('modal.close')">
             {{ __('Cancel') }}
         </button>
     </x-slot>
