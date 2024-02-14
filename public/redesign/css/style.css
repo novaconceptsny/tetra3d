@@ -225,7 +225,8 @@ header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a i {
   font-size: 20px !important;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a img {
-  max-height: 19px;
+  max-height: 28px;
+  filter: contrast(2) !important;
 }
 header#header nav .nav-container .navbar-collapse .menu-nav .menu-links a svg {
   width: 24px;

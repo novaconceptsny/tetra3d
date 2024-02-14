@@ -3,7 +3,7 @@
 @section('outside-menu')
     <div class="menu-links d-flex align-items-center gap-4">
     <x-menu-item
-        text="360 View" :img="asset('redesign/images/360.svg')" target="_self"
+        text="360 View" :img="asset('redesign/images/360-icon.png')" target="_self"
         :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
     />
     <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
