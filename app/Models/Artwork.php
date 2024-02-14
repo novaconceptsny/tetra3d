@@ -68,7 +68,7 @@ class Artwork extends Model implements HasMedia
     public function dimensions(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => "{$this->data->height_inch}x{$this->data->width_inch}"
+            get: fn($value) => "{$this->data->height_inch}x{$this->data->width_inch}x1"
         );
     }
 
