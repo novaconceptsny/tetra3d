@@ -87,7 +87,7 @@
                                     @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
                                         <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
                                            class="surface-active">
-                                            <i class="fal fa-circle-check"></i>
+                                            <i class="fa-regular fa-circle-check"></i>
                                         </a>
                                     @endif
                                     @if($canvas['surfaceStateId'])

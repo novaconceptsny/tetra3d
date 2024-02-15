@@ -53,17 +53,18 @@ main{
               //  }
               //}
               select {
-                  padding: 16px 57px 13px 12px;
+                  padding: 16px 57px 13px 12px !important;
                   //color: #222436;
-
-                  font-family: var(--main-font-family);
-                  font-size: 20px;
-                  font-style: normal;
-                  font-weight: var(--light-font);
-                  line-height: normal;
+                  font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
+                  //font-family: var(--main-font-family);
+                  //font-size: 20px;
+                  //font-style: normal;
+                  //font-weight: var(--light-font);
+                  //line-height: normal;
                   color: $dark-color;
                   background: none;
                   &.form-control{
+                  font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
                   border: 1px solid $black-color !important;
 
                   }
@@ -77,12 +78,7 @@ main{
                  //border: 1px solid $dark-color;
                 border-radius: 0;
                 padding: 15px 40px;
-
-                  font-family: var(--main-font-family);
-                font-style: normal;
-                font-weight: var(--regular-font);
-                font-size: 20px;
-                line-height: 23px;
+                  font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
                 color: $white-color;
 
               }
@@ -235,6 +231,7 @@ input[type='text'].form-control,
 select.form-control{
     border: 1px solid #000 !important;
     border-radius: 0 !important;
+    font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
     color: #000;
     &::placeholder{
         color: #000;
@@ -248,11 +245,8 @@ select.form-control{
     border-radius: 0;
     //padding: 15px 40px;
 
-    font-family: var(--main-font-family);
-    font-style: normal;
-    font-weight: var(--regular-font);
-    font-size: 20px;
-    line-height: 23px;
+    font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
+
     color: $white-color;
     &:hover{
         color: #fff !important;
@@ -311,5 +305,13 @@ select.form-control{
 .activity-table{
     td{
         text-align: center;
+        font: normal var(--light-font) 20px/normal var(--main-font-family);
+        padding: 10px 9px;
+        color: #515151;
+        //font-family: var(--main-font-family);
+        //font-size: 20px;
+        //font-style: normal;
+        //font-weight: var(--light-font);
+        //line-height: normal;
     }
 }

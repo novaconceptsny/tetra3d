@@ -4,8 +4,8 @@ main {
         position: relative;
 
         .main-intro {
-            margin-top: 5px;
-            height: calc(100dvh - 53px);
+            //margin-top: 5px;
+            height: calc(100dvh - 52px);
             overflow: auto;
 
             @include intro-row;
