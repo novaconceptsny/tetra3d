@@ -229,7 +229,8 @@ input#checkbox {
 
     color: $dark-color !important;
 
-    &:hover {
+    &:hover,
+    &.active{
         background-color: $dark-color !important;
         color: $white-color !important;
     }
@@ -241,10 +242,17 @@ input#checkbox {
 
     color: $dark-color !important;
 
-    &:hover {
+    &:hover,
+    &.active {
         background-color: $dark-color !important;
         color: $white-color !important;
     }
+}
+.modal-content{
+    border-radius: 0 !important;
+}
+.wep-modal-content{
+    border-radius: 0 !important;
 }
 
 // .tooltip {

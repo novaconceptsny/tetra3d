@@ -57,7 +57,7 @@
                 @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
                 <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions/>
-                    <div class="d-inline-flex tabs-container mb-1 px-2">
+                    <div class="d-inline-flex tabs-container mb-1 pe-2">
                         @foreach($canvases as $canvas)
                             <div class="tab"
                                  :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
@@ -77,24 +77,34 @@
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 <div>
                                     <span>
-                                        @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
-                                            <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
-                                               class="surface-active">
-                                                <i class="fal fa-right-to-bracket"></i>
-                                            </a>
-                                        @endif
+
+
 
                                         <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
+{{--                                        <i class="fa fa-circle fa-xs text-warning change-icon"></i>--}}
                                         <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
                                     </span>
-
+                                    @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
+                                        <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
+                                           class="surface-active">
+                                            <i class="fal fa-circle-check"></i>
+                                        </a>
+                                    @endif
                                     @if($canvas['surfaceStateId'])
                                         <form class="d-inline" method="post"
                                               action="{{ route('surfaces.destroy', $canvas['surfaceStateId']) }}">
                                             @method('delete')
                                             @csrf
-                                            <button class="btn cross-btn" onclick="return confirm('Are you sure you want to delete this version?');"
-                                                    style="line-height: 0"><i class="fal fa-times"></i>
+                                            <button class="cross-btn" onclick="return confirm('Are you sure you want to delete this version?');"
+                                                    style="line-height: 0">
+{{--                                                <i class="fas fa-trash"></i>--}}
+                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1.875 3.75H3.125H13.125" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M5 3.75V2.5C5 2.16848 5.1317 1.85054 5.36612 1.61612C5.60054 1.3817 5.91848 1.25 6.25 1.25H8.75C9.08152 1.25 9.39946 1.3817 9.63388 1.61612C9.8683 1.85054 10 2.16848 10 2.5V3.75M11.875 3.75V12.5C11.875 12.8315 11.7433 13.1495 11.5089 13.3839C11.2745 13.6183 10.9565 13.75 10.625 13.75H4.375C4.04348 13.75 3.72554 13.6183 3.49112 13.3839C3.2567 13.1495 3.125 12.8315 3.125 12.5V3.75H11.875Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M6.25 6.875V10.625" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M8.75 6.875V10.625" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+
                                             </button>
                                         </form>
                                     @endif

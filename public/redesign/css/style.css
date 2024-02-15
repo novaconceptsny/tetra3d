@@ -2094,8 +2094,8 @@ main section.editor .editor-view .row .side-col {
   position: fixed;
 }
 main section.editor .editor-view .row .side-col .top-div {
-  padding: 16px 0 0;
-  margin-bottom: 24px;
+  padding: 4px 0 0;
+  margin-bottom: 10px;
   display: flex;
   align-items: center !important;
   justify-content: space-between;
@@ -2402,7 +2402,7 @@ main section.editor .editor-view .row .main-col img {
 }
 main section.editor .editor-view .row .main-col .editor-actions {
   z-index: 1 !important;
-  top: 115px !important;
+  top: 100px !important;
   left: 26%;
   position: fixed;
   width: fit-content;
@@ -2460,14 +2460,14 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   display: flex;
   align-items: end;
   position: relative;
-  height: 50px;
-  background: #e9ecef;
+  height: 36px;
+  background: #cccccc;
   width: 100%;
-  margin-bottom: 0 !important;
+  margin-bottom: 4px !important;
 }
 .tabs-container .view-360 {
   position: absolute;
-  inset: 5px 153px auto auto;
+  inset: 0px 153px 0 auto;
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
@@ -2497,29 +2497,49 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 
 .tab .surface-name {
-  margin-left: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   display: inline-block;
   vertical-align: middle;
+  font: var(--light-font) 14px/1.2 var(--main-font-family);
+  width: 100px;
 }
 
 .tab {
-  height: 34px;
-  padding-inline: 12px;
+  height: 32px;
+  padding: 2px 12px;
   position: relative;
   cursor: pointer;
   background-color: transparent;
+  border-radius: 5px 5px 0 0;
+  position: relative;
+}
+.tab::after {
+  --inline-size: 1px;
+  --block-size: 15px;
+  content: "";
+  width: var(--inline-size);
+  height: var(--block-size);
+  background-color: #fff;
+  position: absolute;
+  inset: calc(50% - var(--block-size) / 2) calc(-1 * var(--inline-size)) auto auto;
+}
+
+.tab.active::after {
+  display: none;
+}
+
+.tab:not(.active) {
+  border-radius: 0;
 }
 
 .tab:not(.active):hover {
-  background: #eff2f5;
   border-bottom: 0;
 }
 
-.tab:not(.active):has(~ .tab.active) {
-  border-right: 0;
+.tab:not(.active):hover ~ .tab {
+  border-left: 0;
 }
 
 .tab.active ~ .tab {
@@ -2527,26 +2547,13 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 
 .tab.active {
-  position: relative;
-  clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
   color: black;
-  border-radius: 0;
-  padding: 0 24px 0 12px !important;
-  background-color: #000;
+  background-color: #fff;
 }
 .tab.active .surface-name {
   display: inline-block;
   vertical-align: middle;
   width: 100px;
-}
-
-.tab.active::after {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  background-color: white;
-  clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
-  z-index: -5;
 }
 
 .tab.active .surface-active i {
@@ -2559,12 +2566,21 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
 }
 .tab .surface-active i {
   vertical-align: middle;
+  color: #000 !important;
+  font-size: 15px;
 }
 
 .tab .change-icon {
   vertical-align: middle;
   margin-top: 1px;
   margin-left: 4px;
+}
+
+.tab .cross-btn {
+  border: unset;
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
 }
 
 .row {
@@ -2735,7 +2751,7 @@ input#checkbox {
   border-radius: 0;
   color: #222436 !important;
 }
-.c-btn-primary:hover {
+.c-btn-primary:hover, .c-btn-primary.active {
   background-color: #222436 !important;
   color: #ffffff !important;
 }
@@ -2746,9 +2762,17 @@ input#checkbox {
   border-radius: 0;
   color: #222436 !important;
 }
-.tour-map-container .list-group-item:hover {
+.tour-map-container .list-group-item:hover, .tour-map-container .list-group-item.active {
   background-color: #222436 !important;
   color: #ffffff !important;
+}
+
+.modal-content {
+  border-radius: 0 !important;
+}
+
+.wep-modal-content {
+  border-radius: 0 !important;
 }
 
 main section.view-3d {

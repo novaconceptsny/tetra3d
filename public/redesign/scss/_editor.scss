@@ -22,8 +22,8 @@ main {
 
                     .top-div {
                         // height: 57px;
-                        padding: 16px 0 0;
-                        margin-bottom: 24px;
+                        padding: 4px 0 0;
+                        margin-bottom: 10px;
                         display: flex;
                         align-items: center !important;
                         justify-content: space-between;
@@ -347,7 +347,7 @@ main {
 
                     .editor-actions {
                         z-index: 1 !important;
-                        top: 115px !important;
+                        top: 100px !important;
                         left: 26%;
                         position: fixed;
                         width: fit-content;
@@ -419,14 +419,14 @@ main {
     align-items: end;
     position: relative;
     //padding-top: 18px;
-    height: 50px;
-    background: #e9ecef;
+    height: 36px;
+    background: #cccccc;
     width: 100%;
-    margin-bottom: 0 !important;
+    margin-bottom: 4px !important;
 
     .view-360 {
         position: absolute;
-        inset: 5px 153px auto auto;
+        inset: 0px 153px 0 auto;
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
@@ -464,34 +464,60 @@ main {
 }
 
 .tab .surface-name {
-    margin-left: 10px;
+    //margin-left: 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     display: inline-block;
     vertical-align: middle;
+    font: var(--light-font) 14px/1.2  var(--main-font-family);
+    width: 100px;
 }
 
 .tab {
-    height: 34px;
-    padding-inline: 12px;
+    height: 32px;
+    padding:  2px 12px;
     position: relative;
     cursor: pointer;
     background-color: transparent;
-    //border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    //margin-inline: 1px;
+    &::after{
+        --inline-size: 1px;
+        --block-size: 15px;
+        content: '';
+        width: var(--inline-size);
+        height: var(--block-size);
+        background-color: #fff;
+        position: absolute;
+        inset: calc(50% - var(--block-size)/2) calc(-1 * var(--inline-size)) auto auto;
+    }
 }
 
-//.tab:not(.active){
-//    border-inline: 1px solid #fff;
-//}
+.tab.active::after{
+    display: none;
+}
+.tab:not(.active){
+    //border-inline: 1px solid #fff;
+    border-radius: 0;
+}
 .tab:not(.active):hover {
-    background: #eff2f5;
+    //background: #eff2f5;
     //border-radius: 5px 5px 0 0;
     border-bottom: 0;
+    //border-top: 1px solid #fff;
+    //border-inline: 1px solid #fff;
+}
+.tab:not(.active):hover ~ .tab {
+    border-left: 0;
 }
 
-.tab:not(.active):has( ~ .tab.active) {
-    border-right: 0;
+.tab:where( ~ .tab.active) {
+//.tab:is(.tab:has( ~ .tab.active)) {
+    &::after{
+        display: none;
+    }
 }
 
 .tab.active ~ .tab {
@@ -505,28 +531,28 @@ main {
         width: 100px;
     }
 
-    position: relative;
-    clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
+    //position: relative;
+    //clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
     color: black;
-    border-radius: 0;
+    //border-radius: 0;
     //width: min(120px);
-    padding: 0 24px 0 12px !important;
+    //padding: 0 24px 0 12px !important;
     //border: 1px solid $black-color;
     //border-bottom: 0;
-    background-color: #000;
+    background-color: #fff;
     //z-index: -3;
 }
-
-.tab.active::after {
-    content: "";
-    //width: 190px;
-    //height: 190px;
-    position: absolute;
-    inset: 1px;
-    background-color: white;
-    clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
-    z-index: -5;
-}
+//
+//.tab.active::after {
+//    content: "";
+//    //width: 190px;
+//    //height: 190px;
+//    position: absolute;
+//    inset: 1px;
+//    background-color: white;
+//    clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
+//    z-index: -5;
+//}
 
 .tab.active .surface-active {
 
@@ -548,6 +574,8 @@ main {
 
     i {
         vertical-align: middle;
+        color: #000 !important;
+        font-size: 15px;
     }
 }
 
@@ -557,11 +585,13 @@ main {
     margin-left: 4px;
 }
 
-//.tab .cross-btn{
-//    position: absolute ;
-//    inset: 0 0 0 auto;
-//    padding: 0 6px;
-//}
+.tab .cross-btn{
+    //margin-left: 6px;
+    border: unset;
+    outline: none;
+    box-shadow: none;
+    background-color: transparent;
+}
 
 //.main-col .tabs-container .view-360 img{
 //    z-index: unset !important;
