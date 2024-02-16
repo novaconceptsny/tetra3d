@@ -58,12 +58,7 @@
                 <div class="col-9 main-col position-relative"
                      x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions/>
-<<<<<<< HEAD
-                    <div style="position: absolute; inset: auto 10px 0 auto; z-index: 10; background:#ffc107 " class="alert alert-warning alert-dismissible fade show rounded-0 border-0" x-show="changedCanvases > 1">
-=======
-                    <div x-cloak style="position: absolute; inset: auto 5px 0 auto; z-index: 10" class="alert alert-warning"
-                         x-show="changedCanvases > 1">
->>>>>>> d3fcb5ff8c577c805bc5e1bfb0754af9060a1490
+                    <div x-cloak style="position: absolute; inset: auto 10px 0 auto; z-index: 10; background:#ffc107 " class="alert alert-warning alert-dismissible fade show rounded-0 border-0" x-show="changedCanvases > 1">
                         <i class="fal fa-exclamation-triangle"></i> Multiple canvases have unsaved changes. <br>
                         Updating one canvas at a time will discard changes on others.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
