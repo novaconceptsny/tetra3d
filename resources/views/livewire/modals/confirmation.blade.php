@@ -43,7 +43,9 @@
     </div>
 
     <x-slot name="buttons">
-        <button type="button" wire:click="$dispatch('modal.close')" class="btn btn-secondary" data-bs-dismiss="modal">{{ $prompt['cancel'] }}</button>
-        <button type="submit" class="btn btn-primary">{{ $prompt['confirm'] }}</button>
+        <div class="btn-wrapper">
+            <button type="button" wire:click="$dispatch('modal.close')" class="btn btn-secondary" data-bs-dismiss="modal">{{ $prompt['cancel'] }}</button>
+            <button type="submit" class="btn btn-primary">{{ $prompt['confirm'] }}</button>
+        </div>
     </x-slot>
 </x-wire-elements-pro::bootstrap.modal>

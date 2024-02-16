@@ -2770,13 +2770,29 @@ main section.view-3d {
   overflow: auto;
 }
 
-/* The container must be positioned relative: */
 .main-col .alert {
   font: var(--light-font) 16px/normal var(--main-font-family) !important;
+  position: absolute;
+  inset: auto 5px 0 auto;
+  z-index: 10;
+  background-color: #ffc107;
 }
 
 select option {
-  font-family: var(--main-font-family);
+  font-family: var(--main-font-family) !important;
+  font-weight: var(--light-font);
+  letter-spacing: 2px !important;
+}
+
+.btn-wrapper button {
+  border: 1px solid #000 !important;
+  color: #000 !important;
+  background-color: #fff !important;
+  border-radius: 0;
+}
+.btn-wrapper button:hover {
+  background-color: #000 !important;
+  color: #fff !important;
 }
 
 /*# sourceMappingURL=style.css.map */

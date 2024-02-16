@@ -167,9 +167,6 @@ input#checkbox {
   padding: 0;
   box-sizing: border-box;
 }
-// body {
-//   overflow-x: hidden;
-// }
 ::-webkit-scrollbar{
   width: 5px;
 }
@@ -255,33 +252,6 @@ input#checkbox {
     border-radius: 0 !important;
 }
 
-// .tooltip {
-//   position: relative;
-//   display: inline-block;
-//   border-bottom: 1px dotted black;
-// }
-
-// .tooltip .tooltiptext {
-//   visibility: hidden;
-//   width: 120px;
-//   background-color: black;
-//   color: #fff;
-//   text-align: center;
-//   border-radius: 6px;
-//   padding: 5px 0;
-
-//   /* Position the tooltip */
-//   position: absolute;
-//   z-index: 1;
-//   top: 100%;
-//   left: 50%;
-//   margin-left: -60px;
-// }
-
-// .tooltip:hover .tooltiptext {
-//   visibility: visible;
-// }
-
 
 main{
   section.view-3d {
@@ -290,78 +260,33 @@ main{
   }
 }
 
-
-
-
-
-
-
-/* The container must be positioned relative: */
-// .custom-select {
-//   margin-top: 30px;
-//   position: relative;
-//font-family: var(--main-font-family);
-//   // border-radius: 10px !important;
-//   select {
-//     display: none; /*hide original SELECT element: */
-//   }
-//   .select-selected {
-//     background-color: $white-color;
-//     border-radius: 10px 10px 0px 0px;
-//     text-transform: capitalize;
-//     color: $dark-color;
-//     padding: 8px 16px;
-//     border: 1px solid transparent;
-//     border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-//     cursor: pointer;
-//     &.select-arrow-active{
-//       border-radius: 10px 10px 10px 10px;
-//       &::before {
-//         border-color: transparent transparent #000 transparent;
-//       }
-//     }
-//     &::before {
-//       position: absolute;
-//       content: "";
-//       top: 14px;
-//       right: 10px;
-//       width: 0;
-//       height: 0;
-//       border: 6px solid transparent;
-//       border-color: #000 transparent transparent transparent;
-//     }
-//   }
-//   .select-items{
-//     position: absolute;
-//     background-color: $white-color;
-//     top: 100%;
-//     left: 0;
-//     right: 0;
-//     z-index: 99;
-//     border-radius: 0px 0px 10px 10px;
-//     text-transform: capitalize !important;
-//     div{
-
-//       color: $dark-color;
-//       padding: 8px 16px !important;
-//       border-bottom: 1px solid rgba(0, 0, 0, 0.1) ;
-//       // border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-//       &:hover,
-//       &.same-as-selected{
-//         background-color: rgba(0, 0, 0, 0.1);
-//       }
-//     }
-//     &.select-hide {
-//       display: none;
-//     }
-//   }
-// }
-
 .main-col .alert{
         font: var(--light-font) 16px/normal var(--main-font-family) !important;
+    position: absolute;
+    inset: auto 5px 0 auto;
+    z-index: 10;
+    background-color: #ffc107;
 }
 
 select option{
-    font-family: var(--main-font-family);
+    font-family: var(--main-font-family) !important;
+    font-weight: var(--light-font);
+    letter-spacing: 2px !important;
+    //background-color: #000;
+
+
+}
+
+.btn-wrapper{
+    button{
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background-color: #fff !important;
+        border-radius: 0;
+        &:hover{
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+    }
 }
 
