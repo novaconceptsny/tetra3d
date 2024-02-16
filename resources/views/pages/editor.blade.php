@@ -55,8 +55,13 @@
                 <livewire:artwork-collection :project="$project"/>
 
                 @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
-                <div class="col-9 main-col" x-data="{ activeCanvas: @js("artwork_canvas_$canvasId") }">
+                <div class="col-9 main-col position-relative" x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions/>
+                    <div style="position: absolute; inset: auto 5px 0 auto; z-index: 10" class="alert alert-warning" x-show="changedCanvases > 1">
+                        <i class="fal fa-exclamation-triangle"></i> Multiple canvases have unsaved changes. <br>
+                        Updating one canvas at a time will discard changes on others.
+                    </div>
+
                     <div class="d-inline-flex tabs-container mb-1 pe-2">
                         @foreach($canvases as $canvas)
                             <div class="tab"
@@ -68,8 +73,9 @@
 
                                     init(){
                                         document.addEventListener('onCanvasUpdated', (e) => {
-                                            if (e.detail.surfaceStateId == this.surfaceStateId){
+                                            if (e.detail.surfaceStateId === this.surfaceStateId && this.hasChanges === false){
                                                 this.hasChanges = true;
+                                                this.changedCanvases++
                                             }
                                         })
                                     }
@@ -77,11 +83,7 @@
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 <div>
                                     <span>
-
-
-
-                                        <i x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
-{{--                                        <i class="fa fa-circle fa-xs text-warning change-icon"></i>--}}
+                                        <i x-show="hasChanges" x-ref="unsavedChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
                                         <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
                                     </span>
                                     @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)

@@ -108,7 +108,7 @@ return [
                     '7xl' => 'wep-modal-content-7xl',
                     'fullscreen' => 'wep-modal-content-fullscreen',
                 ],
-                'confirmation_view' => 'wire-elements-pro::modal.bootstrap.confirmation',
+                'confirmation_view' => 'livewire.modals.confirmation',
             ],
             'slide-over' => [
                 'size-map' => [
