@@ -87,10 +87,10 @@
                                         <i x-cloak x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
                                         <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
                                     </span>
-                                    @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
+                                    @if($canvas['surfaceStateId'])
                                         <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
                                            class="surface-active">
-                                            <i class="fa-regular fa-circle-check"></i>
+                                            <i class="fa-regular fa-circle-check {{ $canvas['surfaceStateId'] == $currentSurfaceStateId ? 'fas' : '' }}"></i>
                                         </a>
                                     @endif
                                     @if($canvas['surfaceStateId'])
