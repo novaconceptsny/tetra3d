@@ -449,7 +449,7 @@ class CanvasManager {
                 return;
             }
 
-            if (confirm("Are you sure you want to proceed to 360?") === true) {
+            if (confirm("You have unsaved changes. Are you sure you want to proceed to 360?") === true) {
                 window.location = event.currentTarget.attributes.href.value
                 return;
             } else {
