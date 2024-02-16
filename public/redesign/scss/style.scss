@@ -357,3 +357,11 @@ main{
 //   }
 // }
 
+.main-col .alert{
+        font: var(--light-font) 16px/normal var(--main-font-family) !important;
+}
+
+select option{
+    font-family: var(--main-font-family);
+}
+
