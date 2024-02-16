@@ -58,7 +58,7 @@
                 <div class="col-9 main-col position-relative"
                      x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
                     <x-editor-actions/>
-                    <div style="position: absolute; inset: auto 5px 0 auto; z-index: 10" class="alert alert-warning"
+                    <div x-cloak style="position: absolute; inset: auto 5px 0 auto; z-index: 10" class="alert alert-warning"
                          x-show="changedCanvases > 1">
                         <i class="fal fa-exclamation-triangle"></i> Multiple canvases have unsaved changes. <br>
                         Updating one canvas at a time will discard changes on others.
@@ -68,7 +68,6 @@
                         @foreach($canvases as $canvas)
                             <div class="tab"
                                  :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''"
-                                 {{--@onCanvasUpdated.window="console.log('foo was dispatched')"--}}
                                  x-data="{
                                     hasChanges: false,
                                     surfaceStateId: @js($canvas['surfaceStateId']),
@@ -85,8 +84,7 @@
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 <div>
                                     <span>
-                                        <i x-show="hasChanges" x-ref="unsavedChanges"
-                                           class="fa fa-circle fa-xs text-warning change-icon"></i>
+                                        <i x-cloak x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
                                         <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
                                     </span>
                                     @if($canvas['surfaceStateId'] && $canvas['surfaceStateId'] !== $currentSurfaceStateId)
@@ -135,7 +133,7 @@
 
                         <x-menu-item
                             text="Return to 360 View" class="view-360" :img="asset('redesign/images/360-icon.png')"
-                            target="_self"
+                            target="_self" id="return_to_360"
                             :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
                         />
 
