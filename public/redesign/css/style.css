@@ -2451,6 +2451,7 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   display: flex;
   align-items: end;
   position: relative;
+  padding-left: 2px;
   height: 36px;
   background: #cccccc;
   width: 100%;
