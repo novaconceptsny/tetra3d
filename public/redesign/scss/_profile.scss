@@ -1,0 +1,185 @@
+main{
+  section.profile{
+    height: calc(100vh - 83px);
+    overflow: auto;
+      .content-container {
+          padding-inline: 50px;
+          margin-block: 50px;
+          .profile-row {
+            row-gap: 16px;
+            .edit-col {
+              .edit-profile {
+                border: 1px solid $dark-color;
+                border-radius: 8px;
+                overflow: hidden;
+                h4 {
+                  display: block;
+                  background-color: $dark-color;
+                  color: $white-color;
+                  font-family: 'Mona-Sans';
+                  font-style: normal;
+                  font-weight: 400;
+                  font-size: 22px;
+                  line-height: 26px;
+                  padding: 18px;
+                }
+                form {
+                  padding: 32px;
+                  display: flex;
+                  gap: 30px;
+                  // flex-direction: column;
+                  gap: 30px;
+
+                  .custum-form-group {
+                    margin-bottom: 28px;
+                    // width: 50%;
+                    label {
+                      font-family: 'Mona-Sans';
+                      font-style: normal;
+                      font-weight: 400;
+                      font-size: 18px;
+                      line-height: 21px;
+                      color: $black-color;
+                    }
+                    input {
+                      // width: 100%;
+                      padding: 18px 22px 14px 22px;
+                      border: 1px solid #3c3b3c;
+                      font-family: 'Mona-Sans';
+                      font-style: normal;
+                      font-weight: 400;
+                      font-size: 14px;
+                      line-height: 16px;
+
+                      color: $black-color;
+                    }
+
+                    .pic-button {
+                      display: flex;
+                      gap: 12px;
+                      div.picture {
+                        padding: 18px 45px;
+                        border: 1px solid #3c3b3c;
+                        width: 221px;
+                        height: 159px;
+                        img{
+                          width: 100%;
+                          height: 100%;
+                        }
+                      }
+                      .drag-img {
+                        display: flex;
+                        gap: 24px;
+                        align-items: center;
+                        padding: 14px 28px;
+                        background-color: $white-color;
+                        border: 1px dashed #3c3b3c;
+                        height: fit-content;
+                        font-family: 'Mona-Sans';
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 14px;
+                        line-height: 16px;
+                        color: #000000;
+                        i{
+                          font-size: 25px;
+                        }
+                      }
+                    }
+                  }
+                  .profile-pic label {
+                    margin-top: 20px;
+                  }
+                  div.update {
+                    margin-top: 32px;
+                    display: flex;
+                    justify-content: flex-end;
+                    width: 100%;
+                    button {
+                      border: none;
+                      padding: 9px 59px;
+                      background: transparent;
+                      border: 1px solid $dark-color;
+                      border-radius: 8px;
+                      font-family: 'Mona-Sans';
+                      font-style: normal;
+                      font-weight: 400;
+                      font-size: 22px;
+                      line-height: 26px;
+                      color: $dark-color;
+                      &:hover{
+                        color: $white-color;
+                        background-color: $dark-color;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            .pass-col {
+              .update-pass {
+                border: 1px solid $dark-color;
+                border-radius: 8px;
+                overflow: hidden;
+                h4 {
+                  display: block;
+                  // margin: auto;
+                  // vertical-align: middle;
+                  background-color: $dark-color;
+                  color: $white-color;
+                  font-family: 'Mona-Sans';
+                  font-style: normal;
+                  font-weight: 400;
+                  font-size: 22px;
+                  line-height: 26px;
+                  padding: 18px;
+                }
+                form {
+                  padding: 32px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 30px;
+                  .custum-form-group {
+                    label {
+                      font-family: 'Mona-Sans';
+                      font-style: normal;
+                      font-weight: 400;
+                      font-size: 18px;
+                      line-height: 21px;
+                      color: $black-color;
+                    }
+                    input {
+                      width: 100%;
+                      padding: 18px 22px 14px 22px;
+                      border: 1px solid #3c3b3c;
+                    }
+                  }
+                  div.update {
+                    display: flex;
+                    justify-content: flex-end;
+                    width: 100%;
+                    button {
+                      border: none;
+                      padding: 9px 59px;
+                      background: transparent;
+                      border: 1px solid $dark-color;
+                      border-radius: 8px;
+                      font-family: 'Mona-Sans';
+                      font-style: normal;
+                      font-weight: 400;
+                      font-size: 22px;
+                      line-height: 26px;
+                      color: $dark-color;
+                      &:hover{
+                        color: $white-color;
+                        background-color: $dark-color;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+  }
+}

@@ -41,6 +41,7 @@
                         <x-backend::tab.item label="Tour" id="tour_form" :active="true"/>
                         @if($tour)
                             <x-backend::tab.item label="Maps" id="map_forms"/>
+                            <x-backend::tab.item label="Model" id="model_forms"/>
                         @endif
                     </x-slot>
                     <x-backend::tab.content id="tour_form" :active="true">
@@ -64,6 +65,11 @@
                     @if($tour)
                         <x-backend::tab.content id="map_forms">
                             <livewire:map.index :tour="$tour"/>
+                        </x-backend::tab.content>
+                    @endif
+                    @if($tour)
+                        <x-backend::tab.content id="model_forms">
+                            <livewire:model.index :tour="$tour"/>
                         </x-backend::tab.content>
                     @endif
                 </x-backend::tab>

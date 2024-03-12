@@ -1,4 +1,4 @@
-<div class="navbar-custom">
+<div class="navbar-custom" style="z-index: 40!important;">
     <ul class="list-unstyled topbar-menu float-end mb-0">
         <li class="dropdown notification-list">
             <a class="nav-link dropdown-toggle arrow-none" href="{{ route('dashboard') }}" target="_blank">
@@ -10,7 +10,7 @@
                role="button" aria-haspopup="false"
                aria-expanded="false">
                 <span class="account-user-avatar">
-                    <img src="{{ user()->avatar_url }}" alt="user-image" class="rounded-circle">
+                    <img src="{{ user()->avatar_url }}" alt="user-image" class="rounded-circle" style="border: 2px solid #222436 !important;">
                 </span>
                 <span>
                     <span class="account-user-name">{{ user()->name }}</span>
@@ -18,12 +18,10 @@
                 </span>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
-                <!-- item-->
                 <div class=" dropdown-header noti-title">
                     <h6 class="text-overflow m-0">{{ __('Welcome') }} {{ user()->name }}!</h6>
                 </div>
 
-                <!-- item-->
                 @if(session()->has('admin_id'))
                     <form class="d-inline" action="{{ route('back.to.admin') }}" method="post">
                         @csrf

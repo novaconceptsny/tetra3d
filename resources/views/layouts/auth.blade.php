@@ -10,6 +10,7 @@
     <meta property="og:type" content=""/>
     <meta property="og:url" content=""/>
     <meta property="og:image" content=""/>
+    @include('backend.includes.partial.favicon')
     <!--Fontawesome cdn	-->
 
     <!-- CSS File -->

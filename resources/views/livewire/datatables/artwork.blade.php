@@ -15,7 +15,7 @@
         <div class="d-flex">
             @include('backend.includes.datatable.search')
             <div class="me-1">
-                <select wire:model="selectedCollection" class="form-control">
+                <select wire:model.live="selectedCollection" class="form-control">
                     <option value="">All Collections</option>
                     @foreach($collections as $collection)
                         <option value="{{$collection->id}}">{{$collection->name}}</option>
@@ -25,7 +25,7 @@
 
             @if(isset($columns['company_name']))
                 <div class="me-1">
-                    <select wire:model="selectedCompany" class="form-control">
+                    <select wire:model.live="selectedCompany" class="form-control">
                         <option value="">All Companies</option>
                         @foreach($companies as $company)
                             <option value="{{$company->id}}">{{$company->name}}</option>
@@ -34,7 +34,7 @@
                 </div>
             @endif
             {{--<div class="me-1">
-                <select wire:model="selectedArtist" class="form-control">
+                <select wire:model.live="selectedArtist" class="form-control">
                     <option value="">All Artists</option>
                     @foreach($artists as $artist)
                         <option value="{{$artist}}">{{$artist}}</option>
@@ -48,7 +48,7 @@
             <div class="d-flex mt-2 justify-content-end">
                 <div class="me-1 ">
                     <label for="">Move to Collection</label>
-                    <select wire:model="targetCollection" class="form-control">
+                    <select wire:model.live="targetCollection" class="form-control">
                         <option value="">Select Collection</option>
                         @foreach($collections as $collection)
                             <option value="{{$collection->id}}">{{$collection->name}}</option>
@@ -63,8 +63,8 @@
         @include('backend.includes.datatable.toggle-columns')
     </div>
     <div class="card-body py-0">
-        <div class="mb-3 scrollbar table-responsive">
-            <table class="table table-hover fs--1 table-sm">
+        <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
+            <table class="table table-hover fs--1 table-sm" >
 
                 @include('backend.includes.datatable.header')
 
@@ -74,8 +74,13 @@
                         @include('backend.includes.datatable.bulk-selection')
 
                         <!-- pre columns !-->
-                        <td class="td">
-                            <img src="{{ $row->image_url }}" alt="" width="50">
+                        <td class="td artwork-img">
+                            <img
+                                @click="artworkImage = @js($row->image_url);"
+                                src="{{ $row->image_url }}"
+                                alt="" width="50"
+                                data-bs-toggle="modal" data-bs-target="#artworkImage"
+                            >
                         </td>
 
                         @include('backend.includes.datatable.content')
@@ -87,7 +92,20 @@
                 @endforeach
                 </tbody>
             </table>
+            <div class="modal fade" id="artworkImage" tabindex="-1" >
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img :src="artworkImage">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
     @include('backend.includes.datatable.footer')
 </div>

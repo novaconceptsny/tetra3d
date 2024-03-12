@@ -7,8 +7,8 @@
         var url = caller.canvas_url;
         var hlookat = krpano.view.hlookat;
         var vlookat = krpano.view.vlookat;
-        var project_id = krpano.project_id;
-        urlStr = url + "&#38;project_id=" + project_id +"&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
+        var layout_id = krpano.layout_id;
+        urlStr = url + "&#38;layout_id=" + layout_id +"&#38;hlookat=" + hlookat + "&#38;vlookat=" + vlookat;
         window.location.href = urlStr;
     </action>
 
@@ -100,7 +100,7 @@
         }
 
         // if surface is live, and no project is selected , show blank wall
-        if(!krpano.project_id &amp;&amp; !krpano.shared_tour_id &amp;&amp; surface == 'live'){
+        if(!krpano.layout_id &amp;&amp; !krpano.shared_tour_id &amp;&amp; surface == 'live'){
             caller.url = '';
         }
 
@@ -119,12 +119,17 @@
         var url = caller.goto_url;
         var hlookat = caller.hlookat;
         var vlookat = caller.vlookat;
-        var project_id = krpano.project_id;
+        var layout_id = krpano.layout_id;
+        var layout_id = krpano.layout_id;
         var tracker = krpano.tracker;
         var shared = krpano.shared;
 
-        if (project_id){
-            url = url + "&#38;project_id=" + project_id
+        if (layout_id){
+            url = url + "&#38;layout_id=" + layout_id
+        }
+
+        if (layout_id){
+            url = url + "&#38;layout_id=" + layout_id
         }
 
         if (tracker){

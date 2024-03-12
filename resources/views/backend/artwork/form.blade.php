@@ -31,16 +31,16 @@
                         @endforeach
                     </x-backend::inputs.select>
 
-                    <x-backend::inputs.text col="col-6" name="name" value="{!! $artwork?->name !!}"/>
+                    <x-backend::inputs.text col="col-6" name="name" value="{!! $artwork?->name !!}" label="Title"/>
                     <x-backend::inputs.text col="col-6" name="artist" value="{{ $artwork?->artist }}"/>
                     <x-backend::inputs.text col="col-6" name="type" value="{{ $artwork?->type }}"/>
-                    <x-backend::inputs.text col="col-4" disabled name="data.scale" value="{{ $artwork?->data->scale }}"/>
-                    <x-backend::inputs.text col="col-4" name="data.width_inch" value="{{ $artwork?->data->width_inch }}"/>
-                    <x-backend::inputs.text col="col-4" name="data.height_inch" value="{{ $artwork?->data->height_inch }}"/>
+                    <x-backend::inputs.text col="col-4" disabled name="data.scale" value="{{ $artwork?->data->scale }}" label="Scale"/>
+                    <x-backend::inputs.text col="col-4" name="data.height_inch" value="{{ $artwork?->data->height_inch }}" label="Height"/>
+                    <x-backend::inputs.text col="col-4" name="data.width_inch" value="{{ $artwork?->data->width_inch }}" label="Width"/>
                     <div class="col-12">
                         <h5>{{ __('Artwork') }}</h5>
                         <x-backend::media-attachment
-                            name="image" rules="max:102400"
+                            name="image" rules="max:20480"
                             :media="$artwork?->getFirstMedia('image')"
                         />
                     </div>

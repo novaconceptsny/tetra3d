@@ -40,7 +40,7 @@ class UserController extends Controller
         $user->addFromMediaLibraryRequest($request->avatar)
             ->toMediaCollection('avatar');
 
-        $user->assignRole($request->role);
+        $user->assignRole((int)$request->role);
 
         return redirect()->route('backend.users.index')->with('success', 'User created successfully');
     }
@@ -75,7 +75,7 @@ class UserController extends Controller
             ]);
         }
 
-        $user->assignRole($request->role);
+        $user->syncRoles((int)$request->role);
 
         $user->addFromMediaLibraryRequest($request->avatar)
             ->toMediaCollection('avatar');
@@ -85,7 +85,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        //
+        $user->delete();
+        return redirect()->back()->with('success', 'User deleted successfully');
     }
 
     public function loginAs(Request $request, User $user)

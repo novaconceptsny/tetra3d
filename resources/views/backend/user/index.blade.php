@@ -15,7 +15,7 @@
                             class="fal fa-plus"></i> {{ __('Add New') }}</a>
                 @endif
             </div>
-            <h5 class="mb-0 ">{{ __('Tours') }}</h5>
+            <h5 class="mb-0 ">{{ __('Users') }}</h5>
         </div>
         <div class="card-body p-0">
             <div class="mb-3">
@@ -55,7 +55,7 @@
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm
-                                permission="edit" :permission_params="$user"
+                                permission="delete" :permission_params="$user"
                                 :route="route('backend.users.destroy', $user)"
                                 :model="$user" :button="false"
                             />
@@ -66,7 +66,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class=" py-0 px-2">
+                {{ $users->links() }}
+            </div>
         </div>
-        <div class="card-footer py-0"></div>
     </div>
 @endsection

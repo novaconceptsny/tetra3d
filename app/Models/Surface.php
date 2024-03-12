@@ -26,6 +26,12 @@ class Surface extends Model implements HasMedia
     {
         parent::boot();
 
+        static::updated(function (self $model) {
+            if ($model->isDirty('name')) {
+                $model->addActivity('renamed');
+            }
+        });
+
         static::deleted(function(self $model) {
             $model->spots()->detach();
 
@@ -40,6 +46,7 @@ class Surface extends Model implements HasMedia
         $this->addMediaCollection('main')->singleFile();
         $this->addMediaCollection('background')->singleFile();
         $this->addMediaCollection('shared');
+        $this->addMediaCollection('layout');
     }
 
     public function scopeWithData(): Builder
@@ -58,20 +65,20 @@ class Surface extends Model implements HasMedia
     }
 
 
-    public function getCurrentState($project_id)
+    public function getCurrentState($layout_id)
     {
-        return $this->states()->current()->forProject($project_id)->first();
+        return $this->states()->current()->forLayout($layout_id)->first();
     }
 
-    public function createNewState($project_id)
+    public function createNewState($layout_id)
     {
-        $this->states()->where('project_id', $project_id)->update([
+        $this->states()->where('layout_id', $layout_id)->update([
             'active' => 0
         ]);
 
         return $this->states()->create([
             'user_id' => auth()->id(),
-            'project_id' => $project_id
+            'layout_id' => $layout_id
         ]);
     }
 
@@ -111,5 +118,21 @@ class Surface extends Model implements HasMedia
         }
 
         return $state->getFirstMediaUrl('hotspot');
+    }
+
+    public function addActivity($action)
+    {
+        $actions = [
+            'renamed' => 'Surface renamed',
+        ];
+
+        $activity = $actions[$action];
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'tour_id' => $this->tour_id,
+            'activity' => $activity,
+            'url' => route('surfaces.show', $this->id, false)
+        ]);
     }
 }

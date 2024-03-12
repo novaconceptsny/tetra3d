@@ -16,15 +16,14 @@
     </div>
     <div class="col-9">
         <div class="row g-3 ">
-            <x-backend::inputs.text name="selectedMap.name" wire:model="selectedMap.name"/>
-            <x-backend::inputs.text col="col-6" name="selectedMap.width" wire:model="selectedMap.width"/>
-            <x-backend::inputs.text col="col-6" name="selectedMap.height" wire:model="selectedMap.height"/>
+            <x-backend::inputs.text name="selectedMap.name" wire:model.live="selectedMap.name"/>
+            <x-backend::inputs.text col="col-6" name="selectedMap.width" wire:model.live="selectedMap.width"/>
+            <x-backend::inputs.text col="col-6" name="selectedMap.height" wire:model.live="selectedMap.height"/>
             <div class="col-12">
                 <h5>{{ __('Map Image') }}</h5>
-
-                <x-backend::media-attachment
-                    name="mapImage" rules="max:102400"
-                    :media="$selectedMap?->getFirstMedia('image')"
+                <livewire:media-library
+                    wire:model="mapImage" rules="max:102400" collection="image"
+                    :model="$selectedMap" :multiple="false" :editable-name="false"
                 />
             </div>
 
@@ -35,11 +34,11 @@
                         <div class="row g-2">
                             <x-backend::inputs.text
                                 col="col-6" name='{{ "spots.{$spot->id}.x" }}'
-                                wire:model="spots.{{ $spot->id }}.x" label='{{ "{$spot->friendly_name} X" }}'
+                                wire:model.live="spots.{{ $spot->id }}.x" label='{{ "{$spot->friendly_name} X" }}'
                             />
                             <x-backend::inputs.text
                                 col="col-6" name='{{ "spots.{$spot->id}.y" }}'
-                                wire:model="spots.{{ $spot->id }}.y" label='{{ "{$spot->friendly_name} Y" }}'
+                                wire:model.live="spots.{{ $spot->id }}.y" label='{{ "{$spot->friendly_name} Y" }}'
                             />
                         </div>
                     @endforeach
@@ -48,7 +47,7 @@
 
             <div class="text-end">
                 @if(!$creatingNewMap)
-                <button class="btn btn-danger me-2" type="button" wire:click="$emit('showModal', 'modals.confirm', {{json_encode($deleteOptions)}})">
+                <button class="btn btn-danger me-2" type="button" wire:click="delete">
                     {{ __('Delete') }}
                 </button>
                 @endif

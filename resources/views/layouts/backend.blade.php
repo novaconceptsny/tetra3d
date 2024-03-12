@@ -19,11 +19,12 @@
     <link rel="stylesheet" href="{{ asset('backend/css/media-library.css') }}">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.7.1/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('vendor/wire-elements-pro/css/bootstrap-overlay-component.css') }}">
 
 
     @yield('styles')
-    <livewire:styles/>
+    @livewireStyles
+    @mediaLibraryStyles
 
 </head>
 
@@ -82,12 +83,17 @@
 </script>
 
 @yield('scripts')
-<livewire:scripts/>
+@livewireScripts
+@livewire('modal-pro')
+@livewire('slide-over-pro')
+
+@mediaLibraryScripts
 <script src="{{ asset('js/modals.js') }}"></script>
 
 <script>
-    Livewire.on('flashNotification', (message, type = 'success') => {
-        toastr[type](message)
+    Livewire.on('flashNotification', (event) => {
+        let type = event.type ? event.type : 'success';
+        toastr[type](event.message)
     });
 
     Echo.channel('shell')
@@ -101,5 +107,10 @@
 
 @yield('livewire-scripts')
 
+<script src="{{ asset('vendor/wire-elements-pro/js/overlay-component.js') }}"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/sql.min.js"></script>
 </body>
 </html>

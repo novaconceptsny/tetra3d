@@ -45,3 +45,8 @@
     </div>
 </div>
 @endif
+
+<script>
+    var route = @json($route);
+    console.log("delete route", route);
+    </script>

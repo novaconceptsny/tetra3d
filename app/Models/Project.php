@@ -28,6 +28,8 @@ class Project extends Model implements HasMedia
             $model->surfaceStates()->cursor()->each(
                 fn (SurfaceState $state) => $state->delete()
             );
+
+            $model->layouts()->delete();
         });
     }
 
@@ -61,6 +63,11 @@ class Project extends Model implements HasMedia
         return $this->hasMany(SurfaceState::class);
     }
 
+    public function layouts()
+    {
+        return $this->hasMany(Layout::class);
+    }
+
     public function artworks()
     {
         return $this->hasManyDeep(
@@ -75,5 +82,26 @@ class Project extends Model implements HasMedia
         if (user()->isEmployee()){
             return $builder->whereIn('id', $project_ids);
         }
+    }
+
+    public function addActivity($action, $data = [])
+    {
+        $oldName = $data['old_name'] ?? '';
+        $newName = $data['new_name'] ?? '';
+
+        $actions = [
+            'name_updated' => "Project name changed to $newName from $oldName",
+            'tours_updated' => 'Project tours updated',
+            'collections_updated' => 'Project collections updated',
+            'users_updated' => 'Project contributors updated',
+        ];
+
+        $activity = $actions[$action];
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'project_id' => $this->id,
+            'activity' => $activity,
+        ]);
     }
 }

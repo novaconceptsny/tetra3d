@@ -60,7 +60,7 @@
                                 </x-backend::dropdown.container>
                             </td>
                             <x-backend::modals.confirm
-                                permission="edit" :permission_params="$project"
+                                permission="delete" :permission_params="$project"
                                 :route="route('backend.projects.destroy', $project)"
                                 :model="$project" :button="false"
                             />

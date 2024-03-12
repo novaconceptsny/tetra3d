@@ -36,7 +36,11 @@
 
                                     <x-backend::dropdown.item
                                         permission="accessCollector" :permission_params="$company"
-                                        onclick="window.livewire.emit('showModal', 'modals.collector-tools', {{ $company->id }})">
+                                        onclick="Livewire.dispatch('modal.open', {
+                                            component: 'modals.collector-tools',
+                                            arguments: {'company': {{$company->id}} }
+                                        })"
+                                    >
                                         <i class="fal fa-power-off mr-1 text-info"></i> {{ __('Collector Tools') }}
                                     </x-backend::dropdown.item>
 

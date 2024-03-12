@@ -26,6 +26,7 @@ class SurfaceState extends Model implements HasMedia
             $model->artworks()->detach();
             $model->comments()->delete();
             $model->likes()->delete();
+            $model->addActivity('deleted');
         });
     }
 
@@ -73,12 +74,19 @@ class SurfaceState extends Model implements HasMedia
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault([
+            'first_name' => 'Guest'
+        ]);
     }
 
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function layout()
+    {
+        return $this->belongsTo(Layout::class);
     }
 
     public function artworks()
@@ -90,20 +98,41 @@ class SurfaceState extends Model implements HasMedia
 
     public function setAsActive()
     {
+        if ($this->isActive()) {
+            return false;
+        }
+
         $this->surface->states()
             ->whereNot('id', $this->id)
-            ->where('project_id', $this->project_id)->update([
+            ->where('project_id', $this->project_id)
+            ->where('layout_id', $this->layout_id)
+            ->update([
                 'active' => 0,
             ]);
 
         $this->update([
             'active' => 1
         ]);
+
+        $this->addActivity('switched_state');
     }
 
     public function isActive()
     {
         return $this->active;
+    }
+
+    public function remove(): void
+    {
+        $this->delete();
+
+        if ($this->isActive()){
+            $stateToActive = SurfaceState::query()
+                ->where('surface_id', $this->surface_id)
+                ->where('layout_id', $this->layout_id)
+                ->first();
+            $stateToActive?->setAsActive();
+        }
     }
 
     //todo::cleanup: not using anymore
@@ -113,6 +142,13 @@ class SurfaceState extends Model implements HasMedia
             get: fn () => \Str::replace('public', 'storage', $this->hotspot_url),
         );
     }*/
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
 
     public function scopeCurrent(Builder $builder)
     {
@@ -127,5 +163,39 @@ class SurfaceState extends Model implements HasMedia
     public function scopeForProject(Builder $builder, $project_id)
     {
         $builder->where('project_id', $project_id);
+    }
+
+    public function scopeForLayout(Builder $builder, $layout_id)
+    {
+        $builder->where('layout_id', $layout_id);
+    }
+
+    public function addActivity($action)
+    {
+        $actions = [
+            'created' => 'added',
+            'updated' => 'edited',
+            'deleted' => 'deleted',
+            'new_comment' => 'comment added',
+            'switched_state' => 'selected to display in tour',
+        ];
+
+        $activity = "Surface {$this->surface->name} version '$this->name' ". $actions[$action];
+
+        $urls = [
+            'created' => route('tours.surfaces', ['tour' => $this->surface?->tour_id, 'layout_id' => $this->layout_id], false),
+            'updated' => route('surfaces.show', ['surface' => $this->surface_id,'layout_id' => $this->layout_id], false),
+            'new_comment' => route('surfaces.show', ['surface' => $this->surface_id, 'layout_id' => $this->layout_id, 'sidebar' => 'comments'], false),
+            'switched_state' => route('tours.show', ['tour' => $this->surface?->tour_id, 'layout_id' => $this->layout_id], false),
+        ];
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'project_id' => $this->layout?->project_id,
+            'layout_id' => $this->layout_id,
+            'tour_id' => $this->surface?->tour_id,
+            'activity' => $activity,
+            'url' => $urls[$action] ?? null
+        ]);
     }
 }

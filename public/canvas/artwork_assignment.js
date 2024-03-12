@@ -392,6 +392,10 @@ function placeSelectedImage(artSelection, topPos = boundingBox.top, leftPos = bo
             scale = 96;
         }
         applyAdaptiveRescale(img1, scale, overrideScale);
+
+        // disable resizing or image
+        img1.hasControls = false;
+
         artworkCanvas.add(img1);
 
         artworkCanvas.renderAll();
@@ -711,12 +715,15 @@ function canvasHasOverlap() {
 
 function positionCropBtn(object)
 {
+    // disable crop
+    return false;
+
     $crop_btn.show();
 
     let headerHeight = $('#header').height();
-    $crop_btn.css('top', object.top + headerHeight + 75);
+    $crop_btn.css('top', object.top + headerHeight);
 
-    let sidebarWidth = $('.sidebar .mini').width() + $('.collections').width() + 50;
+    let sidebarWidth = $('.editor .side-col').width();
     let locLeft = object.left + (sidebarWidth - $crop_btn.width() / 2 - 20);
     $crop_btn.css('left', locLeft);
 }

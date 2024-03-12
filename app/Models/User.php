@@ -30,6 +30,17 @@ class User extends Authenticatable implements HasMedia
 
     protected $casts = ['email_verified_at' => 'datetime',];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function(self $model) {
+            $model->projects()->detach();
+            $model->layouts()->delete();
+            $model->surfaceStates()->delete();
+        });
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
@@ -45,6 +56,16 @@ class User extends Authenticatable implements HasMedia
     public function projects()
     {
         return $this->belongsToMany(Project::class);
+    }
+
+    public function layouts()
+    {
+        return $this->hasMany(Layout::class);
+    }
+
+    public function surfaceStates()
+    {
+        return $this->hasMany(SurfaceState::class);
     }
 
     /*** ============= Attributes ============= ***/

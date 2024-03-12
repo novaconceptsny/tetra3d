@@ -31,18 +31,25 @@
                     <x-backend::tab.content id="surface_form" :active="true">
                         <div class="row g-3">
                             <x-backend::inputs.text name="name" value="{{ $surface ? $surface->name : '' }}"/>
-                            <div class="col-6">
+                            <div class="col-4">
                                 <h5>{{ __('Background Image') }}</h5>
                                 <x-backend::media-attachment
                                     name="background" rules="max:102400"
                                     :media="$surface?->getFirstMedia('background')"
                                 />
                             </div>
-                            <div class="col-6">
+                            <div class="col-4">
                                 <h5>{{ __('Main Image') }}</h5>
                                 <x-backend::media-attachment
                                     name="main" rules="max:102400"
                                     :media="$surface?->getFirstMedia('main')"
+                                />
+                            </div>
+                            <div class="col-4">
+                                <h5>{{ __('Layout Image') }}</h5>
+                                <x-backend::media-attachment
+                                    name="layout" rules="max:102400"
+                                    :media="$surface?->getFirstMedia('layout')"
                                 />
                             </div>
                         </div>

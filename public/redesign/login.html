@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetra</title>
+    <!-- bootstrap css link  -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <!-- own css file  -->
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- font awesome cdn links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body class="login_body">
+    <main class="login">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xl-6 fir-col">
+            <div class="fir-inner">
+              <div class="heading py-auto">
+                <svg width="55" height="62" viewBox="0 0 55 62" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <rect width="55" height="62" fill="url(#pattern0)"/>
+                  <defs>
+                  <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                  <use xlink:href="#image0_1853_1037" transform="scale(0.0181818 0.016129)"/>
+                  </pattern>
+                  <image id="image0_1853_1037" width="55" height="62" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAA+CAYAAACP1IOOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDYuMC1jMDA2IDc5LjE2NDc1MywgMjAyMS8wMi8xNS0xMTo1MjoxMyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIyLjMgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjFERTRCNjNDNkFBQTExRUQ4NTM4OUFEMUIzRTAxREVCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjFERTRCNjNENkFBQTExRUQ4NTM4OUFEMUIzRTAxREVCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MURFNEI2M0E2QUFBMTFFRDg1Mzg5QUQxQjNFMDFERUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MURFNEI2M0I2QUFBMTFFRDg1Mzg5QUQxQjNFMDFERUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7KpvorAAAI/klEQVR42tRaC3BT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"/>
+                  </defs>
+                </svg>
+                  
+                <h3>Tetra</h3>
+              </div>
+              <h4
+                class="login d-flex align-items-center justify-content-center"
+              >
+                Login
+              </h4>
+              <p class="text-center">
+                Duis aute irure dolor in reprehenderit in voluptate
+              </p>
+              <form class="d-flex flex-column align-items-center">
+                <div class="form-group login-custum-form-group">
+                  <label for="email">Email*</label>
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="John Doe @gmail.com"
+                    class="form-control"
+                  />
+                </div>
+                <div class="form-group login-custum-form-group">
+                  <label for="password">Password</label>
+                  <input type="password" id="password" class="form-control" placeholder="......" />
+                </div>
+                <div class="check-main w-100">
+                  <div class="checkbox">
+                    <input class="" type="checkbox" id="checkbox" class="m-0 p-0" />
+                    <label for="checkbox" class="m-0 p-0">Remember me</label>
+                  </div>
+                  <div class="forget d-inline">
+                    <a href="#" class="text-decoration-none"
+                      >Forget Password?</a
+                    >
+                  </div>
+                </div>
+                <button href="sidebar.html" class="btn-login btn form-control">Login</button>
+                <p class="create mb-0">
+                  Not registered yet?
+                  <a href="#" target="_self" class="text-decoration-none"
+                    >Create an account</a
+                  >
+                </p>
+              </form>
+            </div>
+          </div>
+          <div class="col-xl-6 sec-col">
+            <div class="ell-img">
+              <img src="images/Group 4738.png" alt="sec-bg" />
+            </div>
+            <div class="sec-inner">
+              <div class="ellipse">
+                <svg width="55" height="62" viewBox="0 0 55 62" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <rect width="55" height="62" fill="url(#pattern0)"/>
+                  <defs>
+                  <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                  <use xlink:href="#image0_1853_1037" transform="scale(0.0181818 0.016129)"/>
+                  </pattern>
+                  <image id="image0_1853_1037" width="55" height="62" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADcAAAA+CAYAAACP1IOOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDYuMC1jMDA2IDc5LjE2NDc1MywgMjAyMS8wMi8xNS0xMTo1MjoxMyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIyLjMgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjFERTRCNjNDNkFBQTExRUQ4NTM4OUFEMUIzRTAxREVCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjFERTRCNjNENkFBQTExRUQ4NTM4OUFEMUIzRTAxREVCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MURFNEI2M0E2QUFBMTFFRDg1Mzg5QUQxQjNFMDFERUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MURFNEI2M0I2QUFBMTFFRDg1Mzg5QUQxQjNFMDFERUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7KpvorAAAI/klEQVR42tRaC3BT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"/>
+                  </defs>
+                  </svg>
+                  
+              </div>
+              <h1 class="text-white">Welcome To Tetra</h1>
+              <p class="text-white">
+                Tetra3D is a 3D renderer written in Go. It is largely
+                implemented in software, but uses Ebiten to render the triangles
+                and perform depth testing through hardware.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- bootstrap script links -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

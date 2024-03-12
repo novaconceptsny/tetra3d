@@ -35,11 +35,16 @@ class SharedTour extends Model
 
     public function tour()
     {
-        return $this->belongsTo(Tour::class);
+        return $this->hasOneThrough(Tour::class, Layout::class);
+    }
+
+    public function layout()
+    {
+        return $this->belongsTo(Layout::class);
     }
 
     public function project()
     {
-        return $this->belongsTo(Project::class);
+        return $this->hasOneThrough(Project::class, Layout::class);
     }
 }

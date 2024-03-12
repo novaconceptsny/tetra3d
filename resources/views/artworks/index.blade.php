@@ -1,11 +1,13 @@
-@extends('layouts.master')
+@extends('layouts.redesign')
 
 @section('content')
-    <div class="dashboard gallery mini">
-        <div class="inner__table table-responsive p-2 pb-4">
-            <livewire:datatables.artwork-datatable/>
+    <section class="collection">
+        <div class="main-intro container-fluid artworks-table">
+            <div class="mt-5">
+                <livewire:datatables.artwork-datatable />
+            </div>
         </div>
-    </div>
+    </section>
 @endsection
 
 @section('styles')

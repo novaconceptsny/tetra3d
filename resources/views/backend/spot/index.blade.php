@@ -60,7 +60,7 @@
 
                                     <x-backend::dropdown.item
                                         permission="perform-admin-actions"
-                                        onclick="window.livewire.emit('showModal', 'modals.krpano-tools', {{ $spot->id }})">
+                                        onclick="Livewire.dispatch('modal.open', {component: 'modals.krpano-tools', arguments: {'spot': {{$spot->id}}}})">
                                         <i class="fal fa-toolbox mr-1"></i> {{ __('Krpano Tools') }}
                                     </x-backend::dropdown.item>
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Artwork;
+use App\Models\Layout;
 use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Surface;
@@ -13,10 +15,12 @@ class SurfaceStateController extends Controller
 {
     public function show(Surface $surface)
     {
-        $project = Project::relevant()->findOrFail(request('project_id'));
+        $layout = Layout::findOrFail(request('layout_id'));
+        $project = Project::findOrFail($layout->project_id);
 
         $surface->load([
-            'states' => fn($query) => $query->forProject($project->id),
+            'states' => fn($query) => $query->forLayout($layout->id),
+            'states.artworks.media',
             'states.comments.user',
             'states.likes.user'
         ]);
@@ -38,38 +42,64 @@ class SurfaceStateController extends Controller
             $referer == $versions_url
         );
 
-
-        $surface_state = null;
+        $selectedSurfaceState = null;
         $create_new_state = request('new');
 
-        if ($surface_state_id = \request('surface_state_id')){
-            $surface_state = SurfaceState::findOrFail($surface_state_id);
+        if ($surface_state_id = request('surface_state_id')){
+            $selectedSurfaceState = SurfaceState::findOrFail($surface_state_id);
+        }
+
+        if (!$create_new_state && !$surface_state_id){
+            $selectedSurfaceState = $surface->getCurrentState($layout->id);
         }
 
         $surface->background_url = $surface->getFirstMediaUrl('background');
 
-        if (!$create_new_state && !$surface_state_id){
-            $surface_state = $surface->getCurrentState($project->id);
-        }
-        $assignedArtworks = $surface_state?->artworks->map(function ($artwork){
-            $artwork->image_url.= "?uuid=". str()->uuid();
-            return $artwork;
-        });
-
-        $surfaceData = $surface->only([
-            'id', 'name', 'background_url', 'data'
-        ]);
 
         $data = array();
         $data['project'] = $project;
+        $data['layout'] = $layout;
         $data['tour'] = $surface->tour;
-        $data['surface'] = $surface;
-        $data['surface_data'] = $surfaceData;
-        $data['current_surface_state'] = $surface_state;
         $data['spot'] = $spot;
-        $data['assigned_artworks'] = $assignedArtworks;
-        $data['canvas_state'] = $surface_state ? $surface_state->canvas : [];
-        $data['return_to_versions'] = $return_to_versions;
+        $data['surface'] = $surface;
+        $data['selectedSurfaceState'] = $selectedSurfaceState;
+        $data['currentSurfaceStateId'] = $surface->getCurrentState($layout->id)?->id;
+
+        $data['navEnabled'] = false;
+        $data['navbarLight'] = true;
+
+        $canvases = array();
+
+        if (!$surface->states->count() || $create_new_state){
+            $surface->states[] = new SurfaceState();
+        }
+
+        foreach ($surface->states as $surfaceState){
+
+            $assignedArtworks = $surfaceState?->artworks->map(function ($artwork){
+                $artwork->image_url.= "?uuid=". str()->uuid();
+                return $artwork;
+            });
+
+            $canvases[$surfaceState->id ?? 'new'] = [
+                'canvasId' => "artwork_canvas_". ($surfaceState->id ?? 'new'),
+                'surface' => $surface->only([
+                    'id', 'name', 'background_url', 'data'
+                ]),
+                'assignedArtworks' => $assignedArtworks,
+                'surfaceStateId' => $surfaceState?->id,
+                'userId' => auth()->id(),
+                'spotId' => $spot->id,
+                'latestState' => $surfaceState ? $surfaceState->canvas : [],
+                'layoutId' => $layout->id,
+                'updateEndpoint' => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
+                'hlookat' => request('hlookat', $spot->xml->view['hlookat']),
+                'vlookat' => request('vlookat', $spot->xml->view['vlookat']),
+                'surfaceStateName' => $surfaceState->name ?? 'Untitled',
+            ];
+        }
+
+        $data['canvases'] = $canvases;
 
         return view('pages.editor', $data);
     }
@@ -80,9 +110,9 @@ class SurfaceStateController extends Controller
     public function update(Request $request, Surface $surface)
     {
         $request->validate([
-            'project_id' => 'required'
+            'layout_id' => 'required',
+            'assigned_artwork' => 'required',
         ]);
-
 
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
@@ -96,21 +126,21 @@ class SurfaceStateController extends Controller
         }
 
         if ($request->new) {
-            $state = $surface->createNewState($request->project_id);
+            $state = $surface->createNewState($request->layout_id);
             $state->update([
                 'name' => $request->name,
             ]);
         } else {
             $state = $request->get('surface_state_id')
-                ?
-                SurfaceState::findOrFail($request->surface_state_id)
-                :
-                $surface->getCurrentState($request->project_id);
+                ? SurfaceState::findOrFail($request->surface_state_id)
+                : $surface->getCurrentState($request->layout_id);
         }
 
         $state->update([
-            'canvas' => json_decode($request->canvasState, true)
+            'canvas' => json_decode($request->canvasState, true),
         ]);
+
+        $state->setAsActive();
 
         $state->addMediaFromBase64(resizeBase64Image(
             $request->thumbnail,
@@ -137,10 +167,13 @@ class SurfaceStateController extends Controller
 
         $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
 
+        $state->addActivity($request->new ? 'created': 'updated');
+
+
         return redirect()->route($route, [
             $surface->tour,
             'spot_id' => $request->spot_id,
-            'project_id' => $request->project_id,
+            'layout_id' => $request->layout_id,
             'hlookat' => $request->hlookat,
             'vlookat' => $request->vlookat,
         ])->with('success', 'Surface updated');
@@ -148,7 +181,13 @@ class SurfaceStateController extends Controller
 
     public function destroy(SurfaceState $state)
     {
-        $state->delete();
+        $state->remove();
         return redirect()->back()->with('success', 'State removed');
+    }
+
+    public function active(SurfaceState $state)
+    {
+        $state->setAsActive();
+        return redirect()->back()->with('success', 'Active set updated');
     }
 }

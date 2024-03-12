@@ -116,4 +116,15 @@ class ValidationRules
             'image' => '',
         ]);
     }
+
+    public static function storeSculpture()
+    {
+        return [
+            'name' => 'required',
+            'artist' => 'required',
+            'sculpture' => 'required',
+            'thumbnail' => 'required_without:thumbnail-canvas',
+            'thumbnail-canvas' => 'required_without:thumbnail',
+        ];
+    }
 }

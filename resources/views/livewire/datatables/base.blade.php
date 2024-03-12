@@ -30,14 +30,14 @@
         <!-- Filters Start -->
         <div class="d-flex">
             <div>
-                <select wire:model="perPage" class="form-control" id="per_page">
+                <select wire:model.live="perPage" class="form-control" id="per_page">
                     @foreach($perPageOptions as $option)
                         <option value="{{$option}}">{{$option}}</option>
                     @endforeach
                 </select>
             </div>
             <div class="ml-auto">
-                <input wire:model="search" class="form-control" type="text" placeholder="{{ __('Search') }}">
+                <input wire:model.live="search" class="form-control" type="text" placeholder="{{ __('Search') }}">
             </div>
             <div class="align-self-end ms-2 col">
                 <button class="btn btn-primary btn-sm" wire:click="resetFilters">{{ __('Reset') }}</button>
@@ -89,7 +89,7 @@
                 @foreach($rows as $row)
                     <tr class="dt-row">
                         <td>
-                            <input type="checkbox" wire:model="selectedRows" value="{{$row->id}}">
+                            <input type="checkbox" wire:model.live="selectedRows" value="{{$row->id}}">
                         </td>
                         @foreach($columns as $col_name => $column)
                             @if($column['visible'] && ($column['render'] ?? true))
@@ -122,7 +122,7 @@
     <div class="card-footer py-0">
         <div class="mt-1 d-flex justify-content-between" style="line-height: 1;">
             <p class="fs--1 align-self-center">
-                <select wire:model="perPage" class="form-control form-control-sm d-inline" style="width: auto" id="per_page">
+                <select wire:model.live="perPage" class="form-control form-control-sm d-inline" style="width: auto" id="per_page">
                     @foreach($perPageOptions as $option)
                         <option value="{{$option}}">{{$option}}</option>
                     @endforeach

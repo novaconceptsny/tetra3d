@@ -1,19 +1,24 @@
-@extends('layouts.master')
+@extends('layouts.redesign')
 
-@section('page_actions')
-    <x-page-action
-        onclick="window.livewire.emit('showModal', 'modals.share-tour', '{{ $tour->id }}', '{{ $project->id }}', '{{ request('spot_id') }}')"
-        text="Share" icon="fal fa-share-nodes"
-    />
-
-    <x-page-action text="Return to 360 view" :url="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"/>
+@section('menu')
+    <x-menu>
+        <x-menu-item
+            text="360 View" :img="asset('redesign/images/360.svg')" target="_self"
+            :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))"
+        />
+        <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
+        <x-menu-item
+            onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
+            text="Share" icon="fal fa-share-nodes" :visible="$layout" target="_self"
+        />
+        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
+    </x-menu>
 @endsection
 
 @section('content')
-    <div class="dashboard gallery mini">
-        <livewire:surface.index :project="$project" :tour="$tour"/>
-       {{-- @foreach($surfaces as $surface)
-            <livewire:surface.surface-row :project-id="$project->id" :surface="$surface" wire:key="{{$surface->id}}"/>
-        @endforeach--}}
-    </div>
+    <section class="version">
+        <div class="container-fluid version-wrapper">
+            <livewire:surface.index :layout="$layout" :tour="$tour"/>
+        </div>
+    </section>
 @endsection

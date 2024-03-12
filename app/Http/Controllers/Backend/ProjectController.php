@@ -77,12 +77,29 @@ class ProjectController extends Controller
     {
         $request->validate(ValidationRules::updateProject());
 
+        if ($project->name !== $request->name){
+            $project->addActivity('name_updated', ['old_name' => $project->name, 'new_name' => $request->name]);
+        }
+
         $project->update($request->only([
             'name'
         ]));
-        $project->tours()->sync($request->tour_ids);
-        $project->contributors()->sync($request->user_ids);
-        $project->artworkCollections()->sync($request->artwork_collection_ids);
+
+        $syncedTours = $project->tours()->sync($request->tour_ids);
+        $syncedUsers = $project->contributors()->sync($request->user_ids);
+        $syncedCollections = $project->artworkCollections()->sync($request->artwork_collection_ids);
+
+        if (!empty($syncedTours['attached']) || !empty($syncedTours['detached'])){
+            $project->addActivity('tours_updated');
+        }
+
+        if (!empty($syncedUsers['attached']) || !empty($syncedUsers['detached'])){
+            $project->addActivity('users_updated');
+        }
+
+        if (!empty($syncedCollections['attached']) || !empty($syncedCollections['detached'])){
+            $project->addActivity('collections_updated');
+        }
 
         $project->addFromMediaLibraryRequest($request->thumbnail)
             ->toMediaCollection('thumbnail');
