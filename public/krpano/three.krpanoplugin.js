@@ -350,20 +350,6 @@ function krpanoplugin() {
 		return null;
 	}
 
-	function do_plane_point(mx, my) {
-		const mouse = new THREE.Vector2();
-		var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -10);
-		mouse.x = (mx / window.innerWidth) * 2 - 1;
-		mouse.y = -(my / window.innerHeight) * 2 + 1;
-
-		// Calculate intersection point with XZ plane
-		var intersection = new THREE.Vector3();
-		camera_hittest_raycaster.ray.intersectPlane(plane, intersection);
-
-		// Update object position
-		return intersection;
-	}
-
 	var handle_mouse_hitobject = null;
 
 	function handle_mouse_touch_events(event) {

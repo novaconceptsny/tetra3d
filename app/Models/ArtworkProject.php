@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SculptureModel extends Model
+class ArtworkProject extends Model
 {
     use HasFactory;
-    protected $fillable = ['artwork_collection_id', 'name', 'artist', 'sculpture_url', 'image_url', 'data'] ;
+
+    protected $table = 'artwork_collection_project';
 }

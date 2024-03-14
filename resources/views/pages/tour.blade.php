@@ -13,7 +13,6 @@ $readonly = !$layout_id || $shared_tour_id;
 $test = $test ?? "no parameter";
 $layout = $layout ?? null;
 
-// only admins can see tracker
 $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
 @endphp
 
@@ -86,19 +85,24 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
 @section('modellist')
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Furniture</h5>
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Sculpture List</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <div>
-            Choose from our exquisite collection of furniture to adorn your space.
+            Choose from our exquisite collection of Sculptures to adorn your space.
         </div>
         <div class="mt-3 modellist">
         @foreach($sculptures as $sculpture)
-        <div>
-            <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
-                alt="Image 1" data-image-id="{{ $sculpture->id }}">
-        </div>
+            <div class='sculpture-list'>
+                <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
+                    alt="Image 1" data-image-id="{{ $sculpture->id }}">
+                <div class='sculpture-list-data-container'>
+                    <input value='{{ $sculpture->name }}' readonly='readonly' class='sculpture-list-data-name'>
+                    <input class='sculpture-list-data-artist' readonly='readonly' value='{{ $sculpture->artist }}'>
+                    <input class='sculpture-list-data-dimention' readonly='readonly' value='{{ $sculpture->data }}'>
+                </div>
+            </div>
         @endforeach
         </div>
     </div>
@@ -108,7 +112,39 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
 @section('styles')
 <style>
     .sculpture-list-data-container {
-        text-align: center;
+        margin: 10px;
+    }
+
+    .sculpture-list-data-container>input {
+        border: unset;
+        width: 100%;
+    }
+
+    .sculpture-list-data-container>input:focus {
+        outline: none;
+    }
+
+    .sculpture-list-data-name {
+
+    }
+
+    .sculpture-list-data-artist {
+        font-weight: bold;
+        font-style: Italic;
+    }
+
+    .sculpture-list-data-dimention {
+
+    }
+
+    .image-list-item {
+        aspect-ratio: 4 / 3;
+        border-radius: 20px 20px 0px 0px;
+    }
+
+    .sculpture-list {
+        border: solid 1px;
+        border-radius: 20px;
     }
 </style>
 @endsection
@@ -161,8 +197,8 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
             layout_id: "{{ request('layout_id', '') }}",
             tracker: "{{ request('tracker', '') }}",
             shared: "{{ $tour_is_shared }}",
-            shared_tour_id: "{{ $shared_tour_id }}", // if tour is shared
-            shared_spot_id: "{{ $shared_spot_id }}", // if only single spot is shared
+            shared_tour_id: "{{ $shared_tour_id }}",
+            shared_spot_id: "{{ $shared_spot_id }}",
             readonly: "{{ $readonly || $tour_is_shared}}",
 
                 @foreach($spot->surfaces as $surface)
@@ -178,11 +214,9 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
     krpano.call("set(layer['version'].onclick,openurl('/version/management/spot/{{$spot->id}}'))");
     setLookat(hlookat, vlookat);
 
-    // let krpano = document.getElementById("krpanoSWFObject");
     function krpano_onready_callback(krpano_interface) {
         krpano = krpano_interface;
     }
-
 
     function setLookat(hlookat, vlookat) {
         if (hlookat != 0 || vlookat != 0) {
@@ -212,11 +246,9 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
     function track_mouse() {
         if (krpano) {
             if (track_mouse_enabled === false) {
-                // enable - call 60 times per second
                 track_mouse_interval_id = setInterval(track_mouse_interval_callback, 1000.0 / 60.0);
                 track_mouse_enabled = true;
             } else {
-                // disable
                 clearInterval(track_mouse_interval_id);
                 $("#tracker").html("");
                 track_mouse_enabled = false;
@@ -268,11 +300,10 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
                     sculpture_data[i].model_id, 
                     sculpture_data[i].position_x - spot_position.x * 30, 
                     sculpture_data[i].position_y - spot_position.y * 30, 
-                    sculpture_data[i].position_z - spot_position.z * 30, 
+                    sculpture_data[i].position_z + spot_position.z * 30, 
                     sculpture_data[i].rotation_x, 
                     sculpture_data[i].rotation_y, 
-                    sculpture_data[i].rotation_z, 
-                    sculpture_data[i].scale);
+                    sculpture_data[i].rotation_z);
             }
 
             offset_x = spot_position.x * 30;
@@ -305,18 +336,14 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
                 )
                 model.rotation.x = -Math.PI;
                 model.rotation.y = Math.PI / 2;
-                model.scale.set(3, 3, 3);
-                model.position.set(-offset_x, 4, -offset_z);
+                model.scale.set(30, 30, 30);
+                model.position.set(-offset_x, 55 + offset_y, offset_z);
                 scene.add(model);
-                // assign_object_properties(model, "model", { ath: +0, atv: -90, depth: 70, rz: -180, scale: 10 });
             });
         }
     }, 500);
 
-    // add a krpano hotspot like handling for the 3d objects
-
     function assign_object_properties(obj, name, properties) {
-        // set defaults (krpano hotspot like properties)
         if (properties === undefined) properties = {};
         if (properties.name === undefined) properties.name = name;
         if (properties.ath === undefined) properties.ath = 0;
@@ -360,7 +387,7 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
     function getSize(object) {
         let measure = new THREE.Vector3();
         var boundingBox = new THREE.Box3().setFromObject(object);
-        var size = boundingBox.getSize(measure); // Returns Vector3
+        var size = boundingBox.getSize(measure);
         let width = size.x;
         let height = size.y;
         let depth = size.z;
@@ -469,18 +496,17 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
 
         save_btn.onclick = function () {
             label.innerHTML = '';
-
+            console.log("save button click");
             var request_data = {
                 'layout_id': layout_id,
                 'sculpture_id': object.userData.model.userData.sculpture_id,
                 'model_id': object.userData.model.userData.id,
                 'position_x': object.userData.model.position.x + offset_x,
                 'position_y': object.userData.model.position.y + offset_y,
-                'position_z': object.userData.model.position.z + offset_z,
+                'position_z': object.userData.model.position.z - offset_z,
                 'rotation_x': object.userData.model.rotation.x,
                 'rotation_y': object.userData.model.rotation.y,
                 'rotation_z': object.userData.model.rotation.z,
-                'scale': object.userData.model.scale
             }
             $.ajax({
                 url: '<?php echo route('sculpture_save'); ?>',
@@ -509,7 +535,7 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
         object.position.copy(object.userData.model.position);
     }
 
-    function loadTemp(object, position, rotation_x, rotation_y, rotation_z, scale) {
+    function loadTemp(object, position, rotation_x, rotation_y, rotation_z) {
         var temp;
         var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false, transparent: true, opacity: .3 });
         var width = getSize(object).width;
@@ -524,7 +550,7 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
             rx: rotation_x * 180 / Math.PI,
             ry: rotation_y * 180 / Math.PI,
             rz: rotation_z * 180 / Math.PI,
-            scale: scale, 
+            scale: 30,
             onup: function (obj) { createLabel(obj) } 
         });
 
@@ -549,7 +575,6 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
     }
 
     function handleImageClick(imageId) {
-        // Perform your desired action when an image is clicked
         var sculp_id = 1;
         while(true) {
             if (sculpture_id_list.includes(sculp_id)) 
@@ -592,7 +617,7 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
         });
     }
 
-    function load_model(sculp_id, imageId, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z, scale) {
+    function load_model(sculp_id, imageId, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
         const loader = new GLTFLoader();
         const dracoLoader = new DRACOLoader();
         var sculpture_url = '';
@@ -613,7 +638,7 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
             model.castShadow = true;
             model.receiveShadow = true;
             scene.add(model);
-            var temp = loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z, scale);
+            var temp = loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z);
             model.userData.temp = temp;
             model.userData.id = imageId;
             model.userData.sculpture_id = sculp_id;
@@ -624,7 +649,7 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
                 rx: rotation_x * 180 / Math.PI,
                 ry: rotation_y * 180 / Math.PI,
                 rz: rotation_z * 180 / Math.PI, 
-                scale: scale 
+                scale: 30,
             });
         });
     }
@@ -634,19 +659,17 @@ $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
         let theta = Math.acos(y / r);
         let phi = Math.atan2(z, x);
         
-        // Convert angles from radians to degrees if needed
         theta = theta * 180 / Math.PI;
         phi = phi * 180 / Math.PI;
         
         return { r: r, theta: theta, phi: phi };
     }
 
-    // Add event listeners to the images in the list
     document.addEventListener('DOMContentLoaded', function () {
-        const images = document.querySelectorAll('.image-list-item'); // Replace with the actual class or selector for your images
+        const images = document.querySelectorAll('.image-list-item'); 
         images.forEach(function (image) {
             image.addEventListener('click', function () {
-                const imageId = this.getAttribute('data-image-id'); // Assuming you have a data attribute for the image ID
+                const imageId = this.getAttribute('data-image-id');
                 handleImageClick(imageId);
             });
         });

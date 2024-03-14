@@ -48,6 +48,9 @@ class SculptureDatatable extends BaseDatatable
             $row->data->width = number_format((float)$row->data->width, 2);
             $row->data->height = number_format((float)$row->data->height, 2);
             $row->data = $row->data->length.'x'.$row->data->width.'x'.$row->data->height;
+
+            $collection = ArtworkCollection::where('id', $row->artwork_collection_id)->get();
+            $row->artwork_collection_id = $collection[0]->name;
         }
 
         $data['rows'] = $rows;
@@ -87,9 +90,10 @@ class SculptureDatatable extends BaseDatatable
                 'render' => false,
                 'td-classes' => 'artwork-img'
             ],
-            'company_name' => [
-                'name' => 'Company',
+            'artwork_collection_id' => [
+                'name' => 'Collection',
                 'visible' => true,
+                'sortable' => true,
                 'th-classes' => 'w-10'
             ],
             'name' => [

@@ -41,6 +41,14 @@
                                 </button>
                                 <div id='sculpture-thumbnail-name'>Empty</div>
                             </div>
+                            <x-backend::inputs.select col="col-12 mb-3" id="sculpture-collection-select" name="artwork_collection_id" label="Collection" required>
+                                @foreach($artwork_collections as $collection)
+                                    <x-backend::inputs.select-option
+                                        :value="$collection->id" :text="$collection->name"
+                                        :selected="$sculpture?->artwork_collection_id"
+                                    />
+                                @endforeach
+                            </x-backend::inputs.select>
                             <x-backend::inputs.text col="col-12 mb-3" id="sculpture_name" name="name" value="{!! $sculpture?->name !!}" label="Title" required/>
                             <x-backend::inputs.text col="col-12 mb-3" id="sculpture_artist" name="artist" value="{{ $sculpture?->artist }}" required/>
                             <x-backend::inputs.text col="col-4 mb-3" readonly='readonly' name="data.length" id="data-length" value="{{ $sculpture?->data->length }}" label="Length"/>
@@ -115,7 +123,9 @@
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls'
+    import { OrbitControls } from 'three/addons/controls/OrbitControls';
+
+    var artwork_collection = @json($artwork_collections);
 
     document.getElementById('sculpture-model-input').addEventListener('change', function(e) {
         if (e.target.files[0]) {
@@ -246,14 +256,18 @@
         e.preventDefault();
         var sculpture_input = document.getElementById('sculpture-model-name').innerHTML;
         var thumbnail_input = document.getElementById('sculpture-thumbnail-name').innerHTML;
+        var collection_input = document.getElementById('sculpture-collection-select').value;
 
         if (sculpture_input === 'Empty') {
-            alert('There is no sculpture model');
-        } else if (thumbnail_input === 'thumbnail_input') {
-            alert('There is no thumbnail image');
-        } else {
-            document.getElementById('sculpture_form').submit();
+            alert('Sculpture Model is not exist');
+        } 
+        else if (thumbnail_input === 'Empty') {
+            alert('Thumbnail Image is not exist');
+        } 
+        else if (collection_input === '') {
+            alert('Please choose Collection');
         }
+        else document.getElementById('sculpture_form').submit();
     })
 </script>
 @endsection

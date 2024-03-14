@@ -54,8 +54,3 @@
 
     </div>
 </div>
-
-<script>
-    var rows = @json($rows);
-    console.log(rows);
-</script>

@@ -1,5 +1,5 @@
 <div class="row" style="display: flex; align-items: stretch; ">
-    <div class="col-3 model-import-left" id='model-import-left' style="min-height: 500px; overflow-y: auto; overflow-x: hidden; box-sizing: border-box;">
+    <div class="col-3 model-import-left" id='model-import-left' style="min-height: 500px; overflow-y: auto; overflow-x: hidden;" wire:ignore>
         <div class="row g-3 ">
             <div class="col-12">
                 <h5>{{ __('Model') }}</h5>
@@ -7,12 +7,7 @@
                 <button class="btn btn-primary tour-model-input" type='button' style="width: 100%;">
                     <label for='tour-model-input'>Choose 3D Model</label>
                 </button></br></br>
-                @if ( gettype($tourModel) !== 'string' )
-                    <div>{{ $tourModel->getClientOriginalName() }}</div>
-                @endif
-                @if ( gettype($tourModel) === 'string' )
-                    <div>{{ $tourModel }}</div>
-                @endif
+                <div id='tour-model-name'></div>
             </div>
             <div class="row g-3 mt-2">
                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
@@ -37,14 +32,14 @@
 
             </div>
             <div class="text-end">
-                <button id="tour-model-update" class="btn btn-primary" wire:click="update" type="button">
+                <button id="tour-model-update" class="btn btn-primary mb-3" wire:click="update" type="button">
                     {{ __('Update') }}
                 </button>
             </div>
         </div>
     </div>
     <div class="col-9" id="tour-model-import" style="box-sizing: border-box;" wire:ignore>
-        <canvas id="tour-model-import-canvas" style="width: 100%; aspect-ratio: 4 / 3;" wire:ignore></canvas>
+        <canvas id="tour-model-import-canvas" style="width: 100%; aspect-ratio: 4 / 3;"></canvas>
     </div>
 </div>
 
@@ -59,7 +54,6 @@
 </script>
 
 <script type="module">
-    console.log("this is script");
     let container, stats, controls, isMouseDown;
     let camera, cameraTarget, scene, renderer;
 
@@ -87,11 +81,13 @@
         }
     }
 
+    document.getElementById('tour-model-name').innerHTML = tourModel;
+
     document.getElementById('tour-model-input').addEventListener('change', function(e) {
         if (e.target.files[0]) {
             var url = URL.createObjectURL(e.target.files[0]);
-            console.log(url);
             GLTFLoad(url);
+            document.getElementById('tour-model-name').innerHTML = e.target.files[0].name;
         }
     })
 
@@ -102,7 +98,7 @@
                 if (axis === 'y') object.position.y = value;
                 if (axis === 'z') object.position.z = value;
             }
-        })
+        });
     }
 
     function init() {
@@ -129,11 +125,10 @@
         renderer.shadowMap.enabled = true;
         
         controls = new OrbitControls(camera, renderer.domElement);
-        controls.maxPolarAngle = Math.PI / 3;
+        controls.maxPolarAngle = Math.PI / 2;
     }
 
     function GLTFLoad(full_model_url) {
-        console.log(full_model_url);
         var loader = new GLTFLoader();
         var dracoLoader = new DRACOLoader();
         loader.setDRACOLoader(dracoLoader);
@@ -156,12 +151,12 @@
             var width = getSize(model).width;
             var height = getSize(model).height;
             var depth = getSize(model).depth;
-            console.log(width, height, depth);
     
             camera.position.set(width, height, length);
             camera.lookAt(new THREE.Vector3(0, height / 2, 0));
             controls.target.set(0, height / 2, 0);
-            model.rotation.y =  - Math.PI / 2;
+            model.rotation.y =  Math.PI / 2;
+
             model.name = "space-model";
             scene.add(model);
         });
@@ -189,7 +184,6 @@
 
     function renderSpots() {
         var spotsPosition = @json($spotsPosition);
-        console.log(spotsPosition);
         for (const key in spotsPosition) {
             const coneGeometry = new THREE.ConeGeometry(0.1, 0.5, 32);
             const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
@@ -208,18 +202,21 @@
                     event.preventDefault();
                 }
             })
-            
+
+            spotsPosition = @json($spotsPosition);
+            tourModel = @json($tourModel);
+            tourModelPath = @json($tourModelPath);
+        
             var height = $('#tour-model-import').width() * 3 / 4;
-            $('')
             var element = document.getElementById('model-import-left');
             element.style.height = height + 'px';
     
-            init();
-            renderSpots();
-            animate();
+            if (document.getElementById('tour-model-import-canvas').getAttribute('data-engine') === null){
+                init();
+                renderSpots();
+                animate();
+            }
         }, 1000);
     });
-
-    addEventListener()
 </script>
 @endsection

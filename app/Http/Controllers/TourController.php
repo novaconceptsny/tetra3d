@@ -10,6 +10,7 @@ use App\Models\Sculpture;
 use App\Models\SculptureModel;
 use App\Models\TourModel;
 use App\Models\SpotsPosition;
+use App\Models\ArtworkProject;
 use Illuminate\Http\Request;
 
 class TourController extends Controller
@@ -84,25 +85,35 @@ class TourController extends Controller
             );
         });
 
-        $sculptures = SculptureModel::all();
+        $artwork_collections = ArtworkProject::where('project_id', $project->id)->get();
+        $sculpture_list = array();
+
+        foreach($artwork_collections as $artwork_collection) {
+            $sculpture_list[] = $artwork_collection->artwork_collection_id;
+        }
+        $sculptures = SculptureModel::whereIn('artwork_collection_id', $sculpture_list)->get();
         foreach($sculptures as $row) {
             $row->data = json_decode($row->data);
             $row->data->length = number_format((float)$row->data->length, 2);
             $row->data->width = number_format((float)$row->data->width, 2);
             $row->data->height = number_format((float)$row->data->height, 2);
-            $row->data = $row->data->length.'x'.$row->data->width.'x'.$row->data->height;
+            $row->data = '['.$row->data->length.'x'.$row->data->width.'x'.$row->data->height.' meter'.']';
         }
 
         $tourModel = $tour ? TourModel::where('tour_id', $tour->id)->get() : null;
-        if ($tourModel !== null) {
+        if ($tourModel !== null && !$tourModel->isEmpty()) {
             $tourModel = $tourModel[0];
+        } else {
+            $tourModel = null;
         }
 
         $sculptureData = $layout? Sculpture::where('layout_id', $layout->id)->get() : null;
 
         $spotPosition = $spot? SpotsPosition::where('spot_id', $spot->id)->get() : null;
-        if ($spotPosition !== null) {
+        if ($spotPosition !== null && !$spotPosition->isEmpty()) {
             $spotPosition = $spotPosition[0];
+        } else {
+            $spotPosition = null;
         }
 
         $data = array();

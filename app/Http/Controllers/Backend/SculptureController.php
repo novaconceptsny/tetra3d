@@ -42,11 +42,9 @@ class SculptureController extends Controller
         $request->validate(ValidationRules::storeSculpture());
         
         $data = $request->all();
-        // refresh model, to ensure the media is attached!
         $sculpture = $request->file('sculpture');
         $sculpture_fileName = $sculpture->getClientOriginalName();
         if ($data['thumbnail-canvas']) {
-            // $thumbnail = $data['thumbnail-canvas'];
             $thumbnail= $data['thumbnail-canvas'];
             $thumbnail = str_replace('data:image/png;base64,', '', $thumbnail);
             $thumbnail = str_replace(' ', '+', $thumbnail);
@@ -55,8 +53,14 @@ class SculptureController extends Controller
             $thumbnail = $request->file('thumbnail');
             $thumbnail_fileName = $thumbnail->getClientOriginalName();
         }
-        
-        $save_data = array('name'=>$data['name'], 'artist'=>$data['artist'], 'sculpture_url'=>'', 'image_url'=>'', 'data'=>json_encode($data['data']));
+
+        $save_data = array('name'=>$data['name'], 
+            'artist'=>$data['artist'], 
+            'artwork_collection_id'=>(int)$data['artwork_collection_id'],
+            'sculpture_url'=>'', 
+            'image_url'=>'', 
+            'data'=>json_encode($data['data'])
+        );
         $createdData = SculptureModel::create($save_data);
 
         $createdData->sculpture_url = $createdData->id.'_'.$sculpture_fileName;
@@ -88,15 +92,19 @@ class SculptureController extends Controller
      */
     public function edit(string $id)
     {
+        
         $sculptureModel = SculptureModel::where('id', $id)->get();
 
         $sculptureModel[0]->data = json_decode($sculptureModel[0]->data);
+
+        $artworkCollections = ArtworkCollection::all();
 
         $data = array();
 
         $data['route'] = route('backend.sculptures.update', $sculptureModel[0]->id);
         $data['method'] = 'PUT';
         $data['sculpture'] = $sculptureModel[0];
+        $data['artwork_collections'] = $artworkCollections;
 
         return view('backend.sculpture.form', $data);
     }
@@ -133,6 +141,7 @@ class SculptureController extends Controller
 
         $updatedData[0]->name = $data['name'];
         $updatedData[0]->artist = $data['artist'];
+        $updatedData[0]->artwork_collection_id = $data['artwork_collection_id'];
         $updatedData[0]->data = json_encode($data['data']);
         $updatedData[0]->save();
         

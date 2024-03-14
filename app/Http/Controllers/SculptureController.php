@@ -44,10 +44,13 @@ class SculptureController extends Controller
             'sculpture_id' => 'required'
         ]);
         $data = $request->all();
+        error_log(json_encode($data));
         $sculpture_datas = Sculpture::where('layout_id', $data['layout_id'])->where('sculpture_id', $data['sculpture_id'])->get();
+        error_log(json_encode($sculpture_datas));
         echo var_dump($sculpture_datas);
         if ($sculpture_datas->isEmpty()) {
-            Sculpture::create($data);
+            $createdData = Sculpture::create($data);
+            error_log(json_encode($createdData));
             return response()->json([
                 'response' => $data
             ]);
