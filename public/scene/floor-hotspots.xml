@@ -1,3 +1,0 @@
-<krpano>
-  <hotspot name="Plane" style="htsp" type="image" url="pixel-blue.png" keep="true" width="2000" height="4000" scale=".5" distorted="true" depth="0" tx="0" ty="-2" tz="0" rx="90" torigin="True" zorder="2" depthbuffer="true" capture="false" alpha="0" />
-</krpano>

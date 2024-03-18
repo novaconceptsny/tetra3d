@@ -6,7 +6,7 @@
 }
 
 header#header {
-  padding-top: 5px;
+  padding: 8px 50px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -30,13 +30,15 @@ header#header {
           display: flex;
           align-items: center;
           gap: 10px;
-          font-family: 'Mona-Sans';
+          font-family: var(--main-font-family);
           font-style: normal;
-          font-weight: 400;
-          font-size: calc(clamp(14px, 0.1786rem + 0.8929vw, 18px)) !important;
+          font-weight: var(--light-font);
+          font-size: 20px !important;
           line-height: 1.2;
           color: #6c6c6c;
-
+            &:not(:first-child){
+                color: #000;
+            }
           // &:first-child {
           //   font-size: calc(clamp(14px, 0.1607rem + 1.1161vw, 21px)) !important ;
 
@@ -45,11 +47,10 @@ header#header {
           //   font-size: calc(clamp(15px, 0.1607rem + 1.1161vw, 18px)) !important ;
           // }
           &:last-child {
-            font-weight: 500;
-            color: $dark-color;
+            font-weight: var(--light-font);
           }
           i{
-            font-size: 10px;
+            font-size: 12px;
             color: #6c6c6c;
           }
         }
@@ -73,7 +74,8 @@ header#header {
   }
   nav {
     position: relative;
-    padding: 0 calc(clamp(2rem, 0.7143rem + 2.0089vw, 31.2px));
+    //padding: 0 20px;
+      padding: 0;
     background: $white-color;
     // padding: 0px 50px;
 
@@ -86,11 +88,26 @@ header#header {
       padding: 0;
       .navbar-brand {
         padding: 0;
+          display: flex;
+          align-items: center;
+          gap: 6px;
         img {
           // width: 73px;
           height: 35px;
           // margin-right: 28rem;
         }
+          svg{
+              width: 35px;
+              height: 35px;
+          }
+          span{
+              font-family: var(--main-font-family);
+              font-size: 24px;
+              font-style: normal;
+              font-weight: var(--light-font);
+              line-height: normal;
+              color: $dark-color;
+          }
       }
       .navbar-collapse {
         display: flexbox;
@@ -100,7 +117,7 @@ header#header {
         .navbar-nav {
           &.link-nav{
           position: absolute !important;
-          inset: 0 90px 0 120px !important;
+          inset: 0 70px 0 120px !important;
           justify-content: center !important;
           }
           // display: flex !important;
@@ -112,11 +129,12 @@ header#header {
             .nav-link {
               height: 100%;
               padding: 0;
-              font-family: 'Mona-Sans-SemiBold';
-              font-style: normal;
-              font-weight: 500;
-              font-size: 22px;
-              line-height: 26px;
+                font-family: var(--main-font-family);
+                font-size: 22px;
+                font-style: normal;
+                font-weight: var(--light-font);
+                line-height: normal;
+                letter-spacing: 2.2px;
               color: #9f9f9f;
               text-transform: uppercase;
               position: relative;
@@ -125,7 +143,7 @@ header#header {
                 &::before {
                   content: "";
                   width: 100%;
-                  height: 5px;
+                  height: 2px;
                   // border: 5px solid #FFFFFF;
                   position: absolute;
                   background-color: $dark-color;
@@ -144,7 +162,7 @@ header#header {
 
         .menu-nav {
           position: absolute;
-          inset: auto 32px auto auto;
+          inset: auto 5px auto auto;
           display: flex;
           align-items: stretch;
           gap: 10px;
@@ -157,7 +175,7 @@ header#header {
                     text-decoration: none;
                     font-size: 18px;
                     line-height: 1.1;
-                    font-weight: 400;
+                    font-weight: var(--regular-font);
                     color: $dark-color;
                     text-transform: capitalize;
                     span{
@@ -167,7 +185,10 @@ header#header {
                     i{
                         font-size: 20px !important;
                     }
-
+                    img{
+                        max-height: 28px;
+                        filter: contrast(2) !important;
+                    }
                     svg{
                         width: 24px;
                         height: 24px;
@@ -178,8 +199,8 @@ header#header {
                         width: fit-content;
                         padding: 5px 12px;
                         background: $dark-color;
-                        font-family: 'Mona-Sans';
-                        font-weight: 500;
+                        font-family: var(--main-font-family);
+                        font-weight: var(--medium-font);
                         font-size: 12px;
                         color: #fff;
                         white-space: nowrap;
@@ -222,9 +243,9 @@ header#header {
                 display: block;
                 text-decoration: none !important;
                 padding: 7.5px 10px;
-                font-family: 'Mona-Sans';
+                  font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 400;
+                font-weight: var(--regular-font);
                 font-size: 16px;
                 // line-height: 20dpx;
                 background: $white-color;
@@ -265,9 +286,9 @@ header#header {
                 a {
                   border-top: 1px solid #c6c6c6;
                   padding: 20px 0px 11px 20px;
-                  font-family: 'Mona-Sans';
+                    font-family: var(--main-font-family);
                   font-style: normal;
-                  font-weight: 400;
+                  font-weight: var(--regular-font);
                   font-size: 16px;
                   line-height: 19px;
                   text-decoration: none;
@@ -291,7 +312,7 @@ header#header {
           }
 
           .profile {
-            margin-right: 15px;
+            //margin-right: 15px;
             display: flex;
             align-items: center;
             gap: 13px;
@@ -302,9 +323,9 @@ header#header {
             padding: 0;
               a{
                 // margin-inline: 50px;
-                font-family: 'Mona-Sans';
+                  font-family: var(--main-font-family);
                 font-style: normal;
-                font-weight: 400;
+                font-weight: var(--regular-font);
                 font-size: 16px !important;
                 line-height: 22px;
                 &.dropdown-toggle::after{
@@ -321,23 +342,22 @@ header#header {
                   margin-top: 0;
                 width: 230px;
                 position: absolute;
-                left: -170px;
-                top: calc(100% + 3px);
+                  inset: calc(100% + 6px) 0 auto auto;
                 padding: 10px;
-                background: $white-color;
+                background: #fff;
                 // width: 180px;
-                box-shadow: 0px 0px 35px rgba(0, 0, 0, 0.15);
-                border-radius: 6px;
+                box-shadow: 0 0 35px rgba(0, 0, 0, 0.15);
+                border-radius: 0;
                 z-index: 20 !important;
 
                 .drop-profile {
-                  padding: 10px 0px 8px 20px;
+                  padding: 10px 0 8px 20px;
                   display: flex;
                   align-items: center;
                   justify-content: flex-start;
                   gap: 4px;
                   margin-bottom: 16px;
-                  border-bottom: 1px solid #000000;
+                  border-bottom: 1px solid #000;
 
                   img{
                     width: 60px !important;
@@ -349,9 +369,9 @@ header#header {
                   .user-detail{
 
                     h6{
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 600;
+                      font-weight: var(--semibold-font);
                       font-size: 18px;
                       line-height: 20px;
                       color: $black-color;
@@ -363,9 +383,9 @@ header#header {
                     }
                     p{
                       // display: block;
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 400;
+                      font-weight: var(--regular-font);
                       font-size: 14px;
                       line-height: 18px;
                       color: $black-color;
@@ -397,9 +417,9 @@ header#header {
                       align-items: center;
                       gap: 10px;
                       padding: 5px 3px;
-                      font-family: 'Mona-Sans';
+                        font-family: var(--main-font-family);
                       font-style: normal;
-                      font-weight: 400;
+                      font-weight: var(--regular-font);
                       font-size: 14px;
                       line-height: 22px;
                     }

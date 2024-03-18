@@ -30,8 +30,6 @@ function krpanoplugin() {
 
 		krpano.debugmode = true;
 		krpano.trace(0, "ThreeJS krpano plugin");
-		// load the requiered three.js scripts
-		// load_scripts(["js/lib/GLTFLoader.js", "js/lib/DRACOLoader.js"], start);
 		start();
 	}
 
@@ -126,9 +124,6 @@ function krpanoplugin() {
 		window.camera_hittest_raycaster = camera_hittest_raycaster;
 		krpano_panoview_euler = new THREE.Euler();
 		window.krpano_panoview_euler = krpano_panoview_euler;
-
-		//  perspective = new THREE.PerspectiveCamera( 45, width / height, 1, 1000 );
-		// scene.add( perspective )
 
 		// build the ThreeJS scene (start adding custom code there)
 		build_scene();
@@ -384,7 +379,6 @@ function krpanoplugin() {
 		// is there a object as that pos?
 		var hittest = do_object_hittest(ms.x, ms.y);
 		var hitobj = hittest?.object ? hittest?.object : null;
-		var point = hittest?.point ? hittest?.point : null;
 
 		if (type == "ondown") {
 			if (hitobj) {
@@ -400,7 +394,6 @@ function krpanoplugin() {
 				}
 
 				event.preventDefault();
-				// planeMesh.position.y = point.y;
 				selectedObj = hitobj;
 				isDown = true;
 			}

@@ -47,8 +47,6 @@ class SharedTourController extends Controller
         $data['shared_spot_id'] = $sharedTour->spot_id;
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;
-        $data['modelList'] = [];
-        $data['test'] = "sharedtourcontroller";
 
         return view('pages.tour', $data);
     }

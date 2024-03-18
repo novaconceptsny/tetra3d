@@ -32,11 +32,6 @@ class ArtworkCollection extends Model
         return $this->hasMany(Artwork::class);
     }
 
-    public function sculptureModels()
-    {
-        return $this->hasMany(SculptureModel::class);
-    }
-
     public function projects()
     {
         return $this->belongsToMany(Project::class);

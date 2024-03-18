@@ -2,7 +2,7 @@
     <div class="sidebar-div">
         <div class="sidebar mysidebar">
             <div class="preview">
-                <h5 class="sidebar-heading d-flex align-items-center">
+                <h5 class="sidebar-heading d-flex align-items-start">
                     <span>{{ $project->name }}</span>
                     @can('update', $project)
                     <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
@@ -15,23 +15,26 @@
             <div class="date">
                 <h6>{{ $project->created_at->format('M d, Y') }}</h6>
             </div>
-            <div class="select-tours">
-                <h5>Select Layout</h5>
-            </div>
 
             <div class="mb-3">
                 <table class="table">
                     <tr>
-                        <th>Layout Name</th>
-                        <th>Tour</th>
+                        <th>Name</th>
+                        <th>Configuration</th>
                         <th>Created By</th>
                         <th>Created At</th>
                         <th></th>
                     </tr>
 
                     @forelse($project->layouts()->latest()->get() as $layout)
-                        <tr>
-                            <td>{{ $layout->name }}</td>
+                        <tr wire:key="{{ $layout->id }}">
+                            <td class="layout-table-title">
+                                <span>{{ $layout->name }}</span>
+                                <a class="edit-btn ms-1 text-info text-decoration-none" href="#"
+                                   wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                    <i class="fal fa-edit"></i>
+                                </a>
+                            </td>
                             <td>{{ $layout->tour->name }}</td>
                             <td>
                                 <span>{{ $layout->user->name }}</span><br>
@@ -40,11 +43,8 @@
                                 <span>{{ $layout->created_at->format('M d, Y H:i') }}</span>
                             </td>
                             <td>
-                                <a class="me-1 text-info text-decoration-none" href="#"
-                                   wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
-                                    <i class="fal fa-edit"></i>
-                                </a>
-                                <a class="text-dark" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
+
+                                <a class="text-dark tour-show" href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}">
                                     <i class="fal fa-sign-in"></i>
                                 </a>
                             </td>
@@ -74,22 +74,25 @@
             <div class="collection mt-5">
                 <h5 class="d-flex align-items-center">
                     <span>Collections</span>
-                    @can('edit', $project)
+                    @can('update', $project)
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
                     @endcan
                 </h5>
+                <div class="sidebar-collection-btn-wrapper">
+
                 @forelse($project->artworkCollections as $collection)
                     <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}"
                        target="_blank" class="col-btn">{{ $collection->name }}</a>
                 @empty
                     <span class="text-center d-block">{{ __('No collections') }}</span>
                 @endforelse
+                </div>
             </div>
 
             <div class="contributor">
                 <h5 class="d-flex align-items-center">
                     <span>Contributors</span>
-                    @can('edit', $project)
+                    @can('update', $project)
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i class="fal fa-edit"></i></a>
                     @endcan
                 </h5>

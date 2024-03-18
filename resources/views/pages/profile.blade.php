@@ -1,22 +1,16 @@
 @extends('layouts.redesign')
 
-@section('menu')
-    <x-menu>
-        <x-menu-item text="Projects" :img="asset('redesign/images/Vector (2).png')"/>
-    </x-menu>
-@endsection
-
 @section('content')
     <section class="profile">
         <div class="container-fluid content-container">
-            <div class="row profile-row">
-                <div class="col-lg-6 edit-col">
+            <div class="row profile-row justify-content-evenly">
+                <div class="edit-col">
                     <div class="edit-profile">
                         <h4>{{ __('Edit profile') }}</h4>
                         <form action="{{ route('profile.update') }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="row col-12">
-                                <div class="col-6 form-group custum-form-group">
+                                <div class="first-name form-group custum-form-group">
                                     <label class="form-label" for="first_name">{{ __('First Name') }}</label>
                                     <input
                                         id="first_name" type="text" class="form-control @error('first_name') is-invalid @enderror"
@@ -25,7 +19,7 @@
                                     <x-error field="first_name"/>
                                 </div>
 
-                                <div class="col-6 form-group custum-form-group">
+                                <div class="last-name ms-auto form-group custum-form-group">
                                     <label class="form-label" for="last_name">{{ __('Last Name') }}</label>
                                     <input
                                         id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror"
@@ -59,7 +53,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-6 pass-col">
+                <div class="pass-col">
                     <div class="update-pass">
                         <h4>{{ __('Update password') }}</h4>
                         <form class="row" action="{{ route('profile.password.update') }}" method="post">

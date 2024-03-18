@@ -130,7 +130,7 @@ class ArtworkDatatable extends BaseDatatable
                 'th-classes' => 'w-40'
             ],
             'dimensions' => [
-                'name' => 'Dimensions (h" x w")',
+                'name' => 'h" x w" x d"',
                 'visible' => true,
             ],
             'artist' => [

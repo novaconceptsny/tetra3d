@@ -112,11 +112,6 @@ class SculptureDatatable extends BaseDatatable
                 'sortable' => true,
                 'th-classes' => 'w-10'
             ],
-            'type' => [
-                'name' => 'Type',
-                'visible' => true,
-                'sortable' => true,
-            ],
         ];
 
         if (!user()->isAdmin()){

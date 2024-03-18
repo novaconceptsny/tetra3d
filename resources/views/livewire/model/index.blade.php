@@ -210,7 +210,7 @@
             var height = $('#tour-model-import').width() * 3 / 4;
             var element = document.getElementById('model-import-left');
             element.style.height = height + 'px';
-    
+
             if (document.getElementById('tour-model-import-canvas').getAttribute('data-engine') === null){
                 init();
                 renderSpots();

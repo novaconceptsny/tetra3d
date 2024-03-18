@@ -15,7 +15,7 @@
 @if($visible && $have_permissions)
     <a href="{{ $route }}" {{ $attributes->merge() }} target="_blank" data-content="{{ $text }}">
         @if($img)
-            <img src="{{ $img }}" alt="menu-item" style="max-height: 19px; width: unset"/>
+            <img src="{{ $img }}" alt="menu-item" style="width: unset"/>
         @endif
         @if($icon)
             <i class="{{ $icon }}" style="font-size: 19px;"></i>

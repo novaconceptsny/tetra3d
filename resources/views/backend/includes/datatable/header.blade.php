@@ -1,5 +1,9 @@
 <thead class="bg-200 text-900">
 <tr class="dt-row">
+    @if($bulkDeleteEnabled && user()->can('bulkUpdate', $model))
+        <th></th>
+    @endif
+
     @foreach($columns as $column => $header)
         @php
             $moveToStart = isset($header['move_to_start']) ? "data-move-to-start=true" : "";
@@ -10,7 +14,7 @@
         @if($header['visible'])
             <th class="cursor-pointer td {{$header['th-classes'] ?? ''}}" scope="col" wire:click="sort('{{$column}}')"
                 data-column="{{ $column }}" {{ $moveAfter }} {{ $moveBefore }} {{$moveToStart}}>
-                <span class="d-flex">
+                <span class="d-flex w-full justify-content-center align-items-center">
                     <span> {{ __($header['name']) }}</span>
                     @if($header['sortable'] ?? false)
                         <x-backend::sort-icon

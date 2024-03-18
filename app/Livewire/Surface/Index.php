@@ -17,7 +17,10 @@ class Index extends Component
     public $surfaces;
     public Layout $layout;
 
-    protected $listeners = ['removeSurfaceState'];
+    protected $listeners = [
+        'removeSurfaceState',
+        'refresh' => '$refresh'
+    ];
 
     public function mount()
     {
@@ -38,8 +41,8 @@ class Index extends Component
     public function removeSurfaceState(SurfaceState $state): void
     {
         $this->askForConfirmation(function () use ($state) {
-            $this->dispatch('hideModal');
             $state->remove();
+            $this->js("location.reload();");
             $this->dispatch('flashNotification', message: 'State deleted');
         });
     }

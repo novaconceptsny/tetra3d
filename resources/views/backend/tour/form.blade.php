@@ -66,8 +66,6 @@
                         <x-backend::tab.content id="map_forms">
                             <livewire:map.index :tour="$tour"/>
                         </x-backend::tab.content>
-                    @endif
-                    @if($tour)
                         <x-backend::tab.content id="model_forms">
                             <livewire:model.index :tour="$tour"/>
                         </x-backend::tab.content>

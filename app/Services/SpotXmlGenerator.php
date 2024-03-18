@@ -56,6 +56,7 @@ class SpotXmlGenerator
             $this->getKrpanoAsset('skin/gyro.xml?%$timestamp%'),
             $this->getKrpanoAsset('hotspot.xml?%$timestamp%'),
             $this->getKrpanoAsset('action.xml?%$timestamp%'),
+            $this->getKrpanoAsset('menu.xml?%$timestamp%'),
         ];
 
         foreach ($includeUrls as $url) {

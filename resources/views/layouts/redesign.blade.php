@@ -34,9 +34,8 @@
 
 @include('include.common.header')
 
-<main id="site__body" style="margin-top: 46px">
+<main id="site__body" style="margin-top: 52px">
     @yield('content')
-    @yield('modellist')
     <livewire:modals.base-modal />
 
     <div class="modal fade" id="tourMapModal" tabindex="-1">
@@ -56,7 +55,7 @@
                     @endif
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary c-btn-primary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

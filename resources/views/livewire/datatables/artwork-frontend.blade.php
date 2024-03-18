@@ -51,11 +51,11 @@
                     </ul>
                 </div>
                 <div class="col custum-group">
-                    <button class="form-control" type="reset">Reset</button>
+                    <button class="form-control reset-btn" type="reset">Reset</button>
                 </div>
             </div>
             <!-- </div> -->
-            <table class="w-100 table table-bordered">
+            <table class="w-100  collection-table table table-bordered">
                 <thead>
                 <tr>
                     <th style="width: 4%"></th>

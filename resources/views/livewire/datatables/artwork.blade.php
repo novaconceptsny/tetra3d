@@ -15,7 +15,7 @@
         <div class="d-flex">
             @include('backend.includes.datatable.search')
             <div class="me-1">
-                <select wire:model.live="selectedCollection" class="form-control">
+                <select wire:model.live="selectedCollection" class="form-control rounded-0">
                     <option value="">All Collections</option>
                     @foreach($collections as $collection)
                         <option value="{{$collection->id}}">{{$collection->name}}</option>
@@ -25,7 +25,7 @@
 
             @if(isset($columns['company_name']))
                 <div class="me-1">
-                    <select wire:model.live="selectedCompany" class="form-control">
+                    <select wire:model.live="selectedCompany" class="form-control rounded-0">
                         <option value="">All Companies</option>
                         @foreach($companies as $company)
                             <option value="{{$company->id}}">{{$company->name}}</option>
@@ -48,7 +48,7 @@
             <div class="d-flex mt-2 justify-content-end">
                 <div class="me-1 ">
                     <label for="">Move to Collection</label>
-                    <select wire:model.live="targetCollection" class="form-control">
+                    <select wire:model.live="targetCollection" class="form-control  rounded-0 border-black">
                         <option value="">Select Collection</option>
                         @foreach($collections as $collection)
                             <option value="{{$collection->id}}">{{$collection->name}}</option>
@@ -64,7 +64,7 @@
     </div>
     <div class="card-body py-0">
         <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
-            <table class="table table-hover fs--1 table-sm" >
+            <table class="table table-hover collection-table fs--1 table-sm" >
 
                 @include('backend.includes.datatable.header')
 

@@ -58,6 +58,7 @@ class CanvasManager {
         this.cancelBtn = $('#cancel_btn');
         this.saveAsBtn = $('#save_as_btn');
         this.confirmSaveBtn = $('#confirm_save_btn'); // save new button on modal
+        this.return360Btn = $('#return_to_360');
         this.fileNameInput = $('#file_name');
         this.confirmationModal = $('#confirmation_modal');
 
@@ -114,6 +115,7 @@ class CanvasManager {
         this.saveBtn.on('click', () => this.updateSavedVersion());
         this.saveAsBtn.on('click', () => this.saveNewVersion());
         this.confirmSaveBtn.on('click', () => this.confirmSave());
+        this.return360Btn.on('click', (event) => this.returnTo360(event));
         this.cropBtn.hide();
         this.disableSaveButton();
 
@@ -430,6 +432,34 @@ class CanvasManager {
 
     saveNewVersion(event) {
         this.openSaveFileModal(event);
+    }
+
+    returnTo360(event) {
+        event.preventDefault();
+
+        if (this.isInactive()) {
+            return;
+        }
+
+        if (!this.surfaceStateId) {
+            let artworks = this.canvasState.assignedArtwork.length;
+
+            if (artworks < 1) {
+                window.location = event.currentTarget.attributes.href.value
+                return;
+            }
+
+            if (confirm("You have unsaved changes. Are you sure you want to proceed to 360?") === true) {
+                window.location = event.currentTarget.attributes.href.value
+                return;
+            } else {
+                this.saveNewVersion(event);
+                return;
+            }
+
+        }
+
+        this.updateSavedVersion();
     }
 
     updateSavedVersion(event) {

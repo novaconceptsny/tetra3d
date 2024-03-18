@@ -1,8 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Abel&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
-
+*,
+*::after,
+*::before{
+    box-sizing: border-box;
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
 @font-face {
     font-family: 'Mona-Sans';
     src: url('../../fonts/Mona-sans/Mona-Sans.ttf') format('truetype');
@@ -34,7 +43,19 @@ $roboto-font: "Roboto", sans-serif;
 $inter-font: "Inter", sans-serif;
 $poppins-font: "Poppins", sans-serif;
 $open-font: "Open Sans", sans-serif;
+:root{
+    --main-font-family: "Roboto Condensed", sans-serif;
+    --extra-thin-font: 100;
+    --thin-font: 200;
+    --light-font: 300;
+    --regular-font: 400;
+    --medium-font: 500;
+    --semibold-font: 600;
+    --bold-font: 700;
+    --bolder-font: 800;
+    --boldest-font: 900;
 
+}
 @import "./header";
 @import "./login";
 @import "./collection";
@@ -43,6 +64,12 @@ $open-font: "Open Sans", sans-serif;
 @import "./version";
 @import "./editor";
 
+.row{
+    margin-inline: 0;
+}
+.container-fluid{
+    padding: 0;
+}
 
 .previous-btn{
   border: none;
@@ -82,63 +109,20 @@ $open-font: "Open Sans", sans-serif;
   width: 35%;
   span{
     font-size: 18px;
-    font-weight: 500;
+    font-weight: var(--medium-font);
     color: #fff;
-
-
   }
 
 
 
 }
-.tab-content {
-  display: none;
+
+.delete-btn:hover{
+    background: red !important;
+    //color: white;
+
 }
 
-.tab-content.active {
-  display: block;
-}
-
-.tabs-container{
-  background: #e9ecef;
-}
-.tab {
-    position: relative;
-  cursor: pointer;
-  padding: 0 50px;
-  background-color: transparent;
-  border-radius: 5px 5px 0 0;
-}
-.tab:not(.active){
-  border-inline: 1px solid #fff;
-}
-.tab:not(.active):hover{
-  background: #eff2f5;
-  border-radius: 5px 5px 0 0;
-  border-bottom: 0;
-}
-.tab:not(.active):has( ~ .tab.active){
-  border-right: 0;
-}
-.tab.active ~ .tab{
-  border-left: 0;
-}
-.tab.active {
-  color: black;
-  border-radius: 5px 5px 0 0;
-  border: 1px solid #d0d2d5;
-  border-bottom: 0;
-  background-color: #fff;
-}
-.tab .surface-active{
-    position: absolute;
-    inset: auto auto auto 6px;
-}
-.tab .cross-btn{
-    position: absolute;
-    inset: 0 0 0 auto;
-    padding: 0 6px;
-}
 
 img,
 svg {
@@ -155,8 +139,8 @@ h3 {
 }
 h4 {
   font-style: normal;
-  font-weight: 600;
-  font-size: 45px;
+    font-weight: var(--bold-font);
+    font-size: 45px;
   line-height: 112.7%;
 }
 p {
@@ -164,8 +148,8 @@ p {
 }
 label {
   display: block;
-  font-weight: 400;
-  font-size: 18px;
+    font-weight: var(--regular-font);
+    font-size: 18px;
   line-height: 190.2%;
 }
 label#checkbox {
@@ -183,21 +167,18 @@ input#checkbox {
   padding: 0;
   box-sizing: border-box;
 }
-// body {
-//   overflow-x: hidden;
-// }
 ::-webkit-scrollbar{
-  width: 10px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track{
   background-color: #f1f1f1;
-  border-radius: 50px;
+  border-radius: 0;
 
 
 }
 ::-webkit-scrollbar-thumb{
   background-color: #c4c2bf;
-  border-radius: 5px;
+  border-radius: 0;
 }
 
 .overlay__link{
@@ -238,32 +219,38 @@ input#checkbox {
   }
 }
 
-// .tooltip {
-//   position: relative;
-//   display: inline-block;
-//   border-bottom: 1px dotted black;
-// }
+.c-btn-primary{
+    border: 1px solid #000 !important;
+    background-color: #fff !important;
+    border-radius: 0;
 
-// .tooltip .tooltiptext {
-//   visibility: hidden;
-//   width: 120px;
-//   background-color: black;
-//   color: #fff;
-//   text-align: center;
-//   border-radius: 6px;
-//   padding: 5px 0;
+    color: $dark-color !important;
 
-//   /* Position the tooltip */
-//   position: absolute;
-//   z-index: 1;
-//   top: 100%;
-//   left: 50%;
-//   margin-left: -60px;
-// }
+    &:hover,
+    &.active{
+        background-color: $dark-color !important;
+        color: $white-color !important;
+    }
+}
+.tour-map-container .list-group-item{
+    border: 1px solid #000 !important;
+    background-color: #fff !important;
+    border-radius: 0;
 
-// .tooltip:hover .tooltiptext {
-//   visibility: visible;
-// }
+    color: $dark-color !important;
+
+    &:hover,
+    &.active {
+        background-color: $dark-color !important;
+        color: $white-color !important;
+    }
+}
+.modal-content{
+    border-radius: 0 !important;
+}
+.wep-modal-content{
+    border-radius: 0 !important;
+}
 
 
 main{
@@ -273,70 +260,33 @@ main{
   }
 }
 
+.main-col .alert{
+        font: var(--light-font) 16px/normal var(--main-font-family) !important;
+    position: absolute;
+    inset: auto 5px 0 auto;
+    z-index: 10;
+    background-color: #ffc107;
+}
+
+select option{
+    font-family: var(--main-font-family) !important;
+    font-weight: var(--light-font);
+    letter-spacing: 2px !important;
+    //background-color: #000;
 
 
+}
 
-
-
-
-/* The container must be positioned relative: */
-// .custom-select {
-//   margin-top: 30px;
-//   position: relative;
-//   font-family: $roboto-font;
-//   // border-radius: 10px !important;
-//   select {
-//     display: none; /*hide original SELECT element: */
-//   }
-//   .select-selected {
-//     background-color: $white-color;
-//     border-radius: 10px 10px 0px 0px;
-//     text-transform: capitalize;
-//     color: $dark-color;
-//     padding: 8px 16px;
-//     border: 1px solid transparent;
-//     border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-//     cursor: pointer;
-//     &.select-arrow-active{
-//       border-radius: 10px 10px 10px 10px;
-//       &::before {
-//         border-color: transparent transparent #000 transparent;
-//       }
-//     }
-//     &::before {
-//       position: absolute;
-//       content: "";
-//       top: 14px;
-//       right: 10px;
-//       width: 0;
-//       height: 0;
-//       border: 6px solid transparent;
-//       border-color: #000 transparent transparent transparent;
-//     }
-//   }
-//   .select-items{
-//     position: absolute;
-//     background-color: $white-color;
-//     top: 100%;
-//     left: 0;
-//     right: 0;
-//     z-index: 99;
-//     border-radius: 0px 0px 10px 10px;
-//     text-transform: capitalize !important;
-//     div{
-
-//       color: $dark-color;
-//       padding: 8px 16px !important;
-//       border-bottom: 1px solid rgba(0, 0, 0, 0.1) ;
-//       // border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-//       &:hover,
-//       &.same-as-selected{
-//         background-color: rgba(0, 0, 0, 0.1);
-//       }
-//     }
-//     &.select-hide {
-//       display: none;
-//     }
-//   }
-// }
+.btn-wrapper{
+    button{
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background-color: #fff !important;
+        border-radius: 0;
+        &:hover{
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+    }
+}
 

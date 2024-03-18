@@ -4,7 +4,7 @@
             <div class="me-2" style="width: 250px">
                 <ul class="list-group">
                     @foreach($tour->maps as $map)
-                        <a href="javascript:void(0)" class="list-group-item list-group-item-action {{ $map->id == $selectedMap->id ? 'active' : '' }}"
+                        <a href="javascript:void(0)" class="list-group-item {{ $map->id == $selectedMap->id ? 'active' : '' }}"
                            wire:click="selectMap({{ $map }})" wire:loading.class="disabled">{{ $map->name }}
                         </a>
                     @endforeach

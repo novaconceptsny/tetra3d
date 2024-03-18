@@ -105,6 +105,7 @@ class TourController extends Controller
             $tourModel = $tourModel[0];
         } else {
             $tourModel = null;
+            $sculptures = array();
         }
 
         $sculptureData = $layout? Sculpture::where('layout_id', $layout->id)->get() : null;

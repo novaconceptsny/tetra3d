@@ -48,9 +48,9 @@
                                 <img src="{{ $artwork->image_url }}" alt="card-img" />
                             </div>
                             <div class="card-body">
-                                <div class="heading">{{ $artwork->name }}</div>
                                 <div class="paragraph">{{ $artwork->artist }}</div>
-                                <div>[{{ $artwork->dimensions }}]</div>
+                                <div class="heading">{{ $artwork->name }}</div>
+                                <div class="dimensions">{{ $artwork->dimensions }} inches</div>
                             </div>
                         </div>
                     @endforeach

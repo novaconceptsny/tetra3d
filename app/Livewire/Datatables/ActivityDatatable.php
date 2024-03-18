@@ -61,9 +61,14 @@ class ActivityDatatable extends BaseDatatable
 
         $rows->getCollection()->transform(function ($row){
             $row->project_name = $row->project?->name;
-            $row->layout_name = $row->layout?->name;
+            $row->layout_name = $row->layout?->name ?? 'Layout Deleted';
             $row->user_name = $row->user?->name;
             $row->date = $row->created_at->format('d M Y');
+
+            if (!$row->layout){
+                $row->url = null;
+            }
+
             return $row;
         });
 

@@ -6,7 +6,6 @@ use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Tour;
-use App\Models\SpotsPosition;
 use Arr;
 use Illuminate\Http\Request;
 
@@ -55,6 +54,7 @@ class TourController extends Controller
     public function edit(Tour $tour)
     {
         $tour->load('map', 'spots.maps');
+
         $data = array();
         $data['route'] = route('backend.tours.update', $tour);
         $data['method'] = 'put';
@@ -88,6 +88,7 @@ class TourController extends Controller
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour updated successfully');
+
     }
 
     public function destroy(Tour $tour)

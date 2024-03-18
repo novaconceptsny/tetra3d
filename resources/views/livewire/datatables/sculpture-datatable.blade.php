@@ -15,7 +15,7 @@
         <div class="mb-3 scrollbar table-responsive" x-data="{sculptureImage: null}">
             <table class="table table-hover fs--1 table-sm" >
 
-                @include('backend.includes.datatable.header')
+                @include('backend.includes.datatable.s_header')
 
                 <tbody class="list">
                 @foreach($rows as $row)
@@ -51,6 +51,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
