@@ -52,6 +52,9 @@ class TourController extends Controller
 
         $spot_id = request('spot_id');
 
+        $layout = null;
+        $project = null;
+
         if ($layout_id = request('layout_id')) {
             $layout = Layout::findOrFail($layout_id);
             $project = Project::relevant()->findOrFail($layout->project_id);

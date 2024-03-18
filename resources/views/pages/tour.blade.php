@@ -43,7 +43,7 @@
             text="Share" icon="fal fa-share-nodes"
         />
         <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')" :visible="!$tour_is_shared"/>
-        <x-menu-item text="Sculpture List " icon="fal fa-palette" target="_self" route="#" :visible="!$tour_is_shared"
+        <x-menu-item text="Sculpture List " icon="fal fa-palette" target="_self" route="#" :visible="$project && !$tour_is_shared"
         data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" />
     </div>
 @endsection
