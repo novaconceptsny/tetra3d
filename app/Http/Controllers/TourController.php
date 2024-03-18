@@ -85,7 +85,7 @@ class TourController extends Controller
             );
         });
 
-        $artwork_collections = ArtworkProject::where('project_id', $project->id)->get();
+        $artwork_collections = $project ? ArtworkProject::where('project_id', $project->id)->get() : array();
         $sculpture_list = array();
 
         foreach($artwork_collections as $artwork_collection) {
