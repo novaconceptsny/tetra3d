@@ -9,6 +9,16 @@
                 </button></br></br>
                 <div id='tour-model-name'></div>
             </div>
+
+            <div class="col-12">
+                <h5>{{ __('Intersection Surface') }}</h5>
+                <input type='file' wire:model="surfaceModel" id='surface-model-input' accept=".glb" hidden></input>
+                <button class="btn btn-primary surface-model-input" type='button' style="width: 100%;">
+                    <label for='surface-model-input'>Choose Surface Model</label>
+                </button></br></br>
+                <div id='surface-model-name'></div>
+            </div>
+            
             <div class="row g-3 mt-2">
                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
 
@@ -65,6 +75,8 @@
     var spotsPosition = @json($spotsPosition);
     var tourModel = @json($tourModel);
     var tourModelPath = @json($tourModelPath);
+    var surfaceModel = @json($surfaceModel);
+    var surfaceModelPath = @json($surfaceModelPath);
 
     for (const key in spotsPosition) {
         let x_input = document.getElementById('spotsPosition_' + key + '_x');
@@ -82,12 +94,20 @@
     }
 
     document.getElementById('tour-model-name').innerHTML = tourModel;
+    document.getElementById('surface-model-name').innerHTML = surfaceModel;
 
     document.getElementById('tour-model-input').addEventListener('change', function(e) {
         if (e.target.files[0]) {
             var url = URL.createObjectURL(e.target.files[0]);
             GLTFLoad(url);
             document.getElementById('tour-model-name').innerHTML = e.target.files[0].name;
+        }
+    })
+
+    document.getElementById('surface-model-input').addEventListener('change', function(e) {
+        if (e.target.files[0]) {
+            var url = URL.createObjectURL(e.target.files[0]);
+            document.getElementById('surface-model-name').innerHTML = e.target.files[0].name;
         }
     })
 
@@ -218,5 +238,19 @@
             }
         }, 1000);
     });
+
+    $('#tour-model-update').on('click', function(e) {
+        // e.preventDefault();
+        var tour_input = document.getElementById('tour-model-name').innerHTML;
+        var surface_input = document.getElementById('surface-model-name').innerHTML;
+
+        if (tour_input === 'Empty') {
+            alert('Sculpture Model is not exist');
+        } 
+        else if (surface_input === 'Empty') {
+            alert('Thumbnail Image is not exist');
+        } 
+        else document.getElementById('sculpture_form').submit();
+    })
 </script>
 @endsection

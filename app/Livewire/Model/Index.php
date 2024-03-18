@@ -22,6 +22,8 @@ class Index extends Component
     
     #[Renderless]
     public $tourModel = null;
+    public $surfaceModel = null;
+    public $surfaceModelPath = null;
     public $tourModelPath = null;
     public $spots = array();
     public $spotsPosition = array();
@@ -31,14 +33,12 @@ class Index extends Component
         'spots.*.x' => 'required_with:spots.*.y',
         'spots.*.y' => 'required_with:spots.*.x',
     ];
-
     public function mount(Tour $tour)
     {
         $this->tour = $tour;
         $this->setSpots();
         $this->setModel();
     }
-
     public function render()
     {
         return view('livewire.model.index');
@@ -46,16 +46,14 @@ class Index extends Component
     public function setModel() {
         $models = TourModel::where('tour_id', $this->tour->id)->get();
         if ($models->isEmpty()) {
-            $data = array('tour_id'=>$this->tour->id, 'name'=>'null');
-            TourModel::create($data);
-            $models = TourModel::where('tour_id', $this->tour->id)->get();
-        } 
-
-        foreach($models as $model) {
-            $this->tourModel = $model->name;
+            $this->tourModel = 'Empty';
+            $this->surfaceModel = 'Empty';
+        } else {
+            $this->tourModel = $models[0]->name;
+            $this->surfaceModel = $models[0]->surface;
+            $this->tourModelPath = Storage::url('3dmodel/'.$this->tourModel);
+            $this->surfaceModelPath = Storage::url('3dmodel/surface/'.$this->surfaceModel);
         }
-
-        $this->tourModelPath = Storage::url('3dmodel/'.$this->tourModel);
     }
     public function setSpots() {
         $temp_spots = SpotsPosition::where('tour_id', $this->tour->id)->get();
@@ -93,17 +91,35 @@ class Index extends Component
             }
         }
 
+        $name = null;
+        $surface = null;
+        
         if (gettype($this->tourModel) !== 'string') {
             $name = $this->tourModel->getClientOriginalName();
             $name = $this->tour->id.'_'.$name;
-
+            
             $this->tourModel->storeAs(path: 'public/3dmodel', name: $name);
-
-            $models = TourModel::where('tour_id', $this->tour->id)->get();
-            foreach($models as $model) {
-                $model->name = $name;
-                $model->save();
-            }
+        } else {
+            $name = $this->tourModel;
+        }
+        
+        if (gettype($this->surfaceModel) !== 'string') {
+            $surface = $this->surfaceModel->getClientOriginalName();
+            $surface = $this->tour->id.'_'.$surface;
+            
+            $this->surfaceModel->storeAs(path: 'public/3dmodel/surface/', name: $surface);
+        } else {
+            $surface = $this->surfaceModel;
+        }
+        
+        $models = TourModel::where('tour_id', $this->tour->id)->get();
+        if ($models->isEmpty()) {
+            $data = array('tour_id'=>$this->tour->id, 'name'=>$name, 'surface'=>$surface);
+            TourModel::create($data);
+        } else {
+            $models[0]->name = $name;
+            $models[0]->surface = $surface;
+            $models[0]->save();
         }
 
         $this->updateTourXMLFiles('app/public/tours/'.$this->tour->id);
@@ -135,11 +151,12 @@ class Index extends Component
 
         $file_contents = file_get_contents(storage_path($file_path));
         $check_file = strrpos($file_contents, '<!-- add the custom ThreeJS plugin -->');
+
         if ($check_file) {
 
         } else {
             $insert_position = strrpos($file_contents, '</krpano>');
-
+    
             if ($insert_position !== false) {
                 $file_contents = substr_replace($file_contents, $new_code, $insert_position, 0);
                 file_put_contents(storage_path($file_path), $file_contents);

@@ -42,9 +42,18 @@
             onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
             text="Share" icon="fal fa-share-nodes"
         />
-        <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')" :visible="!$tour_is_shared"/>
-        <x-menu-item text="Sculpture List " icon="fal fa-palette" target="_self" route="#" :visible="$project && !$tour_is_shared"
-        data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" />
+        <x-menu-item 
+            text="Artwork Collection" 
+            icon="fal fa-palette" 
+            :route="route('artworks.index')" :visible="!$tour_is_shared"/>
+        <x-menu-item 
+            text="Sculpture List " 
+            icon="fal fa-palette" target="_self" route="#" 
+            :visible="$project && !$tour_is_shared"
+            data-bs-toggle="offcanvas" 
+            data-bs-target="#offcanvasExample" 
+            aria-controls="offcanvasExample" 
+        />
     </div>
 @endsection
 
@@ -92,30 +101,70 @@
 @endsection
 
 @section('modellist')
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Sculpture List</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <div>
-            Choose from our exquisite collection of Sculptures to adorn your space.
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Sculpture List</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="mt-3 modellist">
-        @foreach($sculptures as $sculpture)
-            <div class='sculpture-list'>
-                <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
-                    alt="Image 1" data-image-id="{{ $sculpture->id }}">
-                <div class='sculpture-list-data-container'>
-                    <input value='{{ $sculpture->name }}' readonly='readonly' class='sculpture-list-data-name'>
-                    <input class='sculpture-list-data-artist' readonly='readonly' value='{{ $sculpture->artist }}'>
-                    <input class='sculpture-list-data-dimention' readonly='readonly' value='{{ $sculpture->data }}'>
-                </div>
+        <div class="offcanvas-body">
+            <div>
+                Choose from our exquisite collection of Sculptures to adorn your space.
             </div>
-        @endforeach
+            <div class="mt-3 modellist">
+            @foreach($sculptures as $sculpture)
+                <div class='sculpture-list'>
+                    <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
+                        alt="Image 1" data-image-id="{{ $sculpture->id }}">
+                    <div class='sculpture-list-data-container'>
+                        <input value='{{ $sculpture->name }}' readonly='readonly' class='sculpture-list-data-name'>
+                        <input class='sculpture-list-data-artist' readonly='readonly' value='{{ $sculpture->artist }}'>
+                        <input class='sculpture-list-data-dimention' readonly='readonly' value='{{ $sculpture->data }}'>
+                    </div>
+                </div>
+            @endforeach
+            </div>
         </div>
     </div>
-</div>
+@endsection
+
+@section('styles')
+<style>
+    .sculpture-list-data-container {
+        margin: 10px;
+    }
+
+    .sculpture-list-data-container>input {
+        border: unset;
+        width: 100%;
+    }
+
+    .sculpture-list-data-container>input:focus {
+        outline: none;
+    }
+
+    .sculpture-list-data-name {
+
+    }
+
+    .sculpture-list-data-artist {
+        font-weight: bold;
+        font-style: Italic;
+    }
+
+    .sculpture-list-data-dimention {
+
+    }
+
+    .image-list-item {
+        aspect-ratio: 4 / 3;
+        border-radius: 20px 20px 0px 0px;
+    }
+
+    .sculpture-list {
+        border: solid 1px;
+        border-radius: 20px;
+    }
+</style>
 @endsection
 
 @section('scripts')
@@ -258,47 +307,50 @@
         var delay_interval = setInterval(function() {
             if (window.scene !== undefined) {
                 clearInterval(delay_interval);
-                for (let i = 0; i < sculpture_data.length; i++) {
-                    sculpture_id_list.push(sculpture_data[i].sculpture_id);
-                    load_model(sculpture_data[i].sculpture_id, 
-                        sculpture_data[i].model_id, 
-                        sculpture_data[i].position_x - spot_position.x * 30, 
-                        sculpture_data[i].position_y - spot_position.y * 30, 
-                        sculpture_data[i].position_z + spot_position.z * 30, 
-                        sculpture_data[i].rotation_x, 
-                        sculpture_data[i].rotation_y, 
-                        sculpture_data[i].rotation_z);
-                }
-
-                offset_x = spot_position.x * 30;
-                offset_y = spot_position.y * 30;
-                offset_z = spot_position.z * 30;
-
-                var planeMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.2, side: THREE.DoubleSide, colorWrite: false});
-                var planeGeometry = new THREE.PlaneGeometry(1500, 1000);
-                planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
-                planeMesh.rotation.x = -Math.PI / 2;
-                planeMesh.position.y = offset_y;
-                scene.add(planeMesh);
-
+                
                 if (space_model == null || space_model.name == 'null')  {
                     alert("No 3D space model");
                 } else {
+                    for (let i = 0; i < sculpture_data.length; i++) {
+                        sculpture_id_list.push(sculpture_data[i].sculpture_id);
+                        load_model(sculpture_data[i].sculpture_id, 
+                            sculpture_data[i].model_id, 
+                            sculpture_data[i].position_x - spot_position.x * 30, 
+                            sculpture_data[i].position_y - spot_position.y * 30, 
+                            sculpture_data[i].position_z + spot_position.z * 30, 
+                            sculpture_data[i].rotation_x, 
+                            sculpture_data[i].rotation_y, 
+                            sculpture_data[i].rotation_z);
+                    }
+    
+                    offset_x = spot_position.x * 30;
+                    offset_y = spot_position.y * 30;
+                    offset_z = spot_position.z * 30;
+    
+                    var planeMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.2, side: THREE.DoubleSide, colorWrite: false});
+                    var planeGeometry = new THREE.PlaneGeometry(1500, 1000);
+                    planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+                    planeMesh.rotation.x = -Math.PI / 2;
+                    planeMesh.position.y = offset_y;
+                    scene.add(planeMesh);
 
                     var loader = new GLTFLoader();
                     var dracoLoader = new DRACOLoader();
                     loader.setDRACOLoader(dracoLoader);
     
                     var model = null;
+                    var surface = null;
                     var model_url = 'storage/3dmodel/' + space_model.name;
+                    var surface_url = 'storage/3dmodel/surface/' + space_model.surface;
                     var asset_url = '<?php echo asset(''); ?>';
                     var full_model_url = asset_url + model_url;
+                    var full_surface_url = asset_url + surface_url;
             
                     loader.load(full_model_url, function (gltf) {
                         model = gltf.scene;
                         model.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.5})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: false, colorWrite: false})
                                 }
                             }
                         )
@@ -307,6 +359,23 @@
                         model.scale.set(30, 30, 30);
                         model.position.set(-offset_x, offset_y, offset_z);
                         scene.add(model);
+                    });
+
+                    loader.load(full_surface_url, function (gltf) {
+                        surface = gltf.scene;
+                        surface.traverse((obj) => {
+                            if(obj instanceof THREE.Mesh){
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: false, colorWrite: false})
+                                }
+                            }
+                        )
+                        surface.rotation.x = -Math.PI;
+                        surface.rotation.y = Math.PI / 2;
+                        surface.scale.set(30, 30, 30);
+                        surface.position.set(-offset_x, offset_y, offset_z);
+
+                        surface.name = "surface-model";
+                        scene.add(surface);
                     });
                 }
             }

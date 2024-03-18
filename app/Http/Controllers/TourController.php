@@ -52,8 +52,8 @@ class TourController extends Controller
 
         $spot_id = request('spot_id');
 
-        $layout = null;
         $project = null;
+        $layout = null;
 
         if ($layout_id = request('layout_id')) {
             $layout = Layout::findOrFail($layout_id);
@@ -89,6 +89,7 @@ class TourController extends Controller
         });
 
         $artwork_collections = $project ? ArtworkProject::where('project_id', $project->id)->get() : array();
+
         $sculpture_list = array();
 
         foreach($artwork_collections as $artwork_collection) {
@@ -111,9 +112,9 @@ class TourController extends Controller
             $sculptures = array();
         }
 
-        $sculptureData = $layout? Sculpture::where('layout_id', $layout->id)->get() : null;
+        $sculptureData = $layout ? Sculpture::where('layout_id', $layout->id)->get() : null;
 
-        $spotPosition = $spot? SpotsPosition::where('spot_id', $spot->id)->get() : null;
+        $spotPosition = $spot ? SpotsPosition::where('spot_id', $spot->id)->get() : null;
         if ($spotPosition !== null && !$spotPosition->isEmpty()) {
             $spotPosition = $spotPosition[0];
         } else {

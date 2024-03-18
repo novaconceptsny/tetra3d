@@ -18,7 +18,7 @@ class ArtworkCollectionController extends Controller
 
     public function index()
     {
-        $collections = ArtworkCollection::with('company')->withCount('artworks')->get();
+        $collections = ArtworkCollection::with('company')->withCount('artworks')->withCount('sculptureModels')->get();
 
         return view('backend.artwork-collection.index', compact('collections'));
     }

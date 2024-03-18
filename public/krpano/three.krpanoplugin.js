@@ -338,7 +338,7 @@ function krpanoplugin() {
 		var intersects = camera_hittest_raycaster.intersectObjects(scene.children, true);
 		for (var i = 0; i < intersects.length; i++) {
 			obj = intersects[i].object;
-			if (obj && obj.geometry instanceof THREE.PlaneGeometry) {
+			if (obj && obj.name == 'surface-model') {
 				return intersects[i].point;
 			}
 		}

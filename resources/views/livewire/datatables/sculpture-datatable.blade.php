@@ -22,7 +22,7 @@
                     <tr class="dt-row">
                         <td class="td sculpture-img">
                             <img
-                                @click="sculptureImage = @js($row->image_url);"
+                                @click="sculptureImage = @js(asset('').'storage/sculptures/thumbnails/'.$row->image_url);"
                                 src="{{ asset('').'storage/sculptures/thumbnails/'.$row->image_url }}"
                                 alt="" width="50"
                                 data-bs-toggle="modal" data-bs-target="#sculptureImage"
