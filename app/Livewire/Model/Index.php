@@ -105,5 +105,45 @@ class Index extends Component
                 $model->save();
             }
         }
+
+        $this->updateTourXMLFiles('app/public/tours/'.$this->tour->id);
+    }
+
+    private function updateTourXMLFiles($dir) {
+        $dh = opendir(storage_path($dir));
+
+        while (($file = readdir($dh)) !==false) {
+            if ($file != '.'&& $file != '..') {
+                $fullpath = $dir.'/'.$file;
+
+                if (is_dir(storage_path($fullpath))) {
+                    $this->updateTourXMLFiles($fullpath);
+                } else {
+                    if ($file == 'tour.xml') {
+                        $this->updateTourXML($fullpath);
+                    }
+                }
+            }
+        }
+
+        closedir($dh);
+    }
+    private function updateTourXML($file_path) {
+        $new_code = '<!-- add the custom ThreeJS plugin -->
+            <plugin name="threejs" url="/krpano/three.krpanoplugin.js" type="plugin" keep="true" />
+        ';
+
+        $file_contents = file_get_contents(storage_path($file_path));
+        $check_file = strrpos($file_contents, '<!-- add the custom ThreeJS plugin -->');
+        if ($check_file) {
+
+        } else {
+            $insert_position = strrpos($file_contents, '</krpano>');
+
+            if ($insert_position !== false) {
+                $file_contents = substr_replace($file_contents, $new_code, $insert_position, 0);
+                file_put_contents(storage_path($file_path), $file_contents);
+            }
+        }
     }
 }
