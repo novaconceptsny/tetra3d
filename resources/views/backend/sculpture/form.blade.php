@@ -122,7 +122,6 @@
 
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
     import { OrbitControls } from 'three/addons/controls/OrbitControls';
 
     var artwork_collection = @json($artwork_collections);
@@ -173,13 +172,10 @@
         renderer.shadowMap.enabled = true;
         
         controls = new OrbitControls(camera, renderer.domElement);
-        // controls.maxPolarAngle = Math.PI / 3;
     }
 
     function GLTFLoad(full_model_url) {
         var loader = new GLTFLoader();
-        var dracoLoader = new DRACOLoader();
-        loader.setDRACOLoader(dracoLoader);
         var model = null;
 
         scene.traverse(function (object) {

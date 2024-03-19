@@ -11,6 +11,10 @@
     $parameters['tracker'] = $tracker ? 0 : 1;
     $readonly = !$layout_id || $shared_tour_id;
     $layout = $layout ?? null;
+    $spotPosition = $spotPosition ?? null;
+    $tourModel = $tourModel ?? null;
+    $sculptureData = $sculptureData ?? null;
+    $sculptures = $sculptures ?? array();
 
     // only admins can see tracker
     $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
@@ -116,8 +120,8 @@
                     <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
                         alt="Image 1" data-image-id="{{ $sculpture->id }}">
                     <div class='sculpture-list-data-container'>
-                        <input value='{{ $sculpture->name }}' readonly='readonly' class='sculpture-list-data-name'>
                         <input class='sculpture-list-data-artist' readonly='readonly' value='{{ $sculpture->artist }}'>
+                        <input value='{{ $sculpture->name }}' readonly='readonly' class='sculpture-list-data-name'>
                         <input class='sculpture-list-data-dimention' readonly='readonly' value='{{ $sculpture->data }}'>
                     </div>
                 </div>
@@ -143,10 +147,6 @@
     }
 
     .sculpture-list-data-name {
-
-    }
-
-    .sculpture-list-data-artist {
         font-weight: bold;
         font-style: Italic;
     }
@@ -157,36 +157,21 @@
 
     .image-list-item {
         aspect-ratio: 4 / 3;
-        border-radius: 20px 20px 0px 0px;
     }
 
     .sculpture-list {
         border: solid 1px;
-        border-radius: 20px;
     }
 </style>
 @endsection
 
 @section('scripts')
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
-            }
-        }
-    </script>
-
     <script src="{{ asset("krpano/tour.js") }}"></script>
+    <script src="https://unpkg.com/three@0.100.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.100.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.100.0/examples/js/loaders/DRACOLoader.js"></script>
 
     <script type="module">
-        import * as THREE from 'three';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-
-        window.THREE = THREE;
-        window.GLTFLoader = GLTFLoader;
-        window.DRACOLoader = DRACOLoader;
         let krpano = null;
         let hlookat = {{ request('hlookat', 0) }};
         let vlookat = {{ request('vlookat', 0) }};
@@ -295,11 +280,12 @@
 
         var label = null;
         label = document.createElement('div');
-        var layout_id = {{ $layout_id }};
+        var layout_id = '{{ $layout_id }}';
         var sculptures = @json($sculptures);
         var sculpture_data = @json($sculptureData);
         var spot_position = @json($spotPosition);
         var space_model = @json($tourModel);
+        var tour_is_shared = @json($tour_is_shared);
 
         var delay_interval = setInterval(function() {
             if (window.scene !== undefined) {
@@ -324,8 +310,8 @@
                     offset_y = spot_position.y * 30;
                     offset_z = spot_position.z * 30;
 
-                    var loader = new GLTFLoader();
-                    var dracoLoader = new DRACOLoader();
+                    var loader = new THREE.GLTFLoader();
+                    var dracoLoader = new THREE.DRACOLoader();
                     loader.setDRACOLoader(dracoLoader);
     
                     var model = null;
@@ -415,10 +401,11 @@
         function getSize(object) {
             let measure = new THREE.Vector3();
             var boundingBox = new THREE.Box3().setFromObject(object);
-            var size = boundingBox.getSize(measure);
-            let width = size.x;
-            let height = size.y;
-            let depth = size.z;
+            // var size = boundingBox.getSize(measure);
+            console.log(boundingBox);
+            let width = boundingBox.max.x - boundingBox.min.x;
+            let height = boundingBox.max.y - boundingBox.min.y;
+            let depth = boundingBox.max.z - boundingBox.min.z;
             return { width: width, height: height, depth: depth };
         }
 
@@ -561,7 +548,7 @@
 
         function loadTemp(object, position, rotation_x, rotation_y, rotation_z) {
             var temp;
-            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false, transparent: true, opacity: .3 });
+            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false});
             var width = getSize(object).width;
             var height = getSize(object).height;
             var depth = getSize(object).depth;
@@ -577,15 +564,15 @@
                 scale: 30,
                 onup: function (obj) { createLabel(obj) } 
             });
-
             scene.add(temp);
             temp.userData.model = object;
+            console.log(temp.position);
             return temp;
         }
 
         function addTemp(object) {
             var temp;
-            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false, transparent: true, opacity: .3 });
+            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false});
             var width = getSize(object).width;
             var height = getSize(object).height;
             var depth = getSize(object).depth;
@@ -612,8 +599,8 @@
         }
 
         function add_model(sculp_id, imageId) {
-            const loader = new GLTFLoader();
-            const dracoLoader = new DRACOLoader();
+            const loader = new THREE.GLTFLoader();
+            const dracoLoader = new THREE.DRACOLoader();
             loader.setDRACOLoader(dracoLoader);
             var model = null;
             var sculpture_url;
@@ -632,8 +619,10 @@
                 model.castShadow = true;
                 model.receiveShadow = true;
                 scene.add(model);
-                var temp = addTemp(model);
-                model.userData.temp = temp;
+                if (!tour_is_shared) {
+                    var temp = addTemp(model);
+                    model.userData.temp = temp;
+                }
                 model.userData.id = imageId;
                 model.userData.sculpture_id = sculp_id;
 
@@ -642,8 +631,8 @@
         }
 
         function load_model(sculp_id, imageId, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
-            const loader = new GLTFLoader();
-            const dracoLoader = new DRACOLoader();
+            const loader = new THREE.GLTFLoader();
+            const dracoLoader = new THREE.DRACOLoader();
             var sculpture_url = '';
             loader.setDRACOLoader(dracoLoader);
 
@@ -662,8 +651,10 @@
                 model.castShadow = true;
                 model.receiveShadow = true;
                 scene.add(model);
-                var temp = loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z);
-                model.userData.temp = temp;
+                if (!tour_is_shared) {
+                    var temp = loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z);
+                    model.userData.temp = temp;
+                }
                 model.userData.id = imageId;
                 model.userData.sculpture_id = sculp_id;
                 assign_object_properties(model, "model", { 

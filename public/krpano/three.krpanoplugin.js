@@ -148,7 +148,7 @@ function krpanoplugin() {
 		// restore the current krpano WebGL program
 		krpano.webGL.restoreProgram();
 
-		//renderer.resetGLState();
+		// renderer.resetGLState();
 		renderer.state.reset();
 	}
 
@@ -162,7 +162,7 @@ function krpanoplugin() {
 		gl.clearDepth(1);
 		gl.clear(gl.DEPTH_BUFFER_BIT);
 
-		//	renderer.resetGLState();
+		// renderer.resetGLState();
 		renderer.state.reset();
 	}
 
@@ -215,7 +215,9 @@ function krpanoplugin() {
 		// do scene updates
 		update_scene();
 
-		renderer.resetState();
+		// renderer.resetState();
+		// renderer.resetGLState();
+		// renderer.state.reset();
 		// render the scene
 		if (krpano.display.stereo == false) {
 			// normal rendering
@@ -270,7 +272,9 @@ function krpanoplugin() {
 			renderer.render(scene, stereocamera);
 		}
 
-		renderer.resetState();
+		// renderer.resetState();
+		// renderer.resetGLState();
+		// renderer.state.reset();
 		// important - restore the krpano WebGL state for correct krpano rendering
 		restore_krpano_WebGL_state();
 	}
@@ -310,7 +314,7 @@ function krpanoplugin() {
 			pointer.x += (pointer.x < 0.0 ? +1 : -1) * (1.0 - Number(krpano.display.stereooverlap)) * 0.5;
 		}
 
-		camera_hittest_raycaster.ray.direction.set(pointer.x, -pointer.y, 1.0).unproject(camera).normalize();
+		camera_hittest_raycaster.ray.direction.set(pointer.x, pointer.y, 1.0).unproject(camera).normalize();
 		var intersects = camera_hittest_raycaster.intersectObjects(scene.children, true);
 		var i;
 		var obj;
@@ -334,7 +338,7 @@ function krpanoplugin() {
 			mouse_x += (mouse_x < 0.0 ? +1 : -1) * (1.0 - Number(krpano.display.stereooverlap)) * 0.5;
 		}
 
-		camera_hittest_raycaster.ray.direction.set(pointer.x, -pointer.y, 1.0).unproject(camera).normalize();
+		camera_hittest_raycaster.ray.direction.set(pointer.x, pointer.y, 1.0).unproject(camera).normalize();
 		var intersects = camera_hittest_raycaster.intersectObjects(scene.children, true);
 		for (var i = 0; i < intersects.length; i++) {
 			obj = intersects[i].object;

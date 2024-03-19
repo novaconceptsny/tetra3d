@@ -44,13 +44,9 @@ class SculptureController extends Controller
             'sculpture_id' => 'required'
         ]);
         $data = $request->all();
-        error_log(json_encode($data));
         $sculpture_datas = Sculpture::where('layout_id', $data['layout_id'])->where('sculpture_id', $data['sculpture_id'])->get();
-        error_log(json_encode($sculpture_datas));
-        echo var_dump($sculpture_datas);
         if ($sculpture_datas->isEmpty()) {
             $createdData = Sculpture::create($data);
-            error_log(json_encode($createdData));
             return response()->json([
                 'response' => $data
             ]);
@@ -63,7 +59,6 @@ class SculptureController extends Controller
                 $sculpture_data->rotation_x = $data['rotation_x'];
                 $sculpture_data->rotation_y = $data['rotation_y'];
                 $sculpture_data->rotation_z = $data['rotation_z'];
-                $sculpture_data->scale = $data['scale'];
                 $sculpture_data->save();
             }
             return response()->json([

@@ -95,13 +95,15 @@ class TourController extends Controller
         foreach($artwork_collections as $artwork_collection) {
             $sculpture_list[] = $artwork_collection->artwork_collection_id;
         }
-        $sculptures = SculptureModel::whereIn('artwork_collection_id', $sculpture_list)->get();
+
+        $sculptures = !empty($sculpture_list) ? SculptureModel::whereIn('artwork_collection_id', $sculpture_list)->get() : array();
+
         foreach($sculptures as $row) {
             $row->data = json_decode($row->data);
             $row->data->length = number_format((float)$row->data->length, 2);
             $row->data->width = number_format((float)$row->data->width, 2);
             $row->data->height = number_format((float)$row->data->height, 2);
-            $row->data = '['.$row->data->length.'x'.$row->data->width.'x'.$row->data->height.' meter'.']';
+            $row->data = $row->data->length.'x'.$row->data->width.'x'.$row->data->height.' meter';
         }
 
         $tourModel = $tour ? TourModel::where('tour_id', $tour->id)->get() : null;

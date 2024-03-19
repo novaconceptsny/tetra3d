@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\SharedTour;
+use App\Models\SpotsPosition;
+use App\Models\TourModel;
+use App\Models\Sculpture;
 use App\Models\Spot;
+use App\Models\SculptureModel;
+use App\Models\ArtworkProject;
 
 class SharedTourController extends Controller
 {
@@ -38,6 +43,33 @@ class SharedTourController extends Controller
             );
         });
 
+        $artwork_collections = $project ? ArtworkProject::where('project_id', $project->id)->get() : array();
+
+        $sculpture_list = array();
+
+        foreach($artwork_collections as $artwork_collection) {
+            $sculpture_list[] = $artwork_collection->artwork_collection_id;
+        }
+
+        $sculptures = !empty($sculpture_list) ? SculptureModel::whereIn('artwork_collection_id', $sculpture_list)->get() : array();
+
+        $tourModel = $tour ? TourModel::where('tour_id', $tour->id)->get() : null;
+        if ($tourModel !== null && !$tourModel->isEmpty()) {
+            $tourModel = $tourModel[0];
+        } else {
+            $tourModel = null;
+            $sculptures = array();
+        }
+
+        $sculptureData = $layout ? Sculpture::where('layout_id', $layout->id)->get() : null;
+
+        $spotPosition = $spot ? SpotsPosition::where('spot_id', $spot->id)->get() : null;
+        if ($spotPosition !== null && !$spotPosition->isEmpty()) {
+            $spotPosition = $spotPosition[0];
+        } else {
+            $spotPosition = null;
+        }
+
         $data = array();
         $data['spot'] = $spot;
         $data['tour'] = $tour;
@@ -47,6 +79,10 @@ class SharedTourController extends Controller
         $data['shared_spot_id'] = $sharedTour->spot_id;
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;
+        $data['tourModel'] = $tourModel;
+        $data['sculptureData'] = $sculptureData;
+        $data['spotPosition'] = $spotPosition;
+        $data['sculptures'] = $sculptures;
 
         return view('pages.tour', $data);
     }
