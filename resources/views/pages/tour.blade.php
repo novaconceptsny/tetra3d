@@ -219,7 +219,6 @@
             },
         });
 
-        // let krpano = document.getElementById("krpanoSWFObject");
         function krpano_onready_callback(krpano_interface) {
             krpano = krpano_interface;
         }
@@ -302,8 +301,6 @@
         var spot_position = @json($spotPosition);
         var space_model = @json($tourModel);
 
-        console.log(space_model);
-
         var delay_interval = setInterval(function() {
             if (window.scene !== undefined) {
                 clearInterval(delay_interval);
@@ -326,13 +323,6 @@
                     offset_x = spot_position.x * 30;
                     offset_y = spot_position.y * 30;
                     offset_z = spot_position.z * 30;
-    
-                    var planeMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.2, side: THREE.DoubleSide, colorWrite: false});
-                    var planeGeometry = new THREE.PlaneGeometry(1500, 1000);
-                    planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
-                    planeMesh.rotation.x = -Math.PI / 2;
-                    planeMesh.position.y = offset_y;
-                    scene.add(planeMesh);
 
                     var loader = new GLTFLoader();
                     var dracoLoader = new DRACOLoader();
@@ -350,7 +340,7 @@
                         model = gltf.scene;
                         model.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: false, colorWrite: false})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false})
                                 }
                             }
                         )
@@ -365,7 +355,8 @@
                         surface = gltf.scene;
                         surface.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: false, colorWrite: false})
+                                obj.name = "surface-model";
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
                                 }
                             }
                         )
@@ -374,7 +365,6 @@
                         surface.scale.set(30, 30, 30);
                         surface.position.set(-offset_x, offset_y, offset_z);
 
-                        surface.name = "surface-model";
                         scene.add(surface);
                     });
                 }
@@ -531,7 +521,6 @@
 
             save_btn.onclick = function () {
                 label.innerHTML = '';
-                console.log("save button click");
                 var request_data = {
                     'layout_id': layout_id,
                     'sculpture_id': object.userData.model.userData.sculpture_id,
