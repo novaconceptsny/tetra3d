@@ -329,7 +329,7 @@
                         model = gltf.scene;
                         model.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: true, visible: false})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false})
                             }
                         });
                         model.rotation.x = -Math.PI;
@@ -345,7 +345,7 @@
                         surface.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
                                 obj.name = "surface-model";
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: true, visible: false})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
                             }
                         });
                         surface.rotation.x = -Math.PI;
@@ -716,47 +716,7 @@
             
             return { r: r, theta: theta, phi: phi };
         }
-
-        function make_gizmo(object) {
-            var gizmo = new THREE.Group();
-
-            var arrowGeometry = new THREE.ConeGeometry(0.5, 3, 32);
-            var directGeometry = new THREE.CylinderGeometry(0.2, 0.2, 30, 32);
-            var gizmoPlaneGeometry = new THREE.PlaneGeometry(5, 5);
-
-            var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 'red', visible: true, transparent: true, opacity: 0.5}));
-            var arrow_z = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 'green', visible: true, transparent: true, opacity: 0.5 }));
-            var direct_x = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 'red', visible: true, transparent: true, opacity: 0.5 }));
-            var direct_z = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 'green', visible: true, transparent: true, opacity: 0.5 }));
-            var gizmoPlane = new THREE.Mesh(gizmoPlaneGeometry, new THREE.MeshBasicMaterial({ color: 'blue', visible: true, side: THREE.DoubleSide, transparent: true, opacity: 0.5}));
-
-            arrow_x.position.set(object.position.x + 30, object.position.y, object.position.z);
-            arrow_z.position.set(object.position.x, object.position.y, object.position.z + 30);
-            direct_x.position.set(object.position.x + 15, object.position.y, object.position.z);
-            direct_z.position.set(object.position.x, object.position.y, object.position.z + 15);
-            gizmoPlane.position.set(object.position.x + 5, object.position.y, object.position.z + 5);
-
-            arrow_x.rotation.z = - Math.PI / 2;
-            arrow_z.rotation.x = Math.PI / 2;
-            direct_x.rotation.z = Math.PI / 2;
-            direct_z.rotation.x = Math.PI / 2;
-            gizmoPlane.rotation.x = Math.PI / 2;
-
-            gizmo.add(arrow_x);
-            gizmo.add(arrow_z);
-            gizmo.add(direct_x);
-            gizmo.add(direct_z);
-            gizmo.add(gizmoPlane);
-
-            gizmo.name = 'gizmo';
-
-            scene.add(gizmo);
-        }
-
-        function highlight_object() {
-
-        }
-
+        
         document.addEventListener('DOMContentLoaded', function () {
             const images = document.querySelectorAll('.image-list-item'); 
             images.forEach(function (image) {
