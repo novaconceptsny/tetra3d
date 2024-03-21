@@ -284,8 +284,11 @@ function krpanoplugin() {
 
 	window.isAnimate = false;
 	var selectedObj = null;
+	var gizmoObj = null;
 	var isDown = false;
+	var canMove = false;
 	var plane_point_temp = null;
+	var direction = '';
 
 	var label = null;
 	label = document.createElement('div');
@@ -317,16 +320,26 @@ function krpanoplugin() {
 		camera_hittest_raycaster.ray.direction.set(pointer.x, pointer.y, 1.0).unproject(camera).normalize();
 		var intersects = camera_hittest_raycaster.intersectObjects(scene.children, true);
 		var i;
-		var obj;
+		var object = null;
+		var gizmo = null;
+		var point = null;
 
 		for (i = 0; i < intersects.length; i++) {
-			obj = intersects[i].object;
-			if (obj && obj.properties && obj.properties.enabled) {
-				return {object: obj, point: intersects[i].point};
+			var obj = intersects[i].object;
+			if (obj.name == 'sculpture-model') {
+				object = obj;
+				point = intersects[i].point;
+			}
+
+			if (obj.name == 'gizmoPlane' || obj.name == 'arrow_x' || obj.name == 'arrow_z' || obj.name == 'direct_x' || obj.name == 'direct_z') {
+				gizmo = obj;
+				point = intersects[i].point;
 			}
 		}
 
-		return null;
+		if (point)
+			return {object: object, gizmo: gizmo, point: point};
+		else return null;
 	}
 
 	function do_object_point(mx, my) {
@@ -349,12 +362,13 @@ function krpanoplugin() {
 		return null;
 	}
 
-	var handle_mouse_hitobject = null;
-
 	function handle_mouse_touch_events(event) {
 		var model_label = document.getElementById('model_label');
 		var type = "";
-
+		var hitobj = null;
+		var gizmo = null;
+		var point = null;
+		
 		if (event.type == "mousedown") {
 			type = "ondown";
 			krpano.control.layer.addEventListener("mouseup", handle_mouse_touch_events, true);
@@ -382,35 +396,62 @@ function krpanoplugin() {
 
 		// is there a object as that pos?
 		var hittest = do_object_hittest(ms.x, ms.y);
-		var hitobj = hittest?.object ? hittest?.object : null;
+		if (hittest !== null) {
+			hitobj = hittest.object;
+			gizmo = hittest.gizmo;
+			point = hittest.point;
+		}
 
 		if (type == "ondown") {
-			if (hitobj) {
-				hitobj.properties.pressed = true;
-
-				if (hitobj.properties.ondown) {
-					hitobj.properties.ondown(hitobj);
-				}
-
-				if (hitobj.properties.capture) {
-					krpano.mouse.down = true;
-					event.stopPropagation();
-				}
-
-				event.preventDefault();
-				selectedObj = hitobj;
+			if ( hitobj || gizmo ) {
 				isDown = true;
-			}
-			else {
+				krpano.mouse.down = true;
+				event.preventDefault();
+				event.stopPropagation();
+				if (gizmo) {
+					selectedObj = gizmo.parent.userData.temp;
+					gizmoObj = gizmo.parent;
+					plane_point_temp = point;
+					canMove = true;
+					if (gizmo.name == 'arrow_x' || gizmo.name == 'direct_x') direction = 'x';
+					if (gizmo.name == 'arrow_z' || gizmo.name == 'direct_z') direction = 'z';
+					if (gizmo.name == 'gizmoPlane') direction = 'xz';
+				} else {
+					selectedObj = hitobj.userData.temp;
+				}
+			} else {
 				label.innerHTML = "";
-				if (model_label !== null) model_label.style.display = 'none';
+
+				if (model_label !== null) 
+					model_label.style.display = 'none';
+
+				if (selectedObj) {
+					scene.remove(selectedObj.userData.gizmo);
+					selectedObj.userData.model.traverse((obj) => {
+						if (obj.name == 'sculpture-model') {
+							obj.material.emissive.setHex(0x000000);
+							obj.material.transparent = false;
+							obj.material.opacity = 1;
+							obj.material.needsUpdate = true;
+						}
+					});
+				}
+
+				if (gizmoObj) 
+					scene.remove(gizmoObj);
 			}
 		}
 		else if (type == "onmove") {
-			if (hitobj && isDown) {
+			if (canMove && isDown) {
+				
 				var plane_point = do_object_point(ms.x, ms.y);
-				update_position(hitobj, plane_point);
-				update_position(hitobj.userData.model, plane_point);
+
+				update_position(selectedObj, plane_point, plane_point_temp, direction);
+				update_position(selectedObj.userData.model, plane_point, plane_point_temp, direction);
+				update_position(gizmoObj, plane_point, plane_point_temp, direction);
+
+				if (plane_point !== null)
+					plane_point_temp = plane_point;
 
 				if (model_label !== null) {
 					model_label.style.display = 'none';
@@ -418,20 +459,76 @@ function krpanoplugin() {
 			}
 		}
 		else if (type == "onup") {
-			if (hitobj && hitobj.properties.enabled) {
-				if (hitobj.properties.pressed) {
-					hitobj.properties.pressed = false;
-					if (hitobj.properties.onup) {
-						hitobj.properties.onup(hitobj);
-						if (model_label !== null) {
-							model_label.style.display = 'block';
+			if (hitobj && isDown) {
+				hitobj.userData.temp.properties.onup(hitobj.userData.temp);
+				
+				if (model_label !== null) {
+					model_label.style.display = 'block';
+				}
+
+				hitobj.userData.temp.userData.model.traverse((obj) => {
+                    if(obj instanceof THREE.Mesh){
+						if (obj.name == 'sculpture-model') {
+							obj.material.emissive.setHex(0x001f1f);
+							obj.material.transparent = true;
+							obj.material.opacity = 0.8;
+							obj.material.needsUpdate = true;
 						}
-					}
+                    }
+                });
+
+				if (!canMove) {
+					make_gizmo(hitobj.userData.temp);
 				}
 			}
 			isDown = false;
 			krpano.mouse.down = false;
+			canMove = false;
 		}
+	}
+
+	function make_gizmo(object) {
+		var gizmo = new THREE.Group();
+
+		var arrowGeometry = new THREE.ConeGeometry(0.5, 3, 32);
+		var directGeometry = new THREE.CylinderGeometry(0.2, 0.2, 30, 32);
+		var gizmoPlaneGeometry = new THREE.PlaneGeometry(10, 10);
+
+		var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8}));
+		var arrow_z = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
+		var direct_x = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8 }));
+		var direct_z = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
+		var gizmoPlane = new THREE.Mesh(gizmoPlaneGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, transparent: false, opacity: 0.8}));
+
+		arrow_x.position.set(30, 0, 0);
+		arrow_z.position.set(0, 0, 30);
+		direct_x.position.set(15, 0, 0);
+		direct_z.position.set(0, 0, 15);
+		gizmoPlane.position.set(5, 0, 5);
+
+		arrow_x.name = 'arrow_x';
+		arrow_z.name = 'arrow_z';
+		direct_x.name = 'direct_x';
+		direct_z.name = 'direct_z';
+		gizmoPlane.name = 'gizmoPlane';
+
+		arrow_x.rotation.z = - Math.PI / 2;
+		arrow_z.rotation.x = Math.PI / 2;
+		direct_x.rotation.z = Math.PI / 2;
+		direct_z.rotation.x = Math.PI / 2;
+		gizmoPlane.rotation.x = Math.PI / 2;
+
+		gizmo.add(arrow_x);
+		gizmo.add(arrow_z);
+		gizmo.add(direct_x);
+		gizmo.add(direct_z);
+		gizmo.add(gizmoPlane);
+
+		gizmo.userData.temp = object;
+		object.userData.gizmo = gizmo;
+		scene.add(gizmo);
+
+		gizmo.position.set(object.position.x, object.position.y, object.position.z);
 	}
 
 	function handle_mouse_hovering() {
@@ -440,25 +537,9 @@ function krpanoplugin() {
 		{
 			var hitobj = do_object_hittest(krpano.mouse.x, krpano.mouse.y)?.object;
 
-			if (hitobj != handle_mouse_hitobject) {
-				if (handle_mouse_hitobject) {
-					handle_mouse_hitobject.properties.hovering = false;
-					if (handle_mouse_hitobject.properties.onout) handle_mouse_hitobject.properties.onout(handle_mouse_hitobject);
-				}
-
-				if (hitobj) {
-					hitobj.properties.hovering = true;
-					if (hitobj.properties.onover) hitobj.properties.onover(hitobj);
-				}
-
-				handle_mouse_hitobject = hitobj;
-			}
-
-			if (handle_mouse_hitobject)// || (krpano.display.stereo == false && krpano.display.hotspotrenderer != "webgl"))
-			{
+			if (hitobj) {
 				krpano.control.layer.style.cursor = krpano.cursors.hit;
-			}
-			else {
+			} else {
 				krpano.cursors.update();
 			}
 		}
@@ -476,8 +557,12 @@ function krpanoplugin() {
 		object.rotation.y += 0.005;
 	}
 
-	function update_position(hitobj, position) {
-		if (position)
-			hitobj.position.set(position.x, hitobj.position.y, position.z);
+	function update_position(hitobj, position, temp, direction) {
+		if (position) {
+			if (direction == 'x') hitobj.position.set(hitobj.position.x + position.x - temp.x, hitobj.position.y, hitobj.position.z);
+			if (direction == 'z') hitobj.position.set(hitobj.position.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
+			if (direction == 'xz') hitobj.position.set(hitobj.position.x + position.x - temp.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
+		}
+
 	}
 }

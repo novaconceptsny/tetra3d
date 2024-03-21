@@ -278,8 +278,8 @@
         var wallMesh2 = null;
         var wallMesh3 = null;
 
-        var label = null;
-        label = document.createElement('div');
+        
+
         var layout_id = '{{ $layout_id }}';
         var sculptures = @json($sculptures);
         var sculpture_data = @json($sculptureData);
@@ -296,6 +296,7 @@
                 } else {
                     for (let i = 0; i < sculpture_data.length; i++) {
                         sculpture_id_list.push(sculpture_data[i].sculpture_id);
+                        
                         load_model(sculpture_data[i].sculpture_id, 
                             sculpture_data[i].model_id, 
                             sculpture_data[i].position_x - spot_position.x * 30, 
@@ -303,7 +304,8 @@
                             sculpture_data[i].position_z + spot_position.z * 30, 
                             sculpture_data[i].rotation_x, 
                             sculpture_data[i].rotation_y, 
-                            sculpture_data[i].rotation_z);
+                            sculpture_data[i].rotation_z
+                        );
                     }
     
                     offset_x = spot_position.x * 30;
@@ -322,14 +324,14 @@
                     var full_model_url = asset_url + model_url;
                     var full_surface_url = asset_url + surface_url;
             
+                    // Load Base Space model
                     loader.load(full_model_url, function (gltf) {
                         model = gltf.scene;
                         model.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false})
-                                }
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: true, visible: false})
                             }
-                        )
+                        });
                         model.rotation.x = -Math.PI;
                         model.rotation.y = Math.PI / 2;
                         model.scale.set(30, 30, 30);
@@ -337,17 +339,18 @@
                         scene.add(model);
                     });
 
+                    // Load Surface Model
                     loader.load(full_surface_url, function (gltf) {
                         surface = gltf.scene;
                         surface.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
                                 obj.name = "surface-model";
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
-                                }
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: true, visible: false})
                             }
-                        )
+                        });
                         surface.rotation.x = -Math.PI;
                         surface.rotation.y = Math.PI / 2;
+
                         surface.scale.set(30, 30, 30);
                         surface.position.set(-offset_x, offset_y, offset_z);
 
@@ -401,17 +404,18 @@
         function getSize(object) {
             let measure = new THREE.Vector3();
             var boundingBox = new THREE.Box3().setFromObject(object);
-            // var size = boundingBox.getSize(measure);
-            console.log(boundingBox);
+
             let width = boundingBox.max.x - boundingBox.min.x;
             let height = boundingBox.max.y - boundingBox.min.y;
             let depth = boundingBox.max.z - boundingBox.min.z;
+
             return { width: width, height: height, depth: depth };
         }
 
+        var label = document.createElement('div');
+
         function createLabel(object) {
             label.innerHTML = "";
-
             label.style.position = 'absolute';
             label.style.width = 300 + "px";
             label.style.height = 100 + "px";
@@ -468,6 +472,7 @@
             delete_btn.classList.add('btn');
             delete_btn.style.borderRadius = 30 + "px";
             delete_btn.style.borderColor = "white";
+
             var delete_icon = document.createElement('i');
             delete_icon.style.scale = 1.5;
             delete_icon.style.padding = 8 + "px";
@@ -500,6 +505,7 @@
             save_btn.classList.add('btn');
             save_btn.style.borderRadius = 30 + 'px';
             save_btn.style.borderColor = 'white';
+
             var save_icon = document.createElement('i');
             save_icon.style.scale = 1.5;
             save_icon.style.padding = 8 + "px";
@@ -548,10 +554,12 @@
 
         function loadTemp(object, position, rotation_x, rotation_y, rotation_z) {
             var temp;
-            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false});
+            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false, transparent: true, opacity: 0.2});
+
             var width = getSize(object).width;
             var height = getSize(object).height;
             var depth = getSize(object).depth;
+
             temp = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), invisibleMat);
 
             assign_object_properties(temp, "temp", { 
@@ -564,24 +572,30 @@
                 scale: 30,
                 onup: function (obj) { createLabel(obj) } 
             });
+
             scene.add(temp);
+
             temp.userData.model = object;
-            console.log(temp.position);
+
             return temp;
         }
 
         function addTemp(object) {
             var temp;
-            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false});
+            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false, transparent: true, opacity: 0.2});
+
             var width = getSize(object).width;
             var height = getSize(object).height;
             var depth = getSize(object).depth;
+
             temp = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), invisibleMat);
 
             assign_object_properties(temp, "temp", { ath: +0, atv: -90, depth: 70, scale: 30, onup: function (obj) { createLabel(obj) } });
 
             scene.add(temp);
+
             temp.userData.model = object;
+
             return temp;
         }
 
@@ -602,8 +616,9 @@
             const loader = new THREE.GLTFLoader();
             const dracoLoader = new THREE.DRACOLoader();
             loader.setDRACOLoader(dracoLoader);
+
             var model = null;
-            var sculpture_url;
+            var sculpture_url = '';
 
             sculptures.forEach(function (sculpture) {
                 if (sculpture.id == imageId) {
@@ -618,11 +633,21 @@
                 model = gltf.scene;
                 model.castShadow = true;
                 model.receiveShadow = true;
-                scene.add(model);
+
                 if (!tour_is_shared) {
                     var temp = addTemp(model);
                     model.userData.temp = temp;
                 }
+
+                model.traverse((obj) => {
+                    if(obj instanceof THREE.Mesh){
+                        obj.name = "sculpture-model";
+                        obj.userData.temp = temp
+                    }
+                });
+
+                scene.add(model);
+
                 model.userData.id = imageId;
                 model.userData.sculpture_id = sculp_id;
 
@@ -633,8 +658,9 @@
         function load_model(sculp_id, imageId, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
             const loader = new THREE.GLTFLoader();
             const dracoLoader = new THREE.DRACOLoader();
-            var sculpture_url = '';
             loader.setDRACOLoader(dracoLoader);
+
+            var sculpture_url = '';
 
             sculptures.forEach(function (sculpture) {
                 if (sculpture.id == imageId) {
@@ -650,13 +676,24 @@
                 model = gltf.scene;
                 model.castShadow = true;
                 model.receiveShadow = true;
-                scene.add(model);
+
                 if (!tour_is_shared) {
                     var temp = loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z);
                     model.userData.temp = temp;
                 }
+
+                model.traverse((obj) => {
+                    if(obj instanceof THREE.Mesh){
+                        obj.name = "sculpture-model";
+                        obj.userData.temp = temp;
+                    }
+                });
+
+                scene.add(model);
+
                 model.userData.id = imageId;
                 model.userData.sculpture_id = sculp_id;
+
                 assign_object_properties(model, "model", { 
                     ath: spherical_position.phi, 
                     atv: spherical_position.theta, 
@@ -678,6 +715,46 @@
             phi = phi * 180 / Math.PI;
             
             return { r: r, theta: theta, phi: phi };
+        }
+
+        function make_gizmo(object) {
+            var gizmo = new THREE.Group();
+
+            var arrowGeometry = new THREE.ConeGeometry(0.5, 3, 32);
+            var directGeometry = new THREE.CylinderGeometry(0.2, 0.2, 30, 32);
+            var gizmoPlaneGeometry = new THREE.PlaneGeometry(5, 5);
+
+            var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 'red', visible: true, transparent: true, opacity: 0.5}));
+            var arrow_z = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 'green', visible: true, transparent: true, opacity: 0.5 }));
+            var direct_x = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 'red', visible: true, transparent: true, opacity: 0.5 }));
+            var direct_z = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 'green', visible: true, transparent: true, opacity: 0.5 }));
+            var gizmoPlane = new THREE.Mesh(gizmoPlaneGeometry, new THREE.MeshBasicMaterial({ color: 'blue', visible: true, side: THREE.DoubleSide, transparent: true, opacity: 0.5}));
+
+            arrow_x.position.set(object.position.x + 30, object.position.y, object.position.z);
+            arrow_z.position.set(object.position.x, object.position.y, object.position.z + 30);
+            direct_x.position.set(object.position.x + 15, object.position.y, object.position.z);
+            direct_z.position.set(object.position.x, object.position.y, object.position.z + 15);
+            gizmoPlane.position.set(object.position.x + 5, object.position.y, object.position.z + 5);
+
+            arrow_x.rotation.z = - Math.PI / 2;
+            arrow_z.rotation.x = Math.PI / 2;
+            direct_x.rotation.z = Math.PI / 2;
+            direct_z.rotation.x = Math.PI / 2;
+            gizmoPlane.rotation.x = Math.PI / 2;
+
+            gizmo.add(arrow_x);
+            gizmo.add(arrow_z);
+            gizmo.add(direct_x);
+            gizmo.add(direct_z);
+            gizmo.add(gizmoPlane);
+
+            gizmo.name = 'gizmo';
+
+            scene.add(gizmo);
+        }
+
+        function highlight_object() {
+
         }
 
         document.addEventListener('DOMContentLoaded', function () {
