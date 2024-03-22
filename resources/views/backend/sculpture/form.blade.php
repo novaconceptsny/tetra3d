@@ -246,7 +246,7 @@
     if (sculpture) {
         document.getElementById('sculpture-model-name').innerHTML = sculpture.sculpture_url;
         document.getElementById('sculpture-thumbnail-name').innerHTML = sculpture.image_url;
-        docment.getElementById('sculpture-interaction-name').innerHTML = sculpture.type;
+        document.getElementById('sculpture-interaction-name').innerHTML = sculpture.type;
         var base_url = '<?php echo asset(''); ?>'
 
         GLTFLoad(base_url + 'storage/sculptures/' + sculpture.sculpture_url);
