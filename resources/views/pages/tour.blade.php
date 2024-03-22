@@ -114,55 +114,40 @@
             <div>
                 Choose from our exquisite collection of Sculptures to adorn your space.
             </div>
-            <div class="mt-3 modellist">
-            @foreach($sculptures as $sculpture)
-                <div class='sculpture-list'>
-                    <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
-                        alt="Image 1" data-image-id="{{ $sculpture->id }}">
-                    <div class='sculpture-list-data-container'>
-                        <input class='sculpture-list-data-artist' readonly='readonly' value='{{ $sculpture->artist }}'>
-                        <input value='{{ $sculpture->name }}' readonly='readonly' class='sculpture-list-data-name'>
-                        <input class='sculpture-list-data-dimention' readonly='readonly' value='{{ $sculpture->data }}'>
-                    </div>
+            <div class="row mt-3 modellist">
+                <div class="col-6">
+                    @foreach($sculptures as $sculpture)
+                        @if ($sculpture->id % 2 == 1)
+                            <div class='sculpture-list'>
+                                <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
+                                    alt="Image 1" data-image-id="{{ $sculpture->id }}">
+                                <div class='sculpture-list-data-container'>
+                                    <div class='sculpture-list-data-artist'>{{ $sculpture->artist }}</div>
+                                    <div class='sculpture-list-data-name'>{{ $sculpture->name }}</div>
+                                    <div class='sculpture-list-data-dimention'>{{ $sculpture->data }}</div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
-            @endforeach
+                <div class="col-6">
+                    @foreach($sculptures as $sculpture)
+                        @if ($sculpture->id % 2 == 0)
+                            <div class='sculpture-list'>
+                                <img class="image-list-item" src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}" data-bs-dismiss="offcanvas"
+                                    alt="Image 1" data-image-id="{{ $sculpture->id }}">
+                                <div class='sculpture-list-data-container'>
+                                    <div class='sculpture-list-data-artist'>{{ $sculpture->artist }}</div>
+                                    <div class='sculpture-list-data-name'>{{ $sculpture->name }}</div>
+                                    <div class='sculpture-list-data-dimention'>{{ $sculpture->data }}</div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
-@endsection
-
-@section('styles')
-<style>
-    .sculpture-list-data-container {
-        margin: 10px;
-    }
-
-    .sculpture-list-data-container>input {
-        border: unset;
-        width: 100%;
-    }
-
-    .sculpture-list-data-container>input:focus {
-        outline: none;
-    }
-
-    .sculpture-list-data-name {
-        font-weight: bold;
-        font-style: Italic;
-    }
-
-    .sculpture-list-data-dimention {
-
-    }
-
-    .image-list-item {
-        aspect-ratio: 4 / 3;
-    }
-
-    .sculpture-list {
-        border: solid 1px;
-    }
-</style>
 @endsection
 
 @section('scripts')
@@ -329,7 +314,7 @@
                         model = gltf.scene;
                         model.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: true, visible: false})
                             }
                         });
                         model.rotation.x = -Math.PI;
@@ -345,7 +330,7 @@
                         surface.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
                                 obj.name = "surface-model";
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: true, visible: false})
                             }
                         });
                         surface.rotation.x = -Math.PI;
@@ -552,51 +537,63 @@
             object.position.copy(object.userData.model.position);
         }
 
-        function loadTemp(object, position, rotation_x, rotation_y, rotation_z) {
+        function loadTemp(object, position, rotation_x, rotation_y, rotation_z, temp_model_url) {
             var temp;
-            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false, transparent: true, opacity: 0.2});
+            const loader = new THREE.GLTFLoader();
+            const dracoLoader = new THREE.DRACOLoader();
+            loader.setDRACOLoader(dracoLoader);
 
-            var width = getSize(object).width;
-            var height = getSize(object).height;
-            var depth = getSize(object).depth;
+            loader.load(temp_model_url, function (gltf) {
+                temp = gltf.scene;
+                temp.traverse((obj) => {
+                    if(obj instanceof THREE.Mesh){
+                        obj.name = "interaction-model";
+                        obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, visible: false, transparent: true, opacity: 0.2})
+                        obj.userData.model = object
+                    }
+                });
 
-            temp = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), invisibleMat);
+                scene.add(temp);
 
-            assign_object_properties(temp, "temp", { 
-                ath: position.phi, 
-                atv: position.theta, 
-                depth: position.r, 
-                rx: rotation_x * 180 / Math.PI,
-                ry: rotation_y * 180 / Math.PI,
-                rz: rotation_z * 180 / Math.PI,
-                scale: 30,
-                onup: function (obj) { createLabel(obj) } 
+                assign_object_properties(temp, "temp", { 
+                    ath: position.phi, 
+                    atv: position.theta, 
+                    depth: position.r, 
+                    rx: rotation_x * 180 / Math.PI,
+                    ry: rotation_y * 180 / Math.PI,
+                    rz: rotation_z * 180 / Math.PI,
+                    scale: 30,
+                    onup: function (obj) { createLabel(obj) } 
+                });
+
+                temp.userData.model = object;
+                object.userData.temp = temp;
             });
-
-            scene.add(temp);
-
-            temp.userData.model = object;
-
-            return temp;
         }
 
-        function addTemp(object) {
-            var temp;
-            var invisibleMat = new THREE.MeshBasicMaterial({ color: 'blue', visible: false, transparent: true, opacity: 0.2});
+        async function addTemp(object, temp_model_url) {
+            var temp = null;
+            const loader = new THREE.GLTFLoader();
+            const dracoLoader = new THREE.DRACOLoader();
+            loader.setDRACOLoader(dracoLoader);
 
-            var width = getSize(object).width;
-            var height = getSize(object).height;
-            var depth = getSize(object).depth;
+            await loader.load(temp_model_url, function (gltf) {
+                temp = gltf.scene;
+                temp.traverse((obj) => {
+                    if(obj instanceof THREE.Mesh){
+                        obj.name = "interaction-model";
+                        obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, visible: false, transparent: true, opacity: 0.2})
+                        obj.userData.model = object;
+                    }
+                });
 
-            temp = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), invisibleMat);
+                scene.add(temp);
 
-            assign_object_properties(temp, "temp", { ath: +0, atv: -90, depth: 70, scale: 30, onup: function (obj) { createLabel(obj) } });
+                assign_object_properties(temp, "temp", { ath: +0, atv: -90, depth: 70, rz: -180, scale: 30, onup: function (obj) { createLabel(obj) } });
 
-            scene.add(temp);
-
-            temp.userData.model = object;
-
-            return temp;
+                temp.userData.model = object;
+                object.userData.temp = temp;
+            });
         }
 
         function handleImageClick(imageId) {
@@ -619,32 +616,32 @@
 
             var model = null;
             var sculpture_url = '';
+            var temp_url = '';
 
             sculptures.forEach(function (sculpture) {
                 if (sculpture.id == imageId) {
                     sculpture_url = sculpture.sculpture_url;
+                    temp_url = sculpture.type;
                 }
             });
 
             var base_url = '<?php echo asset(''); ?>';
             var model_url = base_url + 'storage/sculptures/' + sculpture_url;
+            var temp_model_url = base_url + 'storage/sculptures/interaction/' + temp_url;
 
-            loader.load(model_url, function (gltf) {
+            loader.load(model_url, async function (gltf) {
                 model = gltf.scene;
                 model.castShadow = true;
                 model.receiveShadow = true;
 
                 if (!tour_is_shared) {
-                    var temp = addTemp(model);
-                    model.userData.temp = temp;
+                    addTemp(model, temp_model_url);
+                    model.traverse((obj) => {
+                        if(obj instanceof THREE.Mesh){
+                            obj.name = "sculpture-model";
+                        }
+                    });
                 }
-
-                model.traverse((obj) => {
-                    if(obj instanceof THREE.Mesh){
-                        obj.name = "sculpture-model";
-                        obj.userData.temp = temp
-                    }
-                });
 
                 scene.add(model);
 
@@ -661,15 +658,18 @@
             loader.setDRACOLoader(dracoLoader);
 
             var sculpture_url = '';
+            var temp_url = '';
 
             sculptures.forEach(function (sculpture) {
                 if (sculpture.id == imageId) {
                     sculpture_url = sculpture.sculpture_url;
+                    temp_url = sculpture.type;
                 }
             });
 
             var base_url = '<?php echo asset(''); ?>';
             var model_url = base_url + 'storage/sculptures/' + sculpture_url;
+            var temp_model_url = base_url + 'storage/sculptures/interaction/' + temp_url;
             var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
 
             loader.load(model_url, function (gltf) {
@@ -678,16 +678,13 @@
                 model.receiveShadow = true;
 
                 if (!tour_is_shared) {
-                    var temp = loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z);
-                    model.userData.temp = temp;
+                    loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z, temp_model_url);
+                    model.traverse((obj) => {
+                        if(obj instanceof THREE.Mesh){
+                            obj.name = "sculpture-model";
+                        }
+                    });
                 }
-
-                model.traverse((obj) => {
-                    if(obj instanceof THREE.Mesh){
-                        obj.name = "sculpture-model";
-                        obj.userData.temp = temp;
-                    }
-                });
 
                 scene.add(model);
 
@@ -716,7 +713,7 @@
             
             return { r: r, theta: theta, phi: phi };
         }
-        
+
         document.addEventListener('DOMContentLoaded', function () {
             const images = document.querySelectorAll('.image-list-item'); 
             images.forEach(function (image) {

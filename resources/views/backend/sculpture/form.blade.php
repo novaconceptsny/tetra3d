@@ -41,6 +41,14 @@
                                 </button>
                                 <div id='sculpture-thumbnail-name'>Empty</div>
                             </div>
+                            <div class="col-12 mb-3">
+                                <h5>{{ __('Import Interaction Model') }}</h5>
+                                <input type='file' id='sculpture-interaction-input' accept=".glb" hidden name='interaction'></input>
+                                <button class="btn btn-primary mb-2 sculpture-choose-button" type='button'>
+                                    <label for='sculpture-interaction-input'>Choose Interaction Model</label>
+                                </button>
+                                <div id='sculpture-interaction-name'>Empty</div>
+                            </div>
                             <x-backend::inputs.select col="col-12 mb-3" id="sculpture-collection-select" name="artwork_collection_id" label="Collection" required>
                                 @foreach($artwork_collections as $collection)
                                     <x-backend::inputs.select-option
@@ -141,6 +149,13 @@
             document.getElementById('sculpture-thumbnail-name').innerHTML = e.target.files[0].name;
         }
     });
+    
+    document.getElementById('sculpture-interaction-input').addEventListener('change', function(e) {
+        if (e.target.files[0]) {
+            var url = URL.createObjectURL(e.target.files[0]);
+            document.getElementById('sculpture-interaction-name').innerHTML = e.target.files[0].name;
+        }
+    });
 
     document.getElementById('get-sculpture-thumbnail').addEventListener('click', function(e) {
         var thumbnailURL = renderer.domElement.toDataURL("image/png");
@@ -231,6 +246,7 @@
     if (sculpture) {
         document.getElementById('sculpture-model-name').innerHTML = sculpture.sculpture_url;
         document.getElementById('sculpture-thumbnail-name').innerHTML = sculpture.image_url;
+        docment.getElementById('sculpture-interaction-name').innerHTML = sculpture.type;
         var base_url = '<?php echo asset(''); ?>'
 
         GLTFLoad(base_url + 'storage/sculptures/' + sculpture.sculpture_url);
@@ -252,6 +268,7 @@
         e.preventDefault();
         var sculpture_input = document.getElementById('sculpture-model-name').innerHTML;
         var thumbnail_input = document.getElementById('sculpture-thumbnail-name').innerHTML;
+        var interaction_input = document.getElementById('sculpture-interaction-name').innerHTML;
         var collection_input = document.getElementById('sculpture-collection-select').value;
 
         if (sculpture_input === 'Empty') {
@@ -260,6 +277,9 @@
         else if (thumbnail_input === 'Empty') {
             alert('Thumbnail Image is not exist');
         } 
+        else if (interaction_input === 'Empty') {
+            alert('Interaction model is not exist');
+        }
         else if (collection_input === '') {
             alert('Please choose Collection');
         }

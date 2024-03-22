@@ -42,8 +42,13 @@ class SculptureController extends Controller
         $request->validate(ValidationRules::storeSculpture());
         
         $data = $request->all();
+
         $sculpture = $request->file('sculpture');
         $sculpture_fileName = $sculpture->getClientOriginalName();
+
+        $interaction = $request->file('interaction');
+        $interaction_fileName = $interaction->getClientOriginalName();
+
         if ($data['thumbnail-canvas']) {
             $thumbnail= $data['thumbnail-canvas'];
             $thumbnail = str_replace('data:image/png;base64,', '', $thumbnail);
@@ -59,17 +64,20 @@ class SculptureController extends Controller
             'artwork_collection_id'=>(int)$data['artwork_collection_id'],
             'sculpture_url'=>'', 
             'image_url'=>'', 
+            'type'=>'',
             'data'=>json_encode($data['data'])
         );
+
         $createdData = SculptureModel::create($save_data);
 
         $createdData->sculpture_url = $createdData->id.'_'.$sculpture_fileName;
         $createdData->image_url = $createdData->id.'_'.$thumbnail_fileName;
+        $createdData->type = $createdData->id.'_'.$interaction_fileName;
         $createdData->save();
 
-        $test_sculpture = SculptureModel::where('id', $createdData->id)->get();
-
         $sculpture->storeAs('public/sculptures', $createdData->sculpture_url);
+        $interaction->storeAs('public/sculptures/interaction', $createdData->type);
+
         if ($data['thumbnail-canvas']) {
             Storage::put('public/sculptures/thumbnails/' . $createdData->image_url, base64_decode($thumbnail));
         } else {
@@ -122,6 +130,13 @@ class SculptureController extends Controller
             $sculpture_fileName = $sculpture->getClientOriginalName();
             $updatedData[0]->sculpture_url = $updatedData[0]->id.'_'.$sculpture_fileName;
             $sculpture->storeAs('public/sculptures', $updatedData[0]->sculpture_url);
+        }
+
+        $interaction = $request->file('interaction');
+        if ($interaction) {
+            $interaction_fileName = $interaction->getClientOriginalName();
+            $updatedData[0]->type = $updatedData[0]->id.'_'.$interaction_fileName;
+            $interaction->storeAs('public/sculptures/interaction', $updatedData[0]->type);
         }
         
         if ($data['thumbnail-canvas']) {

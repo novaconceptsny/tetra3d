@@ -326,8 +326,8 @@ function krpanoplugin() {
 
 		for (i = 0; i < intersects.length; i++) {
 			var obj = intersects[i].object;
-			if (obj.name == 'sculpture-model') {
-				object = obj;
+			if (obj.name == 'interaction-model') {
+				object = obj.userData.model;
 				point = intersects[i].point;
 			}
 
@@ -403,6 +403,17 @@ function krpanoplugin() {
 		}
 
 		if (type == "ondown") {
+			if (selectedObj) {
+				scene.remove(selectedObj.userData.gizmo);
+				selectedObj.userData.model.traverse((obj) => {
+					if (obj.name == 'sculpture-model') {
+						obj.material.emissive.setHex(0x000000);
+						obj.material.transparent = false;
+						obj.material.opacity = 1;
+						obj.material.needsUpdate = true;
+					}
+				});
+			}
 			if ( hitobj || gizmo ) {
 				isDown = true;
 				krpano.mouse.down = true;
@@ -424,18 +435,6 @@ function krpanoplugin() {
 
 				if (model_label !== null) 
 					model_label.style.display = 'none';
-
-				if (selectedObj) {
-					scene.remove(selectedObj.userData.gizmo);
-					selectedObj.userData.model.traverse((obj) => {
-						if (obj.name == 'sculpture-model') {
-							obj.material.emissive.setHex(0x000000);
-							obj.material.transparent = false;
-							obj.material.opacity = 1;
-							obj.material.needsUpdate = true;
-						}
-					});
-				}
 
 				if (gizmoObj) 
 					scene.remove(gizmoObj);
@@ -459,14 +458,14 @@ function krpanoplugin() {
 			}
 		}
 		else if (type == "onup") {
-			if (hitobj && isDown) {
-				hitobj.userData.temp.properties.onup(hitobj.userData.temp);
+			if (selectedObj && isDown) {
+				selectedObj.properties.onup(selectedObj);
 				
 				if (model_label !== null) {
 					model_label.style.display = 'block';
 				}
 
-				hitobj.userData.temp.userData.model.traverse((obj) => {
+				selectedObj.userData.model.traverse((obj) => {
                     if(obj instanceof THREE.Mesh){
 						if (obj.name == 'sculpture-model') {
 							obj.material.emissive.setHex(0x001f1f);
@@ -477,9 +476,9 @@ function krpanoplugin() {
                     }
                 });
 
-				if (!canMove) {
-					make_gizmo(hitobj.userData.temp);
-				}
+				// if (!canMove) {
+					make_gizmo(selectedObj);
+				// }
 			}
 			isDown = false;
 			krpano.mouse.down = false;
@@ -563,6 +562,5 @@ function krpanoplugin() {
 			if (direction == 'z') hitobj.position.set(hitobj.position.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
 			if (direction == 'xz') hitobj.position.set(hitobj.position.x + position.x - temp.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
 		}
-
 	}
 }
