@@ -314,7 +314,7 @@
                         model = gltf.scene;
                         model.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: true, visible: false})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false, visible: true})
                             }
                         });
                         model.rotation.x = -Math.PI;
@@ -330,7 +330,7 @@
                         surface.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
                                 obj.name = "surface-model";
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: true, visible: false})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false, visible: true})
                             }
                         });
                         surface.rotation.x = -Math.PI;
