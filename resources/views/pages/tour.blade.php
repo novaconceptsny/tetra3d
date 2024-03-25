@@ -34,15 +34,12 @@
 @section('outside-menu')
     <div class="menu-links d-flex align-items-center gap-4">
         @if ($userName == "Super Admin")
-            <div class="toggle-layout" id="toggle_layout">
-                <input type="checkbox" name="toggle_layout" />
-                <label class="toggle-layout-label" for="toggle_layout">Space Model</label>
+            <div id="toggle_layout">
+                <button onclick="toggleLayout()" class="toggle-layout" >Space Model</button>
             </div>
-        @endif
-        @if ($userName !== "Super Admin")
-            <div class="toggle-layout" id="toggle_layout" hidden>
-                <input type="checkbox" name="toggle_layout" />
-                <label class="toggle-layout-label" for="toggle_layout">Space Model</label>
+        @else
+            <div id="toggle_layout" hidden>
+                <button onclick="toggleLayout()" class="toggle-layout" >Space Model</button>
             </div>
         @endif
         <x-menu-item
@@ -278,6 +275,8 @@
         var model = null;
         var surface = null;
         var user_name = '';
+        var toggle_space_model = false;
+        var sculpture_change_list = [];
 
         var layout_id = '{{ $layout_id }}';
         var sculptures = @json($sculptures);
@@ -287,24 +286,34 @@
         var tour_is_shared = @json($tour_is_shared);
         var user_name = @json($userName);
 
-        document.getElementById('toggle_layout').addEventListener('change', function (e) {
-            if (e.target.checked) {
+        function toggleLayout() {
+            toggle_space_model = !toggle_space_model;
+            
+            if (toggle_space_model) {
                 model.traverse((obj) => {
                     if(obj instanceof THREE.Mesh){
-                        obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: true, visible: true, transparent: true, opacity: 0.5})
+                        obj.material.colorWrite = true;
+                        obj.material.visible = true;
+                        obj.material.transparent = true;
+                        obj.material.opacity = 0.5;
                     }
                 });
             } else {
                 model.traverse((obj) => {
                     if(obj instanceof THREE.Mesh){
-                        obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false, visible: true, transparent: false, opacity: 0.5})
+                        obj.material.colorWrite = false;
                     }
                 });
             }
-        });
+        };
 
         window.addEventListener('beforeunload', function(e) {
-            e.preventDefault();
+            scene.children.forEach(function (object) {
+                if (object.userData.changed) {
+                    console.log(object);
+                    e.preventDefault();
+                }
+            });
         });
 
         var delay_interval = setInterval(function() {
@@ -347,7 +356,7 @@
                         model = gltf.scene;
                         model.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false, visible: true})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false})
                             }
                         });
                         model.rotation.x = -Math.PI;
@@ -363,7 +372,7 @@
                         surface.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
                                 obj.name = "surface-model";
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false, visible: true})
+                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
                             }
                         });
                         surface.rotation.x = -Math.PI;
@@ -454,6 +463,7 @@
 
             animate_btn.onclick = function () {
                 window.isAnimate = !window.isAnimate;
+                object.userData.changed = true;
             }
 
             var anim_icon = document.createElement('i');
@@ -507,6 +517,7 @@
             save_icon.classList.add('fa-save');
 
             save_btn.onclick = function () {
+                object.userData.changed = false;
                 label.innerHTML = '';
                 var request_data = {
                     'layout_id': layout_id,
@@ -609,6 +620,7 @@
                 });
 
                 temp.userData.model = object;
+                temp.userData.changed = true;
                 object.userData.temp = temp;
             });
         }

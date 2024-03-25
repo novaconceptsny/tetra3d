@@ -1,5 +1,6 @@
 <thead class="bg-200 text-900">
 <tr class="dt-row">
+
     @foreach($columns as $column => $header)
         @php
             $moveToStart = isset($header['move_to_start']) ? "data-move-to-start=true" : "";

@@ -458,6 +458,7 @@ function krpanoplugin() {
 					model_label.style.display = 'none';
 				}
 				
+				selectedObj.userData.changed = true;
 			}
 		}
 		else if (type == "onup") {
@@ -492,9 +493,9 @@ function krpanoplugin() {
 	function make_gizmo(object) {
 		var gizmo = new THREE.Group();
 
-		var arrowGeometry = new THREE.ConeGeometry(1, 3, 32);
-		var directGeometry = new THREE.CylinderGeometry(0.5, 0.5, 30, 32);
-		var gizmoPlaneGeometry = new THREE.PlaneGeometry(10, 10);
+		var arrowGeometry = new THREE.ConeGeometry(4, 8, 32);
+		var directGeometry = new THREE.CylinderGeometry(2, 2, 30, 32);
+		var gizmoPlaneGeometry = new THREE.PlaneGeometry(15, 15);
 
 		var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8}));
 		var arrow_z = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
@@ -506,7 +507,7 @@ function krpanoplugin() {
 		arrow_z.position.set(0, 0, 30);
 		direct_x.position.set(15, 0, 0);
 		direct_z.position.set(0, 0, 15);
-		gizmoPlane.position.set(5, 0, 5);
+		gizmoPlane.position.set(7.5, 0, 7.5);
 
 		arrow_x.name = 'arrow_x';
 		arrow_z.name = 'arrow_z';
