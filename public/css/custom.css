@@ -144,6 +144,17 @@
 .offcanvas-body {
     padding: 10px;
 }
+
+.toggle-layout {
+    display: flex;
+    gap: 10px;
+    font-family: var(--main-font-family);
+}
+
+.toggle-layout-label {
+    font-weight: var(--regular-font);
+    font-size: 16px;
+}
 /*td.layout-table-title:hover a{*/
 /*    display: inline-block;*/
 /*}*/

@@ -18,6 +18,11 @@
                 </button></br></br>
                 <div id='surface-model-name'></div>
             </div>
+
+            <div class="col-12">
+                <input type="checkbox" id="toggle_layout" name="toggle_layout" checked />
+                <label for="toggle_layout">Toggle Space Model Layout</label>
+            </div>
             
             <div class="row g-3 mt-2">
                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
@@ -65,7 +70,7 @@
 
 <script type="module">
     let container, stats, controls, isMouseDown;
-    let camera, cameraTarget, scene, renderer;
+    let camera, cameraTarget, scene, renderer, model;
 
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -152,8 +157,7 @@
         var loader = new GLTFLoader();
         var dracoLoader = new DRACOLoader();
         loader.setDRACOLoader(dracoLoader);
-        var model = null;
-
+        
         scene.traverse(function (object) {
             if (object.name === 'space-model') {
                 scene.remove(object);

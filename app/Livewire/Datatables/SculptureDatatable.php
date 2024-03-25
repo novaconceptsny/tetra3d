@@ -42,7 +42,7 @@ class SculptureDatatable extends BaseDatatable
 
         $rows = SculptureModel::all();
         
-        foreach($rows as $row) {
+        foreach($rows as $key => $row) {
             $row->data = json_decode($row->data);
             $row->data->length = number_format((float)$row->data->length, 2);
             $row->data->width = number_format((float)$row->data->width, 2);
@@ -50,7 +50,11 @@ class SculptureDatatable extends BaseDatatable
             $row->data = $row->data->length.'x'.$row->data->width.'x'.$row->data->height;
 
             $collection = ArtworkCollection::where('id', $row->artwork_collection_id)->get();
-            $row->artwork_collection_id = $collection[0]->name;
+            if (!$collection->isEmpty())
+                $row->artwork_collection_id = $collection[0]->name;
+            else {
+                unset($rows[$key]);
+            }
         }
 
         $data['rows'] = $rows;

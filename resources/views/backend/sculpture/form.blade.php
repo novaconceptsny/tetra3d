@@ -2,7 +2,7 @@
 
 @section('title_right')
     <x-backend::layout.breadcrumbs>
-        <x-backend::layout.breadcrumb-item text="Artworks" :route="route('backend.artworks.index')" />
+        <x-backend::layout.breadcrumb-item text="Sculptures" :route="route('backend.sculptures.index')" />
         <x-backend::layout.breadcrumb-item text="Form" :active="true" />
     </x-backend::layout.breadcrumbs>
 @endsection
@@ -10,7 +10,7 @@
 @section('content')
     @php($sculpture = $sculpture ?? null)
     @php($edit_mode = (bool)$sculpture)
-    @php($heading = $heading ?? ( $sculpture ? __('Edit Artwork') : __('Add New Artwork') ))
+    @php($heading = $heading ?? ( $sculpture ? __('Edit Sculpture') : __('Add New Sculpture') ))
 
     <div class="card mb-3">
         <div class="card-header">
@@ -73,7 +73,7 @@
                     <div class="col-9 sculpture-right" id="sculpture-canvas-div">
                         <canvas id="sculpture-canvas"></canvas>
                         <button class="btn btn-primary get-sculpture-thumbnail" id='get-sculpture-thumbnail' type='button'>
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-camera"></i>
                         </button>
                     </div>
                 </div>

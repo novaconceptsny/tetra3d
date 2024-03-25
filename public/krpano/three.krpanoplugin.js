@@ -441,6 +441,8 @@ function krpanoplugin() {
 			}
 		}
 		else if (type == "onmove") {
+			event.preventDefault();
+			event.stopPropagation();
 			if (canMove && isDown) {
 				
 				var plane_point = do_object_point(ms.x, ms.y);
@@ -455,6 +457,7 @@ function krpanoplugin() {
 				if (model_label !== null) {
 					model_label.style.display = 'none';
 				}
+				
 			}
 		}
 		else if (type == "onup") {
@@ -489,8 +492,8 @@ function krpanoplugin() {
 	function make_gizmo(object) {
 		var gizmo = new THREE.Group();
 
-		var arrowGeometry = new THREE.ConeGeometry(0.5, 3, 32);
-		var directGeometry = new THREE.CylinderGeometry(0.2, 0.2, 30, 32);
+		var arrowGeometry = new THREE.ConeGeometry(1, 3, 32);
+		var directGeometry = new THREE.CylinderGeometry(0.5, 0.5, 30, 32);
 		var gizmoPlaneGeometry = new THREE.PlaneGeometry(10, 10);
 
 		var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8}));
@@ -534,12 +537,14 @@ function krpanoplugin() {
 		// check mouse over state
 		if (krpano.mouse.down == false)		// currently not dragging?
 		{
-			var hitobj = do_object_hittest(krpano.mouse.x, krpano.mouse.y)?.object;
+			var hittest = do_object_hittest(krpano.mouse.x, krpano.mouse.y);
 
-			if (hitobj) {
-				krpano.control.layer.style.cursor = krpano.cursors.hit;
-			} else {
-				krpano.cursors.update();
+			if (hittest) {
+				if (hittest.object || hittest.gizmo) {
+					krpano.control.layer.style.cursor = krpano.cursors.hit;
+				} else {
+					krpano.cursors.update();
+				}
 			}
 		}
 	}
@@ -554,6 +559,7 @@ function krpanoplugin() {
 
 	function rotate_object(object) {
 		object.rotation.y += 0.005;
+		object.userData.temp.rotation.y += 0.005;
 	}
 
 	function update_position(hitobj, position, temp, direction) {

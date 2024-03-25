@@ -18,6 +18,7 @@
 
     // only admins can see tracker
     $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
+    $userName = user()?->name;
 @endphp
 
 @section('page_actions')
@@ -32,6 +33,12 @@
 
 @section('outside-menu')
     <div class="menu-links d-flex align-items-center gap-4">
+        @if ($userName == 'Super Admin')
+            <div class="toggle-layout">
+                <input type="checkbox" id="toggle_layout" name="toggle_layout" />
+                <label class="toggle-layout-label" for="toggle_layout">Space Model</label>
+            </div>
+        @endif
         <x-menu-item
             text="List View" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))"
@@ -50,14 +57,15 @@
             text="Artwork Collection" 
             icon="fal fa-palette" 
             :route="route('artworks.index')" :visible="!$tour_is_shared"/>
-        <x-menu-item 
-            text="Sculpture List " 
-            icon="fal fa-palette" target="_self" route="#" 
-            :visible="$project && !$tour_is_shared"
-            data-bs-toggle="offcanvas" 
-            data-bs-target="#offcanvasExample" 
-            aria-controls="offcanvasExample" 
-        />
+        @if ($project && !$tour_is_shared)
+            <x-menu-item 
+                text="Sculpture List" 
+                icon="fal fa-cube" target="_self" route="#" 
+                data-bs-toggle="offcanvas" 
+                data-bs-target="#offcanvasExample" 
+                aria-controls="offcanvasExample" 
+            />
+        @endif
     </div>
 @endsection
 
@@ -262,8 +270,9 @@
         var wallMesh1 = null;
         var wallMesh2 = null;
         var wallMesh3 = null;
-
-        
+        var model = null;
+        var surface = null;
+        var user_name = '';
 
         var layout_id = '{{ $layout_id }}';
         var sculptures = @json($sculptures);
@@ -271,6 +280,27 @@
         var spot_position = @json($spotPosition);
         var space_model = @json($tourModel);
         var tour_is_shared = @json($tour_is_shared);
+        var user_name = @json($userName);
+
+        document.getElementById('toggle_layout').addEventListener('change', function (e) {
+            if (e.target.checked) {
+                model.traverse((obj) => {
+                    if(obj instanceof THREE.Mesh){
+                        obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: true, visible: true, transparent: true, opacity: 0.5})
+                    }
+                });
+            } else {
+                model.traverse((obj) => {
+                    if(obj instanceof THREE.Mesh){
+                        obj.material = new THREE.MeshBasicMaterial({color: 0x00ff00, colorWrite: false, visible: true, transparent: false, opacity: 0.5})
+                    }
+                });
+            }
+        });
+
+        window.addEventListener('beforeunload', function(e) {
+            e.preventDefault();
+        });
 
         var delay_interval = setInterval(function() {
             if (window.scene !== undefined) {
@@ -301,8 +331,6 @@
                     var dracoLoader = new THREE.DRACOLoader();
                     loader.setDRACOLoader(dracoLoader);
     
-                    var model = null;
-                    var surface = null;
                     var model_url = 'storage/3dmodel/' + space_model.name;
                     var surface_url = 'storage/3dmodel/surface/' + space_model.surface;
                     var asset_url = '<?php echo asset(''); ?>';
@@ -427,31 +455,7 @@
             anim_icon.style.scale = 1.5;
             anim_icon.style.padding = 8 + "px";
             anim_icon.classList.add('fa');
-            anim_icon.classList.add('fa-refresh');
-
-            var info_btn = document.createElement('button');
-            info_btn.classList.add('btn');
-            info_btn.style.borderRadius = 30 + "px";
-            info_btn.style.borderColor = "white";
-
-            var help_icon = document.createElement('i');
-            help_icon.style.scale = 1.5;
-            help_icon.style.padding = 8 + "px";
-            help_icon.classList.add('fa');
-            help_icon.classList.add('fa-info');
-
-            var info_div = document.createElement('div');
-            info_btn.onclick = function () {
-                info_div.innerHTML = "";
-                info_div.innerHTML = "Model Description";
-                info_div.style.height = 80 + "px";
-                info_div.style.width = 150 + "px";
-                info_div.style.backgroundColor = "white";
-                info_div.style.color = "black";
-                info_div.style.fontSize = 14 + "px";
-                info_div.style.borderRadius = 10 + "px";
-                label.append(info_div);
-            }
+            anim_icon.classList.add('fa-refresh');           
 
             var delete_btn = document.createElement('button');
             delete_btn.classList.add('btn');
@@ -526,10 +530,8 @@
             container.append(label);
 
             label.append(animate_btn);
-            label.append(info_btn);
             label.append(delete_btn);
             label.append(save_btn);
-            info_btn.append(help_icon);
             animate_btn.append(anim_icon);
             delete_btn.append(delete_icon);
             save_btn.append(save_icon);
@@ -571,13 +573,16 @@
             });
         }
 
-        async function addTemp(object, temp_model_url) {
+        function addTemp(object, temp_model_url) {
             var temp = null;
             const loader = new THREE.GLTFLoader();
             const dracoLoader = new THREE.DRACOLoader();
             loader.setDRACOLoader(dracoLoader);
 
-            await loader.load(temp_model_url, function (gltf) {
+            var add_model_position = findAddModelPosition();
+            var spherical_position = cartesianToSpherical(-add_model_position.x * 30, offset_y, -add_model_position.z * 30);
+            
+            loader.load(temp_model_url, function (gltf) {
                 temp = gltf.scene;
                 temp.traverse((obj) => {
                     if(obj instanceof THREE.Mesh){
@@ -589,7 +594,14 @@
 
                 scene.add(temp);
 
-                assign_object_properties(temp, "temp", { ath: +0, atv: -90, depth: 70, rz: -180, scale: 30, onup: function (obj) { createLabel(obj) } });
+                assign_object_properties(temp, "temp", { 
+                    ath: spherical_position.phi, 
+                    atv: spherical_position.theta, 
+                    depth: spherical_position.r,  
+                    rz: -180, 
+                    scale: 30, 
+                    onup: function (obj) { createLabel(obj) } 
+                });
 
                 temp.userData.model = object;
                 object.userData.temp = temp;
@@ -628,6 +640,8 @@
             var base_url = '<?php echo asset(''); ?>';
             var model_url = base_url + 'storage/sculptures/' + sculpture_url;
             var temp_model_url = base_url + 'storage/sculptures/interaction/' + temp_url;
+            var add_model_position = findAddModelPosition();
+            var spherical_position = cartesianToSpherical(-add_model_position.x * 30, offset_y, -add_model_position.z * 30);
 
             loader.load(model_url, async function (gltf) {
                 model = gltf.scene;
@@ -648,7 +662,13 @@
                 model.userData.id = imageId;
                 model.userData.sculpture_id = sculp_id;
 
-                assign_object_properties(model, "model", { ath: +0, atv: -90, depth: 70, rz: -180, scale: 30 });
+                assign_object_properties(model, "model", { 
+                    ath: spherical_position.phi, 
+                    atv: spherical_position.theta, 
+                    depth: spherical_position.r, 
+                    rz: -180, 
+                    scale: 30 
+                });
             });
         }
 
@@ -657,6 +677,7 @@
             const dracoLoader = new THREE.DRACOLoader();
             loader.setDRACOLoader(dracoLoader);
 
+            var model = null;
             var sculpture_url = '';
             var temp_url = '';
 
@@ -701,6 +722,12 @@
                     scale: 30,
                 });
             });
+        }
+
+        function findAddModelPosition() {
+            var position = new THREE.Vector3();
+            camera.getWorldDirection(position);
+            return position;
         }
 
         function cartesianToSpherical(x, y, z) {
