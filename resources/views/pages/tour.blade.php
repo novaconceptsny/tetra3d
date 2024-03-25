@@ -57,15 +57,14 @@
             text="Artwork Collection" 
             icon="fal fa-palette" 
             :route="route('artworks.index')" :visible="!$tour_is_shared"/>
-        @if ($project && !$tour_is_shared)
-            <x-menu-item 
-                text="Sculpture List" 
-                icon="fal fa-cube" target="_self" route="#" 
-                data-bs-toggle="offcanvas" 
-                data-bs-target="#offcanvasExample" 
-                aria-controls="offcanvasExample" 
-            />
-        @endif
+        <x-menu-item 
+            text="Sculpture List" 
+            icon="fal fa-cube" target="_self" route="#" 
+            :visible="$project && !$tour_is_shared"
+            data-bs-toggle="offcanvas" 
+            data-bs-target="#offcanvasExample" 
+            aria-controls="offcanvasExample" 
+        />
     </div>
 @endsection
 
