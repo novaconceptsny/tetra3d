@@ -33,9 +33,15 @@
 
 @section('outside-menu')
     <div class="menu-links d-flex align-items-center gap-4">
-        @if ($userName == 'Super Admin')
-            <div class="toggle-layout">
-                <input type="checkbox" id="toggle_layout" name="toggle_layout" />
+        @if ($userName == "Super Admin")
+            <div class="toggle-layout" id="toggle_layout">
+                <input type="checkbox" name="toggle_layout" />
+                <label class="toggle-layout-label" for="toggle_layout">Space Model</label>
+            </div>
+        @endif
+        @if ($userName !== "Super Admin")
+            <div class="toggle-layout" id="toggle_layout" hidden>
+                <input type="checkbox" name="toggle_layout" />
                 <label class="toggle-layout-label" for="toggle_layout">Space Model</label>
             </div>
         @endif
