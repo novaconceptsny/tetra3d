@@ -302,6 +302,9 @@
                 model.traverse((obj) => {
                     if(obj instanceof THREE.Mesh){
                         obj.material.colorWrite = false;
+                        obj.material.visible = true;
+                        obj.material.transparent = false;
+                        obj.material.opacity = 1;
                     }
                 });
             }
