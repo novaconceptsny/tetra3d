@@ -130,13 +130,10 @@ class TourController extends Controller
         $data['layout'] = $layout ?? null;
         $data['navEnabled'] = false;
         $data['navbarLight'] = true;
-<<<<<<< HEAD
-=======
         $data['sculptures'] = $sculptures;
         $data['tourModel'] = $tourModel;
         $data['sculptureData'] = $sculptureData;
         $data['spotPosition'] = $spotPosition;
->>>>>>> dev-for-sculpture-list
 
         return view('pages.tour', $data);
     }
