@@ -110,6 +110,48 @@
 .wep-slide-over {
     z-index: 39 !important;
 }
+
+.sculpture-list-data-container {
+    margin: 10px;
+    font-family: var(--main-font-family);
+    font-size: 14px;
+    line-height: normal;
+    overflow-wrap: anywhere;
+}
+
+.sculpture-list-data-name {
+    font-weight: var(--regular-font);
+    font-style: Italic;
+}
+
+.sculpture-list-data-dimention {
+    font-weight: var(--light-font);
+}
+
+.sculpture-list-data-artist {
+    font-weight: var(--light-font);
+}
+
+.sculpture-list {
+    border: solid 1px;
+    margin: 6px;
+}
+
+.offcanvas-start {
+    width: 350px;
+}
+
+.offcanvas-body {
+    padding: 10px;
+}
+
+.toggle-layout {
+    font-family: var(--main-font-family);
+    font-weight: var(--regular-font);
+    font-size: 16px;
+    background-color: white;
+    border: none;
+}
 /*td.layout-table-title:hover a{*/
 /*    display: inline-block;*/
 /*}*/

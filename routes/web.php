@@ -72,6 +72,7 @@ Route::group([
     Route::resource('users', 'UserController');
     Route::resource('projects', 'ProjectController');
     Route::resource('tours', 'TourController');
+    Route::resource('sculptures', 'SculptureController');
     Route::resource('artworks', 'ArtworkController');
     Route::resource('artwork-collections', 'ArtworkCollectionController')
     ->parameter('artwork-collections', 'collection');

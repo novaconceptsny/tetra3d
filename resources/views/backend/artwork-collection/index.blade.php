@@ -25,6 +25,7 @@
                         <th scope="col">{{ __('Company') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
                         <th scope="col">{{ __('Artworks') }}</th>
+                        <th scope="col">{{ __('Sculptures') }}</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -34,6 +35,7 @@
                             <td>{{ $collection->company->name }}</td>
                             <td>{{ $collection->name }}</td>
                             <td>{{ $collection->artworks_count }}</td>
+                            <td>{{ $collection->sculpture_models_count }}</td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$collection">
                                     <x-backend::dropdown.item

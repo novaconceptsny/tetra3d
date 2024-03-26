@@ -36,6 +36,7 @@
 
 <main id="site__body" style="margin-top: 52px">
     @yield('content')
+    @yield('modellist')
     <livewire:modals.base-modal />
 
     <div class="modal fade" id="tourMapModal" tabindex="-1">
