@@ -19,11 +19,6 @@
                 <div id='surface-model-name'></div>
             </div>
 
-            <div class="col-12">
-                <input type="checkbox" id="toggle_layout" name="toggle_layout" checked />
-                <label for="toggle_layout">Toggle Space Model Layout</label>
-            </div>
-            
             <div class="row g-3 mt-2">
                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
 
@@ -32,15 +27,15 @@
                     <div class="row g-2">
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.x" }}'
-                            wire:model.live="spotsPosition.{{ $spot->id }}.x" label='{{ "X" }}'
+                            wire:model.live="spotsPosition.{{ $spot->id }}.x" label='{{ "X (Y in 3ds Max)" }}'
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.y" }}'
-                            wire:model.live="spotsPosition.{{ $spot->id }}.y" label='{{ "Y" }}'
+                            wire:model.live="spotsPosition.{{ $spot->id }}.y" label='{{ "Y (Z in 3ds Max)" }}'
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.z" }}'
-                            wire:model.live="spotsPosition.{{ $spot->id }}.z" label='{{ "Z" }}'
+                            wire:model.live="spotsPosition.{{ $spot->id }}.z" label='{{ "Z (X in 3ds Max)" }}'
                         />
                     </div>
                 @endforeach
