@@ -504,6 +504,7 @@
                 });
                 scene.remove(object.userData.model);
                 scene.remove(object);
+                scene.remove(object.userData.gizmo);
                 label.innerHTML = "";
                 sculpture_id_list.splice(sculpture_id_list.indexOf(object.userData.model.userData.sculpture_id), 1);
             }
