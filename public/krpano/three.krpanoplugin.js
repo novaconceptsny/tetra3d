@@ -370,6 +370,8 @@ function krpanoplugin() {
 		var gizmo = null;
 		var point = null;
 		
+		console.log(event.type);
+
 		if (event.type == "mousedown") {
 			type = "ondown";
 			krpano.control.layer.addEventListener("mouseup", handle_mouse_touch_events, true);
