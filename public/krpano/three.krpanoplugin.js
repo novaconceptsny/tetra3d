@@ -110,6 +110,7 @@ function krpanoplugin() {
 		}
 		if (device.browser.events.touch) {
 			krpano.control.layer.addEventListener(device.browser.events.touchstart, handle_mouse_touch_events, true);
+			krpano.control.layer.addEventListener(device.browser.events.touchmove, handle_mouse_touch_events, true);
 		}
 
 		// basic ThreeJS objects
@@ -387,6 +388,9 @@ function krpanoplugin() {
 		else if (event.type == device.browser.events.touchend) {
 			type = "onup";
 			krpano.control.layer.removeEventListener(device.browser.events.touchend, handle_mouse_touch_events, true);
+		}
+		else if (event.type == device.browser.events.touchmove) {
+			type = "onmove";
 		}
 
 		// get mouse / touch pos

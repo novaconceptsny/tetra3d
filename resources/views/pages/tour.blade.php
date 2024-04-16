@@ -63,7 +63,7 @@
         <x-menu-item 
             text="Sculpture List" 
             icon="fal fa-cube" target="_self" route="#" 
-            :visible="$project && !$tour_is_shared && tourModel"
+            :visible="$project && !$tour_is_shared && $tourModel"
             data-bs-toggle="offcanvas" 
             data-bs-target="#offcanvasExample" 
             aria-controls="offcanvasExample" 
