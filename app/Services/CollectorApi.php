@@ -28,7 +28,7 @@ class CollectorApi
         $this->baseUrl .= "/$subscription_id";
     }
 
-    public function syncCollection($collection_id)
+    public function syncCollection($collection_id): void
     {
         if (!$collection_id){
             throw new Exception("Collection ID can not be null", 403);

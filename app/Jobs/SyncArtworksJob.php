@@ -14,6 +14,8 @@ class SyncArtworksJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public int $timeout = 3600;
+
     public $collection;
     public CollectorApi $collector;
 
@@ -26,7 +28,7 @@ class SyncArtworksJob implements ShouldQueue
     /**
      * @throws \Exception
      */
-    public function handle()
+    public function handle(): void
     {
         set_time_limit(60 * 60);
 
@@ -35,7 +37,7 @@ class SyncArtworksJob implements ShouldQueue
 
     }
 
-    public function fail($exception = null)
+    public function fail($exception = null): void
     {
         Log::channel('collector-sync-report')->error($exception);
     }
