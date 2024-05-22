@@ -51,7 +51,7 @@ class CollectorApi
         //$this->syncArtworksFromCollection($collection);
     }
 
-    public function syncArtworksFromCollection($collection)
+    public function syncArtworksFromCollection($collection): void
     {
         ini_set('memory_limit', -1);
 
@@ -85,7 +85,7 @@ class CollectorApi
         );
     }
 
-    public function syncArtwork($object)
+    public function syncArtwork($object): Artwork
     {
         $collection = ArtworkCollection::firstOrCreate([
             'company_id' => $this->company->id,
@@ -116,6 +116,9 @@ class CollectorApi
         return $artwork;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getObjectById($object_id)
     {
         if (!$object_id){
@@ -139,7 +142,7 @@ class CollectorApi
         return $object;
     }
 
-    private function getDimensions($object)
+    private function getDimensions($object): array
     {
         return array(
             'width' => $object->widthimperial,
@@ -162,7 +165,10 @@ class CollectorApi
         return $dimensions;*/
     }
 
-    private function prepareObject(&$object)
+    /**
+     * @throws Exception
+     */
+    private function prepareObject(&$object): void
     {
         if ( ! property_exists($object, "heightimperial")
              || ! property_exists($object, "widthimperial")

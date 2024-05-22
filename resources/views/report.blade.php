@@ -5,11 +5,7 @@
 @endsection
 
 @section('content')
-    @php
-        $content = file_get_contents(storage_path('logs/collector.log'));
-    @endphp
-    <div class="card"></div>
-    <pre style="overflow: unset"><code class="language-accesslog">{{ $content }}</code></pre>
+   <livewire:collector-tools-report/>
 @endsection
 
 @section('styles')
