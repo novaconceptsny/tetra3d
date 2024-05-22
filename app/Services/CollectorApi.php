@@ -66,8 +66,10 @@ class CollectorApi
         foreach ($objects as $index => $object){
             $current = $index + 1;
 
+            $inventoryNumber = $object->inventorynumber;
+
             Log::channel('collector-sync-report')->info(
-                "Syncing Object $current/$collection->objectcount "
+                "Syncing Object $object->objectid ($inventoryNumber) - $current/$collection->objectcount "
             );
 
             try {
@@ -75,7 +77,7 @@ class CollectorApi
                 $this->syncArtwork($object);
             } catch (Exception $exception){
                 Log::channel('collector-sync-report')->error(
-                    "############ Error in Object $object->objectid ############ \n {$exception->getMessage()}"
+                    "############ Error in Object $object->objectid ($inventoryNumber) ############ \n {$exception->getMessage()}"
                 );
             }
         }
