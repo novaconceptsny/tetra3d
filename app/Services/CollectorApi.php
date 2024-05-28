@@ -101,7 +101,7 @@ class CollectorApi
             'artwork_collection_id' => $collection->id,
             'name' => $object->title,
             'artist' => $object->artistname,
-            'type' => $object->objecttype,
+            'type' => $object->objecttype ?? null,
             'data' => [
                 'width_inch' => $object->dimensions['width'],
                 'height_inch' => $object->dimensions['height'],

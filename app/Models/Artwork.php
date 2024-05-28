@@ -99,4 +99,9 @@ class Artwork extends Model implements HasMedia
             ->usingName($media->name)
             ->toMediaCollection('image');
     }
+
+    public function getTypeAttribute($value)
+    {
+        return $value ?? 'Unknown';
+    }
 }
