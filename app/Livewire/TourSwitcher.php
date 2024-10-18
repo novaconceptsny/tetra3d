@@ -17,7 +17,8 @@ class TourSwitcher extends SlideOver
     public int $selectedTourId;
 
     protected $listeners = [
-        'refresh' => '$refresh'
+        'refresh' => '$refresh',
+        'duplicateLayout' => 'duplicateLayout'
     ];
 
     public function mount(Project $project)
@@ -37,10 +38,23 @@ class TourSwitcher extends SlideOver
         $this->selectedTour = $this->project->tours->where('id', $this->selectedTourId)->first();
     }
 
+    public function duplicateLayout($layoutId)
+    {
+        $layout = Layout::find($layoutId);
+
+        if ($layout) {
+            $newLayout = $layout->replicate();
+            $newLayout->name = $layout->name . ' copy';
+            $newLayout->save();
+
+            // $this->emit('refresh'); 
+        }
+    }
+
     public static function attributes(): array
     {
         return [
-            'size' => '3xl'
+            'size' => '4xl'
         ];
     }
 }

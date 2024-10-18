@@ -84,10 +84,10 @@
                                  @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 <div>
                                     <span>
-                                        <i x-cloak x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i>
+                                        <!-- <i x-cloak x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i> -->
                                         <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
                                     </span>
-                                    @if($canvas['surfaceStateId'])
+                                    <!-- @if($canvas['surfaceStateId'])
                                         <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
                                            class="surface-active">
                                             <i class="fa-regular {{ $canvas['surfaceStateId'] == $currentSurfaceStateId ? ' fa-circle-check' : ' fa-circle' }}"></i>
@@ -118,18 +118,17 @@
 
                                             </button>
                                         </form>
-                                    @endif
-
+                                    @endif -->
                                 </div>
                             </div>
                         @endforeach
 
-                        @if(!request('new'))
+                        <!-- @if(!request('new'))
                             <a href="{{ route('surfaces.show', [$surface->id, 'layout_id' => $layout->id, 'new' => 1]) }}"
                                class="h-full d-flex justify-content-center align-items-center px-2 bg-transparent text-decoration-none">
                                 <i class="fas fa-plus btn"></i>
                             </a>
-                        @endif
+                        @endif -->
 
                         <x-menu-item
                             text="Return to 360 View" class="view-360" :img="asset('redesign/images/360-icon.png')"
