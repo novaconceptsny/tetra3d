@@ -7,6 +7,8 @@ use App\Models\Project;
 use App\Models\Tour;
 use WireElements\Pro\Components\SlideOver\SlideOver;
 use WireElements\Pro\Concerns\InteractsWithConfirmationModal;
+use App\Models\Sculpture;
+use App\Models\SurfaceState;
 
 class TourSwitcher extends SlideOver
 {
@@ -47,7 +49,21 @@ class TourSwitcher extends SlideOver
             $newLayout->name = $layout->name . ' copy';
             $newLayout->save();
 
-            // $this->emit('refresh'); 
+            $sculptures = Sculpture::where('layout_id', $layoutId)->get();
+            if (count($sculptures) > 0)
+                foreach ($sculptures as $sculpture) {
+                    $newSculpture = $sculpture->replicate();
+                    $newSculpture->layout_id = $newLayout->id;
+                    $newSculpture->save();
+                }
+
+            $surfaceStates = SurfaceState::where('layout_id', $layoutId)->get();
+            if (count($surfaceStates) > 0)
+                foreach ($surfaceStates as $surfaceState) {
+                    $newSurfaceState = $surfaceState->replicate();
+                    $newSurfaceState->layout_id = $newLayout->id;
+                    $newSurfaceState->save();
+                }
         }
     }
 
