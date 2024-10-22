@@ -484,15 +484,15 @@ class CanvasManager {
 
             let screenshots = this.exportArtAssignments(this.canvasState['currentVersionData'].version_name);
 
-            // this.canvasApi.updateSurfaceState({
-            //     surfaceStateId: this.surfaceStateId,
-            //     updates,
-            //     screenshots,
-            //     canvasState: this.canvasState,
-            //     reverseScale: this.reverseScale,
-            //     userId: this.user_id,
-            //     spotId: this.spot_id,
-            // });
+            this.canvasApi.updateSurfaceState({
+                surfaceStateId: this.surfaceStateId,
+                updates,
+                screenshots,
+                canvasState: this.canvasState,
+                reverseScale: this.reverseScale,
+                userId: this.user_id,
+                spotId: this.spot_id,
+            });
         }
     }
 
@@ -622,7 +622,7 @@ class CanvasManager {
             document.dispatchEvent(onCanvasUpdatedEvent)
 
             this.saveBtn.show();
-            this.updateSavedVersion();
+            // this.updateSavedVersion();
         } else {
             this.saveBtn.hide();
         }
