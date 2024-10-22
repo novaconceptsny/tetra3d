@@ -53,24 +53,41 @@ class CanvasApi {
 
     fakeFormPost(endpoint, payload) {
 
-        let $form = $('<form>', {
-            action: endpoint,
-            method: 'post'
-        });
-        let token = $('meta[name="_token"]').attr('content');
+        // let $form = $('<form>', {
+        //     action: endpoint,
+        //     method: 'post'
+        // });
+        // let token = $('meta[name="_token"]').attr('content');
 
-        $.each(payload, function (key, val) {
-            $('<input>').attr({
-                type: "hidden",
-                name: key,
-                value: val
-            }).appendTo($form);
-        });
-        $('<input>').attr({type: "hidden", name: "_token", value: token}).appendTo($form);
-        $('<input>').attr({type: "hidden", name: "layout_id", value: this.layoutId}).appendTo($form);
-        $('<input>').attr({type: "hidden", name: "hlookat", value: this.hlookat}).appendTo($form);
-        $('<input>').attr({type: "hidden", name: "vlookat", value: this.vlookat}).appendTo($form);
-        $form.appendTo('body').submit();
+        // $.each(payload, function (key, val) {
+        //     $('<input>').attr({
+        //         type: "hidden",
+        //         name: key,
+        //         value: val
+        //     }).appendTo($form);
+        // });
+        // $('<input>').attr({ type: "hidden", name: "_token", value: token }).appendTo($form);
+        // $('<input>').attr({ type: "hidden", name: "layout_id", value: this.layoutId }).appendTo($form);
+        // $('<input>').attr({ type: "hidden", name: "hlookat", value: this.hlookat }).appendTo($form);
+        // $('<input>').attr({ type: "hidden", name: "vlookat", value: this.vlookat }).appendTo($form);
+        // $form.appendTo('body').submit();
+        $.ajax({
+            url: endpoint,
+            type: 'POST',
+            data: {
+                ...payload,
+                _token: token,
+                layout_id: this.layoutId,
+                hlookat: this.hlookat,
+                vlookat: this.vlookat,
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        })
     }
 }
 
