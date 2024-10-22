@@ -48,29 +48,35 @@ class CanvasApi {
         payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
         payload.added = JSON.stringify(payload.added);
         payload.removed = JSON.stringify(payload.removed);
-        this.fakeFormPost(this.updateEndpoint, payload);
+        this.updateSurfaceStatePost(this.updateEndpoint, payload);
     }
 
     fakeFormPost(endpoint, payload) {
 
-        // let $form = $('<form>', {
-        //     action: endpoint,
-        //     method: 'post'
-        // });
+        let $form = $('<form>', {
+            action: endpoint,
+            method: 'post'
+        });
         let token = $('meta[name="_token"]').attr('content');
 
-        // $.each(payload, function (key, val) {
-        //     $('<input>').attr({
-        //         type: "hidden",
-        //         name: key,
-        //         value: val
-        //     }).appendTo($form);
-        // });
-        // $('<input>').attr({ type: "hidden", name: "_token", value: token }).appendTo($form);
-        // $('<input>').attr({ type: "hidden", name: "layout_id", value: this.layoutId }).appendTo($form);
-        // $('<input>').attr({ type: "hidden", name: "hlookat", value: this.hlookat }).appendTo($form);
-        // $('<input>').attr({ type: "hidden", name: "vlookat", value: this.vlookat }).appendTo($form);
-        // $form.appendTo('body').submit();
+        $.each(payload, function (key, val) {
+            $('<input>').attr({
+                type: "hidden",
+                name: key,
+                value: val
+            }).appendTo($form);
+        });
+        $('<input>').attr({ type: "hidden", name: "_token", value: token }).appendTo($form);
+        $('<input>').attr({ type: "hidden", name: "layout_id", value: this.layoutId }).appendTo($form);
+        $('<input>').attr({ type: "hidden", name: "hlookat", value: this.hlookat }).appendTo($form);
+        $('<input>').attr({ type: "hidden", name: "vlookat", value: this.vlookat }).appendTo($form);
+        $form.appendTo('body').submit();
+    }
+
+    updateSurfaceStatePost(endpoint, payload) {
+
+        let token = $('meta[name="_token"]').attr('content');
+
         $.ajax({
             url: endpoint,
             type: 'POST',
