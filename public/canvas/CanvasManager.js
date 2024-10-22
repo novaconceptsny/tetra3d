@@ -622,7 +622,7 @@ class CanvasManager {
             document.dispatchEvent(onCanvasUpdatedEvent)
 
             this.saveBtn.show();
-            this.updateSavedVersion();
+            // this.updateSavedVersion();
         } else {
             this.saveBtn.hide();
         }
