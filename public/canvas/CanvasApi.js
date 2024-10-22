@@ -57,7 +57,7 @@ class CanvasApi {
         //     action: endpoint,
         //     method: 'post'
         // });
-        // let token = $('meta[name="_token"]').attr('content');
+        let token = $('meta[name="_token"]').attr('content');
 
         // $.each(payload, function (key, val) {
         //     $('<input>').attr({
