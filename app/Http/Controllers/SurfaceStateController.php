@@ -156,19 +156,19 @@ class SurfaceStateController extends Controller
 
         $state->setAsActive();
 
-        $state->addMediaFromBase64(resizeBase64Image(
-            $request->thumbnail,
-            $request->reverseScale
-        ))
-            ->usingFileName('thumbnail.png')
-            ->toMediaCollection('thumbnail');
+        // $state->addMediaFromBase64(resizeBase64Image(
+        //     $request->thumbnail,
+        //     $request->reverseScale
+        // ))
+        //     ->usingFileName('thumbnail.png')
+        //     ->toMediaCollection('thumbnail');
 
-        $state->addMediaFromBase64(resizeBase64Image(
-            $request->hotspot,
-            $request->reverseScale
-        ))
-            ->usingFileName('hotspot.png')
-            ->toMediaCollection('hotspot');
+        // $state->addMediaFromBase64(resizeBase64Image(
+        //     $request->hotspot,
+        //     $request->reverseScale
+        // ))
+        //     ->usingFileName('hotspot.png')
+        //     ->toMediaCollection('hotspot');
 
         $state->artworks()->detach();
         foreach ($assigned_artworks as $assigned_artwork){
@@ -179,7 +179,7 @@ class SurfaceStateController extends Controller
         }
         //$state->artworks()->sync($assigned_artworks);
 
-        $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
+        // $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
 
         $state->addActivity($request->new ? 'created': 'updated');
 
