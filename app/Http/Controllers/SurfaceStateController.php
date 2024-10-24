@@ -128,6 +128,8 @@ class SurfaceStateController extends Controller
             'assigned_artwork' => 'required',
         ]);
 
+        dump($request);
+
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
             $assigned_artworks[] = array(

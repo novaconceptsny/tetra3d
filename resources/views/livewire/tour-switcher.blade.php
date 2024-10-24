@@ -44,7 +44,9 @@
                                 <span>{{ $layout->created_at->format('M d, Y H:i') }}</span>
                             </td>
                             <td>
-                                <button class="text-dark tour-show" href="#" wire:click="duplicateLayout({{ $layout->id }})"><i class="fa fa-files-o"></i></button>
+                                <button class="text-dark tour-show" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
+                                    <i class="fa fa-files-o"></i>
+                                </button>
                             </td>
                             <td>
                                 <button class="text-dark tour-show"
@@ -116,12 +118,32 @@
         </div>
     </div>
 </x-wire-elements-pro::bootstrap.slide-over>
+@section('content')
+<div class="modal fade" id="duplicat_confirmation" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save Canvas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Save art arrangement as:</p>
+                <form>
+                    <div class="form-row">
+                        <input type="text" class="form-control ml-2 mr-2" placeholder="assignment1" id="file_name">
+                        <div class="invalid-feedback ml-3">
+                            Invalid file name provided.
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-@section('scripts')
-<script type="module">
-    function duplicateLayout(layoutId) {
-        console.log("duplicateLayout")
-        Livewire.emit('duplicateLayout', layoutId)
-    }
-</script>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-secondary" id="confirm_save_btn">Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
