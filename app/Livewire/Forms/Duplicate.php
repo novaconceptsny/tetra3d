@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\ArtworkSurfaceState;
 use App\Models\Layout;
 use App\Models\Project;
 use App\Models\Tour;
@@ -34,6 +35,7 @@ class Duplicate extends Modal
     public function mount(Project $project, Layout $layout)
     {
         $this->layout = $layout;
+        $this->layout->name = $layout->name . ' - copy';
         $this->heading = 'Duplicate Layout';
     }
 
@@ -63,7 +65,16 @@ class Duplicate extends Modal
             foreach ($surfaceStates as $surfaceState) {
                 $newSurfaceState = $surfaceState->replicate();
                 $newSurfaceState->layout_id = $newLayout->id;
+                dd($newSurfaceState, $surfaceState);
                 $newSurfaceState->save();
+
+                $artworkSurfaceStates = ArtworkSurfaceState::where('surface_state_id', $surfaceState->id)->get();
+                if (count($artworkSurfaceStates) > 0)
+                    foreach ($artworkSurfaceStates as $artworkSurfaceState) {
+                        $newArtworkSurfaceState = $artworkSurfaceState->replicate();
+                        $newArtworkSurfaceState->surface_state_id = $newSurfaceState->id;
+                        $newArtworkSurfaceState->save();
+                    }
             }
 
         $this->close(andDispatch: [

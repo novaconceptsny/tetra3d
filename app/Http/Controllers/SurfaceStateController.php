@@ -179,23 +179,23 @@ class SurfaceStateController extends Controller
                 $assigned_artwork
             );
         }
-        //$state->artworks()->sync($assigned_artworks);
+        $state->artworks()->sync($assigned_artworks);
 
-        // $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
+        $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
 
         $state->addActivity($request->new ? 'created': 'updated');
 
 
-        return response()->json([
-            'success' => true,
-        ]);
-        // return redirect()->route($route, [
-        //     $surface->tour,
-        //     'spot_id' => $request->spot_id,
-        //     'layout_id' => $request->layout_id,
-        //     'hlookat' => $request->hlookat,
-        //     'vlookat' => $request->vlookat,
-        // ])->with('success', 'Surface updated');
+        // return response()->json([
+        //     'success' => true,
+        // ]);
+        return redirect()->route($route, [
+            $surface->tour,
+            'spot_id' => $request->spot_id,
+            'layout_id' => $request->layout_id,
+            'hlookat' => $request->hlookat,
+            'vlookat' => $request->vlookat,
+        ])->with('success', 'Surface updated');
     }
 
     public function destroy(SurfaceState $state)
