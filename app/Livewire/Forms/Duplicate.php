@@ -65,7 +65,6 @@ class Duplicate extends Modal
             foreach ($surfaceStates as $surfaceState) {
                 $newSurfaceState = $surfaceState->replicate();
                 $newSurfaceState->layout_id = $newLayout->id;
-                dd($newSurfaceState, $surfaceState);
                 $newSurfaceState->save();
 
                 $artworkSurfaceStates = ArtworkSurfaceState::where('surface_state_id', $surfaceState->id)->get();
