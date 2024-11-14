@@ -5,6 +5,7 @@ namespace App\Livewire\Datatables;
 use App\Models\Activity;
 use App\Models\Project;
 use App\Models\Tour;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ActivityDatatable extends BaseDatatable
 {
@@ -55,7 +56,6 @@ class ActivityDatatable extends BaseDatatable
                 )
             )
             ->forCurrentCompany()
-            ->whereAnyColumnLike($this->search)
             ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
 
@@ -72,7 +72,30 @@ class ActivityDatatable extends BaseDatatable
             return $row;
         });
 
-        $data['rows'] = $rows;
+        $search = strtolower($this->search);
+
+        $filtered = $rows->getCollection()->filter(function ($row) use ($search) {
+            $activity = strtolower($row->activity);
+            $project_name = strtolower($row->project?->name);
+            $user_name = strtolower($row->user?->name);
+            $layout_name = strtolower($row->layout?->name ?? 'Layout Deleted');
+            $date = strtolower($row->created_at->format('d M Y'));
+            return str_contains($layout_name, $search) || str_contains($project_name, $search) || str_contains($user_name, $search) || str_contains($activity, $search) || str_contains($date, $search);
+        });
+
+        $currentPage = $rows->currentPage();
+        $perPage = $rows->perPage();
+        $total = $filtered->count();
+        $paginator = new LengthAwarePaginator(
+            $filtered->forPage($currentPage, $perPage),
+            $total,
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+
+
+        $data['rows'] = $paginator;
         $data['label'] = 'activity';
 
         return view("livewire.datatables.activity", $data);

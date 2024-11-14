@@ -23,11 +23,14 @@
                          'shared_tour_id' => $shared_tour_id ?? null
                     ]
                 @endphp
-
                 @foreach($selectedMap->spots as $spot)
                     <a href="{{ route('tours.show', array_merge($parameters, ['spot_id' => $spot->id]) )}}">
                         <div class="pin" top="{{ $spot->pivot->y }}" left="{{ $spot->pivot->x }}"
                              style="top: {{ $spot->pivot->y }}px; left: {{ $spot->pivot->x }}px;">
+                        </div>
+                        <div class="spotname {{ $spot->id == $spot_id ? 'selected' : '' }}" top="{{ $spot->pivot->y +80 }}" left="{{ $spot->pivot->x }}"
+                             style="top: {{ $spot->pivot->y + 80 }}px; left: {{ $spot->pivot->x }}px;" >
+                            {{ $spot->name }}
                         </div>
                     </a>
                 @endforeach

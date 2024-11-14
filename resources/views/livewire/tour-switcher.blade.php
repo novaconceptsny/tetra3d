@@ -4,26 +4,26 @@
             <div class="preview">
                 <h5 class="sidebar-heading d-flex align-items-start">
                     <span>{{ $project->name }}</span>
-                    @can('update', $project)
+                    <!-- @can('update', $project)
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i
                                 class="fal fa-edit"></i></a>
-                    @endcan
+                    @endcan -->
                 </h5>
                 <a href="#" wire:slide-over="close" class="x text-decoration-none">
                     <i class="fa-solid fa-xmark"></i>
                 </a>
             </div>
-            <div class="date">
+            <!-- <div class="date">
                 <h6>{{ $project->created_at->format('M d, Y') }}</h6>
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <table class="table">
                     <tr>
-                        <th>Name</th>
+                        <th>Layout Name</th>
                         <th>Configuration</th>
                         <th>Created By</th>
-                        <th>Created At</th>
+                        <th>Last modified</th>
                         <th></th>
                     </tr>
 
@@ -81,10 +81,10 @@
             <div class="collection mt-5">
                 <h5 class="d-flex align-items-center">
                     <span>Collections</span>
-                    @can('update', $project)
+                    <!-- @can('update', $project)
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i
                                 class="fal fa-edit"></i></a>
-                    @endcan
+                    @endcan -->
                 </h5>
                 <div class="sidebar-collection-btn-wrapper">
 
@@ -100,10 +100,10 @@
             <div class="contributor">
                 <h5 class="d-flex align-items-center">
                     <span>Contributors</span>
-                    @can('update', $project)
+                    <!-- @can('update', $project)
                         <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i
                                 class="fal fa-edit"></i></a>
-                    @endcan
+                    @endcan -->
                 </h5>
                 <div class="img-container d-flex">
                     @forelse($project->contributors as $contributor)

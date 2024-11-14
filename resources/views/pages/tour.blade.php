@@ -88,7 +88,7 @@
 
 @section('content')
     <div style="height: calc(100vh - 52px);">
-        <div class="h-100">
+        <div class="h-100 position-relative">
             @if ($tracker)
                 <div id="tracker"></div>
             @endif
@@ -102,6 +102,13 @@
                         </tr>
                     </table>
                 </noscript>
+            </div>
+            <div class="view-map-btn" style="position: absolute; bottom: 80px; right: 100px ;">
+                <x-menu-item
+                    route="#" target="_self" 
+                    icon="fal fa-map-marked-alt"
+                    data-bs-toggle="modal" data-bs-target="#tourMapModal"
+                />
             </div>
         </div>
     </div>

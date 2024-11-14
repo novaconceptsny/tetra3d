@@ -9,12 +9,14 @@ use Livewire\Component;
 class TourMap extends Component
 {
     public $tour;
+    public $spot_id;
     public $shared_tour_id;
     public $layoutId;
     public $selectedMap;
 
     public function mount(Tour $tour)
     {
+        $this->spot_id = request('spot_id');
         $this->tour = $tour;
         $this->selectedMap = $tour->map;
     }

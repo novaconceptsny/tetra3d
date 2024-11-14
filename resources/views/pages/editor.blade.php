@@ -25,15 +25,7 @@
     <x-breadcrumb.separtator />
 
     <x-breadcrumb.item :text="$spot->name" />
-    <x-breadcrumb.separtator />
 
-    <x-breadcrumb.item>
-        @if($selectedSurfaceState)
-            <livewire:editable-field :model="$selectedSurfaceState" field="name" />
-        @else
-            <span>Untitled</span>
-        @endif
-    </x-breadcrumb.item>
 
 </x-breadcrumb.breadcrumb>
 @endsection
@@ -50,7 +42,7 @@
             @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
             <div class="col-9 main-col position-relative"
                 x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
-                <x-editor-actions />
+                <!-- <x-editor-actions /> -->
                 <div x-cloak style="position: absolute; inset: auto 10px 0 auto; z-index: 10; background:#ffc107 "
                     class="alert alert-warning alert-dismissible fade show rounded-0 border-0"
                     x-show="changedCanvases > 1">
@@ -76,10 +68,12 @@
                            }"
                                 @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
                                 <div>
+
                                     <span>
                                         <!-- <i x-cloak x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i> -->
-                                        <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span>
+                                        <!-- <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span> -->
                                     </span>
+                                    
                                     <!-- @if($canvas['surfaceStateId'])
                               <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
                                  class="surface-active">
