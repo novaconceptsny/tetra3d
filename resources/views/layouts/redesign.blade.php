@@ -50,6 +50,7 @@
                     @if(isset($tour))
                         <livewire:tour-map
                             :tour="$tour"
+                            :spot="$spot"
                             :layout-id="request('layout_id')"
                             :shared_tour_id="$shared_tour_id ?? null"
                         />

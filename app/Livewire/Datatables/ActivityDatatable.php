@@ -83,6 +83,9 @@ class ActivityDatatable extends BaseDatatable
             return str_contains($layout_name, $search) || str_contains($project_name, $search) || str_contains($user_name, $search) || str_contains($activity, $search) || str_contains($date, $search);
         });
 
+            // Get unique tours from the filtered rows
+        $uniqueTours = $filtered->pluck('tour')->filter()->unique('id')->values();
+
         $currentPage = $rows->currentPage();
         $perPage = $rows->perPage();
         $total = $filtered->count();
@@ -97,7 +100,8 @@ class ActivityDatatable extends BaseDatatable
 
         $data['rows'] = $paginator;
         $data['label'] = 'activity';
-
+        $data['uniqueTours'] = $uniqueTours; // Pass unique tours to the view
+        
         return view("livewire.datatables.activity", $data);
     }
 

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Map;
 use App\Models\Tour;
+use App\Models\Spot;
 use Livewire\Component;
 
 class TourMap extends Component
@@ -14,9 +15,9 @@ class TourMap extends Component
     public $layoutId;
     public $selectedMap;
 
-    public function mount(Tour $tour)
+    public function mount(Tour $tour, Spot $spot)
     {
-        $this->spot_id = request('spot_id');
+        $this->spot_id = $spot->id;
         $this->tour = $tour;
         $this->selectedMap = $tour->map;
     }
