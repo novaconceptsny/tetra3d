@@ -24,17 +24,26 @@
     height: 40px;
     z-index: 600;
     cursor: pointer;
-    background-image: url("/images/location_pin.png");
+    background-image: url("/images/hotspot map pin_blue.png");
     background-size: contain;
     background-repeat: no-repeat;
 }
 
+.pin.selected {
+    background-image: url("/images/location_pin.png");
+}
+
 .spotname {
     position: absolute;
-    width: 40px;
+    width: "fit-content";
     height: 40px;
     z-index: 700;
     cursor: pointer;
+    display: none !important;
+}
+
+a:has(> .pin):hover .spotname {
+    display: block !important;
 }
 
 .spotname.selected {
@@ -42,12 +51,12 @@
 }
 
 .view-map-btn i {
-    font-size: 32px !important;
+    font-size: 48px !important;
 }
 
 .view-map-btn a {
     color: black;
-    font-size: 32px;
+    font-size: 48px;
     text-decoration: none;
 }
 

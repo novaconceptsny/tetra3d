@@ -79,9 +79,7 @@
         <x-breadcrumb.item :text="$layout?->name"/>
         <x-breadcrumb.separtator/>
 
-        <x-breadcrumb.item>
-            <livewire:editable-field :model="$spot" field="name" element="span"/>
-        </x-breadcrumb.item>
+        <x-breadcrumb.item :text="$spot?->name"/>
 
     </x-breadcrumb.breadcrumb>
 @endsection

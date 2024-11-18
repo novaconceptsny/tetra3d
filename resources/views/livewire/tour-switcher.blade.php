@@ -17,7 +17,7 @@
                 <h6>{{ $project->created_at->format('M d, Y') }}</h6>
             </div> -->
 
-            <div class="mb-3">
+            <div class="mb-3" style ="margin-top: 40px">
                 <table class="table">
                     <tr>
                         <th>Layout Name</th>

@@ -42,7 +42,7 @@
             @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
             <div class="col-9 main-col position-relative"
                 x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
-                <!-- <x-editor-actions /> -->
+                <x-editor-actions />
                 <div x-cloak style="position: absolute; inset: auto 10px 0 auto; z-index: 10; background:#ffc107 "
                     class="alert alert-warning alert-dismissible fade show rounded-0 border-0"
                     x-show="changedCanvases > 1">
