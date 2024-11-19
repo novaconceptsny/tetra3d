@@ -53,7 +53,7 @@
 
                 <div class="d-inline-flex tabs-container mb-1 pe-2">
                     @foreach($canvases as $canvas)
-                            <div class="tab" :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''" x-data="{
+                            <!-- <div class="tab" :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''" x-data="{
                             hasChanges: false,
                             surfaceStateId: @js($canvas['surfaceStateId']),
 
@@ -67,12 +67,12 @@
                             }
                            }"
                                 @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
-                                <div>
+                                <div> -->
 
-                                    <span>
+                                    <!-- <span> -->
                                         <!-- <i x-cloak x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i> -->
                                         <!-- <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span> -->
-                                    </span>
+                                    <!-- </span> -->
                                     
                                     <!-- @if($canvas['surfaceStateId'])
                               <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
@@ -106,8 +106,8 @@
                                 </button>
                               </form>
                             @endif -->
-                                </div>
-                            </div>
+                                <!-- </div>
+                            </div> -->
                     @endforeach
 
                     <!-- @if(!request('new'))
