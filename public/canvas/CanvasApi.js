@@ -48,7 +48,7 @@ class CanvasApi {
         payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
         payload.added = JSON.stringify(payload.added);
         payload.removed = JSON.stringify(payload.removed);
-        this.updateSurfaceStatePost(this.updateEndpoint, payload);
+        this.fakeFormPost(this.updateEndpoint, payload);
     }
 
     fakeFormPost(endpoint, payload) {

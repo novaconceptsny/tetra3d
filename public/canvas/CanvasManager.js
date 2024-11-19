@@ -502,7 +502,7 @@ class CanvasManager {
         });
 
         const captureHotspot = () => {
-            console.log(this.artworkCanvas.backgroundImage, "ppppppppp")
+            console.log( "captureHotspot")
             this.boundingBox.opacity = 0;  // hide bounding box
             this.artworkCanvas.backgroundImage.opacity = 0;  // hide background image
 
