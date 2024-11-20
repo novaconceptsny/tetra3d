@@ -27,10 +27,14 @@
                         <th></th>
                     </tr>
 
-                    @forelse($project->layouts()->latest()->get() as $layout)
+                    @forelse($project->layouts()->orderBy('updated_at', 'desc')->get() as $layout)
                         <tr wire:key="{{ $layout->id }}">
                             <td class="layout-table-title">
                                 <span>{{ $layout->name }}</span>
+                                <!-- <a class="edit-btn ms-1 text-info text-decoration-none" href="#"
+                                    wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                    <i class="fal fa-edit"></i>
+                                </a> -->
                             </td>
                             <td>{{ $layout->tour->name }}</td>
                             <td>

@@ -62,7 +62,7 @@ a:has(> .pin):hover .spotname {
     height: 80px;
     border-radius: 9999px;
     border: solid 2px #000000;
-    background-color: #808080;
+    background-color: #d3d3d3;
 }
 
 .view-map-btn a {

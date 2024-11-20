@@ -67,6 +67,7 @@ class Duplicate extends Modal
                 $newSurfaceState->layout_id = $newLayout->id;
                 $newSurfaceState->save();
 
+
                 $artworkSurfaceStates = ArtworkSurfaceState::where('surface_state_id', $surfaceState->id)->get();
                 if (count($artworkSurfaceStates) > 0)
                     foreach ($artworkSurfaceStates as $artworkSurfaceState) {
