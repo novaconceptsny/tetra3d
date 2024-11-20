@@ -44,7 +44,7 @@ class SpotController extends Controller
         ]);
 
         $spot = $tour->spots()->create($request->only([
-            'name', 'company_id'
+            'name', 'display_name','company_id'
         ]));
 
         $spot->surfaces()->sync($request->surfaces);
@@ -77,7 +77,8 @@ class SpotController extends Controller
         $request->validate(ValidationRules::updateSpot());
 
         $spot->update($request->only([
-            'name'
+            'name',
+            'display_name'
         ]));
 
         $spot->surfaces()->sync($request->surfaces);

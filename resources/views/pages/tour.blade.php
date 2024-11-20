@@ -101,7 +101,7 @@
                     </table>
                 </noscript>
             </div>
-            <div class="view-map-btn" style="position: absolute; bottom: 80px; right: 100px ;">
+            <div class="view-map-btn" >
                 <x-menu-item
                     route="#" target="_self" 
                     icon="fal fa-map-marked-alt"

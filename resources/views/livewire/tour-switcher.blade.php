@@ -31,17 +31,22 @@
                         <tr wire:key="{{ $layout->id }}">
                             <td class="layout-table-title">
                                 <span>{{ $layout->name }}</span>
-                                <a class="edit-btn ms-1 text-info text-decoration-none" href="#"
-                                    wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
-                                    <i class="fal fa-edit"></i>
-                                </a>
                             </td>
                             <td>{{ $layout->tour->name }}</td>
                             <td>
                                 <span>{{ $layout->user->name }}</span><br>
                             </td>
-                            <td>
+                            <!-- <td>
                                 <span>{{ $layout->created_at->format('M d, Y H:i') }}</span>
+                            </td> -->
+                            <td>
+                                <span>{{ $layout->updated_at->format('M d, Y H:i') }}</span>
+                            </td>
+                            <td>
+                                <button class="text-dark tour-show" 
+                                    wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                    <i class="fal fa-edit"></i>
+                                </button>
                             </td>
                             <td>
                                 <button class="text-dark tour-show" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
@@ -69,7 +74,7 @@
                 </table>
 
                 @if($project->layouts->count())
-                    <div class="text-end">
+                    <div class="text-start">
                         <button class="btn btn-light btn sm"
                             wire:modal="forms.layout-form, @js(['project' => $project->id])">
                             Create Layout <i class="fal fa-plus ms-2"></i>
@@ -147,3 +152,4 @@
     </div>
 </div>
 @endsection
+
