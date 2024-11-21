@@ -54,12 +54,12 @@ a:has(> .pin):hover .spotname {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 48px !important;
+    font-size: 40px !important;
     position: absolute;
     bottom: 80px;
-    right: 65px;
-    width: 80px;
-    height: 80px;
+    right: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 9999px;
     border: solid 2px #000000;
     background-color: #d3d3d3;

@@ -30,7 +30,7 @@
                         </div>
                         <div class="spotname {{ $spot->id == $spot_id ? 'selected' : '' }}" top="{{ $spot->pivot->y +80 }}" left="{{ $spot->pivot->x }}"
                              style="top: {{ $spot->pivot->y + 80 }}px; left: {{ $spot->pivot->x }}px;" >
-                            {{ $spot->name }}
+                            {{ $spot->display_name }}
                         </div>
                     </a>
                 @endforeach
