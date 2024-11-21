@@ -123,13 +123,16 @@ class SurfaceStateController extends Controller
      */
     public function update(Request $request, Surface $surface)
     {
+        $layout = Layout::findOrFail(request('layout_id'));
+    
         $request->validate([
             'layout_id' => 'required',
             'assigned_artwork' => 'required',
         ]);
-
-        // dump($request);
-
+    
+        // Update the `updated_at` field of the `$layout` to the current time
+        $layout->touch();
+    
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
             $assigned_artworks[] = array(
