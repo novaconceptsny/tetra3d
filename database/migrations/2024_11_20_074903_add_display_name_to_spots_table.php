@@ -11,9 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('spots', function (Blueprint $table) {
-            $table->string('display_name')->nullable()->after('name'); // Add after 'name' column
-        });
+        // Check if the 'display_name' column exists
+        if (!Schema::hasColumn('spots', 'display_name')) {
+            // Add 'display_name' column if it doesn't exist
+            Schema::table('spots', function (Blueprint $table) {
+                $table->string('display_name')->nullable()->after('name'); // Add after 'name' column
+            });
+        }
+
+        // Set display_name to the same value as 'name', whether the column was newly added or already existed
+        DB::table('spots')->update(['display_name' => DB::raw('name')]);
     }
 
     /**
