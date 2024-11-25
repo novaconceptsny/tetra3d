@@ -91,8 +91,7 @@ class SpotController extends Controller
             ->toMediaCollection('image_360');
 
 
-        print_r($tour->id);
-        $this->updateTourXMLFiles('app/public/tours'.$tour->id, $spot->name,  $spot->display_name, $previousDisplayName);
+        $this->updateTourXMLFiles('app/public/tours/'.$tour->id, $spot->name,  $spot->display_name, $previousDisplayName);
 
         return redirect()->route('backend.tours.spots.index', $spot->tour)->with('success', 'Spot updated successfully');
     }
