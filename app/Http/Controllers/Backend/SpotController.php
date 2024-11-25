@@ -126,19 +126,14 @@ class SpotController extends Controller
     private function updateTourXML($file_path,$name, $display_name, $previousDisplayName) {
 
         $file_contents = file_get_contents(storage_path($file_path));
-        $check_file = strrpos($file_contents, '<!-- add the custom ThreeJS plugin -->');
 
-        if ($check_file) {
-
-        } else {
-            if($previousDisplayName != null){
-                $file_contents = str_replace((string)$previousDisplayName, (string)$display_name, $file_contents);
-                $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
-                file_put_contents(storage_path($file_path), $file_contents);
-            }else{
-                $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
-                file_put_contents(storage_path($file_path), $file_contents);
-            }
+        if($previousDisplayName != null){
+            $file_contents = str_replace((string)$previousDisplayName, (string)$display_name, $file_contents);
+            $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
+            file_put_contents(storage_path($file_path), $file_contents);
+        }else{
+            $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
+            file_put_contents(storage_path($file_path), $file_contents);
         }
     }
 }
