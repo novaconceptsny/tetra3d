@@ -135,10 +135,10 @@ class SpotController extends Controller
             if($previousDisplayName != null){
                 $file_contents = str_replace((string)$previousDisplayName, (string)$display_name, $file_contents);
                 $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
-                ile_put_contents(storage_path($file_path), $file_contents);
+                file_put_contents(storage_path($file_path), $file_contents);
             }else{
                 $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
-                ile_put_contents(storage_path($file_path), $file_contents);
+                file_put_contents(storage_path($file_path), $file_contents);
             }
         }
     }
