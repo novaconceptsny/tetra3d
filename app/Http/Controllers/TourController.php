@@ -7,6 +7,8 @@ use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Tour;
 use App\Models\Sculpture;
+use App\Models\ArtworkModel;
+use App\Models\Artwork;
 use App\Models\SculptureModel;
 use App\Models\TourModel;
 use App\Models\SpotsPosition;
@@ -116,6 +118,15 @@ class TourController extends Controller
 
         $sculptureData = $layout ? Sculpture::where('layout_id', $layout->id)->get() : null;
 
+        $artworkData = $layout ? ArtworkModel::where('layout_id', $layout->id)->get() : null;
+
+        if($artworkData !== null && !$artworkData->isEmpty()) {
+            for($index = 0; $index < count($artworkData); $index++) {
+                $image_url = Artwork::where('id', $artworkData[$index]->artwork_id)->get()->first()->image_url;
+                $artworkData[$index]->image_url = $image_url;
+            }
+        }
+
         $spotPosition = $spot ? SpotsPosition::where('spot_id', $spot->id)->get() : null;
         if ($spotPosition !== null && !$spotPosition->isEmpty()) {
             $spotPosition = $spotPosition[0];
@@ -134,6 +145,7 @@ class TourController extends Controller
         $data['tourModel'] = $tourModel;
         $data['sculptureData'] = $sculptureData;
         $data['spotPosition'] = $spotPosition;
+        $data['artworkData'] = $artworkData;
 
         return view('pages.tour', $data);
     }

@@ -14,6 +14,7 @@
     $spotPosition = $spotPosition ?? null;
     $tourModel = $tourModel ?? null;
     $sculptureData = $sculptureData ?? null;
+    $artworkData = $artworkData ?? null;
     $sculptures = $sculptures ?? array();
 
     // only admins can see tracker
@@ -270,6 +271,7 @@
         var init_depth = 40;
         var sculpture_id = 0;
         var sculpture_id_list = [];
+        var artwork_id_list = [];
         var offset_x = 0;
         var offset_y = 0;
         var offset_z = 0;
@@ -286,7 +288,10 @@
         var layout_id = '{{ $layout_id }}';
         var sculptures = @json($sculptures);
         var sculpture_data = @json($sculptureData);
+        var artworks_data = @json($artworkData);
+ 
         var spot_position = @json($spotPosition);
+        console.log(artworks_data, spot_position, "pppppppppppp")
         var space_model = @json($tourModel);
         var tour_is_shared = @json($tour_is_shared);
         var user_name = @json($userName);
@@ -342,6 +347,20 @@
                             sculpture_data[i].rotation_x, 
                             sculpture_data[i].rotation_y, 
                             sculpture_data[i].rotation_z
+                        );
+                    }
+
+                    for (let i = 0; i < artworks_data.length; i++) {
+                        artwork_id_list.push(artworks_data[i].artwork_id);
+                        
+                        load_artModels(artworks_data[i].artwork_id, 
+                            artworks_data[i].image_url, 
+                            artworks_data[i].position_x - spot_position.x * 30, 
+                            artworks_data[i].position_y - spot_position.y * 30, 
+                            artworks_data[i].position_z + spot_position.z * 30, 
+                            artworks_data[i].rotation_x, 
+                            artworks_data[i].rotation_y, 
+                            artworks_data[i].rotation_z
                         );
                     }
     
@@ -748,6 +767,77 @@
                     scale: 30,
                 });
             });
+        }
+
+        function load_artModels(art_id, image_url, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
+            const loader = new THREE.GLTFLoader();
+            const dracoLoader = new THREE.DRACOLoader();
+            loader.setDRACOLoader(dracoLoader);
+
+            var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
+
+            // Load a texture (image)
+            const textureLoader = new THREE.TextureLoader();
+
+            // textureLoader.load(image_url, (texture) => {
+            //         // Ensure the image is loaded and dimensions are accessible
+            //     texture.flipY = false;
+            //     const img = texture.image; // `img` is an HTMLImageElement
+            //     const imageWidth = img.naturalWidth || img.width;
+            //     const imageHeight = img.naturalHeight || img.height;
+
+            //     if (!imageWidth || !imageHeight) {
+            //         console.error('Failed to retrieve image dimensions');
+            //         return;
+            //     }
+
+            //     // Calculate aspect ratio
+            //     const aspectRatio = imageWidth / imageHeight;
+
+            //     // Create a geometry with the same aspect ratio
+            //     const geometry = new THREE.PlaneGeometry(aspectRatio, 1); // Height is normalized to 1
+
+            //     // Create a material with the texture
+            //     const material = new THREE.MeshBasicMaterial({ map: texture });
+
+            //     // Create a mesh with the geometry and material
+            //     const plane = new THREE.Mesh(geometry, material);
+            //     console.log(position_x, position_y, position_z, art_id, spherical_position, "pppppppppp","dddddddddddd");
+            //     scene.add(plane);
+
+            //     assign_object_properties(plane, "model", { 
+            //         ath: spherical_position.phi, 
+            //         atv: spherical_position.theta, 
+            //         depth: spherical_position.r, 
+            //         rx: rotation_x * 180 / Math.PI,
+            //         ry: rotation_y * 180 / Math.PI,
+            //         rz: rotation_z * 180 / Math.PI, 
+            //         scale: 30,
+            //     });
+            //     }
+            // );
+
+            const geometry = new THREE.PlaneGeometry(4, 2); // Height is normalized to 1
+
+            // Create a material with the texture
+            const material = new THREE.MeshBasicMaterial({ color: "#00FF00" });
+
+            // Create a mesh with the geometry and material
+            const plane = new THREE.Mesh(geometry, material);
+
+            console.log(position_x, position_y, position_z, art_id, "pppppppppp","dddddddddddd");
+            scene.add(plane);
+
+            assign_object_properties(plane, "plane", { 
+                ath: spherical_position.phi, 
+                atv: spherical_position.theta, 
+                depth: spherical_position.r, 
+                rx: rotation_x * 180 / Math.PI,
+                ry: rotation_y * 180 / Math.PI,
+                rz: rotation_z * 180 / Math.PI, 
+                scale: 30,
+            });
+
         }
 
         function findAddModelPosition() {

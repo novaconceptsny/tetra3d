@@ -9,6 +9,8 @@ use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Surface;
 use App\Models\SurfaceState;
+use App\Models\ArtworkModel;
+use App\Models\SurfaceInfo;
 use Illuminate\Http\Request;
 
 class SurfaceStateController extends Controller
@@ -132,9 +134,15 @@ class SurfaceStateController extends Controller
     
         // Update the `updated_at` field of the `$layout` to the current time
         $layout->touch();
+
+        $canvasWidth = $surface->data["bounding_box_width"];
+        $canvasHeight = $surface->data["bounding_box_height"];
     
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
+             // Calculate top and left distances
+
+          
             $assigned_artworks[] = array(
                 'artwork_id' => $artwork['artworkId'],
                 'top_position' => $artwork['topPosition'],
@@ -142,6 +150,55 @@ class SurfaceStateController extends Controller
                 'crop_data' => $artwork['cropData'],
                 'override_scale' => $artwork['overrideScale'],
             );
+
+             // Fetch surface information using surface_id
+            $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
+
+            if ($surfaceInfo) {
+                $topLeftCorner = json_decode($surfaceInfo->start_pos, true); // Start position as ['x', 'y', 'z']
+                $normal = json_decode($surfaceInfo->normalvector, true);    // Normal vector as ['x', 'y', 'z']
+                $planeWidth = $surfaceInfo->width;                         // Width in meters
+                $planeHeight = $surfaceInfo->height;                       // Length in meters
+         
+                // Normalize the normal vector
+                $normalizedNormal = $this->normalize($normal);
+
+            // Create the basis vectors (u, v)
+                $arbitraryVector = ['x' => 1, 'y' => 0, 'z' => 0];
+                $dotProduct = $normalizedNormal['x'] * $arbitraryVector['x'] +
+                            $normalizedNormal['y'] * $arbitraryVector['y'] +
+                            $normalizedNormal['z'] * $arbitraryVector['z'];
+                if (abs($dotProduct) === 1) {
+                    $arbitraryVector = ['x' => 0, 'y' => 1, 'z' => 0];
+                }
+                $u = $this->normalize($this->crossProduct($normalizedNormal, $arbitraryVector));
+                $v = $this->normalize($this->crossProduct($normalizedNormal, $u));
+
+
+                // Calculate the target position in 3D space
+                $xDistance = $artwork['leftPosition'] / $canvasWidth * $planeWidth;
+                $yDistance = $artwork['topPosition'] / $canvasHeight * $planeHeight;
+
+                $targetPosition = [
+                    'x' => $topLeftCorner['x'] + $u['x'] * $xDistance + $v['x'] * $yDistance,
+                    'y' => $topLeftCorner['y'] + $u['y'] * $xDistance + $v['y'] * $yDistance,
+                    'z' => $topLeftCorner['z'] + $u['z'] * $xDistance + $v['z'] * $yDistance,
+                ];
+
+                 // Insert into ArtworkModel table
+                ArtworkModel::updateOrCreate(
+                    [
+                        'layout_id' => $layout->id,
+                        'artwork_id' => $artwork['artworkId'],
+                    ],
+                    [
+                        'position_x' => $targetPosition['x'],
+                        'position_y' => $targetPosition['y'],
+                        'position_z' => $targetPosition['z'],
+                    ]
+                );
+            }
+
         }
 
         if ($request->new) {
@@ -212,4 +269,24 @@ class SurfaceStateController extends Controller
         $state->setAsActive();
         return redirect()->back()->with('success', 'Active set updated');
     }
+// Helper Functions
+    private function normalize($vector)
+    {
+        $length = sqrt($vector['x'] ** 2 + $vector['y'] ** 2 + $vector['z'] ** 2);
+        return [
+            'x' => $vector['x'] / $length,
+            'y' => $vector['y'] / $length,
+            'z' => $vector['z'] / $length,
+        ];
+    }
+
+    private function crossProduct($v1, $v2)
+    {
+        return [
+            'x' => $v1['y'] * $v2['z'] - $v1['z'] * $v2['y'],
+            'y' => $v1['z'] * $v2['x'] - $v1['x'] * $v2['z'],
+            'z' => $v1['x'] * $v2['y'] - $v1['y'] * $v2['x'],
+        ];
+    }
+
 }
