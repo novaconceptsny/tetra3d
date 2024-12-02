@@ -122,8 +122,10 @@ class TourController extends Controller
 
         if($artworkData !== null && !$artworkData->isEmpty()) {
             for($index = 0; $index < count($artworkData); $index++) {
-                $image_url = Artwork::where('id', $artworkData[$index]->artwork_id)->get()->first()->image_url;
-                $artworkData[$index]->image_url = $image_url;
+                $artInfo = Artwork::where('id', $artworkData[$index]->artwork_id)->get()->first();
+                $artworkData[$index]->image_url = $artInfo->image_url;
+                $artworkData[$index]->imageWidth =$artInfo->data["width_inch"] * 0.0254;
+                $artworkData[$index]->imageHeight =$artInfo->data["height_inch"] * 0.0254;
             }
         }
 

@@ -351,13 +351,16 @@
                     }
 
                     for (let i = 0; i < artworks_data.length; i++) {
+                        console.log(artworks_data[i], "oooooooooooooo")
                         artwork_id_list.push(artworks_data[i].artwork_id);
                         
                         load_artModels(artworks_data[i].artwork_id, 
                             artworks_data[i].image_url, 
-                            artworks_data[i].position_x - spot_position.x * 30, 
-                            artworks_data[i].position_y - spot_position.y * 30, 
-                            artworks_data[i].position_z + spot_position.z * 30, 
+                            artworks_data[i].imageWidth, 
+                            artworks_data[i].imageHeight, 
+                            artworks_data[i].position_x * 30   -spot_position.x * 30 , 
+                            -artworks_data[i].position_y* 30+ spot_position.y * 30 , 
+                          -artworks_data[i].position_z* 30+ spot_position.z * 30 +1 , 
                             artworks_data[i].rotation_x, 
                             artworks_data[i].rotation_y, 
                             artworks_data[i].rotation_z
@@ -437,11 +440,11 @@
 
             obj.properties = properties;
 
-            update_object_properties(obj);
+            update_object_properties(obj, name);
         }
 
 
-        function update_object_properties(obj) {
+        function update_object_properties(obj, name) {
 
             var p = obj.properties;
 
@@ -449,7 +452,8 @@
             var py = p.depth * Math.cos(p.atv * M_RAD);
             var pz = p.depth * Math.sin(p.atv * M_RAD) * Math.sin(p.ath * M_RAD);
 
-            obj.position.set(px, offset_y, pz);
+            if(name === "artwork")   obj.position.set(px, py, pz);
+            else  obj.position.set(px, offset_y, pz);
             obj.rotation.set(p.rx * M_RAD, p.ry * M_RAD, p.rz * M_RAD, p.rorder);
             obj.scale.set(p.scale, p.scale, p.scale);
             obj.updateMatrix();
@@ -769,74 +773,37 @@
             });
         }
 
-        function load_artModels(art_id, image_url, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
-            const loader = new THREE.GLTFLoader();
-            const dracoLoader = new THREE.DRACOLoader();
-            loader.setDRACOLoader(dracoLoader);
-
-            var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
+        function load_artModels(art_id, image_url,imageWidth, imageHeight,  position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
 
             // Load a texture (image)
             const textureLoader = new THREE.TextureLoader();
+            
+            var spherical_position = cartesianToSpherical(position_x , position_y, position_z);
+            textureLoader.load(image_url, (texture) => {
+                // Ensure the image is loaded and dimensions are accessible
+                texture.flipY = false;
+                // Create a geometry with the same aspect ratio
+                const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight); // Height is normalized to 1
+                geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
+                // Create a material with the texture
+                const material = new THREE.MeshBasicMaterial({ map: texture });
 
-            // textureLoader.load(image_url, (texture) => {
-            //         // Ensure the image is loaded and dimensions are accessible
-            //     texture.flipY = false;
-            //     const img = texture.image; // `img` is an HTMLImageElement
-            //     const imageWidth = img.naturalWidth || img.width;
-            //     const imageHeight = img.naturalHeight || img.height;
+                // Create a mesh with the geometry and material
+                const plane = new THREE.Mesh(geometry, material);
+                scene.add(plane);
 
-            //     if (!imageWidth || !imageHeight) {
-            //         console.error('Failed to retrieve image dimensions');
-            //         return;
-            //     }
+                 assign_object_properties(plane, "artwork", { 
+                    ath: spherical_position.phi, 
+                    atv: spherical_position.theta, 
+                    depth: spherical_position.r, 
+                    rx: rotation_x * 180 / Math.PI,
+                    ry: rotation_y * 180 / Math.PI,
+                    rz: rotation_z * 180 / Math.PI, 
+                    scale: 30,
+                });
+                }
+            );
 
-            //     // Calculate aspect ratio
-            //     const aspectRatio = imageWidth / imageHeight;
-
-            //     // Create a geometry with the same aspect ratio
-            //     const geometry = new THREE.PlaneGeometry(aspectRatio, 1); // Height is normalized to 1
-
-            //     // Create a material with the texture
-            //     const material = new THREE.MeshBasicMaterial({ map: texture });
-
-            //     // Create a mesh with the geometry and material
-            //     const plane = new THREE.Mesh(geometry, material);
-            //     console.log(position_x, position_y, position_z, art_id, spherical_position, "pppppppppp","dddddddddddd");
-            //     scene.add(plane);
-
-            //     assign_object_properties(plane, "model", { 
-            //         ath: spherical_position.phi, 
-            //         atv: spherical_position.theta, 
-            //         depth: spherical_position.r, 
-            //         rx: rotation_x * 180 / Math.PI,
-            //         ry: rotation_y * 180 / Math.PI,
-            //         rz: rotation_z * 180 / Math.PI, 
-            //         scale: 30,
-            //     });
-            //     }
-            // );
-
-            const geometry = new THREE.PlaneGeometry(4, 2); // Height is normalized to 1
-
-            // Create a material with the texture
-            const material = new THREE.MeshBasicMaterial({ color: "#00FF00" });
-
-            // Create a mesh with the geometry and material
-            const plane = new THREE.Mesh(geometry, material);
-
-            console.log(position_x, position_y, position_z, art_id, "pppppppppp","dddddddddddd");
-            scene.add(plane);
-
-            assign_object_properties(plane, "plane", { 
-                ath: spherical_position.phi, 
-                atv: spherical_position.theta, 
-                depth: spherical_position.r, 
-                rx: rotation_x * 180 / Math.PI,
-                ry: rotation_y * 180 / Math.PI,
-                rz: rotation_z * 180 / Math.PI, 
-                scale: 30,
-            });
 
         }
 

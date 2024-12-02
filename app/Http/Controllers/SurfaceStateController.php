@@ -135,8 +135,10 @@ class SurfaceStateController extends Controller
         // Update the `updated_at` field of the `$layout` to the current time
         $layout->touch();
 
-        $canvasWidth = $surface->data["bounding_box_width"];
-        $canvasHeight = $surface->data["bounding_box_height"];
+        $boundingBoxWidth = $surface->data["bounding_box_width"];
+        $boundingBoxHeight = $surface->data["bounding_box_height"];
+        $boundingBoxTop = $surface->data["bounding_box_top"];
+        $boundingBoxLeft = $surface->data["bounding_box_left"];
     
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
@@ -153,6 +155,11 @@ class SurfaceStateController extends Controller
 
              // Fetch surface information using surface_id
             $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
+            $artworkInfo = Artwork::where('id', $artwork['artworkId'])->first();
+
+            $artWidth =  $artworkInfo->data["width_inch"] ;
+            $artHeight =  $artworkInfo->data["height_inch"];
+            $artScale =  $artworkInfo->data["scale"];
 
             if ($surfaceInfo) {
                 $topLeftCorner = json_decode($surfaceInfo->start_pos, true); // Start position as ['x', 'y', 'z']
@@ -163,7 +170,7 @@ class SurfaceStateController extends Controller
                 // Normalize the normal vector
                 $normalizedNormal = $this->normalize($normal);
 
-            // Create the basis vectors (u, v)
+                // Create the basis vectors (u, v)
                 $arbitraryVector = ['x' => 1, 'y' => 0, 'z' => 0];
                 $dotProduct = $normalizedNormal['x'] * $arbitraryVector['x'] +
                             $normalizedNormal['y'] * $arbitraryVector['y'] +
@@ -171,19 +178,40 @@ class SurfaceStateController extends Controller
                 if (abs($dotProduct) === 1) {
                     $arbitraryVector = ['x' => 0, 'y' => 1, 'z' => 0];
                 }
+
+                // Compute u and v vectors based on the normal
                 $u = $this->normalize($this->crossProduct($normalizedNormal, $arbitraryVector));
                 $v = $this->normalize($this->crossProduct($normalizedNormal, $u));
 
+                // Adjust the direction of u and v vectors to match the coordinate system
+                $u = [
+                    'x' => -$u['x'], // Reverse the x direction for "Right = -x"
+                    'y' => -$u['y'], // Reverse the y direction for "Up = -y"
+                    'z' => -$u['z'], // (z-direction for u is not relevant here)
+                ];
+                $v = [
+                    'x' => -$v['x'], // (x-direction for v is not relevant here)
+                    'y' => -$v['y'], // Reverse the y direction for "Up = -y"
+                    'z' => -$v['z'], // Reverse the z direction for "Forward = +z"
+                ];
+
 
                 // Calculate the target position in 3D space
-                $xDistance = $artwork['leftPosition'] / $canvasWidth * $planeWidth;
-                $yDistance = $artwork['topPosition'] / $canvasHeight * $planeHeight;
+                $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft + $artWidth / 2) / $boundingBoxWidth * $planeWidth;
+                $yDistance = ($artwork['topPosition'] - $boundingBoxTop + $artHeight / 2) / $boundingBoxHeight * $planeHeight;
+
 
                 $targetPosition = [
                     'x' => $topLeftCorner['x'] + $u['x'] * $xDistance + $v['x'] * $yDistance,
                     'y' => $topLeftCorner['y'] + $u['y'] * $xDistance + $v['y'] * $yDistance,
                     'z' => $topLeftCorner['z'] + $u['z'] * $xDistance + $v['z'] * $yDistance,
                 ];
+
+                // $targetPosition = [
+                //     'x' => $topLeftCorner['x'] -  $xDistance ,
+                //     'y' => $topLeftCorner['y'] -   $yDistance,
+                //     'z' => $topLeftCorner['z'],
+                // ];
 
                  // Insert into ArtworkModel table
                 ArtworkModel::updateOrCreate(
