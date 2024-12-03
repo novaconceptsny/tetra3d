@@ -132,7 +132,6 @@ class TourController extends Controller
                 $filteredRecords = array_filter($artworkRecords, function ($record) {
                     return !is_null($record['position_x']) && !is_null($record['position_y']) && !is_null($record['position_z']);
                 });
-                dump($filteredRecords);
                 if (count($filteredRecords) > 0) {
                     $artworkData = array_merge($artworkData, $filteredRecords); // Merge filtered records into artworkData
                 }
