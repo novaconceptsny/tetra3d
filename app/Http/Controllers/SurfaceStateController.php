@@ -153,8 +153,22 @@ class SurfaceStateController extends Controller
             $offset = 0.005;
 
             if ($surfaceInfo) {
-                $topLeftCorner = json_decode($surfaceInfo->start_pos, true); // Start position as ['x', 'y', 'z']
-                $normal = json_decode($surfaceInfo->normalvector, true);    // Normal vector as ['x', 'y', 'z']
+                // If $surfaceInfo->start_pos is already an array:
+                if (is_string($surfaceInfo->start_pos)) {
+                    // Decode JSON string to an associative array
+                    $topLeftCorner = json_decode($surfaceInfo->start_pos, true);
+                } else {
+                    // Directly assign if it's already an array
+                    $topLeftCorner = $surfaceInfo->start_pos;
+                }
+                // Convert string values in $topLeftCorner to numbers
+                $topLeftCorner = array_map('floatval', $topLeftCorner);
+                
+                $normal = $surfaceInfo->normalvector;
+
+                // Convert string values in $normal to numbers
+                $normal = array_map('floatval', $normal);
+                
                 $planeWidth = $surfaceInfo->width;                         // Width in meters
                 $planeHeight = $surfaceInfo->height;                       // Length in meters
 
@@ -162,7 +176,7 @@ class SurfaceStateController extends Controller
                 $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft + $artWidth / 2) / $boundingBoxWidth * $planeWidth;
                 $yDistance = ($artwork['topPosition'] - $boundingBoxTop + $artHeight / 2) / $boundingBoxHeight * $planeHeight;
 
-                if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
+                if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
                     $targetPosition = [
                         'x' => $topLeftCorner['x'] - $xDistance,
                         'y' => $topLeftCorner['y'] - $yDistance,
@@ -174,7 +188,7 @@ class SurfaceStateController extends Controller
                         'z' => 0,
                     ];
 
-                } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
+                } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
                     $targetPosition = [
                         'x' => $topLeftCorner['x'] + $xDistance,
                         'y' => $topLeftCorner['y'] - $yDistance,
@@ -187,7 +201,7 @@ class SurfaceStateController extends Controller
                     ];
                 } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
                     $targetPosition = [
-                        'x' => $topLeftCorner['x'] - $offset,
+                        'x' => $topLeftCorner['x'] + $offset,
                         'y' => $topLeftCorner['y'] - $yDistance,
                         'z' => $topLeftCorner['z'] - $xDistance
                     ];
@@ -199,7 +213,7 @@ class SurfaceStateController extends Controller
                 } else {
                     // Default case if no known normal is matched
                     $targetPosition = [
-                        'x' => $topLeftCorner['x'] + $offset,
+                        'x' => $topLeftCorner['x'] - $offset,
                         'y' => $topLeftCorner['y'] - $yDistance,
                         'z' => $topLeftCorner['z'] + $xDistance
                     ];

@@ -41,6 +41,56 @@
                 @endforeach
 
             </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-12"><h5>{{ __('Surfaces') }}</h5></div>
+                @foreach($tour->surfaces as $surface)
+                    <div class="col-12"><h7>{{ $surface->friendly_name }}</h7></div>
+                    <div class="col-12"><h7>Normal Vector</h7></div>
+                    <div class="row g-2">
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.x" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.x" label='{{ "X (Y in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.y" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.y" label='{{ "Y (Z in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.z" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.z" label='{{ "Z (X in 3ds Max)" }}'
+                        />
+                    </div>
+                    <div class="col-12"><h7>Start Point</h7></div>
+                    <div class="row g-2">
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.x" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.x" label='{{ "X (Y in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.y" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.y" label='{{ "Y (Z in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.z" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.z" label='{{ "Z (X in 3ds Max)" }}'
+                        />
+                    </div>
+                    <div class="col-12"><h7>Size</h7></div>
+                    <div class="row g-2">
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.width" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.width" label='{{ "Width" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.height" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.height" label='{{ "Height" }}'
+                        />
+                    </div>
+                @endforeach
+
+            </div>
+
             <div class="text-end">
                 <button id="tour-model-update" class="btn btn-primary mb-3" wire:click="update" type="button">
                     {{ __('Update') }}
@@ -73,6 +123,7 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls'
 
     var spotsPosition = @json($spotsPosition);
+    var surfaceArray = @json($surfaceArray);
     var tourModel = @json($tourModel);
     var tourModelPath = @json($tourModelPath);
     var surfaceModel = @json($surfaceModel);

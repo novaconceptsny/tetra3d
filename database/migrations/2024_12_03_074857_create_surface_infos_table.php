@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('surface_infos', function (Blueprint $table) {
             $table->id();
             $table->string('surface_id');
+            $table->string('tour_id');
             $table->json('normalvector'); // JSON for complex data like vectors
             $table->json('start_pos');    // JSON for position data
             $table->float('width');

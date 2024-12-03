@@ -291,7 +291,7 @@
         var artworks_data = @json($artworkData);
  
         var spot_position = @json($spotPosition);
-        console.log(artworks_data, spot_position, "pppppppppppp")
+
         var space_model = @json($tourModel);
         var tour_is_shared = @json($tour_is_shared);
         var user_name = @json($userName);
@@ -355,7 +355,6 @@
                     }
 
                     for (let i = 0; i < artworks_data.length; i++) {
-                        console.log(artworks_data[i], "oooooooooooooo")
                         artwork_id_list.push(artworks_data[i].artwork_id);
     
                         load_artModels(artworks_data[i].artwork_id, 
@@ -791,7 +790,7 @@
                 const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight); // Height is normalized to 1
                 geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
                 // Create a material with the texture
-                const material = new THREE.MeshBasicMaterial({ map: texture });
+                const material = new THREE.MeshBasicMaterial({ map: texture, });
 
                 // Create a mesh with the geometry and material
                 const plane = new THREE.Mesh(geometry, material);
