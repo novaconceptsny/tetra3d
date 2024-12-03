@@ -240,7 +240,7 @@ class SurfaceStateController extends Controller
                     'rotation_z' => $targetRotation['z'],
                 );
             }else{
-                dump($artwork);
+                dump($surface->id);
                 $assigned_artworks[] = array(
                     'artwork_id' => $artwork['artworkId'],
                     'top_position' => $artwork['topPosition'],
