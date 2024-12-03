@@ -7,9 +7,10 @@ use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Tour;
 use App\Models\Sculpture;
-use App\Models\ArtworkModel;
 use App\Models\Artwork;
 use App\Models\SculptureModel;
+use App\Models\ArtworkSurfaceState;
+use App\Models\SurfaceState;
 use App\Models\TourModel;
 use App\Models\SpotsPosition;
 use App\Models\ArtworkProject;
@@ -118,14 +119,37 @@ class TourController extends Controller
 
         $sculptureData = $layout ? Sculpture::where('layout_id', $layout->id)->get() : null;
 
-        $artworkData = $layout ? ArtworkModel::where('layout_id', $layout->id)->get() : null;
-
-        if($artworkData !== null && !$artworkData->isEmpty()) {
-            for($index = 0; $index < count($artworkData); $index++) {
-                $artInfo = Artwork::where('id', $artworkData[$index]->artwork_id)->get()->first();
-                $artworkData[$index]->image_url = $artInfo->image_url;
-                $artworkData[$index]->imageWidth =$artInfo->data["width_inch"] * 0.0254;
-                $artworkData[$index]->imageHeight =$artInfo->data["height_inch"] * 0.0254;
+        $stateArray = $layout 
+        ? SurfaceState::where('layout_id', $layout->id)->pluck('id')->toArray() 
+        : [];
+    
+        $artworkData = [];
+        
+        if ($stateArray) {
+            foreach ($stateArray as $stateId) {
+                $artworkRecords = ArtworkSurfaceState::where('surface_state_id', $stateId)->get()->toArray(); // Convert to array
+                
+                $filteredRecords = array_filter($artworkRecords, function ($record) {
+                    return !is_null($record['position_x']) && !is_null($record['position_y']) && !is_null($record['position_z']);
+                });
+        
+                if (count($filteredRecords) > 0) {
+                    $artworkData = array_merge($artworkData, $filteredRecords); // Merge filtered records into artworkData
+                }
+            }
+        }
+        
+        
+            
+        for ($index = 0; $index < count($artworkData); $index++) {
+            $artworkId = $artworkData[$index]['artwork_id'] ?? null; // Safely access artwork_id
+            if ($artworkId) {
+                $artInfo = Artwork::find($artworkId); // Find by ID
+                if ($artInfo) {
+                    $artworkData[$index]['image_url'] = $artInfo->image_url;
+                    $artworkData[$index]['imageWidth'] = ($artInfo->data['width_inch'] ?? 0) * 0.0254; // Safely access width_inch
+                    $artworkData[$index]['imageHeight'] = ($artInfo->data['height_inch'] ?? 0) * 0.0254; // Safely access height_inch
+                }
             }
         }
 

@@ -9,7 +9,6 @@ use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Surface;
 use App\Models\SurfaceState;
-use App\Models\ArtworkModel;
 use App\Models\SurfaceInfo;
 use Illuminate\Http\Request;
 
@@ -142,16 +141,7 @@ class SurfaceStateController extends Controller
     
         $assigned_artworks = array();
         foreach (json_decode($request->assigned_artwork, true) as $artwork){
-             // Calculate top and left distances
 
-          
-            $assigned_artworks[] = array(
-                'artwork_id' => $artwork['artworkId'],
-                'top_position' => $artwork['topPosition'],
-                'left_position' => $artwork['leftPosition'],
-                'crop_data' => $artwork['cropData'],
-                'override_scale' => $artwork['overrideScale'],
-            );
 
              // Fetch surface information using surface_id
             $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
@@ -160,70 +150,87 @@ class SurfaceStateController extends Controller
             $artWidth =  $artworkInfo->data["width_inch"] ;
             $artHeight =  $artworkInfo->data["height_inch"];
             $artScale =  $artworkInfo->data["scale"];
+            $offset = 0.005;
 
             if ($surfaceInfo) {
                 $topLeftCorner = json_decode($surfaceInfo->start_pos, true); // Start position as ['x', 'y', 'z']
                 $normal = json_decode($surfaceInfo->normalvector, true);    // Normal vector as ['x', 'y', 'z']
                 $planeWidth = $surfaceInfo->width;                         // Width in meters
                 $planeHeight = $surfaceInfo->height;                       // Length in meters
-         
-                // Normalize the normal vector
-                $normalizedNormal = $this->normalize($normal);
-
-                // Create the basis vectors (u, v)
-                $arbitraryVector = ['x' => 1, 'y' => 0, 'z' => 0];
-                $dotProduct = $normalizedNormal['x'] * $arbitraryVector['x'] +
-                            $normalizedNormal['y'] * $arbitraryVector['y'] +
-                            $normalizedNormal['z'] * $arbitraryVector['z'];
-                if (abs($dotProduct) === 1) {
-                    $arbitraryVector = ['x' => 0, 'y' => 1, 'z' => 0];
-                }
-
-                // Compute u and v vectors based on the normal
-                $u = $this->normalize($this->crossProduct($normalizedNormal, $arbitraryVector));
-                $v = $this->normalize($this->crossProduct($normalizedNormal, $u));
-
-                // Adjust the direction of u and v vectors to match the coordinate system
-                $u = [
-                    'x' => -$u['x'], // Reverse the x direction for "Right = -x"
-                    'y' => -$u['y'], // Reverse the y direction for "Up = -y"
-                    'z' => -$u['z'], // (z-direction for u is not relevant here)
-                ];
-                $v = [
-                    'x' => -$v['x'], // (x-direction for v is not relevant here)
-                    'y' => -$v['y'], // Reverse the y direction for "Up = -y"
-                    'z' => -$v['z'], // Reverse the z direction for "Forward = +z"
-                ];
-
 
                 // Calculate the target position in 3D space
                 $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft + $artWidth / 2) / $boundingBoxWidth * $planeWidth;
                 $yDistance = ($artwork['topPosition'] - $boundingBoxTop + $artHeight / 2) / $boundingBoxHeight * $planeHeight;
 
+                if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
+                    $targetPosition = [
+                        'x' => $topLeftCorner['x'] - $xDistance,
+                        'y' => $topLeftCorner['y'] - $yDistance,
+                        'z' => $topLeftCorner['z'] - $offset,
+                    ];
+                    $targetRotation = [
+                        'x' => 0,
+                        'y' => 0,
+                        'z' => 0,
+                    ];
 
-                $targetPosition = [
-                    'x' => $topLeftCorner['x'] + $u['x'] * $xDistance + $v['x'] * $yDistance,
-                    'y' => $topLeftCorner['y'] + $u['y'] * $xDistance + $v['y'] * $yDistance,
-                    'z' => $topLeftCorner['z'] + $u['z'] * $xDistance + $v['z'] * $yDistance,
-                ];
+                } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
+                    $targetPosition = [
+                        'x' => $topLeftCorner['x'] + $xDistance,
+                        'y' => $topLeftCorner['y'] - $yDistance,
+                        'z' => $topLeftCorner['z'] + $offset
+                    ];
+                    $targetRotation = [
+                        'x' => 0,
+                        'y' => 3.14,
+                        'z' => 0,
+                    ];
+                } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
+                    $targetPosition = [
+                        'x' => $topLeftCorner['x'] - $offset,
+                        'y' => $topLeftCorner['y'] - $yDistance,
+                        'z' => $topLeftCorner['z'] - $xDistance
+                    ];
+                    $targetRotation = [
+                        'x' => 0,
+                        'y' => 1.57,
+                        'z' => 0,
+                    ];
+                } else {
+                    // Default case if no known normal is matched
+                    $targetPosition = [
+                        'x' => $topLeftCorner['x'] + $offset,
+                        'y' => $topLeftCorner['y'] - $yDistance,
+                        'z' => $topLeftCorner['z'] + $xDistance
+                    ];
+                    $targetRotation = [
+                        'x' => 0,
+                        'y' => -1.57,
+                        'z' => 0,
+                    ];
+                }
 
-                // $targetPosition = [
-                //     'x' => $topLeftCorner['x'] -  $xDistance ,
-                //     'y' => $topLeftCorner['y'] -   $yDistance,
-                //     'z' => $topLeftCorner['z'],
-                // ];
-
-                 // Insert into ArtworkModel table
-                ArtworkModel::updateOrCreate(
-                    [
-                        'layout_id' => $layout->id,
-                        'artwork_id' => $artwork['artworkId'],
-                    ],
-                    [
-                        'position_x' => $targetPosition['x'],
-                        'position_y' => $targetPosition['y'],
-                        'position_z' => $targetPosition['z'],
-                    ]
+                $assigned_artworks[] = array(
+                    'artwork_id' => $artwork['artworkId'],
+                    'top_position' => $artwork['topPosition'],
+                    'left_position' => $artwork['leftPosition'],
+                    'crop_data' => $artwork['cropData'],
+                    'override_scale' => $artwork['overrideScale'],
+                    
+                    'position_x' => $targetPosition['x'],
+                    'position_y' => $targetPosition['y'],
+                    'position_z' => $targetPosition['z'],
+                    'rotation_x' => $targetRotation['x'],
+                    'rotation_y' => $targetRotation['y'],
+                    'rotation_z' => $targetRotation['z'],
+                );
+            }else{
+                $assigned_artworks[] = array(
+                    'artwork_id' => $artwork['artworkId'],
+                    'top_position' => $artwork['topPosition'],
+                    'left_position' => $artwork['leftPosition'],
+                    'crop_data' => $artwork['cropData'],
+                    'override_scale' => $artwork['overrideScale'],
                 );
             }
 

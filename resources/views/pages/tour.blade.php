@@ -200,7 +200,7 @@
                 readonly: "{{ $readonly || $tour_is_shared}}",
 
                 @foreach ($spot->surfaces as $surface)
-                    {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared) }}',
+                    {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared, $tourModel ) }}',
                 @endforeach
             },
         });
@@ -297,27 +297,31 @@
         var user_name = @json($userName);
 
         function toggleLayout() {
-            toggle_space_model = !toggle_space_model;
-            
-            if (toggle_space_model) {
-                model.traverse((obj) => {
-                    if(obj instanceof THREE.Mesh){
-                        obj.material.colorWrite = true;
-                        obj.material.visible = true;
-                        obj.material.transparent = true;
-                        obj.material.opacity = 0.5;
-                    }
-                });
+            if (space_model == null || space_model.name == 'null')  {
+                    alert("No 3D space model");
             } else {
-                model.traverse((obj) => {
-                    if(obj instanceof THREE.Mesh){
-                        obj.material.colorWrite = false;
-                        obj.material.visible = true;
-                        obj.material.transparent = false;
-                        obj.material.opacity = 1;
-                    }
-                });
+                toggle_space_model = !toggle_space_model;
+                if (toggle_space_model) {
+                    model.traverse((obj) => {
+                        if(obj instanceof THREE.Mesh){
+                            obj.material.colorWrite = true;
+                            obj.material.visible = true;
+                            obj.material.transparent = true;
+                            obj.material.opacity = 0.5;
+                        }
+                    });
+                } else {
+                    model.traverse((obj) => {
+                        if(obj instanceof THREE.Mesh){
+                            obj.material.colorWrite = false;
+                            obj.material.visible = true;
+                            obj.material.transparent = false;
+                            obj.material.opacity = 1;
+                        }
+                    });
+                }
             }
+
         };
 
         window.addEventListener('beforeunload', function(e) {
@@ -353,14 +357,15 @@
                     for (let i = 0; i < artworks_data.length; i++) {
                         console.log(artworks_data[i], "oooooooooooooo")
                         artwork_id_list.push(artworks_data[i].artwork_id);
-                        
+    
                         load_artModels(artworks_data[i].artwork_id, 
                             artworks_data[i].image_url, 
                             artworks_data[i].imageWidth, 
                             artworks_data[i].imageHeight, 
                             artworks_data[i].position_x * 30   -spot_position.x * 30 , 
                             -artworks_data[i].position_y* 30+ spot_position.y * 30 , 
-                          -artworks_data[i].position_z* 30+ spot_position.z * 30 +1 , 
+                            -artworks_data[i].position_z* 30+ spot_position.z * 30  , 
+
                             artworks_data[i].rotation_x, 
                             artworks_data[i].rotation_y, 
                             artworks_data[i].rotation_z
