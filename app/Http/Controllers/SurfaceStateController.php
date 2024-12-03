@@ -153,6 +153,7 @@ class SurfaceStateController extends Controller
             $offset = 0.005;
 
             if ($surfaceInfo) {
+                dump($surfaceInfo->start_pos);
                 // If $surfaceInfo->start_pos is already an array:
                 if (is_string($surfaceInfo->start_pos)) {
                     // Decode JSON string to an associative array
@@ -239,6 +240,7 @@ class SurfaceStateController extends Controller
                     'rotation_z' => $targetRotation['z'],
                 );
             }else{
+                dump($artwork);
                 $assigned_artworks[] = array(
                     'artwork_id' => $artwork['artworkId'],
                     'top_position' => $artwork['topPosition'],

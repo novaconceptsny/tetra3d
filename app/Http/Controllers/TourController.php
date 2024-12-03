@@ -126,7 +126,6 @@ class TourController extends Controller
         $artworkData = [];
         
         if ($stateArray) {
-            dump($stateArray);
             foreach ($stateArray as $stateId) {
                 $artworkRecords = ArtworkSurfaceState::where('surface_state_id', $stateId)->get()->toArray(); // Convert to array
                 
