@@ -45,7 +45,13 @@
             <div class="row g-3 mt-2">
                 <div class="col-12"><h5>{{ __('Surfaces') }}</h5></div>
                 @foreach($tour->surfaces as $surface)
-                    <div class="col-12"><h7>{{ $surface->friendly_name }}</h7></div>
+                    <div class="col-12" style="display: flex; gap: 30px;">
+                        <h7>{{ $surface->friendly_name }}</h7>
+                        <label class="switch">
+                            <input type="checkbox" class="surface-toggle" data-surface-id="{{ $surface->id }}" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                     <div class="col-12"><h7>Normal Vector</h7></div>
                     <div class="row g-2">
                         <x-backend::inputs.text
@@ -128,6 +134,7 @@
     var tourModelPath = @json($tourModelPath);
     var surfaceModel = @json($surfaceModel);
     var surfaceModelPath = @json($surfaceModelPath);
+    var surfaceMeshes = [];
 
     for (const key in spotsPosition) {
         let x_input = document.getElementById('spotsPosition_' + key + '_x');
@@ -161,6 +168,19 @@
             document.getElementById('surface-model-name').innerHTML = e.target.files[0].name;
         }
     })
+
+    document.querySelectorAll('.surface-toggle').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const surfaceId = event.target.getAttribute('data-surface-id');
+            const planeMesh = surfaceMeshes[surfaceId];
+
+            // Toggle visibility based on checkbox state
+            if (planeMesh) {
+                planeMesh.visible = event.target.checked;
+            }
+        });
+    });
+
 
     function updatePosition(key, axis, value) {
         scene.traverse(function(object) {
@@ -265,6 +285,49 @@
         }
     }
 
+    function renderSurfaces() {
+        var surfaceArray = @json($surfaceArray);
+        for (const key in surfaceArray) {
+            const width = surfaceArray[key]['width'];
+            const height = surfaceArray[key]['height'];
+            let startPos = surfaceArray[key]['start_pos'];
+            let normalvector = surfaceArray[key]['normalvector'];
+        
+            if(width != 0 && height != 0){
+                // Convert values of the object from strings to numbers
+                startPos = Object.fromEntries(
+                    Object.entries(startPos).map(([key, value]) => [key, parseFloat(value)])
+                );
+
+                normalvector = Object.fromEntries(
+                    Object.entries(normalvector).map(([key, value]) => [key, parseFloat(value)])
+                );
+
+                const geometry = new THREE.PlaneGeometry(width, height); 
+                geometry.translate(width / 2, -height / 2, 0);
+                const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, });
+                const planeMesh = new THREE.Mesh(geometry, material);
+
+                planeMesh.position.set(startPos['x'], startPos['y'], startPos['z'])
+                planeMesh.name = key;
+                if(normalvector['x'] == 0 && normalvector['y'] == 0 && normalvector['z'] ==1){
+                    planeMesh.rotation.set(0, 0, 0);
+                }else if(normalvector['x'] == 0 && normalvector['y'] == 0 && normalvector['z'] ==-1){
+                    planeMesh.rotation.set(0, Math.PI, 0);
+                }else if(normalvector['x'] == 1 && normalvector['y'] == 0 && normalvector['z'] ==0){
+                    planeMesh.rotation.set(0, Math.PI/2, 0);
+                }else{
+                    planeMesh.rotation.set(0, -Math.PI/2, 0);
+                }
+                // Store the planeMesh in the surfaceMeshes object with the surface id
+                surfaceMeshes[key] = planeMesh;
+                scene.add(planeMesh);
+            }
+
+        }
+    }
+
+
     document.getElementById('model_forms-tab').addEventListener('click', function() {
         setTimeout(function() {
             $('[id^="spotsPosition_"]').on('keydown', function(event) {
@@ -284,6 +347,7 @@
             if (document.getElementById('tour-model-import-canvas').getAttribute('data-engine') === null){
                 init();
                 renderSpots();
+                renderSurfaces();
                 animate();
             }
         }, 1000);

@@ -334,6 +334,7 @@
         });
 
         var delay_interval = setInterval(function() {
+            console.log(window.scene, "ppppppppppppppppp");
             if (window.scene !== undefined) {
                 clearInterval(delay_interval);
                 
@@ -356,7 +357,6 @@
 
                     for (let i = 0; i < artworks_data.length; i++) {
                         artwork_id_list.push(artworks_data[i].artwork_id);
-    
                         load_artModels(artworks_data[i].artwork_id, 
                             artworks_data[i].image_url, 
                             artworks_data[i].imageWidth, 
