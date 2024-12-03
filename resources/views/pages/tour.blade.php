@@ -291,7 +291,7 @@
         var artworks_data = @json($artworkData);
  
         var spot_position = @json($spotPosition);
-
+        console.log(artworks_data, "artworks_data")
         var space_model = @json($tourModel);
         var tour_is_shared = @json($tour_is_shared);
         var user_name = @json($userName);
