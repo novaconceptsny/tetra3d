@@ -147,9 +147,6 @@ class SurfaceStateController extends Controller
             $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
             $artworkInfo = Artwork::where('id', $artwork['artworkId'])->first();
 
-            $artWidth =  $artworkInfo->data["width_inch"] ;
-            $artHeight =  $artworkInfo->data["height_inch"];
-            $artScale =  $artworkInfo->data["scale"];
             $offset = 0.005;
 
             if ($surfaceInfo) {
@@ -173,8 +170,8 @@ class SurfaceStateController extends Controller
                 $planeHeight = $surfaceInfo->height;                       // Length in meters
 
                 // Calculate the target position in 3D space
-                $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft + $artWidth / 2) / $boundingBoxWidth * $planeWidth;
-                $yDistance = ($artwork['topPosition'] - $boundingBoxTop + $artHeight / 2) / $boundingBoxHeight * $planeHeight;
+                $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft ) / $boundingBoxWidth * $planeWidth;
+                $yDistance = ($artwork['topPosition'] - $boundingBoxTop ) / $boundingBoxHeight * $planeHeight;
 
                 if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
                     $targetPosition = [
