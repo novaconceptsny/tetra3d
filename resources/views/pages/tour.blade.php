@@ -341,35 +341,7 @@
                 if (space_model == null || space_model.name == 'null')  {
                     alert("No 3D space model");
                 } else {
-                    for (let i = 0; i < sculpture_data.length; i++) {
-                        sculpture_id_list.push(sculpture_data[i].sculpture_id);
-                        
-                        load_model(sculpture_data[i].sculpture_id, 
-                            sculpture_data[i].model_id, 
-                            sculpture_data[i].position_x - spot_position.x * 30, 
-                            sculpture_data[i].position_y - spot_position.y * 30, 
-                            sculpture_data[i].position_z + spot_position.z * 30, 
-                            sculpture_data[i].rotation_x, 
-                            sculpture_data[i].rotation_y, 
-                            sculpture_data[i].rotation_z
-                        );
-                    }
-
-                    for (let i = 0; i < artworks_data.length; i++) {
-                        artwork_id_list.push(artworks_data[i].artwork_id);
-                        load_artModels(artworks_data[i].artwork_id, 
-                            artworks_data[i].image_url, 
-                            artworks_data[i].imageWidth, 
-                            artworks_data[i].imageHeight, 
-                            artworks_data[i].position_x * 30   -spot_position.x * 30 , 
-                            -artworks_data[i].position_y* 30+ spot_position.y * 30 , 
-                            -artworks_data[i].position_z* 30+ spot_position.z * 30  , 
-
-                            artworks_data[i].rotation_x, 
-                            artworks_data[i].rotation_y, 
-                            artworks_data[i].rotation_z
-                        );
-                    }
+                  
     
                     offset_x = spot_position.x * 30;
                     offset_y = spot_position.y * 30;
@@ -398,10 +370,8 @@
                         model.scale.set(30, 30, 30);
                         model.position.set(-offset_x, offset_y, offset_z);
                         scene.add(model);
-                    });
 
-                    // Load Surface Model
-                    loader.load(full_surface_url, function (gltf) {
+                        loader.load(full_surface_url, function (gltf) {
                         surface = gltf.scene;
                         surface.traverse((obj) => {
                             if(obj instanceof THREE.Mesh){
@@ -417,6 +387,40 @@
 
                         scene.add(surface);
                     });
+
+                        for (let i = 0; i < sculpture_data.length; i++) {
+                            sculpture_id_list.push(sculpture_data[i].sculpture_id);
+                            
+                            load_model(sculpture_data[i].sculpture_id, 
+                                sculpture_data[i].model_id, 
+                                sculpture_data[i].position_x - spot_position.x * 30, 
+                                sculpture_data[i].position_y - spot_position.y * 30, 
+                                sculpture_data[i].position_z + spot_position.z * 30, 
+                                sculpture_data[i].rotation_x, 
+                                sculpture_data[i].rotation_y, 
+                                sculpture_data[i].rotation_z
+                            );
+                    }
+
+                    for (let i = 0; i < artworks_data.length; i++) {
+                        artwork_id_list.push(artworks_data[i].artwork_id);
+                        load_artModels(artworks_data[i].artwork_id, 
+                            artworks_data[i].image_url, 
+                            artworks_data[i].imageWidth, 
+                            artworks_data[i].imageHeight, 
+                            artworks_data[i].position_x * 30   -spot_position.x * 30 , 
+                            -artworks_data[i].position_y* 30+ spot_position.y * 30 , 
+                            -artworks_data[i].position_z* 30+ spot_position.z * 30  , 
+
+                            artworks_data[i].rotation_x, 
+                            artworks_data[i].rotation_y, 
+                            artworks_data[i].rotation_z
+                        );
+                    }
+                    });
+
+                    // Load Surface Model
+                  
                 }
             }
         }, 500);
