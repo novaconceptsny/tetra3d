@@ -15,6 +15,7 @@
     $tourModel = $tourModel ?? null;
     $sculptureData = $sculptureData ?? null;
     $artworkData = $artworkData ?? null;
+    $surfaceData = $surfaceData ?? null;
     $sculptures = $sculptures ?? array();
 
     // only admins can see tracker
@@ -289,9 +290,10 @@
         var sculptures = @json($sculptures);
         var sculpture_data = @json($sculptureData);
         var artworks_data = @json($artworkData);
- 
+        var surface_data = @json($surfaceData);
+        var spot_id = "{{ $spot->id }}";
+
         var spot_position = @json($spotPosition);
-        console.log(artworks_data, "artworks_data")
         var space_model = @json($tourModel);
         var tour_is_shared = @json($tour_is_shared);
         var user_name = @json($userName);
@@ -334,7 +336,6 @@
         });
 
         var delay_interval = setInterval(function() {
-            console.log(window.scene, "ppppppppppppppppp");
             if (window.scene !== undefined) {
                 clearInterval(delay_interval);
                 
@@ -400,6 +401,20 @@
                                 sculpture_data[i].rotation_y, 
                                 sculpture_data[i].rotation_z
                             );
+                    }
+
+                    for (let i = 0; i < surface_data.length; i++) {
+                        loadSurfaces(
+                            surface_data[i].surface_id, 
+                            surface_data[i].width, 
+                            surface_data[i].height, 
+                            surface_data[i].start_pos['x'] * 30   -spot_position.x * 30 , 
+                            -surface_data[i].start_pos['y']* 30+ spot_position.y * 30 , 
+                            -surface_data[i].start_pos['z']* 30+ spot_position.z * 30  , 
+                            surface_data[i].rotation['x'], 
+                            surface_data[i].rotation['y'], 
+                            surface_data[i].rotation['z']
+                        );
                     }
 
                     for (let i = 0; i < artworks_data.length; i++) {
@@ -781,6 +796,34 @@
             });
         }
 
+        
+        function loadSurfaces(surface_id, width, height, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
+
+            var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
+            const geometry = new THREE.PlaneGeometry(width, height); 
+            geometry.translate(-width / 2, height / 2, 0);
+            const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0 });
+            const planeMesh = new THREE.Mesh(geometry, material);
+            planeMesh.position.set(position_x, position_y, position_z)
+            planeMesh.rotation.set(rotation_x, rotation_y, rotation_z)
+            planeMesh.userData.surface_id = surface_id;
+            planeMesh.userData.layout_id = layout_id;
+            planeMesh.userData.spot_id = spot_id;
+            planeMesh.userData.type = "surface";
+            scene.add(planeMesh);
+
+            assign_object_properties(planeMesh, "artwork", { 
+                ath: spherical_position.phi, 
+                atv: spherical_position.theta, 
+                depth: spherical_position.r, 
+                rx: rotation_x * 180 / Math.PI,
+                ry: rotation_y * 180 / Math.PI,
+                rz: rotation_z * 180 / Math.PI, 
+                scale: 30,
+            });
+
+}
+
         function load_artModels(art_id, image_url,imageWidth, imageHeight,  position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
 
             // Load a texture (image)
@@ -832,6 +875,7 @@
             return { r: r, theta: theta, phi: phi };
         }
 
+
         document.addEventListener('DOMContentLoaded', function () {
             const images = document.querySelectorAll('.image-list-item'); 
             images.forEach(function (image) {
@@ -850,5 +894,6 @@
                 }
             });
         });
+
     </script>
 @endsection

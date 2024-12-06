@@ -12,6 +12,7 @@ use App\Models\SculptureModel;
 use App\Models\ArtworkSurfaceState;
 use App\Models\SurfaceState;
 use App\Models\TourModel;
+use App\Models\SurfaceInfo;
 use App\Models\SpotsPosition;
 use App\Models\ArtworkProject;
 use Illuminate\Http\Request;
@@ -124,6 +125,48 @@ class TourController extends Controller
         : [];
     
         $artworkData = [];
+        $surfaceData = [];
+        $surfaceInfos = SurfaceInfo::where('tour_id', $tour->id)->get();
+
+        for ($index = 0; $index < count($surfaceInfos); $index++) {
+            $normal = $surfaceInfos[$index]->normalvector;  
+            $normal = array_map('floatval', $normal);
+            $startPos = $surfaceInfos[$index]->start_pos;
+            $startPos = array_map('floatval', $startPos);
+
+            if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 0,
+                    'z' => 0,
+                ];
+
+            } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 3.14,
+                    'z' => 0,
+                ];
+            } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 1.57,
+                    'z' => 0,
+                ];
+            } else {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => -1.57,
+                    'z' => 0,
+                ];
+            }
+
+            $surfaceData[$index]['surface_id'] = $surfaceInfos[$index]->surface_id;
+            $surfaceData[$index]['start_pos'] = $startPos;
+            $surfaceData[$index]['width'] = $surfaceInfos[$index]->width;
+            $surfaceData[$index]['height'] = $surfaceInfos[$index]->height;
+            $surfaceData[$index]['rotation'] = $targetRotation;
+        }
         
         if ($stateArray) {
             foreach ($stateArray as $stateId) {
@@ -171,6 +214,7 @@ class TourController extends Controller
         $data['sculptureData'] = $sculptureData;
         $data['spotPosition'] = $spotPosition;
         $data['artworkData'] = $artworkData;
+        $data['surfaceData'] = $surfaceData;
 
         return view('pages.tour', $data);
     }

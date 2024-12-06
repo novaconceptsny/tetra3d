@@ -365,7 +365,6 @@
                 }else{
                     planeMesh.rotation.set(0, -Math.PI/2, 0);
                 }
-                planeMesh.name = key;
                 // Store the planeMesh in the surfaceMeshes object with the surface id
                 surfaceMeshes[key] = planeMesh;
                 scene.add(planeMesh);

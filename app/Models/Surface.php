@@ -122,7 +122,8 @@ class Surface extends Model implements HasMedia
             }
             return $state->getFirstMediaUrl('hotspot');
         }
-        return asset('images/defaults/no-artwork.png');
+        // return asset('images/defaults/no-artwork.png');
+        return null;
         
     }
 
