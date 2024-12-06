@@ -23,11 +23,17 @@
                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
 
                 @foreach($tour->spots as $spot)
-                    <div class="col-12"><h7>{{ $spot->friendly_name }}</h7></div>
+                    <div class="col-12" style="display: flex; gap: 30px;">
+                        <h7>{{ $spot->friendly_name }}</h7>
+                        <label class="switch">
+                            <input type="checkbox" class="spot-toggle" data-spot-id="{{ $spot->id }}" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                     <div class="row g-2">
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.x" }}'
-                            wire:model.live="spotsPosition.{{ $spot->id }}.x" label='{{ "X (Y in 3ds Max)" }}'
+                            wire:model.live="spotsPosition.{{ $spot->id }}.x" label='{{ "X (invert Y in 3ds Max)" }}'
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.y" }}'
@@ -35,7 +41,7 @@
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.z" }}'
-                            wire:model.live="spotsPosition.{{ $spot->id }}.z" label='{{ "Z (X in 3ds Max)" }}'
+                            wire:model.live="spotsPosition.{{ $spot->id }}.z" label='{{ "Z (invert X in 3ds Max)" }}'
                         />
                     </div>
                 @endforeach
@@ -56,7 +62,7 @@
                     <div class="row g-2">
                         <x-backend::inputs.text
                             col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.x" }}'
-                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.x" label='{{ "X (Y in 3ds Max)" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.x" label='{{ "X (invert Y in 3ds Max)" }}'
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.y" }}'
@@ -64,14 +70,14 @@
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.z" }}'
-                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.z" label='{{ "Z (X in 3ds Max)" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.z" label='{{ "Z (invert X in 3ds Max)" }}'
                         />
                     </div>
                     <div class="col-12"><h7>Start Point</h7></div>
                     <div class="row g-2">
                         <x-backend::inputs.text
                             col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.x" }}'
-                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.x" label='{{ "X (Y in 3ds Max)" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.x" label='{{ "X (invert Y in 3ds Max)" }}'
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.y" }}'
@@ -79,7 +85,7 @@
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.z" }}'
-                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.z" label='{{ "Z (X in 3ds Max)" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.z" label='{{ "Z (invert X in 3ds Max)" }}'
                         />
                     </div>
                     <div class="col-12"><h7>Size</h7></div>
@@ -135,6 +141,7 @@
     var surfaceModel = @json($surfaceModel);
     var surfaceModelPath = @json($surfaceModelPath);
     var surfaceMeshes = [];
+    var spotMeshes = [];
 
     for (const key in spotsPosition) {
         let x_input = document.getElementById('spotsPosition_' + key + '_x');
@@ -148,6 +155,21 @@
         let z_input = document.getElementById('spotsPosition_' + key + '_z');
         z_input.onchange = function() {
             updatePosition(key, 'z', this.value);
+        }
+    }
+
+    for (const key in surfaceArray) {
+        let x_input = document.getElementById('surfaceArray_' + key + '_start_pos_x');
+        x_input.onchange = function() {
+            updateSurfaces(key, 'start_pos_x', this.value);
+        }
+        let y_input = document.getElementById('surfaceArray_' + key + '_start_pos_y');
+        y_input.onchange = function() {
+            updateSurfaces(key, 'start_pos_y', this.value);
+        }
+        let z_input = document.getElementById('surfaceArray_' + key + '_start_pos_z');
+        z_input.onchange = function() {
+            updateSurfaces(key, 'start_pos_z', this.value);
         }
     }
 
@@ -181,6 +203,18 @@
         });
     });
 
+    document.querySelectorAll('.spot-toggle').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const spotId = event.target.getAttribute('data-spot-id');
+            const spotMesh = spotMeshes[spotId];
+
+            // Toggle visibility based on checkbox state
+            if (spotMesh) {
+                spotMesh.visible = event.target.checked;
+            }
+        });
+    });
+
 
     function updatePosition(key, axis, value) {
         scene.traverse(function(object) {
@@ -188,6 +222,16 @@
                 if (axis === 'x') object.position.x = value;
                 if (axis === 'y') object.position.y = value;
                 if (axis === 'z') object.position.z = value;
+            }
+        });
+    }
+
+    function updateSurfaces(key, axis, value) {
+        scene.traverse(function(object) {
+            if (object.name === key) {
+                if (axis === 'start_pos_x') object.position.x = value;
+                if (axis === 'start_pos_y') object.position.y = value;
+                if (axis === 'start_pos_z') object.position.z = value;
             }
         });
     }
@@ -281,6 +325,8 @@
             coneMesh.rotation.x = - Math.PI;
             coneMesh.position.set(spotsPosition[key]['x'], spotsPosition[key]['y'], spotsPosition[key]['z'])
             coneMesh.name = key;
+
+            spotMeshes[key] = coneMesh;
             scene.add(coneMesh);
         }
     }
@@ -319,6 +365,7 @@
                 }else{
                     planeMesh.rotation.set(0, -Math.PI/2, 0);
                 }
+                planeMesh.name = key;
                 // Store the planeMesh in the surfaceMeshes object with the surface id
                 surfaceMeshes[key] = planeMesh;
                 scene.add(planeMesh);
