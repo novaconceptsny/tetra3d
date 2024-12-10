@@ -96,8 +96,8 @@ class Index extends Component
                     "tour_id" => $this->tour->id,
                     "normalvector" => ["x" => 0.0, "y" => 0.0, "z" => 0.0],
                     "start_pos" => ["x" => 0.0, "y" => 0.0, "z" => 0.0],
-                    "width" => 0.1,
-                    "height" => 0.1,
+                    "width" => 0,
+                    "height" => 0,
                 ];
                 SurfaceInfo::create($data);
             }
@@ -135,10 +135,12 @@ class Index extends Component
         }
 
         $temp_surfaces = SurfaceInfo::where('tour_id', $this->tour->id)->get();
-        dump($this->surfaceArray);
+       
         if ($temp_surfaces->isEmpty()) {
 
         } else {
+            dump($this->surfaceArray);
+            dump($temp_surfaces);
             foreach($temp_surfaces as $surface) {
                 $surface->normalvector = $this->surfaceArray[$surface->surface_id]['normalvector'];
                 $surface->start_pos = $this->surfaceArray[$surface->surface_id]['start_pos'];

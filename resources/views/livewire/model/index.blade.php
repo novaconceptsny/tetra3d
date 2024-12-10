@@ -138,6 +138,7 @@
 
     var spotsPosition = @json($spotsPosition);
     var surfaceArray = @json($surfaceArray);
+    console.log(surfaceArray, "pppppppppp")
     var tourModel = @json($tourModel);
     var tourModelPath = @json($tourModelPath);
     var surfaceModel = @json($surfaceModel);
