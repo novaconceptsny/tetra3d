@@ -346,12 +346,12 @@
         var delay_interval = setInterval(function() {
             if (window.scene !== undefined) {
                 clearInterval(delay_interval);
-                
+                console.log("testttttttttttttttt")
                 if (space_model == null || space_model.name == 'null')  {
                     alert("No 3D space model");
                 } else {
                   
-
+                    console.log("1111111111111111")
                     offset_x = spot_position.x * 30;
                     offset_y = spot_position.y * 30;
                     offset_z = spot_position.z * 30;
