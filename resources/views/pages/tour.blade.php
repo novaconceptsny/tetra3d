@@ -300,7 +300,7 @@
         var user_name = @json($userName);
 
         function toggleLayout() {
-
+            console.log(surface_meshes, surface_data);
             if (surface_meshes.length > 0) {
                 surface_meshes.forEach(mesh => {
                     mesh.material.visible = !mesh.material.visible ;
