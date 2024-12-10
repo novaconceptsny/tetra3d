@@ -88,19 +88,26 @@ class Index extends Component
 
     public function setSurfaces() {
         $temp_surfaces = SurfaceInfo::where('tour_id', $this->tour->id)->get();
-
-        if ($temp_surfaces->isEmpty()) {
+        $tour_surfaces_count = count($this->tour->surfaces);
+    
+        // Check if temp_surfaces count matches the count of tour surfaces
+        if ($temp_surfaces->count() !== $tour_surfaces_count) {
+            // Delete existing SurfaceInfo records for this tour
+            SurfaceInfo::where('tour_id', $this->tour->id)->delete();
+    
+            // Recreate the SurfaceInfo records
             foreach ($this->tour->surfaces as $surface) {
                 $data = [
                     "surface_id" => $surface->id,
                     "tour_id" => $this->tour->id,
                     "normalvector" => ["x" => 0.0, "y" => 0.0, "z" => 0.0],
                     "start_pos" => ["x" => 0.0, "y" => 0.0, "z" => 0.0],
-                    "width" => 0,
-                    "height" => 0,
+                    "width" => 1,
+                    "height" => 1,
                 ];
                 SurfaceInfo::create($data);
             }
+    
             $temp_surfaces = SurfaceInfo::where('tour_id', $this->tour->id)->get();
         }
     
@@ -117,7 +124,7 @@ class Index extends Component
     
         $this->surfaceArray = $surfaceArray;
     }
-
+    
     #[Renderless]
     public function update()
     {
