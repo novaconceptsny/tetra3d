@@ -445,6 +445,9 @@ function krpanoplugin() {
 				} else {
 					if (hitobj.userData.type === "surface") {
 						var urlStr ="/surfaces/" +hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id ;
+						var hlookat = krpano.view.hlookat;
+						var vlookat = krpano.view.vlookat;
+						urlStr += "&hlookat=" + hlookat + "&vlookat=" + vlookat;
 						window.location.href = urlStr;
 					} else {
 						selectedObj = hitobj.userData.temp;
