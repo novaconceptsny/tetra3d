@@ -99,3 +99,26 @@
   .slider.round:before {
     border-radius: 50%;
   }
+
+
+    /* Dashed border */
+    hr.dashed {
+      border-top: 3px dashed #3905f4;
+    }
+
+    /* Dotted border */
+    hr.dotted {
+      border-top: 3px dotted #3905f4;
+    }
+
+    
+    /* Solid border */
+    hr.solid {
+      border-top: 3px solid #3905f4;
+    }
+
+    /* Rounded border */
+    hr.rounded {
+      border-top: 8px solid #3905f4;
+      border-radius: 5px;
+    }

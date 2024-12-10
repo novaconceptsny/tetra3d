@@ -44,6 +44,7 @@
                             wire:model.live="spotsPosition.{{ $spot->id }}.z" label='{{ "Z (invert X in 3ds Max)" }}'
                         />
                     </div>
+                    <hr class="solid">
                 @endforeach
 
             </div>
@@ -99,6 +100,7 @@
                             wire:model.live="surfaceArray.{{ $surface->id }}.height" label='{{ "Height" }}'
                         />
                     </div>
+                    <hr class="solid">
                 @endforeach
 
             </div>

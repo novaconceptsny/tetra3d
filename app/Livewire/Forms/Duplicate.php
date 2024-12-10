@@ -35,7 +35,31 @@ class Duplicate extends Modal
     public function mount(Project $project, Layout $layout)
     {
         $this->layout = $layout;
-        $this->layout->name = $layout->name . ' - copy';
+
+        // Check if the name already has a "copy" suffix
+        $matches = [];
+        if (preg_match('/^(.*) - copy(?: (\d+))?$/', $layout->name, $matches)) {
+            // Extract the original name without "copy" and the suffix
+            $originalName = trim($matches[1]);
+        } else {
+            // If no "copy" suffix, use the current name as the original name
+            $originalName = $layout->name;
+        }
+    
+        // Base name for duplicates
+        $baseName = $originalName . ' - copy';
+    
+        // Find existing duplicates with similar names
+        $existingLayouts = Layout::where('name', 'LIKE', $baseName . '%')->pluck('name');
+    
+        // Determine the next available suffix
+        $suffix = 1;
+        while ($existingLayouts->contains($baseName . ($suffix > 1 ? " $suffix" : ''))) {
+            $suffix++;
+        }
+    
+        // Assign the new name
+        $this->layout->name = $baseName . ($suffix > 1 ? " $suffix" : '');
         $this->heading = 'Duplicate Layout';
     }
 
