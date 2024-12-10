@@ -300,7 +300,7 @@
         var user_name = @json($userName);
 
         function toggleLayout() {
-            console.log(surface_meshes, surface_data);
+            console.log(surface_meshes, surface_data, space_model, model,full_model_url, "mmmm");
             if (surface_meshes.length > 0) {
                 surface_meshes.forEach(mesh => {
                     mesh.material.visible = !mesh.material.visible ;
@@ -351,7 +351,7 @@
                     alert("No 3D space model");
                 } else {
                   
-    
+
                     offset_x = spot_position.x * 30;
                     offset_y = spot_position.y * 30;
                     offset_z = spot_position.z * 30;
@@ -397,18 +397,18 @@
                         scene.add(surface);
                     });
 
-                        for (let i = 0; i < sculpture_data.length; i++) {
-                            sculpture_id_list.push(sculpture_data[i].sculpture_id);
-                            
-                            load_model(sculpture_data[i].sculpture_id, 
-                                sculpture_data[i].model_id, 
-                                sculpture_data[i].position_x - spot_position.x * 30, 
-                                sculpture_data[i].position_y - spot_position.y * 30, 
-                                sculpture_data[i].position_z + spot_position.z * 30, 
-                                sculpture_data[i].rotation_x, 
-                                sculpture_data[i].rotation_y, 
-                                sculpture_data[i].rotation_z
-                            );
+                    for (let i = 0; i < sculpture_data.length; i++) {
+                        sculpture_id_list.push(sculpture_data[i].sculpture_id);
+                        
+                        load_model(sculpture_data[i].sculpture_id, 
+                            sculpture_data[i].model_id, 
+                            sculpture_data[i].position_x - spot_position.x * 30, 
+                            sculpture_data[i].position_y - spot_position.y * 30, 
+                            sculpture_data[i].position_z + spot_position.z * 30, 
+                            sculpture_data[i].rotation_x, 
+                            sculpture_data[i].rotation_y, 
+                            sculpture_data[i].rotation_z
+                        );
                     }
 
                     for (let i = 0; i < surface_data.length; i++) {
