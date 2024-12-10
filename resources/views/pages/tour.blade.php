@@ -365,7 +365,8 @@
                     var asset_url = '<?php echo asset(''); ?>';
                     var full_model_url = asset_url + model_url;
                     var full_surface_url = asset_url + surface_url;
-            
+                    
+                    console.log(full_model_url, full_surface_url, "mmmm");
                     // Load Base Space model
                     loader.load(full_model_url, function (gltf) {
                         model = gltf.scene;
@@ -381,22 +382,22 @@
                         scene.add(model);
 
                         loader.load(full_surface_url, function (gltf) {
-                        surface = gltf.scene;
-                        surface.traverse((obj) => {
-                            if(obj instanceof THREE.Mesh){
-                                obj.name = "surface-model";
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
-                            }
+                            surface = gltf.scene;
+                            surface.traverse((obj) => {
+                                if(obj instanceof THREE.Mesh){
+                                    obj.name = "surface-model";
+                                    obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
+                                }
+                            });
+                            surface.rotation.x = -Math.PI;
+                            surface.rotation.y = Math.PI / 2;
+
+                            surface.scale.set(30, 30, 30);
+                            surface.position.set(-offset_x, offset_y, offset_z);
+
+                            scene.add(surface);
                         });
-                        surface.rotation.x = -Math.PI;
-                        surface.rotation.y = Math.PI / 2;
-
-                        surface.scale.set(30, 30, 30);
-                        surface.position.set(-offset_x, offset_y, offset_z);
-
-                        scene.add(surface);
-                    });
-
+                        console.log("surface_meshes", "mmmm");
                     for (let i = 0; i < sculpture_data.length; i++) {
                         sculpture_id_list.push(sculpture_data[i].sculpture_id);
                         
