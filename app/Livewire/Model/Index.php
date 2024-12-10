@@ -67,24 +67,41 @@ class Index extends Component
     }
     public function setSpots() {
         $temp_spots = SpotsPosition::where('tour_id', $this->tour->id)->get();
-
-        if ($temp_spots->isEmpty()) {
-            foreach($this->tour->spots as $spot) {
-                $data = array("tour_id"=>$this->tour->id, "spot_id"=>$spot->id, "x"=>0.0, "y"=>0.0, "z"=>0.0);
+        $tour_spots_count = count($this->tour->spots);
+    
+        // Check if temp_spots count matches the count of tour spots
+        if ($temp_spots->count() !== $tour_spots_count) {
+            // Delete existing SpotsPosition records for this tour
+            SpotsPosition::where('tour_id', $this->tour->id)->delete();
+    
+            // Recreate the SpotsPosition records
+            foreach ($this->tour->spots as $spot) {
+                $data = [
+                    "tour_id" => $this->tour->id,
+                    "spot_id" => $spot->id,
+                    "x" => 0.0,
+                    "y" => 0.0,
+                    "z" => 0.0,
+                ];
                 SpotsPosition::create($data);
             }
+    
             $temp_spots = SpotsPosition::where('tour_id', $this->tour->id)->get();
         }
-        $spotsPosition = array();
-
-        foreach ($temp_spots as $spot){
-            $spotsPosition[$spot->spot_id]['x'] = $spot?->x;
-            $spotsPosition[$spot->spot_id]['y'] = $spot?->y;
-            $spotsPosition[$spot->spot_id]['z'] = $spot?->z;
+    
+        $spotsPosition = [];
+    
+        foreach ($temp_spots as $spot) {
+            $spotsPosition[$spot->spot_id] = [
+                'x' => $spot->x ?? 0.0,
+                'y' => $spot->y ?? 0.0,
+                'z' => $spot->z ?? 0.0,
+            ];
         }
-
+    
         $this->spotsPosition = $spotsPosition;
     }
+    
 
     public function setSurfaces() {
         $temp_surfaces = SurfaceInfo::where('tour_id', $this->tour->id)->get();

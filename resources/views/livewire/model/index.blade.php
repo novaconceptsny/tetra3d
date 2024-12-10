@@ -24,7 +24,7 @@
 
                 @foreach($tour->spots as $spot)
                     <div class="col-12" style="display: flex; gap: 30px;">
-                        <h7>{{ $spot->friendly_name }}</h7>
+                        <div style="font-weight: bold; font-size : 14px">{{ $spot->friendly_name }}</div>
                         <label class="switch">
                             <input type="checkbox" class="spot-toggle" data-spot-id="{{ $spot->id }}" checked>
                             <span class="slider round"></span>
@@ -53,7 +53,7 @@
                 <div class="col-12"><h5>{{ __('Surfaces') }}</h5></div>
                 @foreach($tour->surfaces as $surface)
                     <div class="col-12" style="display: flex; gap: 30px;">
-                        <h7>{{ $surface->friendly_name }}</h7>
+                        <div style="font-weight: bold; font-size : 14px">{{ $surface->friendly_name }}</div>
                         <label class="switch">
                             <input type="checkbox" class="surface-toggle" data-surface-id="{{ $surface->id }}" checked>
                             <span class="slider round"></span>
