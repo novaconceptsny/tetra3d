@@ -1,6 +1,6 @@
 <div class="row" style="display: flex; align-items: stretch; ">
-    <div class="col-3 model-import-left" id='model-import-left' style="min-height: 500px; overflow-y: auto; overflow-x: hidden;" wire:ignore>
-        <div class="row g-3 ">
+    <div class="col-3 model-import-left" id='model-import-left' style="min-height: 500px;" wire:ignore>
+        <div class="row g-3" style="overflow-y: auto; overflow-x: hidden;height:100%">
             <div class="col-12">
                 <h5>{{ __('Model') }}</h5>
                 <input type='file' wire:model="tourModel" id='tour-model-input' accept=".glb" hidden></input>
@@ -105,11 +105,11 @@
 
             </div>
 
-            <div class="text-end">
-                <button id="tour-model-update" class="btn btn-primary mb-3" wire:click="update" type="button">
-                    {{ __('Update') }}
-                </button>
-            </div>
+        </div>
+        <div class="text-end">
+            <button id="tour-model-update" class="btn btn-primary mt-3" wire:click="update" type="button">
+                {{ __('Update') }}
+            </button>
         </div>
     </div>
     <div class="col-9" id="tour-model-import" style="box-sizing: border-box;" wire:ignore>
