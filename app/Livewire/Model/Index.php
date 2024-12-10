@@ -146,8 +146,6 @@ class Index extends Component
         if ($temp_surfaces->isEmpty()) {
 
         } else {
-            dump($this->surfaceArray);
-            dump($temp_surfaces);
             foreach($temp_surfaces as $surface) {
                 $surface->normalvector = $this->surfaceArray[$surface->surface_id]['normalvector'];
                 $surface->start_pos = $this->surfaceArray[$surface->surface_id]['start_pos'];
