@@ -285,6 +285,7 @@
         var user_name = '';
         var toggle_space_model = false;
         var sculpture_change_list = [];
+        var surface_meshes = [];
 
         var layout_id = '{{ $layout_id }}';
         var sculptures = @json($sculptures);
@@ -299,6 +300,13 @@
         var user_name = @json($userName);
 
         function toggleLayout() {
+
+            if (surface_meshes.length > 0) {
+                surface_meshes.forEach(mesh => {
+                    mesh.material.visible = !mesh.material.visible ;
+                });
+            }
+
             if (space_model == null || space_model.name == 'null')  {
                     alert("No 3D space model");
             } else {
@@ -802,7 +810,7 @@
             var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
             const geometry = new THREE.PlaneGeometry(width, height); 
             geometry.translate(-width / 2, height / 2, 0);
-            const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0 });
+            const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0.5, visible: false });
             const planeMesh = new THREE.Mesh(geometry, material);
             planeMesh.position.set(position_x, position_y, position_z)
             planeMesh.rotation.set(rotation_x, rotation_y, rotation_z)
@@ -810,6 +818,7 @@
             planeMesh.userData.layout_id = layout_id;
             planeMesh.userData.spot_id = spot_id;
             planeMesh.userData.type = "surface";
+            surface_meshes.push(planeMesh);
             scene.add(planeMesh);
 
             assign_object_properties(planeMesh, "artwork", { 
