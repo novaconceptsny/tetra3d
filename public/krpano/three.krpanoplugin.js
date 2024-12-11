@@ -287,6 +287,7 @@ function krpanoplugin() {
 	var selectedObj = null;
 	var gizmoObj = null;
 	var isDown = false;
+	var selected_surface_id = null;
 	var canMove = false;
 	var plane_point_temp = null;
 	var direction = '';
@@ -346,7 +347,7 @@ function krpanoplugin() {
 			}
 		}
 
-		if(intersects.length > 0){
+		if (intersects.length > 0) {
 			var obj = intersects[0].object;
 		}
 		if (point)
@@ -432,9 +433,10 @@ function krpanoplugin() {
 			if (hitobj || gizmo) {
 				isDown = true;
 				krpano.mouse.down = true;
-				event.preventDefault();
-				event.stopPropagation();
+
 				if (gizmo) {
+					event.preventDefault();
+					event.stopPropagation();
 					selectedObj = gizmo.parent.userData.temp;
 					gizmoObj = gizmo.parent;
 					plane_point_temp = point;
@@ -444,12 +446,10 @@ function krpanoplugin() {
 					if (gizmo.name == 'gizmoPlane') direction = 'xz';
 				} else {
 					if (hitobj.userData.type === "surface") {
-						var hlookat = krpano.view.hlookat;
-						var vlookat = krpano.view.vlookat;
-						var urlStr ="/surfaces/" +hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id + "&hlookat=" + hlookat + "&vlookat=" + vlookat;
-						console.log(hitobj.userData.layout_id, "layout_id", urlStr)
-						window.location.href = urlStr;
+						selected_surface_id = hitobj.userData.surface_id;
 					} else {
+						event.preventDefault();
+						event.stopPropagation();
 						selectedObj = hitobj.userData.temp;
 					}
 				}
@@ -506,6 +506,13 @@ function krpanoplugin() {
 				// if (!canMove) {
 				make_gizmo(selectedObj);
 				// }
+			}
+			if (hitobj && isDown && hitobj.userData.type == "surface" && selected_surface_id === hitobj.userData.surface_id) {
+				var hlookat = krpano.view.hlookat;
+				var vlookat = krpano.view.vlookat;
+				var urlStr = "/surfaces/" + hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id + "&hlookat=" + hlookat + "&vlookat=" + vlookat;
+				console.log(hitobj.userData.layout_id, "layout_id", urlStr)
+				window.location.href = urlStr;
 			}
 			isDown = false;
 			krpano.mouse.down = false;

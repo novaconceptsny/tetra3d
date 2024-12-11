@@ -289,7 +289,6 @@
 
         var layout_id = '{{ $layout_id }}';
         var shared_tour_id = '{{ $shared_tour_id }}';
-        console.log(shared_tour_id, "shared_tour_id", layout_id, "layout_id")
         var sculptures = @json($sculptures);
         var sculpture_data = @json($sculptureData);
         var artworks_data = @json($artworkData);
@@ -819,7 +818,6 @@
             planeMesh.rotation.set(rotation_x, rotation_y, rotation_z)
             planeMesh.userData.surface_id = surface_id;
             planeMesh.userData.layout_id = layout_id;
-            console.log(layout_id, "layout_id")
             planeMesh.userData.spot_id = spot_id;
             planeMesh.userData.type = "surface";
             surface_meshes.push(planeMesh);
