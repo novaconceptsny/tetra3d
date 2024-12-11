@@ -444,12 +444,11 @@ function krpanoplugin() {
 					if (gizmo.name == 'gizmoPlane') direction = 'xz';
 				} else {
 					if (hitobj.userData.type === "surface") {
-						var urlStr ="/surfaces/" +hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id ;
-						console.log(hitobj.userData.layout_id, "layout_id")
 						var hlookat = krpano.view.hlookat;
 						var vlookat = krpano.view.vlookat;
-						urlStr += "&hlookat=" + hlookat + "&vlookat=" + vlookat;
-						window.location.href = urlStr;
+						var urlStr ="/surfaces/" +hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id + "&hlookat=" + hlookat + "&vlookat=" + vlookat;
+						console.log(hitobj.userData.layout_id, "layout_id", urlStr)
+						// window.location.href = urlStr;
 					} else {
 						selectedObj = hitobj.userData.temp;
 					}
