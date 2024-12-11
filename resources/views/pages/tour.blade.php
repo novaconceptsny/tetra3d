@@ -300,14 +300,13 @@
         var user_name = @json($userName);
 
         function toggleLayout() {
-            console.log(surface_meshes, surface_data, space_model, model, "mmmm");
             if (surface_meshes.length > 0) {
                 surface_meshes.forEach(mesh => {
                     mesh.material.visible = !mesh.material.visible ;
                 });
             }
 
-            if (space_model == null || space_model.name == 'null')  {
+            if (space_model == null || space_model.name == 'null' || model == null)  {
                     alert("No 3D space model");
             } else {
                 toggle_space_model = !toggle_space_model;
@@ -346,12 +345,10 @@
         var delay_interval = setInterval(function() {
             if (window.scene !== undefined) {
                 clearInterval(delay_interval);
-                console.log("testttttttttttttttt")
                 if (space_model == null || space_model.name == 'null')  {
                     alert("No 3D space model");
                 } else {
                   
-                    console.log("1111111111111111")
                     offset_x = spot_position.x * 30;
                     offset_y = spot_position.y * 30;
                     offset_z = spot_position.z * 30;
@@ -366,7 +363,6 @@
                     var full_model_url = asset_url + model_url;
                     var full_surface_url = asset_url + surface_url;
                     
-                    console.log(full_model_url, full_surface_url, sculpture_data, "mmmm");
                     // Load Base Space model
                     loader.load(full_model_url, function (gltf) {
                         model = gltf.scene;
@@ -811,7 +807,7 @@
 
         
         function loadSurfaces(surface_id, width, height, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
-            console.log("loadSurfaces", surface_id, width, height, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z);
+
             var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
             const geometry = new THREE.PlaneGeometry(width, height); 
             geometry.translate(-width / 2, height / 2, 0);
