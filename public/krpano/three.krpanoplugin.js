@@ -448,7 +448,7 @@ function krpanoplugin() {
 						var vlookat = krpano.view.vlookat;
 						var urlStr ="/surfaces/" +hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id + "&hlookat=" + hlookat + "&vlookat=" + vlookat;
 						console.log(hitobj.userData.layout_id, "layout_id", urlStr)
-						// window.location.href = urlStr;
+						window.location.href = urlStr;
 					} else {
 						selectedObj = hitobj.userData.temp;
 					}
