@@ -366,7 +366,7 @@
                     var full_model_url = asset_url + model_url;
                     var full_surface_url = asset_url + surface_url;
                     
-                    console.log(full_model_url, full_surface_url, "mmmm");
+                    console.log(full_model_url, full_surface_url, sculpture_data, "mmmm");
                     // Load Base Space model
                     loader.load(full_model_url, function (gltf) {
                         model = gltf.scene;
