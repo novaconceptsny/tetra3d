@@ -288,6 +288,8 @@
         var surface_meshes = [];
 
         var layout_id = '{{ $layout_id }}';
+        var shared_tour_id = '{{ $shared_tour_id }}';
+        console.log(shared_tour_id, "shared_tour_id", layout_id, "layout_id")
         var sculptures = @json($sculptures);
         var sculpture_data = @json($sculptureData);
         var artworks_data = @json($artworkData);
