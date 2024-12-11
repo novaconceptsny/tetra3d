@@ -807,7 +807,7 @@
 
         
         function loadSurfaces(surface_id, width, height, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
-
+            console.log("loadSurfaces", surface_id, width, height, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z);
             var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
             const geometry = new THREE.PlaneGeometry(width, height); 
             geometry.translate(-width / 2, height / 2, 0);
