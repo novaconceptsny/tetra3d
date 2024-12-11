@@ -397,21 +397,8 @@
 
                             scene.add(surface);
                         });
-                        console.log("surface_meshes", "mmmm");
-                    for (let i = 0; i < sculpture_data.length; i++) {
-                        sculpture_id_list.push(sculpture_data[i].sculpture_id);
+                    
                         
-                        load_model(sculpture_data[i].sculpture_id, 
-                            sculpture_data[i].model_id, 
-                            sculpture_data[i].position_x - spot_position.x * 30, 
-                            sculpture_data[i].position_y - spot_position.y * 30, 
-                            sculpture_data[i].position_z + spot_position.z * 30, 
-                            sculpture_data[i].rotation_x, 
-                            sculpture_data[i].rotation_y, 
-                            sculpture_data[i].rotation_z
-                        );
-                    }
-
                     for (let i = 0; i < surface_data.length; i++) {
                         loadSurfaces(
                             surface_data[i].surface_id, 
@@ -425,6 +412,23 @@
                             surface_data[i].rotation['z']
                         );
                     }
+
+                    if(sculpture_data !== null){
+                        for (let i = 0; i < sculpture_data.length; i++) {
+                            sculpture_id_list.push(sculpture_data[i].sculpture_id);
+                            
+                            load_model(sculpture_data[i].sculpture_id, 
+                                sculpture_data[i].model_id, 
+                                sculpture_data[i].position_x - spot_position.x * 30, 
+                                sculpture_data[i].position_y - spot_position.y * 30, 
+                                sculpture_data[i].position_z + spot_position.z * 30, 
+                                sculpture_data[i].rotation_x, 
+                                sculpture_data[i].rotation_y, 
+                                sculpture_data[i].rotation_z
+                            );
+                        }
+                    }
+                   
 
                     for (let i = 0; i < artworks_data.length; i++) {
                         artwork_id_list.push(artworks_data[i].artwork_id);
