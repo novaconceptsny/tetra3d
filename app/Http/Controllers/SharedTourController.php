@@ -9,6 +9,11 @@ use App\Models\Sculpture;
 use App\Models\Spot;
 use App\Models\SculptureModel;
 use App\Models\ArtworkProject;
+use App\Models\SurfaceInfo;
+use App\Models\SurfaceState;
+use App\Models\ArtworkSurfaceState;
+use App\Models\Artwork;
+
 
 class SharedTourController extends Controller
 {
@@ -70,6 +75,81 @@ class SharedTourController extends Controller
             $spotPosition = null;
         }
 
+        $stateArray = $layout 
+        ? SurfaceState::where('layout_id', $layout->id)->pluck('id')->toArray() 
+        : [];     
+        $artworkData = [];
+        $surfaceData = [];
+        $surfaceInfos = SurfaceInfo::where('tour_id', $tour->id)->get();
+
+        for ($index = 0; $index < count($surfaceInfos); $index++) {
+            $normal = $surfaceInfos[$index]->normalvector;  
+            $normal = array_map('floatval', $normal);
+            $startPos = $surfaceInfos[$index]->start_pos;
+            $startPos = array_map('floatval', $startPos);
+
+            if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 0,
+                    'z' => 0,
+                ];
+
+            } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 3.14,
+                    'z' => 0,
+                ];
+            } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 1.57,
+                    'z' => 0,
+                ];
+            } else {
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => -1.57,
+                    'z' => 0,
+                ];
+            }
+
+            $surfaceData[$index]['surface_id'] = $surfaceInfos[$index]->surface_id;
+            $surfaceData[$index]['start_pos'] = $startPos;
+            $surfaceData[$index]['width'] = $surfaceInfos[$index]->width;
+            $surfaceData[$index]['height'] = $surfaceInfos[$index]->height;
+            $surfaceData[$index]['rotation'] = $targetRotation;
+        }
+        
+        if ($stateArray) {
+            foreach ($stateArray as $stateId) {
+                $artworkRecords = ArtworkSurfaceState::where('surface_state_id', $stateId)->get()->toArray(); // Convert to array
+                
+                $filteredRecords = array_filter($artworkRecords, function ($record) {
+                    return !is_null($record['position_x']) && !is_null($record['position_y']) && !is_null($record['position_z']);
+                });
+                if (count($filteredRecords) > 0) {
+                    $artworkData = array_merge($artworkData, $filteredRecords); // Merge filtered records into artworkData
+                }
+            }
+        }
+        
+        
+            
+        for ($index = 0; $index < count($artworkData); $index++) {
+            $artworkId = $artworkData[$index]['artwork_id'] ?? null; // Safely access artwork_id
+            if ($artworkId) {
+                $artInfo = Artwork::find($artworkId); // Find by ID
+                if ($artInfo) {
+                    $artworkData[$index]['image_url'] = $artInfo->image_url;
+                    $artworkData[$index]['imageWidth'] = ($artInfo->data['width_inch'] ?? 0) * 0.0254; // Safely access width_inch
+                    $artworkData[$index]['imageHeight'] = ($artInfo->data['height_inch'] ?? 0) * 0.0254; // Safely access height_inch
+                }
+            }
+        }
+
+
         $data = array();
         $data['spot'] = $spot;
         $data['tour'] = $tour;
@@ -81,8 +161,10 @@ class SharedTourController extends Controller
         $data['navbarLight'] = true;
         $data['tourModel'] = $tourModel;
         $data['sculptureData'] = $sculptureData;
+        $data['artworkData'] = $artworkData;
         $data['spotPosition'] = $spotPosition;
         $data['sculptures'] = $sculptures;
+        $data['surfaceData'] = $surfaceData;
 
         return view('pages.tour', $data);
     }
