@@ -315,8 +315,8 @@ function addSavedVersionEvents() {
     let handleModification = (event, msg) => {
         if (canvasState.savedVersion && canvasState.currentVersionData !== null) {
             enableSaveButton();
-            // Auto Save
-            updateSavedVersion()
+            // Auto Save feature
+            // updateSavedVersion()
         }
     };
     artworkCanvas.on({

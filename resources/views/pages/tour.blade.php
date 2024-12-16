@@ -294,7 +294,7 @@
         var artworks_data = @json($artworkData);
         var surface_data = @json($surfaceData);
         var spot_id = "{{ $spot->id }}";
-        console.log(sculpture_data, "sculpture_data")
+
         var spot_position = @json($spotPosition);
         var space_model = @json($tourModel);
         var tour_is_shared = @json($tour_is_shared);

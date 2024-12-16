@@ -622,8 +622,8 @@ class CanvasManager {
             document.dispatchEvent(onCanvasUpdatedEvent)
 
             this.saveBtn.show();
-            // auto  save
-            this.updateSavedVersion();
+            // auto  save feature
+            // this.updateSavedVersion();
         } else {
             this.saveBtn.hide();
         }
