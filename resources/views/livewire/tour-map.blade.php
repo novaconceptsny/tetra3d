@@ -74,6 +74,11 @@
             let selectedLine = null;
             let isInitialized = false;
 
+            // Add these variables near the top where other state variables are declared
+            let isDraggingLine = false;
+            let dragStartPoint = null;
+            let dragOffset = null;
+
             document.querySelector('.view-map-btn a i').addEventListener('click', () => {
                 if (isInitialized) {
                     return;
@@ -355,13 +360,24 @@
                             const hitObject = intersects[0].object;
                             
                             // Reset previous selection
-                            if (selectedLine) {
+                            if (selectedLine && selectedLine !== hitObject) {
                                 resetLineColor(selectedLine);
+                                removeEndPoints();
                             }
                             
                             // Set new selection
                             selectedLine = hitObject;
                             setLineColor(selectedLine, 0xff0000);
+
+                            // Start line dragging
+                            isDraggingLine = true;
+                            dragStartPoint = getIntersectionPoint(event);
+                            
+                            // Calculate offset from click point to line center
+                            const lineCenter = new THREE.Vector3();
+                            selectedLine.geometry.computeBoundingBox();
+                            selectedLine.geometry.boundingBox.getCenter(lineCenter);
+                            dragOffset = new THREE.Vector3().subVectors(lineCenter, dragStartPoint);
                         }
                     }
                 });
@@ -407,52 +423,43 @@
                             drawingLine = createThickLine(points);
                             scene.add(drawingLine);
                         }
-                    } else if (currentMode === 'edit' && isDragging && draggedPoint) {
-                        const intersectionPoint = getIntersectionPoint(event);
-                        if (intersectionPoint) {
-                            // Remove previous guide line
-                            if (guideLine) {
-                                scene.remove(guideLine);
-                                guideLine = null;
-                            }
-
-                            const otherPoint = endPoints.find(p => p !== draggedPoint);
-                            
-                            // Calculate angle and check for guides
-                            const angle = calculateAngle(otherPoint.position, intersectionPoint);
-                            const guideType = checkGuideAngle(angle);
-                            
-                            let endPoint = intersectionPoint;
-                            
-                            if (guideType) {
-                                // Create snapped point
-                                endPoint = createSnappedPoint(otherPoint.position, intersectionPoint, guideType);
+                    } else if (currentMode === 'edit') {
+                        if (isDraggingLine && selectedLine) {
+                            const currentPoint = getIntersectionPoint(event);
+                            if (currentPoint && dragStartPoint) {
+                                // Calculate movement delta
+                                const delta = new THREE.Vector3().subVectors(currentPoint, dragStartPoint);
                                 
-                                // Create guide line
-                                const guideStart = new THREE.Vector3(
-                                    guideType === 'vertical' ? otherPoint.position.x : -1000,
-                                    guideType === 'horizontal' ? otherPoint.position.y : -1000,
-                                    0
+                                // Move the line
+                                const positions = selectedLine.geometry.attributes.position;
+                                for (let i = 0; i < positions.count; i++) {
+                                    const x = positions.array[i * 3];
+                                    const y = positions.array[i * 3 + 1];
+                                    const z = positions.array[i * 3 + 2];
+                                    
+                                    positions.array[i * 3] = x + delta.x;
+                                    positions.array[i * 3 + 1] = y + delta.y;
+                                    positions.array[i * 3 + 2] = z;
+                                }
+                                positions.needsUpdate = true;
+                                
+                                // Update stored line data
+                                const lineIndex = drawnLines.findIndex(line => 
+                                    line.points[0].x === dragStartPoint.x &&
+                                    line.points[0].y === dragStartPoint.y
                                 );
-                                const guideEnd = new THREE.Vector3(
-                                    guideType === 'vertical' ? otherPoint.position.x : 1000,
-                                    guideType === 'horizontal' ? otherPoint.position.y : 1000,
-                                    0
-                                );
-                                guideLine = createGuideLine(guideStart, guideEnd);
-                                scene.add(guideLine);
+                                
+                                if (lineIndex !== -1) {
+                                    drawnLines[lineIndex].points = drawnLines[lineIndex].points.map(point => ({
+                                        x: point.x + delta.x,
+                                        y: point.y + delta.y,
+                                        z: point.z
+                                    }));
+                                }
+                                
+                                // Update drag start point for next movement
+                                dragStartPoint.copy(currentPoint);
                             }
-
-                            // Update point and line positions
-                            draggedPoint.position.copy(endPoint);
-                            const startPoint = draggedPoint.userData.pointType === 'start' ? 
-                                endPoint : otherPoint.position;
-                            const finalEndPoint = draggedPoint.userData.pointType === 'end' ? 
-                                endPoint : otherPoint.position;
-
-                            selectedLine = updateLine(draggedPoint.userData.parentLine, startPoint, finalEndPoint);
-                            draggedPoint.userData.parentLine = selectedLine;
-                            otherPoint.userData.parentLine = selectedLine;
                         }
                     }
                 });
@@ -471,8 +478,9 @@
                         }
                         isDrawing = false;
                     } else if (currentMode === 'edit') {
-                        isDragging = false;
-                        draggedPoint = null;
+                        isDraggingLine = false;
+                        dragStartPoint = null;
+                        dragOffset = null;
                     }
                 });
 
@@ -615,6 +623,14 @@
                     }
                     
                     return newLine;
+                }
+
+                // Add this function to check if a point is near the line
+                function isPointNearLine(point, lineStart, lineEnd, threshold = 10) {
+                    const line = new THREE.Line3(lineStart, lineEnd);
+                    const closestPoint = new THREE.Vector3();
+                    line.closestPointToPoint(point, true, closestPoint);
+                    return point.distanceTo(closestPoint) < threshold;
                 }
             }
 
