@@ -274,8 +274,7 @@
                 const drawModeBtn = document.getElementById('drawModeBtn');
                 const editModeBtn = document.getElementById('editModeBtn');
 
-                function 
-                () {
+                function updateModeButtons() {
                     // Reset all buttons
                     drawModeBtn.classList.remove('active');
                     editModeBtn.classList.remove('active');
@@ -395,6 +394,53 @@
                             drawingLine = createThickLine(points);
                             scene.add(drawingLine);
                         }
+                    } else if (currentMode === 'edit' && isDragging && draggedPoint) {
+                        const intersectionPoint = getIntersectionPoint(event);
+                        if (intersectionPoint) {
+                            // Remove previous guide line
+                            if (guideLine) {
+                                scene.remove(guideLine);
+                                guideLine = null;
+                            }
+
+                            const otherPoint = endPoints.find(p => p !== draggedPoint);
+                            
+                            // Calculate angle and check for guides
+                            const angle = calculateAngle(otherPoint.position, intersectionPoint);
+                            const guideType = checkGuideAngle(angle);
+                            
+                            let endPoint = intersectionPoint;
+                            
+                            if (guideType) {
+                                // Create snapped point
+                                endPoint = createSnappedPoint(otherPoint.position, intersectionPoint, guideType);
+                                
+                                // Create guide line
+                                const guideStart = new THREE.Vector3(
+                                    guideType === 'vertical' ? otherPoint.position.x : -1000,
+                                    guideType === 'horizontal' ? otherPoint.position.y : -1000,
+                                    0
+                                );
+                                const guideEnd = new THREE.Vector3(
+                                    guideType === 'vertical' ? otherPoint.position.x : 1000,
+                                    guideType === 'horizontal' ? otherPoint.position.y : 1000,
+                                    0
+                                );
+                                guideLine = createGuideLine(guideStart, guideEnd);
+                                scene.add(guideLine);
+                            }
+
+                            // Update point and line positions
+                            draggedPoint.position.copy(endPoint);
+                            const startPoint = draggedPoint.userData.pointType === 'start' ? 
+                                endPoint : otherPoint.position;
+                            const finalEndPoint = draggedPoint.userData.pointType === 'end' ? 
+                                endPoint : otherPoint.position;
+
+                            selectedLine = updateLine(draggedPoint.userData.parentLine, startPoint, finalEndPoint);
+                            draggedPoint.userData.parentLine = selectedLine;
+                            otherPoint.userData.parentLine = selectedLine;
+                        }
                     }
                 });
 
@@ -411,6 +457,9 @@
                             guideLine = null;
                         }
                         isDrawing = false;
+                    } else if (currentMode === 'edit') {
+                        isDragging = false;
+                        draggedPoint = null;
                     }
                 });
 
