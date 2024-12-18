@@ -79,6 +79,9 @@
             let dragStartPoint = null;
             let dragOffset = null;
 
+            // Add this variable near other state variables at the top
+            let currentDrawingLabel = null;
+
             document.querySelector('.view-map-btn a i').addEventListener('click', () => {
                 if (isInitialized) {
                     return;
@@ -423,6 +426,19 @@
                             points = [startPoint, endPoint];
                             drawingLine = createThickLine(points);
                             scene.add(drawingLine);
+
+                            // Calculate length
+                            const length = calculateLineLength(points);
+                            
+                            // Update or create label
+                            if (!currentDrawingLabel) {
+                                currentDrawingLabel = document.createElement('div');
+                                currentDrawingLabel.className = 'length-label';
+                                floorPlanContainer.appendChild(currentDrawingLabel);
+                            }
+                            
+                            // Update label position and content
+                            updateLengthLabel(currentDrawingLabel, drawingLine, length);
                         }
                     } else if (currentMode === 'edit') {
                         if (isDraggingLine && selectedLine) {
@@ -471,12 +487,17 @@
                             drawnLines.push({
                                 points: points.map(p => ({ x: p.x, y: p.y, z: p.z }))
                             });
-                        }                   
-                        // Remove guide line
-                        if (guideLine) {
-                            scene.remove(guideLine);
-                            guideLine = null;
+                            
+                            // Create permanent label for the finished line
+                            showLengthLabel(drawingLine, calculateLineLength(points));
                         }
+                        
+                        // Remove the temporary drawing label
+                        if (currentDrawingLabel) {
+                            currentDrawingLabel.remove();
+                            currentDrawingLabel = null;
+                        }
+                        
                         isDrawing = false;
                     } else if (currentMode === 'edit') {
                         isDraggingLine = false;
@@ -490,6 +511,23 @@
                     const material = line.material;
                     material.color.setHex(color);
                     material.needsUpdate = true;
+
+                    // Show length when line is selected
+                    if (color === 0xff0000) { // Selected state
+                        const positions = line.geometry.attributes.position.array;
+                        const points = [
+                            { x: positions[0], y: positions[1], z: positions[2] },
+                            { x: positions[positions.length - 3], y: positions[positions.length - 2], z: positions[positions.length - 1] }
+                        ];
+                        const length = calculateLineLength(points);
+                        showLengthLabel(line, length);
+                    } else {
+                        // Remove length label when deselected
+                        const label = document.querySelector(`[data-line-id="${line.uuid}"]`);
+                        if (label) {
+                            label.remove();
+                        }
+                    }
                 }
 
                 function resetLineColor(line) {
@@ -633,6 +671,119 @@
                     line.closestPointToPoint(point, true, closestPoint);
                     return point.distanceTo(closestPoint) < threshold;
                 }
+
+                // Add this constant near the top of your script with other constants
+                const PIXELS_PER_METER = 100; // Adjust this value based on your floor plan scale
+
+                // Update the calculateLineLength function to return meters
+                function calculateLineLength(points) {
+                    if (points.length < 2) return 0;
+                    const start = new THREE.Vector3(points[0].x, points[0].y, points[0].z);
+                    const end = new THREE.Vector3(points[1].x, points[1].y, points[1].z);
+                    const lengthInPixels = start.distanceTo(end);
+                    return lengthInPixels / PIXELS_PER_METER; // Convert to meters
+                }
+
+                // Update the showLengthLabel function
+                function showLengthLabel(line, length) {
+                    // Remove existing label if any
+                    const existingLabel = document.querySelector(`[data-line-id="${line.uuid}"]`);
+                    if (existingLabel) {
+                        existingLabel.remove();
+                    }
+
+                    // Create label
+                    const label = document.createElement('div');
+                    label.className = 'length-label';
+                    label.setAttribute('data-line-id', line.uuid);
+                    label.textContent = `${length.toFixed(2)}m`; // Display with 2 decimal places
+                    label.style.position = 'absolute';
+                    label.style.zIndex = '1000';
+                    label.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                    label.style.color = 'white';
+                    label.style.padding = '2px 6px';
+                    label.style.borderRadius = '3px';
+                    label.style.fontSize = '12px';
+
+                    // Find the start and end points of the line
+                    const positions = line.geometry.attributes.position.array;
+                    const startPoint = new THREE.Vector3(positions[0], positions[1], positions[2]);
+                    const endPoint = new THREE.Vector3(
+                        positions[positions.length - 3],
+                        positions[positions.length - 2],
+                        positions[positions.length - 1]
+                    );
+
+                    // Calculate the middle point of the line
+                    const middlePoint = new THREE.Vector3()
+                        .addVectors(startPoint, endPoint)
+                        .multiplyScalar(0.5);
+
+                    // Convert middle point to screen coordinates
+                    const vector = middlePoint.clone();
+                    vector.project(camera);
+                    
+                    const floorPlanContainer = document.querySelector('.floorPlan.tour-map');
+                    const rect = floorPlanContainer.getBoundingClientRect();
+                    
+                    const x = (vector.x + 1) / 2 * rect.width;
+                    const y = (-vector.y + 1) / 2 * rect.height;
+
+                    // Position label at the middle point, slightly above the line
+                    label.style.left = `${x}px`;
+                    label.style.top = `${y - 10}px`; // 10px above the line
+                    label.style.transform = 'translate(-50%, -50%)';
+
+                    // Add a small connecting line from the label to the measurement line
+                    const connector = document.createElement('div');
+                    connector.className = 'length-label-connector';
+                    connector.style.position = 'absolute';
+                    connector.style.left = '50%';
+                    connector.style.top = '100%';
+                    connector.style.width = '1px';
+                    connector.style.height = '5px';
+                    connector.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                    label.appendChild(connector);
+
+                    floorPlanContainer.appendChild(label);
+                }
+
+                // Create a separate function for updating label position and content
+                function updateLengthLabel(label, line, length) {
+                    label.textContent = `${length.toFixed(2)}m`;
+                    label.style.position = 'absolute';
+                    label.style.zIndex = '1000';
+                    label.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                    label.style.color = 'white';
+                    label.style.padding = '2px 6px';
+                    label.style.borderRadius = '3px';
+                    label.style.fontSize = '12px';
+
+                    // Calculate middle point
+                    const positions = line.geometry.attributes.position.array;
+                    const startPoint = new THREE.Vector3(positions[0], positions[1], positions[2]);
+                    const endPoint = new THREE.Vector3(
+                        positions[positions.length - 3],
+                        positions[positions.length - 2],
+                        positions[positions.length - 1]
+                    );
+
+                    const middlePoint = new THREE.Vector3()
+                        .addVectors(startPoint, endPoint)
+                        .multiplyScalar(0.5);
+
+                    // Convert to screen coordinates
+                    const vector = middlePoint.clone();
+                    vector.project(camera);
+                    
+                    const rect = label.parentElement.getBoundingClientRect();
+                    const x = (vector.x + 1) / 2 * rect.width;
+                    const y = (-vector.y + 1) / 2 * rect.height;
+
+                    label.style.left = `${x}px`;
+                    label.style.top = `${y - 10}px`;
+                    label.style.transform = 'translate(-50%, -50%)';
+                }
             }
 
                             // Add this function to create and show remove button
@@ -739,6 +890,17 @@
 
     .remove-line-btn:hover {
         opacity: 0.9;
+    }
+
+    .length-label {
+        pointer-events: none;
+        user-select: none;
+        white-space: nowrap;
+        position: relative; /* For connector positioning */
+    }
+
+    .length-label-connector {
+        pointer-events: none;
     }
 
     </style>
