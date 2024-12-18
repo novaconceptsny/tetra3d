@@ -287,21 +287,30 @@
                     drawModeBtn.classList.remove('active');
                     editModeBtn.classList.remove('active');
 
-                    // Reset drawing state
-                    isDrawing = false;
-                    if (drawingLine) {
-                        scene.remove(drawingLine);
-                        drawingLine = null;
+                    // Clean up based on previous mode
+                    if (currentMode === 'draw') {
+                        if (drawingLine) {
+                            scene.remove(drawingLine);
+                            drawingLine = null;
+                        }
+                        if (guideLine) {
+                            scene.remove(guideLine);
+                            guideLine = null;
+                        }
+                        isDrawing = false;
+                        startPoint = null;
+                        points = [];
+                    } else if (currentMode === 'edit') {
+                        if (selectedLine) {
+                            resetLineColor(selectedLine);
+                            removeEndPoints();
+                            selectedLine = null;
+                        }
+                        isDragging = false;
+                        draggedPoint = null;
                     }
 
-                    // Reset selection
-                    if (selectedLine) {
-                        resetLineColor(selectedLine);
-                        removeEndPoints();
-                        selectedLine = null;
-                    }
-
-                    // Set active button
+                    // Set new mode and update UI
                     if (currentMode === 'draw') {
                         drawModeBtn.classList.add('active');
                     } else if (currentMode === 'edit') {
@@ -539,6 +548,73 @@
                         isInitialized = false;
                         // Note: We don't clear drawnLines here to preserve the data
                     });
+                }
+
+                // Add these functions for endpoint management
+                function createEndPoint(position, pointType, parentLine) {
+                    const geometry = new THREE.SphereGeometry(5);
+                    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                    const point = new THREE.Mesh(geometry, material);
+                    point.position.copy(position);
+                    point.userData.isEndPoint = true;
+                    point.userData.pointType = pointType;
+                    point.userData.parentLine = parentLine;
+                    return point;
+                }
+
+                function createEndPoints(line) {
+                    const positions = line.geometry.attributes.position;
+                    const startPoint = createEndPoint(
+                        new THREE.Vector3(positions.array[0], positions.array[1], positions.array[2]),
+                        'start',
+                        line
+                    );
+                    const endPoint = createEndPoint(
+                        new THREE.Vector3(
+                            positions.array[positions.array.length - 3],
+                            positions.array[positions.array.length - 2],
+                            positions.array[positions.array.length - 1]
+                        ),
+                        'end',
+                        line
+                    );
+                    endPoints = [startPoint, endPoint];
+                    endPoints.forEach(point => scene.add(point));
+                }
+
+                function removeEndPoints() {
+                    endPoints.forEach(point => {
+                        if (point && point.parent) {
+                            scene.remove(point);
+                        }
+                    });
+                    endPoints = [];
+                }
+
+                function updateLine(oldLine, startPoint, endPoint) {
+                    // Remove old line
+                    scene.remove(oldLine);
+                    
+                    // Create new line with updated points
+                    const newLine = createThickLine([startPoint, endPoint]);
+                    scene.add(newLine);
+                    
+                    // Update the stored line data
+                    const lineIndex = drawnLines.findIndex(line => 
+                        line.points[0].x === oldLine.geometry.attributes.position.array[0] &&
+                        line.points[0].y === oldLine.geometry.attributes.position.array[1]
+                    );
+                    
+                    if (lineIndex !== -1) {
+                        drawnLines[lineIndex] = {
+                            points: [
+                                { x: startPoint.x, y: startPoint.y, z: startPoint.z },
+                                { x: endPoint.x, y: endPoint.y, z: endPoint.z }
+                            ]
+                        };
+                    }
+                    
+                    return newLine;
                 }
             }
 
