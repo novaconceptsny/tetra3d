@@ -368,7 +368,8 @@
                             // Set new selection
                             selectedLine = hitObject;
                             setLineColor(selectedLine, 0xff0000);
-
+                            showRemoveButton(selectedLine);
+                            
                             // Start line dragging
                             isDraggingLine = true;
                             dragStartPoint = getIntersectionPoint(event);
@@ -634,6 +635,69 @@
                 }
             }
 
+                            // Add this function to create and show remove button
+                            function showRemoveButton(line) {
+                    // Remove existing button if any
+                    const existingButton = document.querySelector('.remove-line-btn');
+                    if (existingButton) {
+                        existingButton.remove();
+                    }
+
+                    // Create remove button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-line-btn btn btn-danger btn-sm';
+                    removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                    removeBtn.style.position = 'absolute';
+                    removeBtn.style.zIndex = '1000';
+
+                    // Calculate center position of the line
+                    const positions = line.geometry.attributes.position.array;
+                    let centerX = 0, centerY = 0;
+                    let count = 0;
+                    for (let i = 0; i < positions.length; i += 3) {
+                        centerX += positions[i];
+                        centerY += positions[i + 1];
+                        count++;
+                    }
+                    centerX /= count;
+                    centerY /= count;
+
+                    // Convert 3D position to screen coordinates
+                    const vector = new THREE.Vector3(centerX, centerY, 0);
+                    vector.project(camera);
+                    
+                    const floorPlanContainer = document.querySelector('.floorPlan.tour-map');
+                    const rect = floorPlanContainer.getBoundingClientRect();
+                    
+                    const x = (vector.x + 1) / 2 * rect.width;
+                    const y = (-vector.y + 1) / 2 * rect.height;
+
+                    // Position button above the line
+                    removeBtn.style.left = `${x}px`;
+                    removeBtn.style.top = `${y - 30}px`; // 30px above the center
+
+                    // Add click handler
+                    removeBtn.addEventListener('click', () => {
+                        // Remove the line from the scene
+                        scene.remove(line);
+                        
+                        // Remove from stored lines array
+                        const lineIndex = drawnLines.findIndex(l => l === line);
+                        if (lineIndex !== -1) {
+                            drawnLines.splice(lineIndex, 1);
+                        }
+                        
+                        // Remove the button
+                        removeBtn.remove();
+                        
+                        // Reset selection
+                        selectedLine = null;
+                    });
+
+                    // Add button to container
+                    floorPlanContainer.appendChild(removeBtn);
+                }
+
             // Update getIntersects function to use the global camera and scene
             function getIntersects(event) {
                 const floorPlanContainer = document.querySelector('.floorPlan.tour-map');
@@ -663,6 +727,20 @@
         padding: 1rem;
         border-right: 1px solid #dee2e6;
     }
+
+    .remove-line-btn {
+        position: absolute;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+
+    .remove-line-btn:hover {
+        opacity: 0.9;
+    }
+
     </style>
 @endpush
 
