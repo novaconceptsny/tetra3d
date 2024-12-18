@@ -126,6 +126,34 @@ function krpanoplugin() {
 		krpano_panoview_euler = new THREE.Euler();
 		window.krpano_panoview_euler = krpano_panoview_euler;
 
+		// Debounce function
+		function debounce(func, wait) {
+			let timeout;
+			return function executedFunction(...args) {
+				const later = () => {
+					clearTimeout(timeout);
+					func(...args);
+				};
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+			};
+		}
+		// Handle window resize with debouncing
+		const handleResize = debounce(() => {
+			const gl = krpano.webGL.context;
+			const sw = gl.drawingBufferWidth;
+			const sh = gl.drawingBufferHeight;
+			// Update renderer size
+			renderer.setSize(sw, sh);
+			// Update camera projection
+			krpano_projection_matrix(sw, sh, krpano_panoview.z, 0, krpano_panoview.yf);
+			update_camera_matrix(camera);
+			update_camera_matrix(stereocamera);
+			// Force a new render
+			render_frame();
+		}, 250); // Wait 250ms after last resize event
+		window.addEventListener('resize', handleResize);
+
 		// build the ThreeJS scene (start adding custom code there)
 		build_scene();
 
@@ -339,7 +367,7 @@ function krpanoplugin() {
 		}
 
 		if (point)
-			return {object: object, gizmo: gizmo, point: point};
+			return { object: object, gizmo: gizmo, point: point };
 		else return null;
 	}
 
@@ -369,7 +397,7 @@ function krpanoplugin() {
 		var hitobj = null;
 		var gizmo = null;
 		var point = null;
-		
+
 		if (event.type == "mousedown") {
 			type = "ondown";
 			krpano.control.layer.addEventListener("mouseup", handle_mouse_touch_events, true);
@@ -418,7 +446,7 @@ function krpanoplugin() {
 					}
 				});
 			}
-			if ( hitobj || gizmo ) {
+			if (hitobj || gizmo) {
 				isDown = true;
 				krpano.mouse.down = true;
 				event.preventDefault();
@@ -437,10 +465,10 @@ function krpanoplugin() {
 			} else {
 				label.innerHTML = "";
 
-				if (model_label !== null) 
+				if (model_label !== null)
 					model_label.style.display = 'none';
 
-				if (gizmoObj) 
+				if (gizmoObj)
 					scene.remove(gizmoObj);
 			}
 		}
@@ -448,7 +476,7 @@ function krpanoplugin() {
 			event.preventDefault();
 			event.stopPropagation();
 			if (canMove && isDown) {
-				
+
 				var plane_point = do_object_point(ms.x, ms.y);
 
 				update_position(selectedObj, plane_point, plane_point_temp, direction);
@@ -461,31 +489,31 @@ function krpanoplugin() {
 				if (model_label !== null) {
 					model_label.style.display = 'none';
 				}
-				
+
 				selectedObj.userData.changed = true;
 			}
 		}
 		else if (type == "onup") {
 			if (selectedObj && isDown) {
 				selectedObj.properties.onup(selectedObj);
-				
+
 				if (model_label !== null) {
 					model_label.style.display = 'block';
 				}
 
 				selectedObj.userData.model.traverse((obj) => {
-                    if(obj instanceof THREE.Mesh){
+					if (obj instanceof THREE.Mesh) {
 						if (obj.name == 'sculpture-model') {
 							obj.material.emissive.setHex(0x001f1f);
 							obj.material.transparent = true;
 							obj.material.opacity = 0.8;
 							obj.material.needsUpdate = true;
 						}
-                    }
-                });
+					}
+				});
 
 				// if (!canMove) {
-					make_gizmo(selectedObj);
+				make_gizmo(selectedObj);
 				// }
 			}
 			isDown = false;
@@ -501,11 +529,11 @@ function krpanoplugin() {
 		var directGeometry = new THREE.CylinderGeometry(2, 2, 30, 32);
 		var gizmoPlaneGeometry = new THREE.PlaneGeometry(15, 15);
 
-		var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8}));
+		var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8 }));
 		var arrow_z = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
 		var direct_x = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8 }));
 		var direct_z = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
-		var gizmoPlane = new THREE.Mesh(gizmoPlaneGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, transparent: false, opacity: 0.8}));
+		var gizmoPlane = new THREE.Mesh(gizmoPlaneGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, transparent: false, opacity: 0.8 }));
 
 		arrow_x.position.set(30, 0, 0);
 		arrow_z.position.set(0, 0, 30);
