@@ -67,9 +67,10 @@
         import * as THREE from 'three';
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Store lines data globally
+            // Add camera to global scope at the top level
+            let camera, scene, renderer;
             let drawnLines = [];
-            let currentMode = 'none'; // 'none', 'draw', or 'edit'
+            let currentMode = 'none';
             let selectedLine = null;
             let isInitialized = false;
 
@@ -104,6 +105,10 @@
                 let points = [];
                 const LINE_THICKNESS = 10;
 
+                let isDragging = false;
+                let draggedPoint = null;
+                let endPoints = [];
+
                 // Get the actual dimensions
                 const containerWidth = floorPlanContainer.clientWidth;
                 const containerHeight = floorPlanContainer.clientHeight;
@@ -114,11 +119,11 @@
                 }
 
                 // Create scene
-                const scene = new THREE.Scene();
+                scene = new THREE.Scene();
                 scene.background = new THREE.Color(0xf0f0f0);
 
                 // Set up orthographic camera
-                const camera = new THREE.OrthographicCamera(
+                camera = new THREE.OrthographicCamera(
                     containerWidth / -2,
                     containerWidth / 2,
                     containerHeight / 2,
@@ -129,7 +134,7 @@
                 camera.position.z = 500;
 
                 // Set up renderer
-                const renderer = new THREE.WebGLRenderer();
+                renderer = new THREE.WebGLRenderer();
                 renderer.setSize(containerWidth, containerHeight);
                 floorPlanContainer.appendChild(renderer.domElement);
 
@@ -197,7 +202,9 @@
                         side: THREE.DoubleSide
                     });
 
-                    return new THREE.Mesh(thickGeometry, material);
+                    const mesh = new THREE.Mesh(thickGeometry, material);
+                    mesh.userData.isDrawnLine = true;
+                    return mesh;
                 }
 
                 // Function to get intersection point with plane
@@ -338,18 +345,14 @@
                         if (intersects.length > 0) {
                             const hitObject = intersects[0].object;
                             
-                            if (hitObject.userData.isDrawnLine) {
-                                // Reset previous selection
-                                if (selectedLine) {
-                                    resetLineColor(selectedLine);
-                                    removeEndPoints();
-                                }
-                                
-                                // Set new selection
-                                selectedLine = hitObject;
-                                setLineColor(selectedLine, 0xff0000);
-                                showEndPoints(selectedLine);
+                            // Reset previous selection
+                            if (selectedLine) {
+                                resetLineColor(selectedLine);
                             }
+                            
+                            // Set new selection
+                            selectedLine = hitObject;
+                            setLineColor(selectedLine, 0xff0000);
                         }
                     }
                 });
@@ -464,6 +467,7 @@
                     }
                 });
 
+                // Add this function to handle line color changes
                 function setLineColor(line, color) {
                     const material = line.material;
                     material.color.setHex(color);
@@ -537,6 +541,21 @@
                     });
                 }
             }
+
+            // Update getIntersects function to use the global camera and scene
+            function getIntersects(event) {
+                const floorPlanContainer = document.querySelector('.floorPlan.tour-map');
+                const rect = floorPlanContainer.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+                
+                // Filter only drawn lines from scene children
+                const drawnObjects = scene.children.filter(obj => obj.userData.isDrawnLine);
+                return raycaster.intersectObjects(drawnObjects);
+            }
         });
 
     </script>
@@ -554,3 +573,4 @@
     }
     </style>
 @endpush
+
