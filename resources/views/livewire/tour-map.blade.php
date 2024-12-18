@@ -227,6 +227,7 @@
                         color: color,
                         dashSize: 5,
                         gapSize: 5,
+                        linewidth: 1
                     });
                     const line = new THREE.Line(geometry, material);
                     line.computeLineDistances(); // Required for dashed lines
@@ -357,8 +358,8 @@
                     if (currentMode === 'draw' && isDrawing) {
                         const intersectionPoint = getIntersectionPoint(event);
                         if (intersectionPoint) {
-                                 // Remove previous guide line
-                                 if (guideLine) {
+                            // Remove previous guide line
+                            if (guideLine) {
                                 scene.remove(guideLine);
                                 guideLine = null;
                             }
@@ -390,7 +391,7 @@
 
                             // Update drawing line
                             scene.remove(drawingLine);
-                            points = [startPoint, intersectionPoint];
+                            points = [startPoint, endPoint];
                             drawingLine = createThickLine(points);
                             scene.add(drawingLine);
                         }
