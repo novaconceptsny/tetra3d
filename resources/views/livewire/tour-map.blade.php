@@ -1,7 +1,15 @@
 <div>
     @if($selectedMap)
-        <div class="tour-map-container">
-            <div class="me-2" style="width: 250px">
+        <div class="tour-map-container d-flex">
+            <div class="toolbar me-3" style="width: 250px">
+                <div class="btn-group-vertical w-100 mb-3">
+                    <button class="btn btn-outline-primary" id="drawModeBtn">
+                        <i class="fas fa-pen"></i> Draw Line
+                    </button>
+                    <button class="btn btn-outline-primary" id="editModeBtn">
+                        <i class="fas fa-edit"></i> Edit Lines
+                    </button>
+                </div>
                 <ul class="list-group">
                     @foreach($tour->maps as $map)
                         <a href="javascript:void(0)" class="list-group-item {{ $map->id == $selectedMap->id ? 'active' : '' }}"
@@ -61,6 +69,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Store lines data globally
             let drawnLines = [];
+            let currentMode = 'none'; // 'none', 'draw', or 'edit'
+            let selectedLine = null;
             let isInitialized = false;
 
             document.querySelector('.view-map-btn a i').addEventListener('click', () => {
@@ -72,6 +82,7 @@
                     initThreeJS();
                 }, 500);
             });
+            let isDrawing = false;
 
             function initThreeJS() {
                 const floorPlanContainer = document.querySelector('.floorPlan.tour-map');
@@ -259,25 +270,96 @@
                     return currentPoint;
                 }
 
+                // Mode handling
+                const drawModeBtn = document.getElementById('drawModeBtn');
+                const editModeBtn = document.getElementById('editModeBtn');
+
+                function 
+                () {
+                    // Reset all buttons
+                    drawModeBtn.classList.remove('active');
+                    editModeBtn.classList.remove('active');
+
+                    // Reset drawing state
+                    isDrawing = false;
+                    if (drawingLine) {
+                        scene.remove(drawingLine);
+                        drawingLine = null;
+                    }
+
+                    // Reset selection
+                    if (selectedLine) {
+                        resetLineColor(selectedLine);
+                        removeEndPoints();
+                        selectedLine = null;
+                    }
+
+                    // Set active button
+                    if (currentMode === 'draw') {
+                        drawModeBtn.classList.add('active');
+                    } else if (currentMode === 'edit') {
+                        editModeBtn.classList.add('active');
+                    }
+                }
+
+                drawModeBtn.addEventListener('click', () => {
+                    // Toggle draw mode
+                    if (currentMode === 'draw') {
+                        currentMode = 'none';
+                    } else {
+                        currentMode = 'draw';
+                    }
+                    updateModeButtons();
+                });
+
+                editModeBtn.addEventListener('click', () => {
+                    // Toggle edit mode
+                    if (currentMode === 'edit') {
+                        currentMode = 'none';
+                    } else {
+                        currentMode = 'edit';
+                    }
+                    updateModeButtons();
+                });
+
                 // Mouse event handlers
                 floorPlanContainer.addEventListener('mousedown', (event) => {
-                    const intersectionPoint = getIntersectionPoint(event);
-                    if (intersectionPoint) {
-                        isDrawing = true;
-                        startPoint = intersectionPoint;
-                        points = [startPoint];
-
-                        drawingLine = createThickLine([startPoint, startPoint.clone()]);
-                        scene.add(drawingLine);
+                    if (currentMode === 'draw') {
+                        const intersectionPoint = getIntersectionPoint(event);
+                        if (intersectionPoint) {
+                            isDrawing = true;
+                            startPoint = intersectionPoint;
+                            points = [startPoint];
+                            drawingLine = createThickLine([startPoint, startPoint.clone()]);
+                            scene.add(drawingLine);
+                        }
+                    } else if (currentMode === 'edit') {
+                        const intersects = getIntersects(event);
+                        if (intersects.length > 0) {
+                            const hitObject = intersects[0].object;
+                            
+                            if (hitObject.userData.isDrawnLine) {
+                                // Reset previous selection
+                                if (selectedLine) {
+                                    resetLineColor(selectedLine);
+                                    removeEndPoints();
+                                }
+                                
+                                // Set new selection
+                                selectedLine = hitObject;
+                                setLineColor(selectedLine, 0xff0000);
+                                showEndPoints(selectedLine);
+                            }
+                        }
                     }
                 });
 
                 floorPlanContainer.addEventListener('mousemove', (event) => {
-                    if (isDrawing && drawingLine) {
+                    if (currentMode === 'draw' && isDrawing) {
                         const intersectionPoint = getIntersectionPoint(event);
                         if (intersectionPoint) {
-                            // Remove previous guide line
-                            if (guideLine) {
+                                 // Remove previous guide line
+                                 if (guideLine) {
                                 scene.remove(guideLine);
                                 guideLine = null;
                             }
@@ -309,7 +391,7 @@
 
                             // Update drawing line
                             scene.remove(drawingLine);
-                            points = [startPoint, endPoint];
+                            points = [startPoint, intersectionPoint];
                             drawingLine = createThickLine(points);
                             scene.add(drawingLine);
                         }
@@ -317,23 +399,33 @@
                 });
 
                 floorPlanContainer.addEventListener('mouseup', () => {
-                    if (isDrawing) {
-                        // Store the line data
-                        drawnLines.push({
-                            points: points.map(p => ({ x: p.x, y: p.y, z: p.z }))
-                        });
-                        
+                    if (currentMode === 'draw' && isDrawing) {
+                        if (points.length >= 2) {
+                            drawnLines.push({
+                                points: points.map(p => ({ x: p.x, y: p.y, z: p.z }))
+                            });
+                        }                   
                         // Remove guide line
                         if (guideLine) {
                             scene.remove(guideLine);
                             guideLine = null;
                         }
-                        
                         isDrawing = false;
-                        drawingLine = null;
-                        points = [];
                     }
                 });
+
+                function setLineColor(line, color) {
+                    const material = line.material;
+                    material.color.setHex(color);
+                    material.needsUpdate = true;
+                }
+
+                function resetLineColor(line) {
+                    setLineColor(line, 0x000000);
+                }
+
+                // Initialize with no mode active
+                updateModeButtons();
 
                 // Load texture and create plane
                 const textureLoader = new THREE.TextureLoader();
@@ -398,4 +490,17 @@
         });
 
     </script>
+
+    <style>
+    .btn.active {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .toolbar {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-right: 1px solid #dee2e6;
+    }
+    </style>
 @endpush
