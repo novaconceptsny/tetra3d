@@ -126,6 +126,39 @@ function krpanoplugin() {
 		krpano_panoview_euler = new THREE.Euler();
 		window.krpano_panoview_euler = krpano_panoview_euler;
 
+		// Debounce function
+		function debounce(func, wait) {
+			let timeout;
+			return function executedFunction(...args) {
+				const later = () => {
+					clearTimeout(timeout);
+					func(...args);
+				};
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+			};
+		}
+
+		// Handle window resize with debouncing
+		const handleResize = debounce(() => {
+			const gl = krpano.webGL.context;
+			const sw = gl.drawingBufferWidth;
+			const sh = gl.drawingBufferHeight;
+
+			// Update renderer size
+			renderer.setSize(sw, sh);
+
+			// Update camera projection
+			krpano_projection_matrix(sw, sh, krpano_panoview.z, 0, krpano_panoview.yf);
+			update_camera_matrix(camera);
+			update_camera_matrix(stereocamera);
+
+			// Force a new render
+			render_frame();
+		}, 250); // Wait 250ms after last resize event
+
+		window.addEventListener('resize', handleResize);
+
 		// build the ThreeJS scene (start adding custom code there)
 		build_scene();
 
