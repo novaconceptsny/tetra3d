@@ -110,11 +110,24 @@
     })
 </script>
 
+<script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+            }
+        }
+</script>
+
 @livewire('modal-pro')
 @livewire('slide-over-pro')
 
+@yield('scripts')
 @livewireScripts
 
+@stack('scripts')
+
+@mediaLibraryScripts
 <script src="{{ asset('js/modals.js') }}"></script>
 <script>
     Livewire.on('flashNotification', (event) => {
@@ -123,10 +136,10 @@
     });
 </script>
 
-@yield('scripts')
-
 <!-- Map script -->
 <script src="{{ asset('js/map.js') }}"></script>
+
+@yield('livewire-scripts')
 
 <script src="{{ asset('vendor/wire-elements-pro/js/overlay-component.js') }}"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
