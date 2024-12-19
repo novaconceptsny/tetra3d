@@ -2,14 +2,16 @@
     @if($selectedMap)
         <div class="tour-map-container d-flex">
             <div class="toolbar me-3" style="width: 250px">
-                <div class="btn-group-vertical w-100 mb-3">
-                    <button class="btn btn-outline-primary" id="drawModeBtn">
-                        <i class="fas fa-pen"></i> Draw Line
-                    </button>
-                    <button class="btn btn-outline-primary" id="editModeBtn">
-                        <i class="fas fa-edit"></i> Edit Lines
-                    </button>
-                </div>
+                @if($tourModel)
+                    <div class="btn-group-vertical w-100 mb-3">
+                        <button class="btn btn-outline-primary" id="drawModeBtn">
+                            <i class="fas fa-pen"></i> Add Wall
+                        </button>
+                        <button class="btn btn-outline-primary" id="editModeBtn">
+                            <i class="fas fa-edit"></i> Edit Wall
+                        </button>
+                    </div>
+                @endif
                 <ul class="list-group">
                     @foreach($tour->maps as $map)
                         <a href="javascript:void(0)" class="list-group-item {{ $map->id == $selectedMap->id ? 'active' : '' }}"
@@ -326,25 +328,29 @@
                     }
                 }
 
-                drawModeBtn.addEventListener('click', () => {
-                    // Toggle draw mode
-                    if (currentMode === 'draw') {
-                        currentMode = 'none';
-                    } else {
-                        currentMode = 'draw';
-                    }
-                    updateModeButtons();
-                });
+                if(drawModeBtn){
+                    drawModeBtn.addEventListener('click', () => {
+                        // Toggle draw mode
+                        if (currentMode === 'draw') {
+                            currentMode = 'none';
+                        } else {
+                            currentMode = 'draw';
+                        }
+                        updateModeButtons();
+                    });
+                }
 
-                editModeBtn.addEventListener('click', () => {
-                    // Toggle edit mode
-                    if (currentMode === 'edit') {
-                        currentMode = 'none';
-                    } else {
-                        currentMode = 'edit';
-                    }
-                    updateModeButtons();
-                });
+                if(editModeBtn){
+                    editModeBtn.addEventListener('click', () => {
+                        // Toggle edit mode
+                        if (currentMode === 'edit') {
+                            currentMode = 'none';
+                        } else {
+                            currentMode = 'edit';
+                        }
+                        updateModeButtons();
+                    });
+                }
 
                 // Mouse event handlers
                 floorPlanContainer.addEventListener('mousedown', (event) => {
@@ -786,68 +792,68 @@
                 }
             }
 
-                            // Add this function to create and show remove button
-                            function showRemoveButton(line) {
-                    // Remove existing button if any
-                    const existingButton = document.querySelector('.remove-line-btn');
-                    if (existingButton) {
-                        existingButton.remove();
-                    }
-
-                    // Create remove button
-                    const removeBtn = document.createElement('button');
-                    removeBtn.className = 'remove-line-btn btn btn-danger btn-sm';
-                    removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                    removeBtn.style.position = 'absolute';
-                    removeBtn.style.zIndex = '1000';
-
-                    // Calculate center position of the line
-                    const positions = line.geometry.attributes.position.array;
-                    let centerX = 0, centerY = 0;
-                    let count = 0;
-                    for (let i = 0; i < positions.length; i += 3) {
-                        centerX += positions[i];
-                        centerY += positions[i + 1];
-                        count++;
-                    }
-                    centerX /= count;
-                    centerY /= count;
-
-                    // Convert 3D position to screen coordinates
-                    const vector = new THREE.Vector3(centerX, centerY, 0);
-                    vector.project(camera);
-                    
-                    const floorPlanContainer = document.querySelector('.floorPlan.tour-map');
-                    const rect = floorPlanContainer.getBoundingClientRect();
-                    
-                    const x = (vector.x + 1) / 2 * rect.width;
-                    const y = (-vector.y + 1) / 2 * rect.height;
-
-                    // Position button above the line
-                    removeBtn.style.left = `${x}px`;
-                    removeBtn.style.top = `${y - 30}px`; // 30px above the center
-
-                    // Add click handler
-                    removeBtn.addEventListener('click', () => {
-                        // Remove the line from the scene
-                        scene.remove(line);
-                        
-                        // Remove from stored lines array
-                        const lineIndex = drawnLines.findIndex(l => l === line);
-                        if (lineIndex !== -1) {
-                            drawnLines.splice(lineIndex, 1);
-                        }
-                        
-                        // Remove the button
-                        removeBtn.remove();
-                        
-                        // Reset selection
-                        selectedLine = null;
-                    });
-
-                    // Add button to container
-                    floorPlanContainer.appendChild(removeBtn);
+                        // Add this function to create and show remove button
+            function showRemoveButton(line) {
+                // Remove existing button if any
+                const existingButton = document.querySelector('.remove-line-btn');
+                if (existingButton) {
+                    existingButton.remove();
                 }
+
+                // Create remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-line-btn btn btn-danger btn-sm';
+                removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                removeBtn.style.position = 'absolute';
+                removeBtn.style.zIndex = '1000';
+
+                // Calculate center position of the line
+                const positions = line.geometry.attributes.position.array;
+                let centerX = 0, centerY = 0;
+                let count = 0;
+                for (let i = 0; i < positions.length; i += 3) {
+                    centerX += positions[i];
+                    centerY += positions[i + 1];
+                    count++;
+                }
+                centerX /= count;
+                centerY /= count;
+
+                // Convert 3D position to screen coordinates
+                const vector = new THREE.Vector3(centerX, centerY, 0);
+                vector.project(camera);
+                
+                const floorPlanContainer = document.querySelector('.floorPlan.tour-map');
+                const rect = floorPlanContainer.getBoundingClientRect();
+                
+                const x = (vector.x + 1) / 2 * rect.width;
+                const y = (-vector.y + 1) / 2 * rect.height;
+
+                // Position button above the line
+                removeBtn.style.left = `${x}px`;
+                removeBtn.style.top = `${y - 30}px`; // 30px above the center
+
+                // Add click handler
+                removeBtn.addEventListener('click', () => {
+                    // Remove the line from the scene
+                    scene.remove(line);
+                    
+                    // Remove from stored lines array
+                    const lineIndex = drawnLines.findIndex(l => l === line);
+                    if (lineIndex !== -1) {
+                        drawnLines.splice(lineIndex, 1);
+                    }
+                    
+                    // Remove the button
+                    removeBtn.remove();
+                    
+                    // Reset selection
+                    selectedLine = null;
+                });
+
+                // Add button to container
+                floorPlanContainer.appendChild(removeBtn);
+            }
 
             // Update getIntersects function to use the global camera and scene
             function getIntersects(event) {

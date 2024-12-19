@@ -6,6 +6,7 @@ use App\Models\Map;
 use App\Models\Tour;
 use App\Models\Spot;
 use Livewire\Component;
+use App\Models\TourModel;
 
 class TourMap extends Component
 {
@@ -14,12 +15,20 @@ class TourMap extends Component
     public $shared_tour_id;
     public $layoutId;
     public $selectedMap;
+    public $tourModel;
 
     public function mount(Tour $tour, Spot $spot)
     {
         $this->spot_id = $spot->id;
         $this->tour = $tour;
         $this->selectedMap = $tour->map;
+
+        $tourModel = $tour ? TourModel::where('tour_id', $tour->id)->get() : null;
+        if ($tourModel !== null && !$tourModel->isEmpty()) {
+            $this->tourModel  = $tourModel[0];
+        } else {
+            $this->tourModel  = null;
+        }
     }
 
     public function dehydrate()
