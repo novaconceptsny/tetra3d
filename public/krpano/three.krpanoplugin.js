@@ -315,6 +315,7 @@ function krpanoplugin() {
 	var selectedObj = null;
 	var gizmoObj = null;
 	var isDown = false;
+	var selected_surface_id = null;
 	var canMove = false;
 	var plane_point_temp = null;
 	var direction = '';
@@ -351,6 +352,7 @@ function krpanoplugin() {
 		var i;
 		var object = null;
 		var gizmo = null;
+		var surface = null;
 		var point = null;
 
 		for (i = 0; i < intersects.length; i++) {
@@ -364,8 +366,18 @@ function krpanoplugin() {
 				gizmo = obj;
 				point = intersects[i].point;
 			}
+
+			if (obj.userData.type === "surface") {
+				obj = intersects[0].object;
+				surface = obj;
+				point = intersects[i].point;
+				object = obj;
+			}
 		}
 
+		if (intersects.length > 0) {
+			var obj = intersects[0].object;
+		}
 		if (point)
 			return { object: object, gizmo: gizmo, point: point };
 		else return null;
@@ -449,9 +461,10 @@ function krpanoplugin() {
 			if (hitobj || gizmo) {
 				isDown = true;
 				krpano.mouse.down = true;
-				event.preventDefault();
-				event.stopPropagation();
+
 				if (gizmo) {
+					event.preventDefault();
+					event.stopPropagation();
 					selectedObj = gizmo.parent.userData.temp;
 					gizmoObj = gizmo.parent;
 					plane_point_temp = point;
@@ -460,7 +473,13 @@ function krpanoplugin() {
 					if (gizmo.name == 'arrow_z' || gizmo.name == 'direct_z') direction = 'z';
 					if (gizmo.name == 'gizmoPlane') direction = 'xz';
 				} else {
-					selectedObj = hitobj.userData.temp;
+					if (hitobj.userData.type === "surface") {
+						selected_surface_id = hitobj.userData.surface_id;
+					} else {
+						event.preventDefault();
+						event.stopPropagation();
+						selectedObj = hitobj.userData.temp;
+					}
 				}
 			} else {
 				label.innerHTML = "";
@@ -515,6 +534,13 @@ function krpanoplugin() {
 				// if (!canMove) {
 				make_gizmo(selectedObj);
 				// }
+			}
+			if (hitobj && isDown && hitobj.userData.type == "surface" && selected_surface_id === hitobj.userData.surface_id) {
+				var hlookat = krpano.view.hlookat;
+				var vlookat = krpano.view.vlookat;
+				var urlStr = "/surfaces/" + hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id + "&hlookat=" + hlookat + "&vlookat=" + vlookat;
+				console.log(hitobj.userData.layout_id, "layout_id", urlStr)
+				window.location.href = urlStr;
 			}
 			isDown = false;
 			krpano.mouse.down = false;

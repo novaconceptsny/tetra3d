@@ -1,6 +1,6 @@
 <div class="row" style="display: flex; align-items: stretch; ">
-    <div class="col-3 model-import-left" id='model-import-left' style="min-height: 500px; overflow-y: auto; overflow-x: hidden;" wire:ignore>
-        <div class="row g-3 ">
+    <div class="col-3 model-import-left" id='model-import-left' style="min-height: 500px;" wire:ignore>
+        <div class="row g-3" style="overflow-y: auto; overflow-x: hidden;height:100%">
             <div class="col-12">
                 <h5>{{ __('Model') }}</h5>
                 <input type='file' wire:model="tourModel" id='tour-model-input' accept=".glb" hidden></input>
@@ -23,11 +23,17 @@
                 <div class="col-12"><h5>{{ __('Spots') }}</h5></div>
 
                 @foreach($tour->spots as $spot)
-                    <div class="col-12"><h7>{{ $spot->friendly_name }}</h7></div>
+                    <div class="col-12" style="display: flex; gap: 30px;">
+                        <div style="font-weight: bold; font-size : 14px">{{ $spot->friendly_name }}</div>
+                        <label class="switch">
+                            <input type="checkbox" class="spot-toggle" data-spot-id="{{ $spot->id }}" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                     <div class="row g-2">
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.x" }}'
-                            wire:model.live="spotsPosition.{{ $spot->id }}.x" label='{{ "X (Y in 3ds Max)" }}'
+                            wire:model.live="spotsPosition.{{ $spot->id }}.x" label='{{ "X (invert Y in 3ds Max)" }}'
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.y" }}'
@@ -35,17 +41,75 @@
                         />
                         <x-backend::inputs.text
                             col="col-4" name='{{ "spotsPosition.{$spot->id}.z" }}'
-                            wire:model.live="spotsPosition.{{ $spot->id }}.z" label='{{ "Z (X in 3ds Max)" }}'
+                            wire:model.live="spotsPosition.{{ $spot->id }}.z" label='{{ "Z (invert X in 3ds Max)" }}'
                         />
                     </div>
+                    <hr class="solid">
                 @endforeach
 
             </div>
-            <div class="text-end">
-                <button id="tour-model-update" class="btn btn-primary mb-3" wire:click="update" type="button">
-                    {{ __('Update') }}
-                </button>
+
+            <div class="row g-3 mt-2">
+                <div class="col-12"><h5>{{ __('Surfaces') }}</h5></div>
+                @foreach($tour->surfaces as $surface)
+                    <div class="col-12" style="display: flex; gap: 30px;">
+                        <div style="font-weight: bold; font-size : 14px">{{ $surface->friendly_name }}</div>
+                        <label class="switch">
+                            <input type="checkbox" class="surface-toggle" data-surface-id="{{ $surface->id }}" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="col-12"><h7>Normal Vector</h7></div>
+                    <div class="row g-2">
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.x" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.x" label='{{ "X (invert Y in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.y" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.y" label='{{ "Y (Z in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.normalvector.z" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.normalvector.z" label='{{ "Z (invert X in 3ds Max)" }}'
+                        />
+                    </div>
+                    <div class="col-12"><h7>Start Point</h7></div>
+                    <div class="row g-2">
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.x" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.x" label='{{ "X (invert Y in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.y" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.y" label='{{ "Y (Z in 3ds Max)" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.start_pos.z" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.start_pos.z" label='{{ "Z (invert X in 3ds Max)" }}'
+                        />
+                    </div>
+                    <div class="col-12"><h7>Size</h7></div>
+                    <div class="row g-2">
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.width" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.width" label='{{ "Width" }}'
+                        />
+                        <x-backend::inputs.text
+                            col="col-4" name='{{ "surfaceArray.{$surface->id}.height" }}'
+                            wire:model.live="surfaceArray.{{ $surface->id }}.height" label='{{ "Height" }}'
+                        />
+                    </div>
+                    <hr class="solid">
+                @endforeach
+
             </div>
+
+        </div>
+        <div class="text-end">
+            <button id="tour-model-update" class="btn btn-primary mt-3" wire:click="update" type="button">
+                {{ __('Update') }}
+            </button>
         </div>
     </div>
     <div class="col-9" id="tour-model-import" style="box-sizing: border-box;" wire:ignore>
@@ -73,10 +137,14 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls'
 
     var spotsPosition = @json($spotsPosition);
+    var surfaceArray = @json($surfaceArray);
+
     var tourModel = @json($tourModel);
     var tourModelPath = @json($tourModelPath);
     var surfaceModel = @json($surfaceModel);
     var surfaceModelPath = @json($surfaceModelPath);
+    var surfaceMeshes = [];
+    var spotMeshes = [];
 
     for (const key in spotsPosition) {
         let x_input = document.getElementById('spotsPosition_' + key + '_x');
@@ -90,6 +158,21 @@
         let z_input = document.getElementById('spotsPosition_' + key + '_z');
         z_input.onchange = function() {
             updatePosition(key, 'z', this.value);
+        }
+    }
+
+    for (const key in surfaceArray) {
+        let x_input = document.getElementById('surfaceArray_' + key + '_start_pos_x');
+        x_input.onchange = function() {
+            updateSurfaces(key, 'start_pos_x', this.value);
+        }
+        let y_input = document.getElementById('surfaceArray_' + key + '_start_pos_y');
+        y_input.onchange = function() {
+            updateSurfaces(key, 'start_pos_y', this.value);
+        }
+        let z_input = document.getElementById('surfaceArray_' + key + '_start_pos_z');
+        z_input.onchange = function() {
+            updateSurfaces(key, 'start_pos_z', this.value);
         }
     }
 
@@ -111,12 +194,47 @@
         }
     })
 
+    document.querySelectorAll('.surface-toggle').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const surfaceId = event.target.getAttribute('data-surface-id');
+            const planeMesh = surfaceMeshes[surfaceId];
+
+            // Toggle visibility based on checkbox state
+            if (planeMesh) {
+                planeMesh.visible = event.target.checked;
+            }
+        });
+    });
+
+    document.querySelectorAll('.spot-toggle').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const spotId = event.target.getAttribute('data-spot-id');
+            const spotMesh = spotMeshes[spotId];
+
+            // Toggle visibility based on checkbox state
+            if (spotMesh) {
+                spotMesh.visible = event.target.checked;
+            }
+        });
+    });
+
+
     function updatePosition(key, axis, value) {
         scene.traverse(function(object) {
             if (object.name === key) {
                 if (axis === 'x') object.position.x = value;
                 if (axis === 'y') object.position.y = value;
                 if (axis === 'z') object.position.z = value;
+            }
+        });
+    }
+
+    function updateSurfaces(key, axis, value) {
+        scene.traverse(function(object) {
+            if (object.name === key) {
+                if (axis === 'start_pos_x') object.position.x = value;
+                if (axis === 'start_pos_y') object.position.y = value;
+                if (axis === 'start_pos_z') object.position.z = value;
             }
         });
     }
@@ -210,9 +328,54 @@
             coneMesh.rotation.x = - Math.PI;
             coneMesh.position.set(spotsPosition[key]['x'], spotsPosition[key]['y'], spotsPosition[key]['z'])
             coneMesh.name = key;
+
+            spotMeshes[key] = coneMesh;
             scene.add(coneMesh);
         }
     }
+
+    function renderSurfaces() {
+        var surfaceArray = @json($surfaceArray);
+        for (const key in surfaceArray) {
+            const width = surfaceArray[key]['width'];
+            const height = surfaceArray[key]['height'];
+            let startPos = surfaceArray[key]['start_pos'];
+            let normalvector = surfaceArray[key]['normalvector'];
+        
+            if(width != 0 && height != 0){
+                // Convert values of the object from strings to numbers
+                startPos = Object.fromEntries(
+                    Object.entries(startPos).map(([key, value]) => [key, parseFloat(value)])
+                );
+
+                normalvector = Object.fromEntries(
+                    Object.entries(normalvector).map(([key, value]) => [key, parseFloat(value)])
+                );
+
+                const geometry = new THREE.PlaneGeometry(width, height); 
+                geometry.translate(width / 2, -height / 2, 0);
+                const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, });
+                const planeMesh = new THREE.Mesh(geometry, material);
+
+                planeMesh.position.set(startPos['x'], startPos['y'], startPos['z'])
+                planeMesh.name = key;
+                if(normalvector['x'] == 0 && normalvector['y'] == 0 && normalvector['z'] ==1){
+                    planeMesh.rotation.set(0, 0, 0);
+                }else if(normalvector['x'] == 0 && normalvector['y'] == 0 && normalvector['z'] ==-1){
+                    planeMesh.rotation.set(0, Math.PI, 0);
+                }else if(normalvector['x'] == 1 && normalvector['y'] == 0 && normalvector['z'] ==0){
+                    planeMesh.rotation.set(0, Math.PI/2, 0);
+                }else{
+                    planeMesh.rotation.set(0, -Math.PI/2, 0);
+                }
+                // Store the planeMesh in the surfaceMeshes object with the surface id
+                surfaceMeshes[key] = planeMesh;
+                scene.add(planeMesh);
+            }
+
+        }
+    }
+
 
     document.getElementById('model_forms-tab').addEventListener('click', function() {
         setTimeout(function() {
@@ -233,6 +396,7 @@
             if (document.getElementById('tour-model-import-canvas').getAttribute('data-engine') === null){
                 init();
                 renderSpots();
+                renderSurfaces();
                 animate();
             }
         }, 1000);

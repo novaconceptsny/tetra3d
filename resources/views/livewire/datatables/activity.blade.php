@@ -21,10 +21,21 @@
 
             <div class="me-1">
                 <select wire:model.live="selectedTour" class="form-control">
-                    <option value="">All Tours</option>
-                    @foreach($tours as $tour)
-                        <option value="{{$tour->id}}">{{$tour->name}}</option>
-                    @endforeach
+
+                    @if (empty($selectedProject))
+                        <option value="">All Tours</option>
+                        @foreach($tours as $tour)
+                            <option value="{{$tour->id}}">{{$tour->name}}</option>
+                        @endforeach
+                    @else
+                        @if ($uniqueTours->isEmpty())
+                            <option value="" disabled>No Tours Available</option>
+                        @else
+                            @foreach($uniqueTours as $tour)
+                                <option value="{{$tour->id}}">{{$tour->name}}</option>
+                            @endforeach
+                        @endif
+                    @endif
                 </select>
             </div>
             @include('backend.includes.datatable.reset-filters')
@@ -32,6 +43,7 @@
 
         @include('backend.includes.datatable.toggle-columns')
     </div>
+
     <div class="card-body py-0">
         <div class="mb-3 scrollbar table-responsive">
             <table class="table table-hover fs--1 table-sm activity-table">
@@ -58,3 +70,12 @@
     </div>
     @include('backend.includes.datatable.footer')
 </div>
+
+<!-- @section('scripts')
+<script>
+    // Assuming $parameter is passed to the Blade view
+    const parameter = @json($uniqueTours);
+    console.log(parameter);
+</script>
+
+@endsection -->

@@ -44,7 +44,7 @@ class SpotController extends Controller
         ]);
 
         $spot = $tour->spots()->create($request->only([
-            'name', 'company_id'
+            'name', 'display_name','company_id'
         ]));
 
         $spot->surfaces()->sync($request->surfaces);
@@ -72,12 +72,16 @@ class SpotController extends Controller
         return view('backend.spot.form', $data);
     }
 
-    public function update(Request $request, Spot $spot)
+    public function update(Request $request, Spot $spot, Tour $tour)
     {
         $request->validate(ValidationRules::updateSpot());
 
+        // Get the previous value of display_name
+        $previousDisplayName = $spot->getOriginal('display_name');
+
         $spot->update($request->only([
-            'name'
+            'name',
+            'display_name'
         ]));
 
         $spot->surfaces()->sync($request->surfaces);
@@ -86,6 +90,9 @@ class SpotController extends Controller
             ->addFromMediaLibraryRequest($request->image_360)
             ->toMediaCollection('image_360');
 
+
+        $this->updateTourXMLFiles('app/public/tours/'.$tour->id, $spot->name,  $spot->display_name, $previousDisplayName);
+
         return redirect()->route('backend.tours.spots.index', $spot->tour)->with('success', 'Spot updated successfully');
     }
 
@@ -93,5 +100,40 @@ class SpotController extends Controller
     {
         $spot->delete();
         return redirect()->back()->with('success', 'Spot deleted successfully');
+    }
+
+
+
+    private function updateTourXMLFiles($dir, $name, $display_name, $previousDisplayName) {
+        $dh = opendir(storage_path($dir));
+
+        while (($file = readdir($dh)) !==false) {
+            if ($file != '.'&& $file != '..') {
+                $fullpath = $dir.'/'.$file;
+
+                if (is_dir(storage_path($fullpath))) {
+                    $this->updateTourXMLFiles($fullpath, $name,$display_name, $previousDisplayName);
+                } else {
+                    if ($file == 'tour.xml') {
+                        $this->updateTourXML($fullpath, $name,$display_name, $previousDisplayName);
+                    }
+                }
+            }
+        }
+
+        closedir($dh);
+    }
+    private function updateTourXML($file_path,$name, $display_name, $previousDisplayName) {
+
+        $file_contents = file_get_contents(storage_path($file_path));
+
+        if($previousDisplayName != null){
+            $file_contents = str_replace((string)$previousDisplayName, (string)$display_name, $file_contents);
+            $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
+            file_put_contents(storage_path($file_path), $file_contents);
+        }else{
+            $file_contents = str_replace((string)$name, (string)$display_name, $file_contents);
+            file_put_contents(storage_path($file_path), $file_contents);
+        }
     }
 }

@@ -25,6 +25,8 @@
 
                 <x-backend::inputs.text name="name" value="{{ $spot?->name }}"/>
 
+                <x-backend::inputs.text name="display_name" value="{{ $spot?->display_name }}"/>
+
                 <x-backend::inputs.select2 name="surfaces" :multiple="true" :placeholder="false">
                     @foreach($tour->surfaces as $surface)
                         <x-backend::inputs.select-option

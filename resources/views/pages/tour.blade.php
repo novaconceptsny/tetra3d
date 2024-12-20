@@ -14,6 +14,8 @@
     $spotPosition = $spotPosition ?? null;
     $tourModel = $tourModel ?? null;
     $sculptureData = $sculptureData ?? null;
+    $artworkData = $artworkData ?? null;
+    $surfaceData = $surfaceData ?? null;
     $sculptures = $sculptures ?? array();
 
     // only admins can see tracker
@@ -79,16 +81,14 @@
         <x-breadcrumb.item :text="$layout?->name"/>
         <x-breadcrumb.separtator/>
 
-        <x-breadcrumb.item>
-            <livewire:editable-field :model="$spot" field="name" element="span"/>
-        </x-breadcrumb.item>
+        <x-breadcrumb.item :text="$spot?->name"/>
 
     </x-breadcrumb.breadcrumb>
 @endsection
 
 @section('content')
     <div style="height: calc(100vh - 52px);">
-        <div class="h-100">
+        <div class="h-100 position-relative">
             @if ($tracker)
                 <div id="tracker"></div>
             @endif
@@ -102,6 +102,13 @@
                         </tr>
                     </table>
                 </noscript>
+            </div>
+            <div class="view-map-btn" >
+                <x-menu-item
+                    route="#" target="_self" 
+                    icon="fal fa-map-marked-alt"
+                    data-bs-toggle="modal" data-bs-target="#tourMapModal"
+                />
             </div>
         </div>
     </div>
@@ -194,7 +201,7 @@
                 readonly: "{{ $readonly || $tour_is_shared}}",
 
                 @foreach ($spot->surfaces as $surface)
-                    {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared) }}',
+                    {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared, $tourModel ) }}',
                 @endforeach
             },
         });
@@ -265,6 +272,7 @@
         var init_depth = 40;
         var sculpture_id = 0;
         var sculpture_id_list = [];
+        var artwork_id_list = [];
         var offset_x = 0;
         var offset_y = 0;
         var offset_z = 0;
@@ -277,37 +285,53 @@
         var user_name = '';
         var toggle_space_model = false;
         var sculpture_change_list = [];
+        var surface_meshes = [];
 
         var layout_id = '{{ $layout_id }}';
+        var shared_tour_id = '{{ $shared_tour_id }}';
         var sculptures = @json($sculptures);
         var sculpture_data = @json($sculptureData);
+        var artworks_data = @json($artworkData);
+        var surface_data = @json($surfaceData);
+        var spot_id = "{{ $spot->id }}";
+
         var spot_position = @json($spotPosition);
         var space_model = @json($tourModel);
         var tour_is_shared = @json($tour_is_shared);
         var user_name = @json($userName);
 
         function toggleLayout() {
-            toggle_space_model = !toggle_space_model;
-            
-            if (toggle_space_model) {
-                model.traverse((obj) => {
-                    if(obj instanceof THREE.Mesh){
-                        obj.material.colorWrite = true;
-                        obj.material.visible = true;
-                        obj.material.transparent = true;
-                        obj.material.opacity = 0.5;
-                    }
-                });
-            } else {
-                model.traverse((obj) => {
-                    if(obj instanceof THREE.Mesh){
-                        obj.material.colorWrite = false;
-                        obj.material.visible = true;
-                        obj.material.transparent = false;
-                        obj.material.opacity = 1;
-                    }
+            if (surface_meshes.length > 0) {
+                surface_meshes.forEach(mesh => {
+                    mesh.material.visible = !mesh.material.visible ;
                 });
             }
+
+            if (space_model == null || space_model.name == 'null' || model == null)  {
+                    alert("No 3D space model");
+            } else {
+                toggle_space_model = !toggle_space_model;
+                if (toggle_space_model) {
+                    model.traverse((obj) => {
+                        if(obj instanceof THREE.Mesh){
+                            obj.material.colorWrite = true;
+                            obj.material.visible = true;
+                            obj.material.transparent = true;
+                            obj.material.opacity = 0.5;
+                        }
+                    });
+                } else {
+                    model.traverse((obj) => {
+                        if(obj instanceof THREE.Mesh){
+                            obj.material.colorWrite = false;
+                            obj.material.visible = true;
+                            obj.material.transparent = false;
+                            obj.material.opacity = 1;
+                        }
+                    });
+                }
+            }
+
         };
 
         window.addEventListener('beforeunload', function(e) {
@@ -322,24 +346,10 @@
         var delay_interval = setInterval(function() {
             if (window.scene !== undefined) {
                 clearInterval(delay_interval);
-                
                 if (space_model == null || space_model.name == 'null')  {
                     alert("No 3D space model");
                 } else {
-                    for (let i = 0; i < sculpture_data.length; i++) {
-                        sculpture_id_list.push(sculpture_data[i].sculpture_id);
-                        
-                        load_model(sculpture_data[i].sculpture_id, 
-                            sculpture_data[i].model_id, 
-                            sculpture_data[i].position_x - spot_position.x * 30, 
-                            sculpture_data[i].position_y - spot_position.y * 30, 
-                            sculpture_data[i].position_z + spot_position.z * 30, 
-                            sculpture_data[i].rotation_x, 
-                            sculpture_data[i].rotation_y, 
-                            sculpture_data[i].rotation_z
-                        );
-                    }
-    
+                  
                     offset_x = spot_position.x * 30;
                     offset_y = spot_position.y * 30;
                     offset_z = spot_position.z * 30;
@@ -353,7 +363,7 @@
                     var asset_url = '<?php echo asset(''); ?>';
                     var full_model_url = asset_url + model_url;
                     var full_surface_url = asset_url + surface_url;
-            
+                    
                     // Load Base Space model
                     loader.load(full_model_url, function (gltf) {
                         model = gltf.scene;
@@ -367,25 +377,75 @@
                         model.scale.set(30, 30, 30);
                         model.position.set(-offset_x, offset_y, offset_z);
                         scene.add(model);
+
+                        loader.load(full_surface_url, function (gltf) {
+                            surface = gltf.scene;
+                            surface.traverse((obj) => {
+                                if(obj instanceof THREE.Mesh){
+                                    obj.name = "surface-model";
+                                    obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
+                                }
+                            });
+                            surface.rotation.x = -Math.PI;
+                            surface.rotation.y = Math.PI / 2;
+
+                            surface.scale.set(30, 30, 30);
+                            surface.position.set(-offset_x, offset_y, offset_z);
+
+                            scene.add(surface);
+                        });
+                    
+                        
+                    for (let i = 0; i < surface_data.length; i++) {
+                        loadSurfaces(
+                            surface_data[i].surface_id, 
+                            surface_data[i].width, 
+                            surface_data[i].height, 
+                            surface_data[i].start_pos['x'] * 30   -spot_position.x * 30 , 
+                            -surface_data[i].start_pos['y']* 30+ spot_position.y * 30 , 
+                            -surface_data[i].start_pos['z']* 30+ spot_position.z * 30  , 
+                            surface_data[i].rotation['x'], 
+                            surface_data[i].rotation['y'], 
+                            surface_data[i].rotation['z']
+                        );
+                    }
+
+                    if(sculpture_data !== null){
+                        for (let i = 0; i < sculpture_data.length; i++) {
+                            sculpture_id_list.push(sculpture_data[i].sculpture_id);
+                            
+                            load_model(sculpture_data[i].sculpture_id, 
+                                sculpture_data[i].model_id, 
+                                sculpture_data[i].position_x - spot_position.x * 30, 
+                                sculpture_data[i].position_y - spot_position.y * 30, 
+                                sculpture_data[i].position_z + spot_position.z * 30, 
+                                sculpture_data[i].rotation_x, 
+                                sculpture_data[i].rotation_y, 
+                                sculpture_data[i].rotation_z
+                            );
+                        }
+                    }
+                   
+
+                    for (let i = 0; i < artworks_data.length; i++) {
+                        artwork_id_list.push(artworks_data[i].artwork_id);
+                        load_artModels(artworks_data[i].artwork_id, 
+                            artworks_data[i].image_url, 
+                            artworks_data[i].imageWidth, 
+                            artworks_data[i].imageHeight, 
+                            artworks_data[i].position_x * 30   -spot_position.x * 30 , 
+                            -artworks_data[i].position_y* 30+ spot_position.y * 30 , 
+                            -artworks_data[i].position_z* 30+ spot_position.z * 30  , 
+
+                            artworks_data[i].rotation_x, 
+                            artworks_data[i].rotation_y, 
+                            artworks_data[i].rotation_z
+                        );
+                    }
                     });
 
                     // Load Surface Model
-                    loader.load(full_surface_url, function (gltf) {
-                        surface = gltf.scene;
-                        surface.traverse((obj) => {
-                            if(obj instanceof THREE.Mesh){
-                                obj.name = "surface-model";
-                                obj.material = new THREE.MeshBasicMaterial({color: 0x00ffff, colorWrite: false})
-                            }
-                        });
-                        surface.rotation.x = -Math.PI;
-                        surface.rotation.y = Math.PI / 2;
-
-                        surface.scale.set(30, 30, 30);
-                        surface.position.set(-offset_x, offset_y, offset_z);
-
-                        scene.add(surface);
-                    });
+                  
                 }
             }
         }, 500);
@@ -413,11 +473,11 @@
 
             obj.properties = properties;
 
-            update_object_properties(obj);
+            update_object_properties(obj, name);
         }
 
 
-        function update_object_properties(obj) {
+        function update_object_properties(obj, name) {
 
             var p = obj.properties;
 
@@ -425,7 +485,8 @@
             var py = p.depth * Math.cos(p.atv * M_RAD);
             var pz = p.depth * Math.sin(p.atv * M_RAD) * Math.sin(p.ath * M_RAD);
 
-            obj.position.set(px, offset_y, pz);
+            if(name === "artwork")   obj.position.set(px, py, pz);
+            else  obj.position.set(px, offset_y, pz);
             obj.rotation.set(p.rx * M_RAD, p.ry * M_RAD, p.rz * M_RAD, p.rorder);
             obj.scale.set(p.scale, p.scale, p.scale);
             obj.updateMatrix();
@@ -745,6 +806,69 @@
             });
         }
 
+        
+        function loadSurfaces(surface_id, width, height, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
+
+            var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
+            const geometry = new THREE.PlaneGeometry(width, height); 
+            geometry.translate(-width / 2, height / 2, 0);
+            const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0.5, visible: false });
+            const planeMesh = new THREE.Mesh(geometry, material);
+            planeMesh.position.set(position_x, position_y, position_z)
+            planeMesh.rotation.set(rotation_x, rotation_y, rotation_z)
+            planeMesh.userData.surface_id = surface_id;
+            planeMesh.userData.layout_id = layout_id;
+            planeMesh.userData.spot_id = spot_id;
+            planeMesh.userData.type = "surface";
+            surface_meshes.push(planeMesh);
+            scene.add(planeMesh);
+
+            assign_object_properties(planeMesh, "artwork", { 
+                ath: spherical_position.phi, 
+                atv: spherical_position.theta, 
+                depth: spherical_position.r, 
+                rx: rotation_x * 180 / Math.PI,
+                ry: rotation_y * 180 / Math.PI,
+                rz: rotation_z * 180 / Math.PI, 
+                scale: 30,
+            });
+
+}
+
+        function load_artModels(art_id, image_url,imageWidth, imageHeight,  position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
+
+            // Load a texture (image)
+            const textureLoader = new THREE.TextureLoader();
+            
+            var spherical_position = cartesianToSpherical(position_x , position_y, position_z);
+            textureLoader.load(image_url, (texture) => {
+                // Ensure the image is loaded and dimensions are accessible
+                texture.flipY = false;
+                // Create a geometry with the same aspect ratio
+                const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight); // Height is normalized to 1
+                geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
+                // Create a material with the texture
+                const material = new THREE.MeshBasicMaterial({ map: texture, });
+
+                // Create a mesh with the geometry and material
+                const plane = new THREE.Mesh(geometry, material);
+                scene.add(plane);
+
+                 assign_object_properties(plane, "artwork", { 
+                    ath: spherical_position.phi, 
+                    atv: spherical_position.theta, 
+                    depth: spherical_position.r, 
+                    rx: rotation_x * 180 / Math.PI,
+                    ry: rotation_y * 180 / Math.PI,
+                    rz: rotation_z * 180 / Math.PI, 
+                    scale: 30,
+                });
+                }
+            );
+
+
+        }
+
         function findAddModelPosition() {
             var position = new THREE.Vector3();
             camera.getWorldDirection(position);
@@ -761,6 +885,7 @@
             
             return { r: r, theta: theta, phi: phi };
         }
+
 
         document.addEventListener('DOMContentLoaded', function () {
             const images = document.querySelectorAll('.image-list-item'); 
@@ -780,5 +905,6 @@
                 }
             });
         });
+
     </script>
 @endsection

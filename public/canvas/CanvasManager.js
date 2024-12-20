@@ -136,15 +136,14 @@ class CanvasManager {
         this.registerCanvasUpdateEvent();
     }
 
-    registerCanvasUpdateEvent()
-    {
+    registerCanvasUpdateEvent() {
         document.addEventListener("canvasChanged", (event) => {
             this.active = event.detail.surfaceStateId === this.surfaceStateId;
             this.activeStateUpdated();
         });
     }
 
-    renderArtworks(){
+    renderArtworks() {
         if (!this.assignedArtworks) {
             return;
         }
@@ -239,7 +238,7 @@ class CanvasManager {
         let imgUrl = selectedElement.dataset.imgUrl;
         let artworkId = selectedElement.dataset.artworkId;
         let scale = selectedElement.dataset.scale;
-        return {title, imgUrl, artworkId, scale};
+        return { title, imgUrl, artworkId, scale };
     }
 
     newArtworkSelection(targetElement) {
@@ -249,7 +248,7 @@ class CanvasManager {
 
     addCanvasEvents() {
         this.artworkCanvas.on('object:selected', (options) => {
-            if (this.isInactive()){
+            if (this.isInactive()) {
                 return
             }
 
@@ -259,7 +258,7 @@ class CanvasManager {
         });
 
         this.artworkCanvas.on('selection:cleared', (options) => {
-            if (this.isInactive()){
+            if (this.isInactive()) {
                 return
             }
 
@@ -463,7 +462,7 @@ class CanvasManager {
     }
 
     updateSavedVersion(event) {
-        if (this.isInactive()){
+        if (this.isInactive()) {
             return;
         }
 
@@ -503,6 +502,7 @@ class CanvasManager {
         });
 
         const captureHotspot = () => {
+            console.log( "captureHotspot")
             this.boundingBox.opacity = 0;  // hide bounding box
             this.artworkCanvas.backgroundImage.opacity = 0;  // hide background image
 
@@ -519,7 +519,7 @@ class CanvasManager {
             return href;
         };
 
-        return {'thumbnail': captureCanvas(), 'hotspot': captureHotspot()};
+        return { 'thumbnail': captureCanvas(), 'hotspot': captureHotspot() };
     }
 
     trackChanges() {
@@ -556,7 +556,7 @@ class CanvasManager {
     }
 
     async confirmSave() {
-        if (this.isInactive()){
+        if (this.isInactive()) {
             return;
         }
 
@@ -601,7 +601,7 @@ class CanvasManager {
     }
 
     toggleSaveButton() {
-        if (this.isInactive()){
+        if (this.isInactive()) {
             return
         }
 
@@ -622,7 +622,8 @@ class CanvasManager {
             document.dispatchEvent(onCanvasUpdatedEvent)
 
             this.saveBtn.show();
-            this.updateSavedVersion();
+            // auto  save feature
+            // this.updateSavedVersion();
         } else {
             this.saveBtn.hide();
         }
@@ -698,7 +699,7 @@ class CanvasManager {
     }
 
     toggleRemoveButton() {
-        if (this.isInactive()){
+        if (this.isInactive()) {
             return
         }
 

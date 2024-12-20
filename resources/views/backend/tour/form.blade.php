@@ -76,3 +76,7 @@
     </div>
 @endsection
 
+
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('vendor/highlight/styles/custom.css') }}">
+@endsection

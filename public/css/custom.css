@@ -24,9 +24,51 @@
     height: 40px;
     z-index: 600;
     cursor: pointer;
-    background-image: url("/images/location_pin.png");
+    background-image: url("/images/hotspot map pin_blue.png");
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.pin.selected {
+    background-image: url("/images/location_pin.png");
+}
+
+.spotname {
+    position: absolute;
+    width: "fit-content";
+    height: 40px;
+    z-index: 700;
+    cursor: pointer;
+    display: none !important;
+}
+
+a:has(> .pin):hover .spotname {
+    display: block !important;
+}
+
+.spotname.selected {
+    color: red;
+}
+
+.view-map-btn i {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px !important;
+    position: absolute;
+    bottom: 80px;
+    right: 80px;
+    width: 60px;
+    height: 60px;
+    border-radius: 9999px;
+    border: solid 2px #000000;
+    background-color: #d3d3d3;
+}
+
+.view-map-btn a {
+    color: black;
+    font-size: 48px;
+    text-decoration: none;
 }
 
 .tour-map-container {
@@ -99,12 +141,12 @@
     height: 95% !important;
 }
 
-.w-40{
-    width: 40%!important;
+.w-40 {
+    width: 40% !important;
 }
 
-.w-10{
-    width: 10%!important;
+.w-10 {
+    width: 10% !important;
 }
 
 .wep-slide-over {
@@ -152,7 +194,7 @@
     background-color: white;
     border: none;
 }
+
 /*td.layout-table-title:hover a{*/
 /*    display: inline-block;*/
 /*}*/
-

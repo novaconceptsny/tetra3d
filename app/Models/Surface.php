@@ -104,7 +104,7 @@ class Surface extends Model implements HasMedia
         return $this->belongsTo(Tour::class);
     }
 
-    public function getStateThumbnail($state, $tour_is_shared = false)
+    public function getStateThumbnail($state, $tour_is_shared = false, $space_model = null)
     {
         // if the tour is shared tour, and no state present,
         // we will show blank surface
@@ -116,8 +116,15 @@ class Surface extends Model implements HasMedia
         if (!$state){
             return asset('images/defaults/no-artwork.png');
         }
-
-        return $state->getFirstMediaUrl('hotspot');
+        if ($space_model == null || $space_model["name"] == 'null')  {
+            if (!$state){
+                return asset('images/defaults/no-artwork.png');
+            }
+            return $state->getFirstMediaUrl('hotspot');
+        }
+        // return asset('images/defaults/no-artwork.png');
+        return null;
+        
     }
 
     public function addActivity($action)
