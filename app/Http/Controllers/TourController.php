@@ -103,7 +103,7 @@ class TourController extends Controller
         $sculptures = !empty($sculpture_list) ? SculptureModel::whereIn('artwork_collection_id', $sculpture_list)->get() : array();
 
         foreach($sculptures as $row) {
-            $row->data = json_decode($row->data);
+            // $row->data = json_decode($row->data);
             $row->data->length = number_format((float)$row->data->length, 2);
             $row->data->width = number_format((float)$row->data->width, 2);
             $row->data->height = number_format((float)$row->data->height, 2);
@@ -144,19 +144,19 @@ class TourController extends Controller
             } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
                 $targetRotation = [
                     'x' => 0,
-                    'y' => 3.14,
+                    'y' => pi(),
                     'z' => 0,
                 ];
             } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
                 $targetRotation = [
                     'x' => 0,
-                    'y' => 1.57,
+                    'y' => pi() / 2,
                     'z' => 0,
                 ];
             } else {
                 $targetRotation = [
                     'x' => 0,
-                    'y' => -1.57,
+                    'y' => - pi() / 2,
                     'z' => 0,
                 ];
             }

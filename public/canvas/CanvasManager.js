@@ -461,7 +461,7 @@ class CanvasManager {
         this.updateSavedVersion();
     }
 
-    updateSavedVersion(event) {
+    updateSavedVersion() {
         if (this.isInactive()) {
             return;
         }
@@ -482,6 +482,8 @@ class CanvasManager {
             this.disableSaveButton();
 
             let screenshots = this.exportArtAssignments(this.canvasState['currentVersionData'].version_name);
+
+            console.log(this.surfaceStateId, updates, this.canvasState, this.reverseScale, this.user_id, this.spot_id);
 
             this.canvasApi.updateSurfaceState({
                 surfaceStateId: this.surfaceStateId,
@@ -504,7 +506,6 @@ class CanvasManager {
         const captureHotspot = () => {
             console.log( "captureHotspot")
             this.boundingBox.opacity = 0;  // hide bounding box
-            this.artworkCanvas.backgroundImage.opacity = 0;  // hide background image
 
             const href = this.artworkCanvas.toDataURL({
                 format: 'png',
@@ -515,7 +516,6 @@ class CanvasManager {
             });
 
             this.boundingBox.opacity = 0.2;
-            this.artworkCanvas.backgroundImage.opacity = 100;
             return href;
         };
 

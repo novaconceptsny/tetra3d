@@ -122,9 +122,19 @@ class ValidationRules
         return [
             'name' => 'required',
             'artist' => 'required',
+            'type' => 'required',
             'sculpture' => 'required',
-            'thumbnail' => 'required_without:thumbnail-canvas',
-            'thumbnail-canvas' => 'required_without:thumbnail',
+            'thumbnail' => 'required',
+            'interaction' => 'required',
         ];
+    }
+
+    public static function updateSculpture()
+    {
+        return array_merge(self::storeSculpture(), [
+            'sculpture' => '',
+            'thumbnail' => '',
+            'interaction' => '',
+        ]);
     }
 }

@@ -35,7 +35,7 @@ class Surface extends Model implements HasMedia
         static::deleted(function(self $model) {
             $model->spots()->detach();
 
-            $model->surfaceStates()->cursor()->each(
+            $model->states()->cursor()->each(
                 fn (SurfaceState $state) => $state->delete()
             );
         });

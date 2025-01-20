@@ -34,6 +34,7 @@ class SpotXmlGenerator
         $this->addSurfaces();
         $this->addNavigations();
         $this->addOverlays();
+        $this->addThreeJSPlugin();
 
         $dir = public_path("storage/tours/{$this->spot->tour_id}/{$this->spot->id}");
 
@@ -131,6 +132,15 @@ class SpotXmlGenerator
         $cube = $image->addChild('cube');
         $cube->addAttribute('url', $this->getSpotAsset($panos_url));
         $cube->addAttribute('multires', $multires);
+    }
+
+    private function addThreeJSPlugin()
+    {
+        $threejsPlugin = $this->xml->addChild('plugin');
+        $threejsPlugin->addAttribute('name', 'threejs');
+        $threejsPlugin->addAttribute('url', '/krpano/three.krpanoplugin.js');
+        $threejsPlugin->addAttribute('type', 'plugin');
+        $threejsPlugin->addAttribute('keep', 'true');
     }
 
     private function addScaleBox()

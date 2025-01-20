@@ -516,6 +516,7 @@ function krpanoplugin() {
 
 				selectedObj.userData.changed = true;
 			}
+			selected_surface_id = null;
 		}
 		else if (type == "onup") {
 			if (selectedObj && isDown) {

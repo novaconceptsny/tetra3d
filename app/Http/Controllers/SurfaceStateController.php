@@ -26,7 +26,7 @@ class SurfaceStateController extends Controller
             'states.likes.user'
         ]);
 
-        if ($spot_id = request('spot_id')){
+        if ($spot_id = request('spot_id')) {
             $spot = Spot::findOrFail($spot_id);
         } else {
             $spot = $surface->tour->spots->first();
@@ -46,11 +46,11 @@ class SurfaceStateController extends Controller
         $selectedSurfaceState = null;
         $create_new_state = request('new');
 
-        if ($surface_state_id = request('surface_state_id')){
+        if ($surface_state_id = request('surface_state_id')) {
             $selectedSurfaceState = SurfaceState::findOrFail($surface_state_id);
         }
 
-        if (!$create_new_state && !$surface_state_id){
+        if (!$create_new_state && !$surface_state_id) {
             $selectedSurfaceState = $surface->getCurrentState($layout->id);
         }
 
@@ -71,11 +71,11 @@ class SurfaceStateController extends Controller
 
         $canvases = array();
 
-        if (!$surface->states->count() || $create_new_state){
+        if (!$surface->states->count() || $create_new_state) {
             $newState = new SurfaceState();
 
             // initialize new state
-            if (!$surface->states->count()){
+            if (!$surface->states->count()) {
                 $newState->user_id = auth()->id();
                 $newState->layout_id = $layout->id;
                 $newState->surface_id = $surface->id;
@@ -89,17 +89,20 @@ class SurfaceStateController extends Controller
             $surface->states[] = $newState;
         }
 
-        foreach ($surface->states as $surfaceState){
+        foreach ($surface->states as $surfaceState) {
 
-            $assignedArtworks = $surfaceState?->artworks->map(function ($artwork){
-                $artwork->image_url.= "?uuid=". str()->uuid();
+            $assignedArtworks = $surfaceState?->artworks->map(function ($artwork) {
+                $artwork->image_url .= "?uuid=" . str()->uuid();
                 return $artwork;
             });
 
             $canvases[$surfaceState->id ?? 'new'] = [
-                'canvasId' => "artwork_canvas_". ($surfaceState->id ?? 'new'),
+                'canvasId' => "artwork_canvas_" . ($surfaceState->id ?? 'new'),
                 'surface' => $surface->only([
-                    'id', 'name', 'background_url', 'data'
+                    'id',
+                    'name',
+                    'background_url',
+                    'data'
                 ]),
                 'assignedArtworks' => $assignedArtworks,
                 'surfaceStateId' => $surfaceState?->id,
@@ -125,12 +128,12 @@ class SurfaceStateController extends Controller
     public function update(Request $request, Surface $surface)
     {
         $layout = Layout::findOrFail(request('layout_id'));
-    
+
         $request->validate([
             'layout_id' => 'required',
             'assigned_artwork' => 'required',
         ]);
-    
+
         // Update the `updated_at` field of the `$layout` to the current time
         $layout->touch();
 
@@ -138,12 +141,12 @@ class SurfaceStateController extends Controller
         $boundingBoxHeight = $surface->data["bounding_box_height"];
         $boundingBoxTop = $surface->data["bounding_box_top"];
         $boundingBoxLeft = $surface->data["bounding_box_left"];
-    
+
         $assigned_artworks = array();
-        foreach (json_decode($request->assigned_artwork, true) as $artwork){
+        foreach (json_decode($request->assigned_artwork, true) as $artwork) {
 
 
-             // Fetch surface information using surface_id
+            // Fetch surface information using surface_id
             $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
             $artworkInfo = Artwork::where('id', $artwork['artworkId'])->first();
 
@@ -160,18 +163,18 @@ class SurfaceStateController extends Controller
                 }
                 // Convert string values in $topLeftCorner to numbers
                 $topLeftCorner = array_map('floatval', $topLeftCorner);
-                
+
                 $normal = $surfaceInfo->normalvector;
 
                 // Convert string values in $normal to numbers
                 $normal = array_map('floatval', $normal);
-                
+
                 $planeWidth = $surfaceInfo->width;                         // Width in meters
                 $planeHeight = $surfaceInfo->height;                       // Length in meters
 
                 // Calculate the target position in 3D space
-                $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft ) / $boundingBoxWidth * $planeWidth;
-                $yDistance = ($artwork['topPosition'] - $boundingBoxTop ) / $boundingBoxHeight * $planeHeight;
+                $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft) / $boundingBoxWidth * $planeWidth;
+                $yDistance = ($artwork['topPosition'] - $boundingBoxTop) / $boundingBoxHeight * $planeHeight;
 
                 if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
                     $targetPosition = [
@@ -180,8 +183,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] - $offset,
                     ];
                     $targetRotation = [
-                        'x' => 0,
-                        'y' => 0,
+                        'x' => pi(),
+                        'y' => pi(),
                         'z' => 0,
                     ];
 
@@ -192,8 +195,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] + $offset
                     ];
                     $targetRotation = [
-                        'x' => 0,
-                        'y' => 3.14,
+                        'x' => pi(),
+                        'y' => 0,
                         'z' => 0,
                     ];
                 } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
@@ -203,8 +206,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] - $xDistance
                     ];
                     $targetRotation = [
-                        'x' => 0,
-                        'y' => 1.57,
+                        'x' => pi(),
+                        'y' => pi() * 3 / 2,
                         'z' => 0,
                     ];
                 } else {
@@ -215,8 +218,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] + $xDistance
                     ];
                     $targetRotation = [
-                        'x' => 0,
-                        'y' => -1.57,
+                        'x' => pi(),
+                        'y' => pi() / 2,
                         'z' => 0,
                     ];
                 }
@@ -227,7 +230,7 @@ class SurfaceStateController extends Controller
                     'left_position' => $artwork['leftPosition'],
                     'crop_data' => $artwork['cropData'],
                     'override_scale' => $artwork['overrideScale'],
-                    
+
                     'position_x' => $targetPosition['x'],
                     'position_y' => $targetPosition['y'],
                     'position_z' => $targetPosition['z'],
@@ -235,7 +238,7 @@ class SurfaceStateController extends Controller
                     'rotation_y' => $targetRotation['y'],
                     'rotation_z' => $targetRotation['z'],
                 );
-            }else{
+            } else {
                 $assigned_artworks[] = array(
                     'artwork_id' => $artwork['artworkId'],
                     'top_position' => $artwork['topPosition'],
@@ -279,7 +282,7 @@ class SurfaceStateController extends Controller
             ->toMediaCollection('hotspot');
 
         $state->artworks()->detach();
-        foreach ($assigned_artworks as $assigned_artwork){
+        foreach ($assigned_artworks as $assigned_artwork) {
             $state->artworks()->attach(
                 $assigned_artwork['artwork_id'],
                 $assigned_artwork
@@ -289,12 +292,9 @@ class SurfaceStateController extends Controller
 
         $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
 
-        $state->addActivity($request->new ? 'created': 'updated');
+        $state->addActivity($request->new ? 'created' : 'updated');
+        $state->save();
 
-
-        // return response()->json([
-        //     'success' => true,
-        // ]);
         return redirect()->route($route, [
             $surface->tour,
             'spot_id' => $request->spot_id,
@@ -315,7 +315,7 @@ class SurfaceStateController extends Controller
         $state->setAsActive();
         return redirect()->back()->with('success', 'Active set updated');
     }
-// Helper Functions
+    // Helper Functions
     private function normalize($vector)
     {
         $length = sqrt($vector['x'] ** 2 + $vector['y'] ** 2 + $vector['z'] ** 2);

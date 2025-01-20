@@ -52,7 +52,6 @@ class CanvasApi {
     }
 
     fakeFormPost(endpoint, payload) {
-
         let $form = $('<form>', {
             action: endpoint,
             method: 'post'
@@ -74,7 +73,6 @@ class CanvasApi {
     }
 
     updateSurfaceStatePost(endpoint, payload) {
-
         let token = $('meta[name="_token"]').attr('content');
 
         $.ajax({

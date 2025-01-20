@@ -23,14 +23,15 @@ class ArtworkDatatable extends BaseDatatable
         $this->routes = $this->getRoutes();
         $this->projectId = request('project_id');
         $this->selectedCollection = request('collection_id');
-        if ($this->projectId){
+        if ($this->projectId) {
             $this->selectedCollection = \DB::table('artwork_collection_project')
                 ->where('project_id', $this->projectId)
                 ->value('artwork_collection_id');
         }
     }
 
-    public function dehydrate(){
+    public function dehydrate()
+    {
         $this->dispatch('contentChanged');
     }
 
@@ -49,28 +50,33 @@ class ArtworkDatatable extends BaseDatatable
             ->when(
                 $this->selectedCollection,
                 fn($query) => $query->where(
-                    'artwork_collection_id', $this->selectedCollection
+                    'artwork_collection_id',
+                    $this->selectedCollection
                 )
             )
             ->when(
                 $this->selectedCompany,
                 fn($query) => $query->where(
-                    'company_id', $this->selectedCompany
+                    'company_id',
+                    $this->selectedCompany
                 )
             )
             ->when(
                 $this->selectedArtist,
                 fn($query) => $query->where(
-                    'artist', $this->selectedArtist
+                    'artist',
+                    $this->selectedArtist
                 )
             )
             ->whereAnyColumnLike($this->search)
             ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
 
-        $rows->getCollection()->transform(function ($row){
+        $rows->getCollection()->transform(function ($row) {
             $row->company_name = $row->company->name;
             $row->collection_name = $row->collection?->name;
+            $row->dimensions = "{$row->data['height_inch']}x{$row->data['width_inch']}x1";
+            $row->image_url = $row->getFirstMediaUrl('image');
             return $row;
         });
 
@@ -84,16 +90,20 @@ class ArtworkDatatable extends BaseDatatable
     public function resetFilters()
     {
         $this->reset([
-            'perPage', 'selectedCollection',
-            'search', 'selectedCompany', 'selectedArtist',
-            'sortBy', 'sortOrder'
+            'perPage',
+            'selectedCollection',
+            'search',
+            'selectedCompany',
+            'selectedArtist',
+            'sortBy',
+            'sortOrder'
         ]);
 
     }
 
     public function updateCollection()
     {
-        if(!$this->targetCollection || !$this->selectedRows){
+        if (!$this->targetCollection || !$this->selectedRows) {
             return;
         }
 
@@ -146,7 +156,7 @@ class ArtworkDatatable extends BaseDatatable
             ],
         ];
 
-        if (!user()->isAdmin()){
+        if (!user()->isAdmin()) {
             unset($columns['company_name']);
         }
 
@@ -155,7 +165,7 @@ class ArtworkDatatable extends BaseDatatable
 
     public function getRoutes()
     {
-        $routes =  [
+        $routes = [
             'create' => 'backend.artworks.create',
             'edit' => 'backend.artworks.edit',
             'delete' => 'backend.artworks.destroy',

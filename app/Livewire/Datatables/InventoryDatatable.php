@@ -2,13 +2,15 @@
 
 namespace App\Livewire\Datatables;
 
+use App\Models\Artwork;
 use App\Models\ArtworkCollection;
-use App\Models\SculptureModel;
 use App\Models\Company;
+use App\Models\SculptureModel;
 
-class SculptureDatatable extends BaseDatatable
+class InventoryDatatable extends BaseDatatable
 {
-    public $model = SculptureModel::class;
+    public $model = Artwork::class;
+    public $sculptureModel = SculptureModel::class;
     public $selectedCollection = '';
     public $selectedCompany = '';
     public $selectedArtist = '';
@@ -16,66 +18,137 @@ class SculptureDatatable extends BaseDatatable
     public $targetCollection = '';
     public $projectId = null;
     public $frontend = false;
+
     public function mount()
     {
         $this->columns = $this->getColumns();
         $this->routes = $this->getRoutes();
         $this->projectId = request('project_id');
         $this->selectedCollection = request('collection_id');
-
         if ($this->projectId) {
             $this->selectedCollection = \DB::table('artwork_collection_project')
                 ->where('project_id', $this->projectId)
                 ->value('artwork_collection_id');
         }
     }
+
     public function dehydrate()
     {
         $this->dispatch('contentChanged');
     }
+
     public function render()
     {
         $data = array();
 
-        $data['heading'] = __('Sculptures');
+        $data['heading'] = __('Inventory');
 
         $data['collections'] = ArtworkCollection::latest('name')->get();
         $data['companies'] = Company::latest('name')->get();
-        $data['artists'] = SculptureModel::groupBy('artist')->pluck('artist');
+        $data['artists'] = Artwork::groupBy('artist')->pluck('artist');
 
-        $rows = $this->model::query()
+        $artworkQuery = $this->model::query()
+            ->select([
+                'id',
+                'artwork_collection_id',
+                'company_id',
+                'name',
+                'data',
+                'artist',
+                'type',
+                \DB::raw("'artwork' as model_type")
+            ])
+            ->with('collection', 'company', 'media')
+            ->when(
+                $this->selectedCollection,
+                fn($query) => $query->where(
+                    'artwork_collection_id',
+                    $this->selectedCollection
+                )
+            )
+            ->when(
+                $this->selectedCompany,
+                fn($query) => $query->where(
+                    'company_id',
+                    $this->selectedCompany
+                )
+            )
+            ->when(
+                $this->selectedArtist,
+                fn($query) => $query->where(
+                    'artist',
+                    $this->selectedArtist
+                )
+            );
+
+        $sculptureQuery = $this->sculptureModel::query()
+            ->select([
+                'id',
+                'artwork_collection_id',
+                'company_id',
+                'name',
+                'data',
+                'artist',
+                'type',
+                \DB::raw("'sculpture' as model_type")
+            ])
             ->with('collection', 'company', 'media')
             ->when(
                 $this->selectedCollection,
                 fn($query) => $query->where('artwork_collection_id', $this->selectedCollection)
-            )->when(
+            )
+            ->when(
                 $this->selectedCompany,
                 fn($query) => $query->where('company_id', $this->selectedCompany)
-            )->when(
+            )
+            ->when(
                 $this->selectedArtist,
                 fn($query) => $query->where('artist', $this->selectedArtist)
-            )->whereAnyColumnLike($this->search)
+            );
+
+        $artworkRows = $artworkQuery
+            ->whereAnyColumnLike($this->search)
             ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
 
-        $rows->getCollection()->transform(function ($row) {
+        $sculptureRows = $sculptureQuery
+            ->whereAnyColumnLike($this->search)
+            ->sort($this->sortBy, $this->sortOrder)
+            ->paginate($this->perPage);
+
+        $sculptureRows->getCollection()->transform(function ($row) {
             $row->company_name = $row->company->name;
             $row->collection_name = $row->collection?->name;
-            $length = number_format((float) $row->data['length'], 2);
-            $width = number_format((float) $row->data['width'], 2);
-            $height = number_format((float) $row->data['height'], 2);
-            $row->dimensions = "{$height}x{$width}x{$length}";
-            $row->image_url = $row->getFirstMediaUrl('thumbnail');
+
             return $row;
         });
 
-        error_log($rows);
+        $artworkRows->getCollection()->transform(function ($row) {
+            $row->company_name = $row->company->name;
+            $row->collection_name = $row->collection?->name;
 
-        $data['rows'] = $rows;
-        $data['label'] = 'sculptureModel';
+            return $row;
+        });
 
-        return view('livewire.datatables.sculpture-datatable', $data);
+        $mergedCollection = $artworkRows->merge($sculptureRows);
+
+        $page = request()->get('page', 1);
+        $perPage = $this->perPage;
+        $items = $mergedCollection->forPage($page, $perPage);
+
+        $data['rows'] = new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $mergedCollection->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url()]
+        );
+        $data['label'] = 'artwork';
+
+        $view = "livewire.datatables.inventory";
+        return view($view, $data);
     }
+
     public function resetFilters()
     {
         $this->reset([
@@ -129,7 +202,7 @@ class SculptureDatatable extends BaseDatatable
                 'th-classes' => 'w-40'
             ],
             'dimensions' => [
-                'name' => 'l" x w" x h"',
+                'name' => 'h" x w" x d"',
                 'visible' => true,
             ],
             'artist' => [
@@ -151,15 +224,16 @@ class SculptureDatatable extends BaseDatatable
 
         return $columns;
     }
+
     public function getRoutes()
     {
         $routes = [
-            'create' => 'backend.sculptures.create',
-            'edit' => 'backend.sculptures.edit',
-            'delete' => 'backend.sculptures.destroy',
+            'create' => 'backend.artworks.create',
+            'edit' => 'backend.artworks.edit',
+            'delete' => 'backend.artworks.destroy',
         ];
 
-        if (user()->cannot('create', SculptureModel::class)) {
+        if (user()->cannot('create', Artwork::class)) {
             unset($routes['create']);
         }
 
