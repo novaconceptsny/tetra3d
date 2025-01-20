@@ -817,10 +817,10 @@
         const textureLoader = new THREE.TextureLoader();
 
         var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
-        const _image_url = "thumb2.png";
-        var base_url = '<?php echo asset(''); ?>';
-        var model_url = base_url + 'storage/' + _image_url;
-        textureLoader.load(model_url, (texture) => {
+        // const _image_url = "thumb2.png";
+        // var base_url = '<?php echo asset(''); ?>';
+        // var model_url = base_url + 'storage/' + image_url;
+        textureLoader.load(image_url, (texture) => {
             // Create a geometry with the same aspect ratio
             const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight); // Height is normalized to 1
             geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
