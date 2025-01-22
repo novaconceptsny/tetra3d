@@ -821,6 +821,10 @@
         // var base_url = '<?php echo asset(''); ?>';
         // var model_url = base_url + 'storage/' + image_url;
         textureLoader.load(image_url, (texture) => {
+            // Flip the texture horizontally and vertically
+            texture.flipY = true; // Flips vertically
+            texture.center.set(0.5, 0.5); // Set rotation center point
+            texture.rotation = Math.PI; // Rotate 180 degrees to flip horizontally
             // Create a geometry with the same aspect ratio
             const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight); // Height is normalized to 1
             geometry.translate(-imageWidth / 2, imageHeight / 2, 0);

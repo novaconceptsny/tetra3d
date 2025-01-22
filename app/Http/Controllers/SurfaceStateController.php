@@ -183,8 +183,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] - $offset,
                     ];
                     $targetRotation = [
-                        'x' => pi(),
-                        'y' => pi(),
+                        'x' => 0,
+                        'y' => 0,
                         'z' => 0,
                     ];
 
@@ -195,8 +195,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] + $offset
                     ];
                     $targetRotation = [
-                        'x' => pi(),
-                        'y' => 0,
+                        'x' => 0,
+                        'y' => pi(),
                         'z' => 0,
                     ];
                 } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
@@ -206,8 +206,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] - $xDistance
                     ];
                     $targetRotation = [
-                        'x' => pi(),
-                        'y' => pi() * 3 / 2,
+                        'x' => 0,
+                        'y' => pi() / 2,
                         'z' => 0,
                     ];
                 } else {
@@ -218,8 +218,8 @@ class SurfaceStateController extends Controller
                         'z' => $topLeftCorner['z'] + $xDistance
                     ];
                     $targetRotation = [
-                        'x' => pi(),
-                        'y' => pi() / 2,
+                        'x' => 0,
+                        'y' => -pi() / 2,
                         'z' => 0,
                     ];
                 }
