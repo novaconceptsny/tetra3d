@@ -107,7 +107,7 @@ class TourController extends Controller
             $row->data->length = number_format((float)$row->data->length, 2);
             $row->data->width = number_format((float)$row->data->width, 2);
             $row->data->height = number_format((float)$row->data->height, 2);
-            $row->data = $row->data->length.'x'.$row->data->width.'x'.$row->data->height.' meter';
+            $row->dimensions = $row->data->length.'x'.$row->data->width.'x'.$row->data->height.' meter';
         }
 
         $tourModel = $tour ? TourModel::where('tour_id', $tour->id)->get() : null;

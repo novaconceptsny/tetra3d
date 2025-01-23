@@ -133,7 +133,7 @@
                             <div class='sculpture-list-data-container'>
                                 <div class='sculpture-list-data-artist'>{{ $sculpture->artist }}</div>
                                 <div class='sculpture-list-data-name'>{{ $sculpture->name }}</div>
-                                <div class='sculpture-list-data-dimention'>{{ $sculpture->data }}</div>
+                                <div class='sculpture-list-data-dimention'>{{ $sculpture->dimensions }}</div>
                             </div>
                         </div>
                     @endif
