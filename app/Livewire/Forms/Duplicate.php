@@ -91,12 +91,14 @@ class Duplicate extends Modal
                 $newSurfaceState->layout_id = $newLayout->id;
                 $newSurfaceState->save();
 
-                if (file_exists($surfaceState->getFirstMedia('thumbnail')->getPath())){
-                    $surfaceState->getFirstMedia('thumbnail')->copy($newSurfaceState, 'thumbnail');
+                $thumbnailMedia = $surfaceState->getFirstMedia('thumbnail');
+                if ($thumbnailMedia && file_exists($thumbnailMedia->getPath())) {
+                    $thumbnailMedia->copy($newSurfaceState, 'thumbnail');
                 }
 
-                if (file_exists($surfaceState->getFirstMedia('hotspot')->getPath())){
-                    $surfaceState->getFirstMedia('hotspot')->copy($newSurfaceState, 'hotspot');
+                $hotspotMedia = $surfaceState->getFirstMedia('hotspot');
+                if ($hotspotMedia && file_exists($hotspotMedia->getPath())) {
+                    $hotspotMedia->copy($newSurfaceState, 'hotspot');
                 }
 
                 $artworkSurfaceStates = ArtworkSurfaceState::where('surface_state_id', $surfaceState->id)->get();
