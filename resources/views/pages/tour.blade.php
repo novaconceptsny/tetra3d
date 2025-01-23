@@ -127,8 +127,7 @@
                 @foreach($sculptures as $sculpture)
                     @if ($sculpture->id % 2 == 0)
                         <div class='sculpture-list'>
-                            <img class="image-list-item"
-                                src="{{asset('storage/sculptures/thumbnails/') . '/' . $sculpture->image_url }}"
+                            <img class="image-list-item" src="{{$sculpture->getFirstMediaUrl('thumbnail') }}"
                                 data-bs-dismiss="offcanvas" alt="Image 1" data-image-id="{{ $sculpture->id }}">
                             <div class='sculpture-list-data-container'>
                                 <div class='sculpture-list-data-artist'>{{ $sculpture->artist }}</div>

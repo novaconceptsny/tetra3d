@@ -119,14 +119,14 @@ class InventoryDatatable extends BaseDatatable
         $sculptureRows->getCollection()->transform(function ($row) {
             $row->company_name = $row->company->name;
             $row->collection_name = $row->collection?->name;
-
+            $row->route_prefix = 'sculpture';
             return $row;
         });
 
         $artworkRows->getCollection()->transform(function ($row) {
             $row->company_name = $row->company->name;
             $row->collection_name = $row->collection?->name;
-
+            $row->route_prefix = 'artwork';
             return $row;
         });
 
@@ -228,9 +228,12 @@ class InventoryDatatable extends BaseDatatable
     public function getRoutes()
     {
         $routes = [
-            'create' => 'backend.artworks.create',
-            'edit' => 'backend.artworks.edit',
-            'delete' => 'backend.artworks.destroy',
+            'create-artwork' => 'backend.artworks.create',
+            'edit-artwork' => 'backend.artworks.edit',
+            'delete-artwork' => 'backend.artworks.destroy',
+            'create-sculpture' => 'backend.sculptures.create',
+            'edit-sculpture' => 'backend.sculptures.edit',
+            'delete-sculpture' => 'backend.sculptures.destroy',
         ];
 
         if (user()->cannot('create', Artwork::class)) {
