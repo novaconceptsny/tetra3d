@@ -826,10 +826,16 @@
             texture.center.set(0.5, 0.5); // Set rotation center point
             texture.rotation = Math.PI; // Rotate 180 degrees to flip horizontally
             // Create a geometry with the same aspect ratio
-            const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight); // Height is normalized to 1
+            const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight);
             geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
-            // Create a material with the texture
-            const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+            
+            // Create a material with transparency enabled
+            const material = new THREE.MeshBasicMaterial({ 
+                map: texture,
+                side: THREE.DoubleSide,
+                transparent: true,  // Enable transparency
+                alphaTest: 0.1     // Optional: helps prevent alpha sorting issues
+            });
 
             // Create a mesh with the geometry and material
             const plane = new THREE.Mesh(geometry, material);
