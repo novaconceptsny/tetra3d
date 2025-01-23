@@ -40,9 +40,9 @@ class SculptureModel extends Model implements HasMedia
     {
         parent::boot();
 
-        static::deleted(function (self $model) {
-            $model->surfaceStates()->detach();
-        });
+        // static::deleted(function (self $model) {
+        //     $model->surfaceStates()->detach();
+        // });
     }
 
     public function collection()
