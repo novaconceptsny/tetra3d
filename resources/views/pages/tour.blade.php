@@ -268,7 +268,6 @@
     var sculptures = @json($sculptures);
     var sculpture_data = @json($sculptureData);
     var artworks_data = @json($artworkData);
-    console.log(artworks_data, "ppppppppp" )
     var surface_data = @json($surfaceData);
     var spot_id = "{{ $spot->id }}";
 
@@ -746,7 +745,7 @@
                 },
             @endforeach
     };
-
+    console.log(sculptureUrls, "oooooooooo")
     var sculpture_url = sculptureUrls[imageId].sculpture;
     var temp_url = sculptureUrls[imageId].interaction;
     var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
