@@ -276,6 +276,15 @@
     var tour_is_shared = @json($tour_is_shared);
     var user_name = @json($userName);
 
+    var sculptureUrls = {
+            @foreach($sculptures as $sculpture)
+                "{{ $sculpture->id }}": {
+                    sculpture: "{{ $sculpture->getFirstMediaUrl('sculpture') }}",
+                    interaction: "{{ $sculpture->getFirstMediaUrl('interaction') }}"
+                },
+            @endforeach
+    };
+
     function toggleLayout() {
         if (surface_meshes.length > 0) {
             surface_meshes.forEach(mesh => {
@@ -385,8 +394,7 @@
                         );
                     }
 
-                    if (sculpture_data !== null) {
-                        console.log(sculpture_data, "pppppppppppp")
+                    if (sculpture_data !== null && Object.keys(sculptureUrls).length > 0) {
                         for (let i = 0; i < sculpture_data.length; i++) {
                             sculpture_id_list.push(sculpture_data[i].sculpture_id);
 
@@ -685,48 +693,45 @@
 
         var model = null;
 
-        var sculptureUrls = {
-            @foreach($sculptures as $sculpture)
-                "{{ $sculpture->id }}": {
-                    sculpture: "{{ $sculpture->getFirstMediaUrl('sculpture') }}",
-                    interaction: "{{ $sculpture->getFirstMediaUrl('interaction') }}"
-                },
-            @endforeach
-    };
-
-    var sculpture_url = sculptureUrls[imageId].sculpture;
-    var temp_url = sculptureUrls[imageId].interaction;
-
-    var add_model_position = findAddModelPosition();
-    var spherical_position = cartesianToSpherical(-add_model_position.x * 30, offset_y, -add_model_position.z * 30);
-
-    loader.load(sculpture_url, async function (gltf) {
-        model = gltf.scene;
-        model.castShadow = true;
-        model.receiveShadow = true;
-
-        if (!tour_is_shared) {
-            addTemp(model, temp_url);
-            model.traverse((obj) => {
-                if (obj instanceof THREE.Mesh) {
-                    obj.name = "sculpture-model";
-                }
-            });
+        // Check if sculptureUrls exists and has the imageId
+        if (!sculptureUrls[imageId]) {
+            console.error('No sculpture URL found for imageId:', imageId);
+            return;
         }
 
-        scene.add(model);
+        var sculpture_url = sculptureUrls[imageId].sculpture;
+        var temp_url = sculptureUrls[imageId].interaction;
 
-        model.userData.id = imageId;
-        model.userData.sculpture_id = sculp_id;
+        var add_model_position = findAddModelPosition();
+        var spherical_position = cartesianToSpherical(-add_model_position.x * 30, offset_y, -add_model_position.z * 30);
 
-        assign_object_properties(model, "model", {
-            ath: spherical_position.phi,
-            atv: spherical_position.theta,
-            depth: spherical_position.r,
-            rz: -180,
-            scale: 30
+        loader.load(sculpture_url, async function (gltf) {
+            model = gltf.scene;
+            model.castShadow = true;
+            model.receiveShadow = true;
+
+            if (!tour_is_shared) {
+                addTemp(model, temp_url);
+                model.traverse((obj) => {
+                    if (obj instanceof THREE.Mesh) {
+                        obj.name = "sculpture-model";
+                    }
+                });
+            }
+
+            scene.add(model);
+
+            model.userData.id = imageId;
+            model.userData.sculpture_id = sculp_id;
+
+            assign_object_properties(model, "model", {
+                ath: spherical_position.phi,
+                atv: spherical_position.theta,
+                depth: spherical_position.r,
+                rz: -180,
+                scale: 30
+            });
         });
-    });
     }
 
     function load_model(sculp_id, imageId, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
@@ -735,51 +740,46 @@
         loader.setDRACOLoader(dracoLoader);
 
         var model = null;
-        var sculpture_url = '';
-        var temp_url = '';
 
-        var sculptureUrls = {
-            @foreach($sculptures as $sculpture)
-                "{{ $sculpture->id }}": {
-                    sculpture: "{{ $sculpture->getFirstMediaUrl('sculpture') }}",
-                    interaction: "{{ $sculpture->getFirstMediaUrl('interaction') }}"
-                },
-            @endforeach
-    };
-    console.log(sculptureUrls, "oooooooooo")
-    var sculpture_url = sculptureUrls[imageId].sculpture;
-    var temp_url = sculptureUrls[imageId].interaction;
-    var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
-
-    loader.load(sculpture_url, function (gltf) {
-        model = gltf.scene;
-        model.castShadow = true;
-        model.receiveShadow = true;
-
-        if (!tour_is_shared) {
-            loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z, temp_url);
-            model.traverse((obj) => {
-                if (obj instanceof THREE.Mesh) {
-                    obj.name = "sculpture-model";
-                }
-            });
+        // Check if sculptureUrls exists and has the imageId
+        if (!sculptureUrls[imageId]) {
+            console.error('No sculpture URL found for imageId:', imageId);
+            return;
         }
 
-        scene.add(model);
+        var sculpture_url = sculptureUrls[imageId].sculpture;
+        var temp_url = sculptureUrls[imageId].interaction;
+        var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
 
-        model.userData.id = imageId;
-        model.userData.sculpture_id = sculp_id;
+        loader.load(sculpture_url, function (gltf) {
+            model = gltf.scene;
+            model.castShadow = true;
+            model.receiveShadow = true;
 
-        assign_object_properties(model, "model", {
-            ath: spherical_position.phi,
-            atv: spherical_position.theta,
-            depth: spherical_position.r,
-            rx: rotation_x * 180 / Math.PI,
-            ry: rotation_y * 180 / Math.PI,
-            rz: rotation_z * 180 / Math.PI,
-            scale: 30,
+            if (!tour_is_shared) {
+                loadTemp(model, spherical_position, rotation_x, rotation_y, rotation_z, temp_url);
+                model.traverse((obj) => {
+                    if (obj instanceof THREE.Mesh) {
+                        obj.name = "sculpture-model";
+                    }
+                });
+            }
+
+            scene.add(model);
+
+            model.userData.id = imageId;
+            model.userData.sculpture_id = sculp_id;
+
+            assign_object_properties(model, "model", {
+                ath: spherical_position.phi,
+                atv: spherical_position.theta,
+                depth: spherical_position.r,
+                rx: rotation_x * 180 / Math.PI,
+                ry: rotation_y * 180 / Math.PI,
+                rz: rotation_z * 180 / Math.PI,
+                scale: 30,
+            });
         });
-    });
     }
 
 
