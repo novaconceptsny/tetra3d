@@ -679,6 +679,7 @@
             if (sculpture_id_list.includes(sculp_id))
                 sculp_id++;
             else {
+                console.log(sculp_id, imageId, "ppppppppppp")
                 add_model(sculp_id, imageId);
                 sculpture_id_list.push(sculp_id);
                 return;
