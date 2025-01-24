@@ -380,7 +380,9 @@ function krpanoplugin() {
 			}
 
 			if (obj.userData.type === "artwork") {
+
 				obj = intersects[0].object;
+				console.log(obj, "llllll")
 				surface = obj;
 				point = intersects[i].point;
 				object = obj;
