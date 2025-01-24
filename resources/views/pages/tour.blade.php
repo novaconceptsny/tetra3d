@@ -268,6 +268,7 @@
     var sculptures = @json($sculptures);
     var sculpture_data = @json($sculptureData);
     var artworks_data = @json($artworkData);
+    console.log(artworks_data, "ppppppppp" )
     var surface_data = @json($surfaceData);
     var spot_id = "{{ $spot->id }}";
 
