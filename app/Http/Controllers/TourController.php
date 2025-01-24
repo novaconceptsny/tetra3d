@@ -185,9 +185,12 @@ class TourController extends Controller
             
         for ($index = 0; $index < count($artworkData); $index++) {
             $artworkId = $artworkData[$index]['artwork_id'] ?? null; // Safely access artwork_id
+            $surfacestateId = $artworkData[$index]['surface_state_id'] ?? null; 
             if ($artworkId) {
                 $artInfo = Artwork::find($artworkId); // Find by ID
+                $surfaceInfo = SurfaceState::find($surfacestateId); 
                 if ($artInfo) {
+                    $artworkData[$index]['surface_id'] = $surfaceInfo->surface_id;
                     $artworkData[$index]['image_url'] = $artInfo->image_url;
                     $artworkData[$index]['imageWidth'] = ($artInfo->data['width_inch'] ?? 0) * 0.0254; // Safely access width_inch
                     $artworkData[$index]['imageHeight'] = ($artInfo->data['height_inch'] ?? 0) * 0.0254; // Safely access height_inch

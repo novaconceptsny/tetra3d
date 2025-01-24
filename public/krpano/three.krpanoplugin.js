@@ -378,6 +378,13 @@ function krpanoplugin() {
 				point = intersects[i].point;
 				object = obj;
 			}
+
+			if (obj.userData.type === "artwork") {
+				obj = intersects[0].object;
+				surface = obj;
+				point = intersects[i].point;
+				object = obj;
+			}
 		}
 
 		if (intersects.length > 0) {
@@ -478,7 +485,7 @@ function krpanoplugin() {
 					if (gizmo.name == 'arrow_z' || gizmo.name == 'direct_z') direction = 'z';
 					if (gizmo.name == 'gizmoPlane') direction = 'xz';
 				} else {
-					if (hitobj.userData.type === "surface") {
+					if (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") {
 						selected_surface_id = hitobj.userData.surface_id;
 					} else {
 						event.preventDefault();
@@ -541,7 +548,7 @@ function krpanoplugin() {
 				make_gizmo(selectedObj);
 				// }
 			}
-			if (hitobj && isDown && hitobj.userData.type == "surface" && selected_surface_id === hitobj.userData.surface_id) {
+			if (hitobj && isDown && (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") && selected_surface_id === hitobj.userData.surface_id) {
 				var hlookat = krpano.view.hlookat;
 				var vlookat = krpano.view.vlookat;
 				var urlStr = "/surfaces/" + hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id + "&hlookat=" + hlookat + "&vlookat=" + vlookat;
