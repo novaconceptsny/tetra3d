@@ -704,7 +704,7 @@
 
         var add_model_position = findAddModelPosition();
         var spherical_position = cartesianToSpherical(-add_model_position.x * 30, offset_y, -add_model_position.z * 30);
-        console.log(sculpture_url, "mmmmm")
+
         loader.load(sculpture_url, async function (gltf) {
             model = gltf.scene;
             model.castShadow = true;

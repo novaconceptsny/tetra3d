@@ -25,6 +25,10 @@ class InventoryDatatable extends BaseDatatable
         $this->routes = $this->getRoutes();
         $this->projectId = request('project_id');
         $this->selectedCollection = request('collection_id');
+        // Set default sorting by created_at in descending order
+        $this->sortBy = 'created_at';
+        $this->sortOrder = 'desc';
+        
         if ($this->projectId) {
             $this->selectedCollection = \DB::table('artwork_collection_project')
                 ->where('project_id', $this->projectId)
@@ -56,6 +60,7 @@ class InventoryDatatable extends BaseDatatable
                 'data',
                 'artist',
                 'type',
+                'created_at',
                 \DB::raw("'artwork' as model_type")
             ])
             ->with('collection', 'company', 'media')
@@ -90,6 +95,7 @@ class InventoryDatatable extends BaseDatatable
                 'data',
                 'artist',
                 'type',
+                'created_at',
                 \DB::raw("'sculpture' as model_type")
             ])
             ->with('collection', 'company', 'media')
@@ -108,12 +114,10 @@ class InventoryDatatable extends BaseDatatable
 
         $artworkRows = $artworkQuery
             ->whereAnyColumnLike($this->search)
-            ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
 
         $sculptureRows = $sculptureQuery
             ->whereAnyColumnLike($this->search)
-            ->sort($this->sortBy, $this->sortOrder)
             ->paginate($this->perPage);
 
         $sculptureRows->getCollection()->transform(function ($row) {
@@ -131,6 +135,13 @@ class InventoryDatatable extends BaseDatatable
         });
 
         $mergedCollection = $artworkRows->merge($sculptureRows);
+        
+        // Sort the merged collection by date
+        if ($this->sortBy === 'created_at') {
+            $mergedCollection = $mergedCollection->sortBy([
+                ['created_at', $this->sortOrder === 'desc' ? 'desc' : 'asc']
+            ]);
+        }
 
         $page = request()->get('page', 1);
         $perPage = $this->perPage;
@@ -213,6 +224,11 @@ class InventoryDatatable extends BaseDatatable
             ],
             'type' => [
                 'name' => 'Type',
+                'visible' => true,
+                'sortable' => true,
+            ],
+            'created_at' => [
+                'name' => 'Date Created',
                 'visible' => true,
                 'sortable' => true,
             ],
