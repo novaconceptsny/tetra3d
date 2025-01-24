@@ -386,6 +386,7 @@
                     }
 
                     if (sculpture_data !== null) {
+                        console.log(sculpture_data, "pppppppppppp")
                         for (let i = 0; i < sculpture_data.length; i++) {
                             sculpture_id_list.push(sculpture_data[i].sculpture_id);
 
