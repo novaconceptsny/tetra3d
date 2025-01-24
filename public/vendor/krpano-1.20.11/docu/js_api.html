@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+	<meta name="format-detection" content="telephone=no" />
+	<link rel="stylesheet" type="text/css" href="design.css"/>
+	<title>krpano Documentation</title>
+	<script>
+		function toggle_mobile_nav(){var t=document,n=t.getElementById("krpano_contentnav"),m=t.getElementById("krpano_mobile_menu_bg");t=n.state!=2;n.state=t?2:1;n.style.height=t?"auto":"24px";m.style.display=t?"block":"none";t=t?"add":"remove";n.classList[t]("krpano_contentnav_opened");t+="EventListener";n[t]("click",toggle_mobile_nav,false);m[t]("mousedown",toggle_mobile_nav,false);}
+	</script>
+</head>
+<body>
+	<div id="krpano_root">
+		<div id="krpano_headerwrapper">
+			<div id="krpano_header">
+				<div id="krpano_mainmenu">
+					krpano 1.20.11 <span class="smallcomment">(build 2023-11-23)</span>
+				</div>
+			</div>
+			<div id="krpano_imagebar"></div>
+			
+			<div id="krpano_logo_container">
+				<a id="krpano_logo" href="https://krpano.com"><span>krpano.com</span></a>
+			</div>
+			
+			<div id="krpano_imagebar_links">
+				Documentation
+			</div>
+		</div>
+		
+		<div id="krpano_contentwrapper">
+			<div id="krpano_mobile_menuicon" onclick="toggle_mobile_nav();"><span class="burgermenu"></span></div>
+			<div id="krpano_mobile_menu_bg"></div>
+			<div id="krpano_content">
+				<div id="krpano_contentnav">
+					<h2><a href="#top" class="selflink">Documentation</a></h2>
+					<ul>
+						<li><a href="embedpano.html#top">Embedding</a></li>
+						<li><a href="xml.html#top">XML Reference</a></li>
+						<li><a href="actions.html#top">Actions / Scripting</a></li>
+						<li><a href="plugin_api.html#top">Plugin&nbsp;Interface</a></li>
+						<li><a href="js_api.html#top">Javascript Interface</a></li>
+						<li><a href="localusage.html#top">Local / Offline Usage</a></li>
+						<li><a href="releasenotes.html#top">Release Notes</a></li>
+					</ul>
+					<h2><a href="#top" class="selflink">Plugins</a></h2>
+					<ul>
+						<li><a href="plugins/bingmaps.html#top">Bing Maps</a></li>
+						<li><a href="plugins/combobox.html#top">Combobox</a></li>
+						<li><a href="plugins/googlemaps.html#top">Google Maps</a></li>
+						<li><a href="plugins/gyro2.html#top">Gyro2</a></li>
+						<li><a href="plugins/postprocessing.html#top">Postprocessing</a></li>
+						<li><a href="plugins/radar.html#top">Radar</a></li>
+						<li><a href="plugins/scrollarea.html#top">ScrollArea</a></li>
+						<li><a href="plugins/showtext.html#top">Showtext</a></li>
+						<li><a href="plugins/snow.html#top">Snow / Rain</a></li>
+						<li><a href="plugins/soundinterface.html#top">Soundinterface</a></li>
+						<li><a href="textfield.html#top">Textfield</a></li>
+						<li><a href="plugins/videoplayer.html#top">Videoplayer</a></li>
+						<li><a href="plugins/webvr.html#top">WebVR</a></li>
+					</ul>
+					<h2><a href="#top" class="selflink">Tools</a></h2>
+					<ul>
+						<li><a href="tools/krpanotools.html#top">krpano Tools (Cmd)</a></li>
+						
+						<li><a href="tools/config.html#top">Config File Reference</a></li>
+						<li><a href="tools/testingserver.html#top">krpano Testing Server</a></li>
+					</ul>
+					<h2><a href="#top" class="selflink">Examples</a></h2>
+					<ul>
+						<li><a href="examples.html#top">All Examples</a></li>
+						<li><a href="examples.html?depthmap#top">Depthmap</a></li>
+						<li><a href="examples.html?js#top">Javascript</a></li>
+						<li><a href="examples.html?multires#top">Multiresolution</a></li>
+						<li><a href="examples.html?panovideo#top">Panoramic Video</a></li>
+						<li><a href="examples.html?vtour#top">Virtual Tours</a></li>
+						<li><a href="examples.html?webvr#top">WebVR</a></li>
+					</ul>
+				</div>
+				<a name="top" class="toplink">&nbsp;</a>
+				<div id="krpano_contenttext">
+
+					<noscript>
+						<table style="width:100%; height:400px; position:fixed; left:95px; top:220px;"><tr valign="middle"><td><center><h1>
+							<span style="color:#FFFFFF; background:#FF0000; padding:15px;">
+								Javascript must be activated for this page!
+							</span>
+						</h1></center></td></tr></table>
+					</noscript>
+
+					
+
+	<h1>krpano Javascript Interface
+		
+	</h1>
+
+	<div class="paragraph">
+		To get access to krpano from Javascript the <a href="#interfaceobject">krpano Javascript-Interface object</a>
+		will be required. This interface is the same for the krpano HTML5 Viewer and the krpano Flash Viewer and
+		can be used to control both viewers the same way.<br>
+		<br>
+		This object can be get either:
+		<ul>
+			<li>by using the <a href="embedpano.html#onready">onready</a> callback-function of 
+				the <a href="embedpano.html#syntax">embedding&nbsp;script</a> - <i>the recommended way</i>!
+			</li>
+			<li>or by using the Javascript call
+				<span class="presyntax_inline">document.getElementById(id)</span> where 
+				the <a href="embedpano.html#id">id</a> parameter is the unique id of the viewer, 
+				which can be set in the <a href="embedpano.html#embeddingparameters">embedding&nbsp;script</a>
+				(and is <span class="pre">krpanoSWFObject</span> by default).
+			</li>
+		</ul>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a class="selflink" name="interfaceobject" href="#interfaceobject">The krpano Javascript-Interface object</a></h2>
+		The interface object provides these Javascript functions:<br>
+		<ul>
+			<li><span class="presyntax_inline">set(variable,value)</span> - Set any krpano variable to the given value.</li>
+			<li><span class="presyntax_inline">get(variable)</span> - Return the value of the a krpano variable.</li>
+			<li><span class="presyntax_inline">call(action)</span> - Call and execute <a href="actions.html#top">krpano action code</a>.</li>
+			<li><span class="presyntax_inline">spheretoscreen(h,v)</span> - Directly call the <a href="actions.html#screentosphere">spheretoscreen</a> action.<br>The return value will be an object with x, y properties.</li>
+			<li><span class="presyntax_inline">screentosphere(x,y)</span> - Directly call the <a href="actions.html#screentosphere">screentosphere</a> action.<br>The return value will be an object with x, y properties.</li>
+		</ul>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a class="selflink" name="directaccess" href="#directaccess">Direct Access to krpano using Javascript</a> <span class="html5only">(HTML5 only)</span></h2>
+		When Flash-support is not requiered, it would be possible to get a more direct access to krpano using this call:
+		<pre>krpano = krpano.get("global");</pre>
+		The <a href="actions.html#global">global</a> object is the root-level object of the whole krpano API structure and
+		from there all variables, objects and functions are directly accessible.
+		For performance this would be the fastest way of using krpano.
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="usage" href="#usage" class="selflink">Usage Example</a></h2>
+		
+		Using the krpano Javascript-Interface (for Flash and HTML5):
+		<pre><a href="embedpano.html#embedpano" class="selflink2">embedpano</a>({..., html5:"auto",onready:function(<span class="bluetext">krpano</span>)
+{
+    var is_flash = <span class="bluetext">krpano</span>.get("device.flash");
+    ...
+    <span class="bluetext">krpano</span>.set("view.hlookat", 40);
+    <span class="bluetext">krpano</span>.set("view.vlookat", 30);
+    <span class="bluetext">krpano</span>.set("view.fov", 120);
+    <span class="bluetext">krpano</span>.call("loadpano(image.xml,null,MERGE|KEEPVIEW)");
+    ...
+    <span class="bluetext">krpano</span>.call("addhotspot(spot1)");
+    <span class="bluetext">krpano</span>.set("hotspot[spot1].url", "spot.png");
+    <span class="bluetext">krpano</span>.set("hotspot[spot1].ath", 123.4);
+    <span class="bluetext">krpano</span>.set("hotspot[spot1].atv", 12.3);
+    <span class="bluetext">krpano</span>.set("hotspot[spot1].onclick", "loadpano(pano2.xml,null,MERGE,BLEND(0.5)");
+});
+</pre>
+
+	<br>
+	Using direct acccess <span class="html5only">(HTML5 only)</span>:
+		<pre><a href="embedpano.html#embedpano" class="selflink2">embedpano</a>({..., html5:"only", onready:function(<span class="bluetext">krpano</span>)
+{
+    <span class="bluetext">krpano</span> = <span class="bluetext">krpano</span>.get("global");
+    
+    <span class="bluetext">krpano</span>.view.hlookat = 40;
+    <span class="bluetext">krpano</span>.view.vlookat = 30;
+    <span class="bluetext">krpano</span>.view.fov = 120;
+    <span class="bluetext">krpano</span>.actions.loadpano('image.xml',null,'MERGE|KEEPVIEW');
+    ...
+    var hs = <span class="bluetext">krpano</span>.addhotspot();
+    hs.url = "spot.png";
+    hs.ath = 123.4;
+    hs.atv = 12.3;
+    hs.onclick = function()
+    {
+        krpano.actions.loadpano('pano2.xml',null,'MERGE','BLEND(0.5)');
+    }
+});
+</pre>
+
+	</div>
+	
+	<div class="ico_nextlink"></div>  <a href="examples.html?js">Javascript Examples</a><br>
+	<br>
+	
+	
+
+
+
+
+				</div>
+			</div>
+		</div>
+		<div id="krpano_footerwrapper">
+			<div id="krpano_footer">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td align="right">Copyright &copy; krpano.com</td></tr></tbody></table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

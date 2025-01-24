@@ -1,0 +1,1009 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+	<meta name="format-detection" content="telephone=no" />
+	<link rel="stylesheet" type="text/css" href="../design.css"/>
+	<title>krpano Documentation</title>
+	<script>
+		function toggle_mobile_nav(){var t=document,n=t.getElementById("krpano_contentnav"),m=t.getElementById("krpano_mobile_menu_bg");t=n.state!=2;n.state=t?2:1;n.style.height=t?"auto":"24px";m.style.display=t?"block":"none";t=t?"add":"remove";n.classList[t]("krpano_contentnav_opened");t+="EventListener";n[t]("click",toggle_mobile_nav,false);m[t]("mousedown",toggle_mobile_nav,false);}
+	</script>
+</head>
+<body>
+	<div id="krpano_root">
+		<div id="krpano_headerwrapper">
+			<div id="krpano_header">
+				<div id="krpano_mainmenu">
+					krpano 1.20.11 <span class="smallcomment">(build 2023-11-23)</span>
+				</div>
+			</div>
+			<div id="krpano_imagebar"></div>
+			
+			<div id="krpano_logo_container">
+				<a id="krpano_logo" href="https://krpano.com"><span>krpano.com</span></a>
+			</div>
+			
+			<div id="krpano_imagebar_links">
+				Documentation
+			</div>
+		</div>
+		
+		<div id="krpano_contentwrapper">
+			<div id="krpano_mobile_menuicon" onclick="toggle_mobile_nav();"><span class="burgermenu"></span></div>
+			<div id="krpano_mobile_menu_bg"></div>
+			<div id="krpano_content">
+				<div id="krpano_contentnav">
+					<h2><a href="#top" class="selflink">Documentation</a></h2>
+					<ul>
+						<li><a href="../embedpano.html#top">Embedding</a></li>
+						<li><a href="../xml.html#top">XML Reference</a></li>
+						<li><a href="../actions.html#top">Actions / Scripting</a></li>
+						<li><a href="../plugin_api.html#top">Plugin&nbsp;Interface</a></li>
+						<li><a href="../js_api.html#top">Javascript Interface</a></li>
+						<li><a href="../localusage.html#top">Local / Offline Usage</a></li>
+						<li><a href="../releasenotes.html#top">Release Notes</a></li>
+					</ul>
+					<h2><a href="#top" class="selflink">Plugins</a></h2>
+					<ul>
+						<li><a href="../plugins/bingmaps.html#top">Bing Maps</a></li>
+						<li><a href="../plugins/combobox.html#top">Combobox</a></li>
+						<li><a href="../plugins/googlemaps.html#top">Google Maps</a></li>
+						<li><a href="../plugins/gyro2.html#top">Gyro2</a></li>
+						<li><a href="../plugins/postprocessing.html#top">Postprocessing</a></li>
+						<li><a href="../plugins/radar.html#top">Radar</a></li>
+						<li><a href="../plugins/scrollarea.html#top">ScrollArea</a></li>
+						<li><a href="../plugins/showtext.html#top">Showtext</a></li>
+						<li><a href="../plugins/snow.html#top">Snow / Rain</a></li>
+						<li><a href="../plugins/soundinterface.html#top">Soundinterface</a></li>
+						<li><a href="../textfield.html#top">Textfield</a></li>
+						<li><a href="../plugins/videoplayer.html#top">Videoplayer</a></li>
+						<li><a href="../plugins/webvr.html#top">WebVR</a></li>
+					</ul>
+					<h2><a href="#top" class="selflink">Tools</a></h2>
+					<ul>
+						<li><a href="krpanotools.html#top">krpano Tools (Cmd)</a></li>
+						
+						<li><a href="config.html#top">Config File Reference</a></li>
+						<li><a href="testingserver.html#top">krpano Testing Server</a></li>
+					</ul>
+					<h2><a href="#top" class="selflink">Examples</a></h2>
+					<ul>
+						<li><a href="../examples.html#top">All Examples</a></li>
+						<li><a href="../examples.html?depthmap#top">Depthmap</a></li>
+						<li><a href="../examples.html?js#top">Javascript</a></li>
+						<li><a href="../examples.html?multires#top">Multiresolution</a></li>
+						<li><a href="../examples.html?panovideo#top">Panoramic Video</a></li>
+						<li><a href="../examples.html?vtour#top">Virtual Tours</a></li>
+						<li><a href="../examples.html?webvr#top">WebVR</a></li>
+					</ul>
+				</div>
+				<a name="top" class="toplink">&nbsp;</a>
+				<div id="krpano_contenttext">
+
+					<noscript>
+						<table style="width:100%; height:400px; position:fixed; left:95px; top:220px;"><tr valign="middle"><td><center><h1>
+							<span style="color:#FFFFFF; background:#FF0000; padding:15px;">
+								Javascript must be activated for this page!
+							</span>
+						</h1></center></td></tr></table>
+					</noscript>
+
+					
+	
+	<h1>krpano Tools  (Command-Line)
+		
+	</h1>
+	
+	
+	<div class="paragraph">
+		The <span class="pre">krpanotools</span> executable is the core tool for processing images
+		(e.g. sphere/cube conversions, resizing and tiling) and for everything related to the license handling.<br>
+		It can be called from command-line or from batch/script-files or from other applications.
+	</div>
+	
+	<div class="paragraph">
+		The krpanotools application offers these functions:
+		<ul>
+			<li><a href="#makepano">makepano</a> - make a template-based pano or tour.</li>
+			<li><a href="#maketiles">maketiles</a> - make or merge tile images. Can be also used for conversion and resizing.</li>
+			<li><a href="#convert">convert</a> - Convert or resize images.</li>
+			<li><a href="#makepreview">makepreview</a> - make a smooth panoramic preview image.</li>
+			<li><a href="#spheretocube">spheretocube</a> - convert a spherical to a cubical pano image.</li>
+			<li><a href="#cubetosphere">cubetosphere</a> - convert a cubical to a spherical pano image.</li>
+			<li><a href="#protect">protect</a> - create viewer files with custom protection settings.</li>
+			<li><a href="#encrypt">encrypt</a> - encrypt files.</li>
+			<li><a href="testingserver.html#cmd">testserver</a> - the krpano testing server.</li>
+			<li><a href="#register">register</a> - license registration tool.</li>
+		</ul>
+	</div>
+		
+	
+	
+	
+	<div class="paragraph">
+		<h2><a name="makepano" href="#makepano" class="selflink">Makepano Tool</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>A tool for automatically making ready-to-use panos and tours.</li>
+				<li>Automatic image preparation for optimal viewing performance (sphere-to-cube conversion, tiled multi-resolution images, preview images).</li>
+				<li>Templates-based HTML and XML generation, fully customizable.</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools makepano [-config=###] [OPTIONS] inputfiles ...</pre>
+		<div class="preinfo">
+			Config:
+			<ul>
+				<li class="liss">Path to a <a href="config.html#top">config</a> file.</li>
+				<li class="liss">By default the <span class="pre">templates/vtour-multires.config</span> file is used.</li>
+				<li class="liss">The config file is a simple text file with several settings for how to process the input images.</li>
+			</ul>
+			Options:
+			<ul>
+				<li class="liss">Set or overwrite any setting from the <a href="config.html#top">config</a> file.</li>
+				<li class="liss">Can be used multiple times.</li>
+				<li class="liss">Syntax: <span class="pre">-nameofthesetting=value</span>.</li>
+			</ul>
+			Inputfiles:
+			<ul>
+				<li class="liss">One or more image filenames (<a href="#imagefileformats">supported image file formats</a>).</li>
+				<li class="liss">Supported panoramic formats / image-projections:
+					<ul>
+						<li class="liss">Spherical / Equirectangular / 360x180 images</li>
+						<li class="liss">Cylindrical images (360x*)</li>
+						<li class="liss">Partial spherical or cylindrical images with any field-of-view.</li>
+						<li class="liss">Cubical images with six separated image files (one image per cube side).</li>
+						<li class="liss">Cubestrip images (the cube-face order and alignment will be auto-detected by image-content analyzing).</li>
+					</ul>
+				</li>
+				<li class="liss">Supported stereoscopic panorama formats:
+					<ul>
+						<li class="liss">One 12x1 or 1x12 stereo-cubestrip image (=two 6x1 cubestrips side-by-side or two 1x6 cubestrips top-bottom).</li>
+						<li class="liss">One single image with two spherical 360x180 images with side-by-side or top-bottom arrangement.</li>
+						<li class="liss">Two 6x1 cubestrip images with a same 'basename' and some left/right tags for the side detection (e.g. <span class="pre">_l</span> and <span class="pre">_r</span> in the filename).</li>
+						<li class="liss">Two spherical 360x180 images with a same 'basename' and some left/right tags for the side detection (e.g. <span class="pre">_l</span> and <span class="pre">_r</span> in the filename).</li>
+					</ul>
+				</li>
+				<li class="liss">Using wildcards like <span class="pre">*.tif</span> is possible and should be used when trying to pass more images at once.</li>
+				<li class="liss">Cubical images should have suffixes like
+					<span class="pre">_l</span>,
+					<span class="pre">_f</span>,
+					<span class="pre">_r</span>,
+					<span class="pre">_b</span>,
+					<span class="pre">_u</span>,
+					<span class="pre">_d</span>
+					or names like
+					<span class="pre">left</span>,
+					<span class="pre">front</span>,
+					<span class="pre">right</span>,
+					<span class="pre">back</span>,
+					<span class="pre">up</span>,
+					<span class="pre">down</span>
+					in their filenames to allow an automatic detection
+					of the related cube-side.
+				</li>
+				<li class="liss">Stereoscopic images with separated side-images should have the same 'basename' and
+					pre- or suffixes that allow identifying the side (e.g. <span class="pre">_l</span> and <span class="pre">_r</span> or
+					<span class="pre">left</span>, <span class="pre">right</span> or something similar.
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="maketiles" href="#maketiles" class="selflink">Maketiles</a> / <a name="convert" href="#convert" class="selflink">Convert Tool</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>Split large images into smaller tiles.</li>
+				<li>Merge tiles together.</li>
+				<li>Convert image file formats.</li>
+				<li>Resize images (with 360 edge warping support).</li>
+				<li>Optimized for very low memory need, can process any size images.</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools maketiles inputfile outputfile [tilesize] [OPTIONS]</pre>
+		<div class="preinfo">
+			Inputfile:
+			<ul>
+				<li class="liss">A filename or a <a href="#tilestemplate">tile-template</a> of the input image (<a href="#imagefileformats">supported image file formats</a>).</li>
+			</ul>
+			Outputfile:
+			<ul>
+				<li class="liss">A filename or a <a href="#tilestemplate">tile-template</a> of the output image.</li>
+			</ul>
+			<a name="tilestemplate" href="#tilestemplate">Tile Template Syntax</a>:
+			<ul>
+				<li class="liss">A tile-template can contain several placeholders for addressing the actual tile:</li>
+				<li class="liss"><span class="pre">%h</span> - for the horizontal tile index.</li>
+				<li class="liss"><span class="pre">%v</span> - for the vertical tile index.</li>
+				<li class="liss">Optional one or more <span class="pre">0</span> characters between the <span class="pre">%</span> and the
+					<span class="pre">h</span> or <span class="pre">v</span> can be used as number padding.
+				</li>
+			</ul>
+			Tilesize:
+			<ul>
+				<li class="liss">The size of a tile.</li>
+				<li class="liss">For non-quad tiles use <span class="pre">WIDTHxHEIGHT</span>.</li>
+				<li class="liss">When the input image can't be divided exactly by the tilesize, 
+					then the right-column and bottom-row tiles will be smaller than the tile size.
+				</li>
+				<li class="liss">Disable tiling by using <span class="pre">0</span> or by skipping that setting.</li>
+			</ul>
+			Options:
+			<ul>
+				<li><span class="pre">-indexbase=#</span><br>
+					<ul>
+						<li class="liss">Set the tile start-index, default=1.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegquality=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG compression quality, 0 to 100, default=85.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegsubsamp=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG color subsampling, 444, 420, 420, 411, default=444.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegoptimize</span><br>
+					<ul>
+						<li class="liss">Optimize the JPEG Huffman compression tables.</li>
+						<li class="liss">Can reduce the files sizes a bit, for very large input images (Gigapixel and more)
+							this can noticeable increase the memory need and slow down the processing.
+						</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegprogressive</span><br>
+					<ul>
+						<li class="liss">Use the progressive JPEG compression format.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-tiffcompress=#</span><br>
+					<ul>
+						<li class="liss">Set the TIFF compression method, none, lzw, zip or jpeg, default=lzw.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-dpi=#</span><br>
+					<ul>
+						<li class="liss">Write a custom DPI size to the image header.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-profile=#</span><br>
+					<ul>
+						<li class="liss">Embedded Color Profile (ICC) settings:</li>
+						<li class="liss"><span class="pre">COPY</span> - copy the color profile from the input image to the output image.</li>
+						<li class="liss"><span class="pre">CONVERT</span> - convert to a sRGB color profile but don't embed the profile (default).</li>
+						<li class="liss"><span class="pre">sRGB</span> - convert to a sRGB color profile and embed a very small sRGB profile.</li>
+						<li class="liss"><span class="pre">SKIP</span> - skip / ignore an embedded color profile.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-noalpha</span><br>
+					<ul>
+						<li class="liss">Remove the alpha channel (if there is one).</li>
+					</ul>
+				</li>
+				<li><span class="pre">-8bit</span><br>
+					<ul>
+						<li class="liss">Convert the output image to 8bit (for 16bit inputs).</li>
+					</ul>
+				</li>
+				<li><span class="pre">-hmirror</span><br>
+					<ul>
+						<li class="liss">Horizontally mirror the image.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-q</span><br>
+					<ul>
+						<li class="liss">Quiet mode, no console output.</li>
+					</ul>
+				</li>
+			</ul>
+			Options for tiled-input images:
+			<ul>
+				<li><span class="pre">-insize=#</span><br>
+					<ul>
+						<li class="liss">The total size of the input image: <span class="pre">WIDTHxHEIGHT</span>.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-intilesize=#</span><br>
+					<ul>
+						<li class="liss">The tile-size of the input image: <span class="pre">SIZE</span> or <span class="pre">WIDTHxHEIGHT</span>.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-inindexbase=#</span><br>
+					<ul>
+						<li class="liss">Set the tile start-index of input image, default=1.</li>
+					</ul>
+				</li>
+			</ul>
+			Options for resizing an image:
+			<ul>
+				<li><span class="pre">-resize=#x#</span><br>
+					<ul>
+						<li class="liss">Resize the image to <span class="pre">WIDTHxHEIGHT</span>.</li>
+						<li class="liss">Use <span class="pre">*</span> for WIDTH or HEIGHT for a proportional resizing.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-keepaspect</span><br>
+					<ul>
+						<li class="liss">Keep the original image aspect when resizing.</li>
+						<li class="liss">That means the image will be resized to fit into the given WIDTH or HEIGHT.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-hwrap</span><br>
+					<ul>
+						<li class="liss">Wrap around horizontally when filtering (for 360x* panos).</li>
+					</ul>
+				</li>
+				<li><span class="pre">-filter=#</span><br>
+					<ul>
+						<li class="liss">Set which resize filter to use:</li>
+						<li class="liss"><span class="pre">POINT</span></li>
+						<li class="liss"><span class="pre">LINEAR</span></li>
+						<li class="liss"><span class="pre">GAUSS</span></li>
+						<li class="liss"><span class="pre">CUBIC</span></li>
+						<li class="liss"><span class="pre">HAMMING</span></li>
+						<li class="liss"><span class="pre">MITCHELL</span></li>
+						<li class="liss"><span class="pre">LANCZOS</span> (the default, best quality)</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<br>
+		<h2><a name="maketilesexamples" href="#maketilesexamples" class="selflink">Examples for the Maketiles / Convert tool</a></h2>
+		
+		1. Convert an image file format:
+		<pre>krpanotools convert image.tif resized.jpg</pre>
+		<br>
+		
+		2. Resize an image:
+		<pre>krpanotools convert image.jpg small.jpg -resize=1000x500</pre>
+		<br>
+		
+		3. Resize proportionally to a fixed width:
+		<pre>krpanotools convert image.jpg small.jpg -resize=1000x*</pre>
+		<br>
+		
+		4. Resize proportionally to be always within 1000x1000, e.g. results in sizes like 1000x700 or 600x1000 depending on the input size:
+		<pre>krpanotools convert image.jpg small.jpg -resize=1000x1000 -keepaspect</pre>
+		<br>
+		
+		5. Tile an image:
+		<pre>krpanotools maketiles image.jpg tile_%v_%h.jpg 512</pre>
+		<br>
+		
+		6. Merge tiles together (the total size need to be known):
+		<pre style="letter-spacing:-1px;">krpanotools maketiles tile_%v_%h.jpg image.jpg -insize=5000x5000 -intilesize=512</pre>
+		<br>
+		
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="makepreview" href="#makepreview" class="selflink">Makepreview Tool</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>Make a smoothed small preview panorama image.</li>
+				<li>For a faster loading experience.</li>
+				<li>The smoothing/blurring will be equally spherical distributed
+					(an normal image blurring in an image-editor would cause artefacts at the nadir/zenith areas).
+				</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools makepreview inputfiles [-o=outputfile] [OPTIONS]</pre>
+		<div class="preinfo">
+			Inputfiles:
+			<ul>
+				<li class="liss">Spherical or cubical pano images (<a href="#imagefileformats">supported image file formats</a>).</li>
+				<li class="liss">Cubical images should have suffixes like
+					<span class="pre">_l</span>,
+					<span class="pre">_f</span>,
+					<span class="pre">_r</span>,
+					<span class="pre">_b</span>,
+					<span class="pre">_u</span>,
+					<span class="pre">_d</span>
+					or names like
+					<span class="pre">left</span>,
+					<span class="pre">front</span>,
+					<span class="pre">right</span>,
+					<span class="pre">back</span>,
+					<span class="pre">up</span>,
+					<span class="pre">down</span>
+					in their filenames to allow an automatic detection
+					of the related cube-side.
+				</li>
+				<li class="liss">Alternatively it would be possible specify the filesnames for the cubesides manually by using: 
+					<span class="pre">-l=###</span> <span class="pre">-f=###</span> <span class="pre">-r=###</span> <span class="pre">-b=###</span> <span class="pre">-u=###</span> <span class="pre">-d=###</span>.
+				</li>
+			</ul>
+			Options:
+			<ul>
+				<li><span class="pre">-o=###</span><br>
+					<ul>
+						<li class="liss">Set the name of the output image.</li>
+						<li class="liss">By default it will be <span class="pre">*preview.jpg</span> where * is the base input filename.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-cs</span><br>
+					<ul>
+						<li class="liss">Make a cubestrip preview pano image.</li>
+						<li class="liss">For a better quality and a better browser support.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-gray</span><br>
+					<ul>
+						<li class="liss">Make a grayscale preview image.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-size=#x#</span><br>
+					<ul>
+						<li class="liss">Set the size of the preview image.</li>
+						<li class="liss">By default 1024x512 for spherical and 256x256 for cubical.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-smooth=#</span><br>
+					<ul>
+						<li class="liss">Smooting / blurring factor, 0 to 100, default=77.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegquality=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG compression quality, 0 to 100, default=85.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegsubsamp=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG color subsampling, 444, 420, 420, 411, default=422.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-tiffcompress=#</span><br>
+					<ul>
+						<li class="liss">Set the TIFF compression method, none, lzw, zip or jpeg, default=lzw.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-profile=#</span><br>
+					<ul>
+						<li class="liss">Embedded Color Profile (ICC) settings:</li>
+						<li class="liss"><span class="pre">COPY</span> - copy the color profile from the input image to the output image.</li>
+						<li class="liss"><span class="pre">CONVERT</span> - convert to a sRGB color profile but don't embed the profile (default).</li>
+						<li class="liss"><span class="pre">sRGB</span> - convert to a sRGB color profile and embed a very small sRGB profile.</li>
+						<li class="liss"><span class="pre">SKIP</span> - skip / ignore an embedded color profile.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-q</span><br>
+					<ul>
+						<li class="liss">Quiet mode, no console output.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="spheretocube" href="#spheretocube" class="selflink">SphereToCube Tool</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>Convert spherical or cylindrical pano images into a cubical format.</li>
+				<li>Can be also used to render a rectilinear view.</li>
+				<li>When the input image has an embedded color-profile, it will be copied to the output images.</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools spheretocube MODE inputfile outputfile [OPTIONS]</pre>
+		<div class="preinfo">
+			Mode:
+			<ul>
+				<li class="liss"><span class="pre">CUBE</span> - output 6 separate cube face images.</li>
+				<li class="liss"><span class="pre">HCUBE</span> - output a horizontal image strip.</li>
+				<li class="liss"><span class="pre">VCUBE</span> - output a vertical image strip.</li>
+				<li class="liss"><span class="pre">CUBE32</span> - output a 3x2 arranged image strip.</li>
+				<li class="liss"><span class="pre">CUBE23</span> - output a 2x3 arranged image strip.</li>
+				<li class="liss"><span class="pre">VIEW</span> - output a rectilinear view.</li>
+			</ul>
+			Inputfile:
+			<ul>
+				<li class="liss">A spherical or cylindrical input image (<a href="#imagefileformats">supported image file formats</a>).</li>
+				<li class="liss">For a cylindrical image the <span class="pre">-cylinder</span> option need to be added.</li>
+				<li class="liss">For partial pano images the <span class="pre">-infov=###</span> option need to be added.</li>
+				<li class="liss"><u>Special case - using a tiled-image as input</u>:
+					<ul>
+						<li>Input syntax:
+							<span class="pre">tiled:tile_%v_%h.jpg:WIDTH:HEIGHT:TILESIZE</pre>
+						</li>
+						<li>Ideal for low memory usage and faster processing on huge images.
+							That means first tile the input image using the <a href="#maketiles">maketiles</a> tool and then
+							convert it to cube.
+						</li>
+					</ul>
+				</li>
+			</ul>
+			Outputfile:
+			<ul>
+				<li class="liss">The name of the cubical output image.</li>
+				<li class="liss">In <span class="pre">CUBE</span> mode cube-side suffixes will be added to the filenames.</li>
+			</ul>
+			Options for partial pano images:
+			<ul>
+				<li><span class="pre">-infov=HFOVxVFOV/VOFFSET</span><br>
+					<ul>
+						<li class="liss"><span class="pre">HFOV</span> - the horizontal field-of-view in degrees.</li>
+						<li class="liss"><span class="pre">VFOV</span> - the vertical field-of-view in degrees (optional).</li>
+						<li class="liss"><span class="pre">HFOV</span> - a vertical offset in degrees (optional).</li>
+					</ul>
+				</li>
+				<li><span class="pre">-cylinder</span><br>
+					<ul>
+						<li class="liss">Define that the input image is cylindrical pano image.</li>
+					</ul>
+				</li>
+			</ul>
+			Options for <span class="pre">VIEW</span> mode:
+			<ul>
+				<li><span class="pre">-fov=#</span><br>
+					<ul>
+						<li class="liss">The vertical field-of-view in degrees for the rectilinear view image.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-lookat=H,V,R</span><br>
+					<ul>
+						<li class="liss">Set the viewing rotation in krpano viewer form, by hlookat, vlookat, camroll.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-rotate=ORDER,X,Y,Z</span><br>
+					<ul>
+						<li class="liss">Set a custom viewing rotation.</li>
+						<li class="liss"><span class="pre">ORDER</span> - the axis rotation order, can be XYZ, XZY, YXZ, YZX, ZXY, ZYX.</li>
+						<li class="liss"><span class="pre">X,Y,Z</span> - the rotation angles around the axis in degrees.</li>
+					</ul>
+				</li>
+			</ul>
+			General options:
+			<ul>
+				<li><span class="pre">-outsize=#</span><br>
+					<ul>
+						<li class="liss">Set a custom outputsize.</li>
+						<li class="liss">By default the size will be calculated depending on the size of the input image.</li>
+						<li class="liss">For the <span class="pre">VIEW</span> mode <span class="pre">-outsize=WIDTHxHEIGHT</span> need to be used.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-noautolevel</span><br>
+					<ul>
+						<li class="liss">By default the input image will be automatic leveled when there are EXIF orientation information (e.g. from one-shoot panoramic cameras).</li>
+						<li class="liss">With this setting that leveling can be disabled.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-profile=#</span><br>
+					<ul>
+						<li class="liss">Embedded Color Profile (ICC) settings:</li>
+						<li class="liss"><span class="pre">COPY</span> - copy the color profile from the input image to the output image (default).</li>
+						<li class="liss"><span class="pre">CONVERT</span> - convert to a sRGB color profile but don't embed the profile.</li>
+						<li class="liss"><span class="pre">sRGB</span> - convert to a sRGB color profile and embed a very small sRGB profile.</li>
+						<li class="liss"><span class="pre">SKIP</span> - skip / ignore an embedded color profile.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-fast</span><br>
+					<ul>
+						<li class="liss">Faster but lower-quality processing.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegquality=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG compression quality, 0 to 100, default=85.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegsubsamp=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG color subsampling, 444, 420, 420, 411, default=444.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegoptimize</span><br>
+					<ul>
+						<li class="liss">Optimize the JPEG Huffman compression tables (recommended).</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegprogressive</span><br>
+					<ul>
+						<li class="liss">Use the progressive JPEG compression format.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-tiffcompress=#</span><br>
+					<ul>
+						<li class="liss">Set the TIFF compression method, none, lzw, zip or jpeg, default=lzw.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-cachesize=#</span><br>
+					<ul>
+						<li class="liss">Size of the memory cache in MB, default=256.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-tempdir=###</span><br>
+					<ul>
+						<li class="liss">Set a custom directory for temporary files.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-q</span><br>
+					<ul>
+						<li class="liss">Quiet mode, no console output.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="cubetosphere" href="#cubetosphere" class="selflink">CubeToSphere Tool</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>Convert cubical pano images back to a spherical pano image.</li>
+				<li>When the input images have an embedded color-profile, it will be copied to the output image.</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools cubetosphere inputfiles -o=outputfile [OPTIONS]</pre>
+		<div class="preinfo">
+			Inputfiles:
+			<ul>
+				<li class="liss">The six images of a cubical pano (<a href="#imagefileformats">supported image file formats</a>).</li>
+				<li class="liss">The images should have suffixes like
+					<span class="pre">_l</span>,
+					<span class="pre">_f</span>,
+					<span class="pre">_r</span>,
+					<span class="pre">_b</span>,
+					<span class="pre">_u</span>,
+					<span class="pre">_d</span>
+					or names like
+					<span class="pre">left</span>,
+					<span class="pre">front</span>,
+					<span class="pre">right</span>,
+					<span class="pre">back</span>,
+					<span class="pre">up</span>,
+					<span class="pre">down</span>
+					in their filenames to allow an automatic detection
+					of the related cube-side.
+				</li>
+				<li class="liss">Alternatively it would be possible specify the filesnames for the cubesides manually by using: 
+					<span class="pre">-l=###</span> <span class="pre">-f=###</span> <span class="pre">-r=###</span> <span class="pre">-b=###</span> <span class="pre">-u=###</span> <span class="pre">-d=###</span>.
+				</li>
+			</ul>
+			Options:
+			<ul>
+				<li><span class="pre">-o=###</span><br>
+					<ul>
+						<li class="liss">Set the name of the output image.</li>
+						<li class="liss">By default it will be <span class="pre">*_sphere.tif</span> where * is the base input filename.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-size=#x#</span><br>
+					<ul>
+						<li class="liss">Size of the output image (WIDTHxHEIGHT)</li>
+						<li class="liss">By default: width = cubesize * PI, height = width / 2.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-fast</span><br>
+					<ul>
+						<li class="liss">Faster but lower-quality processing.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegquality=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG compression quality, 0 to 100, default=85.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegsubsamp=#</span><br>
+					<ul>
+						<li class="liss">Set the JPEG color subsampling, 444, 420, 420, 411, default=444.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-jpegoptimize=#</span><br>
+					<ul>
+						<li class="liss">Optimize the JPEG Huffman compression tables, true or false, default=true.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-tiffcompress=#</span><br>
+					<ul>
+						<li class="liss">Set the TIFF compression method, none, lzw, zip or jpeg, default=lzw.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-tempdir=###</span><br>
+					<ul>
+						<li class="liss">Set a custom directory for temporary files.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-q</span><br>
+					<ul>
+						<li class="liss">Quiet mode, no console output.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="protect" href="#protect" class="selflink">Protect Tool</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>Generate a registered krpano viewer file with custom protection settings.</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools protect -o=outputfilename [OPTIONS]</pre>
+		<div class="preinfo">
+			Outputfilename:
+			<ul>
+				<li>Path/filename of an output krpano.js viewer file.</li>
+			</ul>
+			Options:
+			<ul>
+				<li><span class="pre">-domain=###</span><br>
+					<ul>
+						<li class="liss">Limit the usage to the given domain.</li>
+						<li class="liss">Can be used multiple times.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-expire=YYYY-MM-DD</span><br>
+					<ul>
+						<li class="liss">Set an expire date.</li>
+						<li class="liss">After that date the viewer will stop working and show an expired information.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-expiredurl=###</span><br>
+					<ul>
+						<li class="liss">Open/redirect to the given url after the expire date.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-nolu</span><br>
+					<ul>
+						<li class="liss">Local / offline usage will be not allowed.
+						</li>
+					</ul>
+				</li>
+				<li><span class="pre">-noep</span><br>
+					<ul>
+						<li class="liss">No external parameters - it will be not possible to pass parameters/variables to the krpano viewer
+							during the <a href="../embedpano.html?#vars">viewer embedding</a>.
+						</li>
+					</ul>
+				</li>
+				<li><span class="pre">-nojs</span><br>
+					<ul>
+						<li class="liss">No Javascript interface - it will be not possible to communicate with
+							the krpano viewer by its <a href="../js_api.html#top">Javascript API</a>.
+						</li>
+					</ul>
+				</li>
+				<li><span class="pre">-noex</span><br>
+					<ul>
+						<li class="liss">Disallow the loading of external xml and plugins from other domains.
+						</li>
+					</ul>
+				</li>
+				<li><span class="pre">-noee</span><br>
+					<ul>
+						<li class="liss">Block the viewer embedding into external (cross-domain) iframes.
+						</li>
+					</ul>
+				</li>
+				<li><span class="pre">-pxml</span><br>
+					<ul>
+						<li class="liss">Allow only the loading of private-encrypted xml files.</li>
+						<li class="liss">Unencrypted or public-encrypted files will be not loadable.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-pplg</span><br>
+					<ul>
+						<li class="liss">Allow only the loading of private-encrypted plugin files.</li>
+						<li class="liss">Unencrypted or public-encrypted files will be not loadable.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-bf</span><br>
+					<ul>
+						<li class="liss">Generate a branding-free krpano viewer (requires a <a href="https://krpano.com/buy/brandingfree/">Branding Free License</a>).</li>
+					</ul>
+				</li>
+				<li><span class="pre">-demo</span><br>
+					<ul>
+						<li class="liss">Generate a unregistered demo-watermarked krpano viewer (even when a krpano license is registered).</li>
+					</ul>
+				</li>
+				<li><span class="pre">-q</span><br>
+					<ul>
+						<li class="liss">Quiet mode, no console output.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="encrypt" href="#encrypt" class="selflink">Encrypt Tool</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>Encrypt files.</li>
+				<li>Only the krpano viewer will be able to load such encrypted files.</li>
+				<li>As 'private' encryption key the krpano license will be used.
+					That means only a krpano viewer registered with the same license
+					will be able to load the encrypted files.
+				</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools encrypt [OPTIONS] inputfiles</pre>
+		<div class="preinfo">
+			Inputfiles:
+			<ul>
+				<li>Any files (placeholder * allowed).</li>
+				<li>Supported file formats: <span class="pre">xml</span>, <span class="pre">js</span>, <span class="pre">json</span>, <span class="pre">stl</span>, <span class="pre">depth</span>, <span class="pre">txt</span>.</li>
+				<li>By default a <span class="pre">.encrypted</span> postfix will be added to the filename.</li>
+			</ul>
+			Options:
+			<ul>
+				<li><span class="pre">-p</span><br>
+					<ul>
+						<li class="liss">Use a 'public' encryption key.</li>
+						<li class="liss">Everyone will be able to load the encrypted files.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-ow</span><br>
+					<ul>
+						<li class="liss">Overwrite the original input file.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-bk</span><br>
+					<ul>
+						<li class="liss">Overwrite the original input file, but make a backup before.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-in=###</span> and <span class="pre">-out=###</span><br>
+					<ul>
+						<li class="liss">Manually set the input and output filename.</li>
+						<li class="liss">When using <span class="pre">stdout</span> as output filename, 
+							the encrypted filedata will be written to the console.
+						</li>
+					</ul>
+				</li>
+				<li><span class="pre">-q</span><br>
+					<ul>
+						<li class="liss">Quiet mode, no console output.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="paragraph">
+		<h2><a name="register" href="#register" class="selflink">Registration Tool</a></h2>
+
+		<div class="subparagraph">
+			<ul>
+				<li>Register krpano license codes or show or remove already registered licenses.</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools register [PARAMETER]</pre>
+		<div class="preinfo">
+			Parameter:
+			<ul>
+				<li><span class="pre">###</span><br>
+					<ul>
+						<li class="liss">Register the given krpano license code on the system.</li>
+					</ul>
+				</li>
+				<li><span class="pre">show</span><br>
+					<ul>
+						<li class="liss">Show the current registration information.</li>
+					</ul>
+				</li>
+				<li><span class="pre">remove</span><br>
+					<ul>
+						<li class="liss">Remove the registration information from the system.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	
+	<div class="paragraph">
+		<h2><a name="speciallicenseusage" href="#speciallicenseusage" class="selflink">Special License Usage</a></h2>
+		
+		<div class="subparagraph">
+			<ul>
+				<li>For some special usage cases there are additional parameters for using the krpano license.</li>
+				<li>This could be used e.g. on web-servers when storing the license is unwanted or doesn't work.</li>
+			</ul>
+		</div>
+		Syntax:
+		<pre>krpanotools ... -license=### -needlicense</pre>
+		<div class="preinfo">
+			Parameters:
+			<ul>
+				<li><span class="pre">-license=###</span><br>
+					<ul>
+						<li class="liss">Use the given krpano license code for the current call.</li>
+						<li class="liss">The license will be not registered on the system and be used only for the current call.</li>
+					</ul>
+				</li>
+				<li><span class="pre">-needlicense</span><br>
+					<ul>
+						<li class="liss">Force the requirement of a valid license (either normally registered or by the license parameter).</li>
+						<li class="liss">When there is no valid krpano license, the tool will stop with exit/return code 1.</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<br>
+	
+	<div class="paragraph">
+		<h2><a name="imagefileformats" href="#imagefileformats" class="selflink">Supported Image File Formats</a></h2>
+		
+		<div>
+			The krpano tools are supporting these image file formats:
+			<ul>
+				<li>TIFF (.tif, .tiff)
+					<ul>
+						<li>Limitations: TIFF files are limited to a 2 gigabytes filesize.</li>
+					</ul>
+				</li>
+				<li>BigTIFF (.btf, .tf8, .bigtiff)
+					<ul>
+						<li>Limitations: none.</li>
+					</ul>
+				</li>
+				<li>JPEG (.jpg, .jpeg)
+					<ul>
+						<li>Limitations: The maximum image size is 65535×65535px.</li>
+					</ul>
+				</li>
+				<li>PNG (.png)
+					<ul>
+						<li>Limitations: Only supported as input images at the moment.</li>
+					</ul>
+				</li>
+				<li>Photoshop Document (.psd)
+					<ul>
+						<li>Limitations: The maximum image size is 30000x30000px.</li>
+					</ul>
+				</li>
+				<li>Photoshop Big Document (.psb)
+					<ul>
+						<li>Limitations: The maximum image size is 300000x300000px.</li>
+					</ul>
+				</li>
+				<li>Kolor RAW (.kro)
+					<ul>
+						<li>Limitations: none.</li>
+					</ul>
+				</li>
+			</ul>
+			All formats are only supported in 8 or 16bit RGB or RGBA format.
+		</div>
+	</div>
+	
+	<br>
+
+
+
+
+				</div>
+			</div>
+		</div>
+		<div id="krpano_footerwrapper">
+			<div id="krpano_footer">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td align="right">Copyright &copy; krpano.com</td></tr></tbody></table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
