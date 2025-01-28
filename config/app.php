@@ -56,7 +56,8 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL_TEST', 'http://localhost:8000'),
+    'url_test' => env('APP_URL_TEST', 'http://localhost:8000'),
 
     'asset_url' => env('ASSET_URL'),
 

@@ -2,15 +2,13 @@
 
 namespace App\Livewire\Datatables;
 
-use Livewire\Component;
-use App\Models\Artwork;
 use App\Models\ArtworkCollection;
-use App\Models\Company;
 use App\Models\SculptureModel;
+use App\Models\Company;
 
 class SculptureDatatable extends BaseDatatable
 {
-    public $model = Artwork::class;
+    public $model = SculptureModel::class;
     public $selectedCollection = '';
     public $selectedCompany = '';
     public $selectedArtist = '';
@@ -25,13 +23,14 @@ class SculptureDatatable extends BaseDatatable
         $this->projectId = request('project_id');
         $this->selectedCollection = request('collection_id');
 
-        if ($this->projectId){
+        if ($this->projectId) {
             $this->selectedCollection = \DB::table('artwork_collection_project')
                 ->where('project_id', $this->projectId)
                 ->value('artwork_collection_id');
         }
     }
-    public function dehydrate(){
+    public function dehydrate()
+    {
         $this->dispatch('contentChanged');
     }
     public function render()
@@ -40,22 +39,37 @@ class SculptureDatatable extends BaseDatatable
 
         $data['heading'] = __('Sculptures');
 
-        $rows = SculptureModel::all();
-        
-        foreach($rows as $key => $row) {
-            $row->data = json_decode($row->data);
-            $row->data->length = number_format((float)$row->data->length, 2);
-            $row->data->width = number_format((float)$row->data->width, 2);
-            $row->data->height = number_format((float)$row->data->height, 2);
-            $row->data = $row->data->length.'x'.$row->data->width.'x'.$row->data->height;
+        $data['collections'] = ArtworkCollection::latest('name')->get();
+        $data['companies'] = Company::latest('name')->get();
+        $data['artists'] = SculptureModel::groupBy('artist')->pluck('artist');
 
-            $collection = ArtworkCollection::where('id', $row->artwork_collection_id)->get();
-            if (!$collection->isEmpty())
-                $row->artwork_collection_id = $collection[0]->name;
-            else {
-                unset($rows[$key]);
-            }
-        }
+        $rows = $this->model::query()
+            ->with('collection', 'company', 'media')
+            ->when(
+                $this->selectedCollection,
+                fn($query) => $query->where('artwork_collection_id', $this->selectedCollection)
+            )->when(
+                $this->selectedCompany,
+                fn($query) => $query->where('company_id', $this->selectedCompany)
+            )->when(
+                $this->selectedArtist,
+                fn($query) => $query->where('artist', $this->selectedArtist)
+            )->whereAnyColumnLike($this->search)
+            ->sort($this->sortBy, $this->sortOrder)
+            ->paginate($this->perPage);
+
+        $rows->getCollection()->transform(function ($row) {
+            $row->company_name = $row->company->name;
+            $row->collection_name = $row->collection?->name;
+            $length = number_format((float) $row->data['length'], 2);
+            $width = number_format((float) $row->data['width'], 2);
+            $height = number_format((float) $row->data['height'], 2);
+            $row->dimensions = "{$height}x{$width}x{$length}";
+            $row->image_url = $row->getFirstMediaUrl('thumbnail');
+            return $row;
+        });
+
+        error_log($rows);
 
         $data['rows'] = $rows;
         $data['label'] = 'sculptureModel';
@@ -65,16 +79,20 @@ class SculptureDatatable extends BaseDatatable
     public function resetFilters()
     {
         $this->reset([
-            'perPage', 'selectedCollection',
-            'search', 'selectedCompany', 'selectedArtist',
-            'sortBy', 'sortOrder'
+            'perPage',
+            'selectedCollection',
+            'search',
+            'selectedCompany',
+            'selectedArtist',
+            'sortBy',
+            'sortOrder'
         ]);
 
     }
 
     public function updateCollection()
     {
-        if(!$this->targetCollection || !$this->selectedRows){
+        if (!$this->targetCollection || !$this->selectedRows) {
             return;
         }
 
@@ -94,10 +112,14 @@ class SculptureDatatable extends BaseDatatable
                 'render' => false,
                 'td-classes' => 'artwork-img'
             ],
-            'artwork_collection_id' => [
+            'company_name' => [
+                'name' => 'Company',
+                'visible' => true,
+                'th-classes' => 'w-10'
+            ],
+            'collection_name' => [
                 'name' => 'Collection',
                 'visible' => true,
-                'sortable' => true,
                 'th-classes' => 'w-10'
             ],
             'name' => [
@@ -106,8 +128,8 @@ class SculptureDatatable extends BaseDatatable
                 'sortable' => true,
                 'th-classes' => 'w-40'
             ],
-            'data' => [
-                'name' => 'Dimensions (l" x w" x h")',
+            'dimensions' => [
+                'name' => 'l" x w" x h"',
                 'visible' => true,
             ],
             'artist' => [
@@ -116,9 +138,14 @@ class SculptureDatatable extends BaseDatatable
                 'sortable' => true,
                 'th-classes' => 'w-10'
             ],
+            'type' => [
+                'name' => 'Type',
+                'visible' => true,
+                'sortable' => true,
+            ],
         ];
 
-        if (!user()->isAdmin()){
+        if (!user()->isAdmin()) {
             unset($columns['company_name']);
         }
 
@@ -126,13 +153,13 @@ class SculptureDatatable extends BaseDatatable
     }
     public function getRoutes()
     {
-        $routes =  [
+        $routes = [
             'create' => 'backend.sculptures.create',
             'edit' => 'backend.sculptures.edit',
             'delete' => 'backend.sculptures.destroy',
         ];
 
-        if (user()->cannot('create', Artwork::class)) {
+        if (user()->cannot('create', SculptureModel::class)) {
             unset($routes['create']);
         }
 

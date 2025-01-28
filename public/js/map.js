@@ -1,7 +1,9 @@
 function setMapScale() {
     let $floorPlan = $(".floorPlan");
     let $pin = $('.pin');
+    let $spotname = $('.spotname');
     $pin.hide();
+    $spotname.hide();
 
     let zoneW = $floorPlan.innerWidth();
     let zoneH = $floorPlan.innerHeight();
@@ -29,6 +31,15 @@ function setMapScale() {
     });
 
     $pin.show();
+
+    $spotname.each(function () {
+        let top = $(this).attr('top');
+        let left = $(this).attr('left');
+        $(this).css('top', (top * scale - 40 + "px"));
+        $(this).css('left', (left * scale - 20 + "px"));
+    });
+
+    $spotname.show();
 }
 
 $(window).resize(function () {

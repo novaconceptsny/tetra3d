@@ -26,7 +26,6 @@ class SurfaceState extends Model implements HasMedia
             $model->artworks()->detach();
             $model->comments()->delete();
             $model->likes()->delete();
-            $model->addActivity('deleted');
         });
     }
 

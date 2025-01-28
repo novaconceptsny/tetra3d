@@ -23,6 +23,7 @@
                     <tr>
                         <th scope="col">{{ __('Tour') }}</th>
                         <th scope="col">{{ __('Spot Name') }}</th>
+                        <th scope="col">{{ __('Display Name') }}</th>
                         <th scope="col">{{ __('Surfaces') }}</th>
                         <th scope="col">{{ __('Panos') }}</th>
                         <th scope="col">{{ __('XML') }}</th>
@@ -36,6 +37,9 @@
                             <td>{{ $tour->name }}</td>
                             <td>
                                 <a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->friendly_name }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ route('backend.spots.edit', $spot) }}">{{ $spot->display_name }}</a>
                             </td>
                             <td>{{ $spot->surfaces_count }} {{ __('Surfaces') }}</td>
                             <td>

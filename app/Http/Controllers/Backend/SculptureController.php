@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
+use App\Models\Activity;
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\SculptureModel;
@@ -13,17 +14,16 @@ use Illuminate\Support\Facades\Storage;
 
 class SculptureController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+        $this->authorizeResource(SculptureModel::class, 'sculptureModel');
+    }
+
     public function index()
     {
         return view('backend.sculpture.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $data = array();
@@ -40,79 +40,59 @@ class SculptureController extends Controller
     public function store(Request $request)
     {
         $request->validate(ValidationRules::storeSculpture());
+
+        $sculptureModel = SculptureModel::create($request->only([
+            'name',
+            'artist',
+            'type',
+            'data',
+            'artwork_collection_id'
+        ]));
+
+        $sculptureModel->addFromMediaLibraryRequest($request->sculpture)
+            ->toMediaCollection('sculpture');
+
+        $sculptureModel->addFromMediaLibraryRequest($request->interaction)
+            ->toMediaCollection('interaction');
+
+        $sculptureModel->addFromMediaLibraryRequest($request->thumbnail)
+            ->toMediaCollection('thumbnail');
+
+        $sculptureModel->refresh();
+
         
-        $data = $request->all();
+        Activity::create([
+            'user_id' => auth()->id(),
+            'activity' => "Sculpture '{$sculptureModel->name}' Created",
+        ]);
 
-        $sculpture = $request->file('sculpture');
-        $sculpture_fileName = $sculpture->getClientOriginalName();
-
-        $interaction = $request->file('interaction');
-        $interaction_fileName = $interaction->getClientOriginalName();
-
-        if ($data['thumbnail-canvas']) {
-            $thumbnail= $data['thumbnail-canvas'];
-            $thumbnail = str_replace('data:image/png;base64,', '', $thumbnail);
-            $thumbnail = str_replace(' ', '+', $thumbnail);
-            $thumbnail_fileName ='thumbnail.png';
-        } else {
-            $thumbnail = $request->file('thumbnail');
-            $thumbnail_fileName = $thumbnail->getClientOriginalName();
-        }
-
-        $save_data = array('name'=>$data['name'], 
-            'artist'=>$data['artist'], 
-            'artwork_collection_id'=>(int)$data['artwork_collection_id'],
-            'sculpture_url'=>'', 
-            'image_url'=>'', 
-            'type'=>'',
-            'data'=>json_encode($data['data'])
-        );
-
-        $createdData = SculptureModel::create($save_data);
-
-        $createdData->sculpture_url = $createdData->id.'_'.$sculpture_fileName;
-        $createdData->image_url = $createdData->id.'_'.$thumbnail_fileName;
-        $createdData->type = $createdData->id.'_'.$interaction_fileName;
-        $createdData->save();
-
-        $sculpture->storeAs('public/sculptures', $createdData->sculpture_url);
-        $interaction->storeAs('public/sculptures/interaction', $createdData->type);
-
-        if ($data['thumbnail-canvas']) {
-            Storage::put('public/sculptures/thumbnails/' . $createdData->image_url, base64_decode($thumbnail));
-        } else {
-            $thumbnail->storeAs('public/sculptures/thumbnails', $createdData->image_url);
-        }
-        
         return redirect()->back()->with('success', 'Sculpture created successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(SculptureModel $sculptureModel)
+    public function show(SculptureModel $sculpture)
     {
-        //
+
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(SculptureModel $sculpture)
     {
-        
-        $sculptureModel = SculptureModel::where('id', $id)->get();
-
-        $sculptureModel[0]->data = json_decode($sculptureModel[0]->data);
-
-        $artworkCollections = ArtworkCollection::all();
+        Activity::create([
+            'user_id' => auth()->id(),
+            'activity' => "Sculpture '{$sculpture->name}' Edited",
+        ]);
 
         $data = array();
 
-        $data['route'] = route('backend.sculptures.update', $sculptureModel[0]->id);
+        $data['route'] = route('backend.sculptures.update', $sculpture);
         $data['method'] = 'PUT';
-        $data['sculpture'] = $sculptureModel[0];
-        $data['artwork_collections'] = $artworkCollections;
+        $data['sculpture'] = $sculpture;
+        $data['artwork_collections'] = ArtworkCollection::all();
 
         return view('backend.sculpture.form', $data);
     }
@@ -120,56 +100,48 @@ class SculptureController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string  $id)
+    public function update(Request $request, SculptureModel $sculpture)
     {
-        $data = $request->all();
-        $updatedData = SculptureModel::where('id', $id)->get();
+        $request->validate(ValidationRules::updateSculpture());
 
-        $sculpture = $request->file('sculpture');
-        if ($sculpture) {
-            $sculpture_fileName = $sculpture->getClientOriginalName();
-            $updatedData[0]->sculpture_url = $updatedData[0]->id.'_'.$sculpture_fileName;
-            $sculpture->storeAs('public/sculptures', $updatedData[0]->sculpture_url);
-        }
+        $sculpture->update($request->only([
+            'name',
+            'artist',
+            'type',
+            'data',
+            'artwork_collection_id'
+        ]));
 
-        $interaction = $request->file('interaction');
-        if ($interaction) {
-            $interaction_fileName = $interaction->getClientOriginalName();
-            $updatedData[0]->type = $updatedData[0]->id.'_'.$interaction_fileName;
-            $interaction->storeAs('public/sculptures/interaction', $updatedData[0]->type);
-        }
-        
-        if ($data['thumbnail-canvas']) {
-            $thumbnail= $data['thumbnail-canvas'];
-            $thumbnail = str_replace('data:image/png;base64,', '', $thumbnail);
-            $thumbnail = str_replace(' ', '+', $thumbnail);
-            $thumbnail_fileName ='thumbnail.png';
-            Storage::put('public/sculptures/thumbnails/' . $updatedData[0]->image_url, base64_decode($thumbnail));
-        } else {
-            $thumbnail = $request->file('thumbnail');
-            if ($thumbnail) {
-                $thumbnail_fileName = $thumbnail->getClientOriginalName();
-                $updatedData[0]->image_url = $updatedData[0]->id.'_'.$thumbnail_fileName;
-                $thumbnail->storeAs('public/sculptures/thumbnails', $updatedData[0]->image_url);
-            }
-        }
+        $sculpture->addFromMediaLibraryRequest($request->sculpture->sculpture)
+            ->toMediaCollection('sculpture');
 
-        $updatedData[0]->name = $data['name'];
-        $updatedData[0]->artist = $data['artist'];
-        $updatedData[0]->artwork_collection_id = $data['artwork_collection_id'];
-        $updatedData[0]->data = json_encode($data['data']);
-        $updatedData[0]->save();
-        
+        $sculpture->addFromMediaLibraryRequest($request->sculpture->interaction)
+            ->toMediaCollection('interaction');
+
+        $sculpture->addFromMediaLibraryRequest($request->sculpture->thumbnail)
+            ->toMediaCollection('thumbnail');
+
+        $sculpture->refresh();
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'activity' => "Sculpture '{$sculpture->name}' Updated",
+        ]);
+
         return view('backend.sculpture.index')->with('success', 'Sculpture updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(SculptureModel $sculpture)
     {
-        $sculptureModel = SculptureModel::where('id', $id)->get();
-        $sculptureModel[0]->delete();
+        $sculpture->delete();
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'activity' => "Sculpture '{$sculpture->name}' Deleted",
+        ]);
 
         return redirect()->back()->with('success', 'Sculpture deleted successfully');
     }

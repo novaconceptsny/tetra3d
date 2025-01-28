@@ -40,33 +40,6 @@ class TourSwitcher extends SlideOver
         $this->selectedTour = $this->project->tours->where('id', $this->selectedTourId)->first();
     }
 
-    public function duplicateLayout($layoutId)
-    {
-        $layout = Layout::find($layoutId);
-
-        if ($layout) {
-            $newLayout = $layout->replicate();
-            $newLayout->name = $layout->name . ' copy';
-            $newLayout->save();
-
-            $sculptures = Sculpture::where('layout_id', $layoutId)->get();
-            if (count($sculptures) > 0)
-                foreach ($sculptures as $sculpture) {
-                    $newSculpture = $sculpture->replicate();
-                    $newSculpture->layout_id = $newLayout->id;
-                    $newSculpture->save();
-                }
-
-            $surfaceStates = SurfaceState::where('layout_id', $layoutId)->get();
-            if (count($surfaceStates) > 0)
-                foreach ($surfaceStates as $surfaceState) {
-                    $newSurfaceState = $surfaceState->replicate();
-                    $newSurfaceState->layout_id = $newLayout->id;
-                    $newSurfaceState->save();
-                }
-        }
-    }
-
     public static function attributes(): array
     {
         return [
