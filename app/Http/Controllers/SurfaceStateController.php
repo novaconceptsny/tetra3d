@@ -143,12 +143,11 @@ class SurfaceStateController extends Controller
         $boundingBoxLeft = $surface->data["bounding_box_left"];
 
         $assigned_artworks = array();
+
+        // Fetch surface information using surface_id
+        $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
+
         foreach (json_decode($request->assigned_artwork, true) as $artwork) {
-
-
-            // Fetch surface information using surface_id
-            $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
-            $artworkInfo = Artwork::where('id', $artwork['artworkId'])->first();
 
             $offset = 0.005;
 
@@ -267,19 +266,21 @@ class SurfaceStateController extends Controller
 
         $state->setAsActive();
 
-        $state->addMediaFromBase64(resizeBase64Image(
-            $request->thumbnail,
-            $request->reverseScale
-        ))
-            ->usingFileName('thumbnail.png')
-            ->toMediaCollection('thumbnail');
-
-        $state->addMediaFromBase64(resizeBase64Image(
-            $request->hotspot,
-            $request->reverseScale
-        ))
-            ->usingFileName('hotspot.png')
-            ->toMediaCollection('hotspot');
+        if (!$surfaceInfo) {
+            $state->addMediaFromBase64(resizeBase64Image(
+                $request->thumbnail,
+                $request->reverseScale
+            ))
+                ->usingFileName('thumbnail.png')
+                ->toMediaCollection('thumbnail');
+    
+            $state->addMediaFromBase64(resizeBase64Image(
+                $request->hotspot,
+                $request->reverseScale
+            ))
+                ->usingFileName('hotspot.png')
+                ->toMediaCollection('hotspot');
+        }
 
         $state->artworks()->detach();
         foreach ($assigned_artworks as $assigned_artwork) {
