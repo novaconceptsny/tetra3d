@@ -2,10 +2,11 @@
     'media' => null,
     'name' => null,
     'rules' => '',
-    'showFilename' => true
+    'showFilename' => true,
+    'id' => null
 ])
 
-<div class="d-flex">
+<div class="d-flex" id="{{ $id }}">
 
     @if($media)
         <div class="media-library-thumb m-0 me-2">

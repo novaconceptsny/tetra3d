@@ -5,7 +5,7 @@ namespace App\Livewire\Forms;
 use App\Models\ArtworkSurfaceState;
 use App\Models\Layout;
 use App\Models\Project;
-use App\Models\Tour;
+use App\Models\Activity;
 use App\Models\Sculpture;
 use App\Models\SurfaceState;
 use WireElements\Pro\Components\Modal\Modal;
@@ -45,19 +45,19 @@ class Duplicate extends Modal
             // If no "copy" suffix, use the current name as the original name
             $originalName = $layout->name;
         }
-    
+
         // Base name for duplicates
         $baseName = $originalName . ' - copy';
-    
+
         // Find existing duplicates with similar names
         $existingLayouts = Layout::where('name', 'LIKE', $baseName . '%')->pluck('name');
-    
+
         // Determine the next available suffix
         $suffix = 1;
         while ($existingLayouts->contains($baseName . ($suffix > 1 ? " $suffix" : ''))) {
             $suffix++;
         }
-    
+
         // Assign the new name
         $this->layout->name = $baseName . ($suffix > 1 ? " $suffix" : '');
         $this->heading = 'Duplicate Layout';
@@ -91,6 +91,15 @@ class Duplicate extends Modal
                 $newSurfaceState->layout_id = $newLayout->id;
                 $newSurfaceState->save();
 
+                $thumbnailMedia = $surfaceState->getFirstMedia('thumbnail');
+                if ($thumbnailMedia && file_exists($thumbnailMedia->getPath())) {
+                    $thumbnailMedia->copy($newSurfaceState, 'thumbnail');
+                }
+
+                $hotspotMedia = $surfaceState->getFirstMedia('hotspot');
+                if ($hotspotMedia && file_exists($hotspotMedia->getPath())) {
+                    $hotspotMedia->copy($newSurfaceState, 'hotspot');
+                }
 
                 $artworkSurfaceStates = ArtworkSurfaceState::where('surface_state_id', $surfaceState->id)->get();
                 if (count($artworkSurfaceStates) > 0)
@@ -104,6 +113,18 @@ class Duplicate extends Modal
         $this->close(andDispatch: [
             'refresh',
             'flashNotification' => ['message' => 'Layout duplicated']
+        ]);
+
+        $activity = "Layout {$this->layout->name} duplicated";
+        $url = route('tours.show', ['tour' => $newLayout->tour_id, 'layout_id' => $newLayout->id], false);
+
+        Activity::create([
+            'user_id' => auth()->id(),
+            'project_id' => $newLayout->project_id,
+            'layout_id' => $this->layout->id,
+            'tour_id' => $newLayout->tour_id,
+            'activity' => $activity,
+            'url' => $url,
         ]);
     }
 

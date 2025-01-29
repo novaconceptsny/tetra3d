@@ -1,12 +1,12 @@
 <div class="card">
-    <x-loader/>
+    <x-loader />
     <div class="card-header d-flex flex-column">
         <div class="d-flex mb-2">
             <h5 class="me-auto">{{ $heading }}</h5>
             <div class="float-end">
                 @if(isset($routes['create']))
-                    <a href="{{ route($routes['create']) }}" class="btn btn-sm btn-primary"><i
-                            class="fal fa-plus"></i> {{ __('Add New') }}</a>
+                    <a href="{{ route($routes['create']) }}" class="btn btn-sm btn-primary"><i class="fal fa-plus"></i>
+                        {{ __('Add New') }}</a>
                 @endif
                 @include('backend.includes.datatable.bulk-delete')
             </div>
@@ -37,7 +37,7 @@
                 <select wire:model.live="selectedArtist" class="form-control">
                     <option value="">All Artists</option>
                     @foreach($artists as $artist)
-                        <option value="{{$artist}}">{{$artist}}</option>
+                    <option value="{{$artist}}">{{$artist}}</option>
                     @endforeach
                 </select>
             </div>--}}
@@ -56,7 +56,8 @@
                     </select>
                 </div>
                 <div class="align-self-end ms-2">
-                    <button class="btn btn-primary {{ !$targetCollection ? 'disabled' : '' }}" wire:click="updateCollection">{{ __('Move') }}</button>
+                    <button class="btn btn-primary {{ !$targetCollection ? 'disabled' : '' }}"
+                        wire:click="updateCollection">{{ __('Move') }}</button>
                 </div>
             </div>
         @endif
@@ -64,35 +65,31 @@
     </div>
     <div class="card-body py-0">
         <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
-            <table class="table table-hover collection-table fs--1 table-sm" >
+            <table class="table table-hover collection-table fs--1 table-sm">
 
                 @include('backend.includes.datatable.header')
 
                 <tbody class="list">
-                @foreach($rows as $row)
-                    <tr class="dt-row">
-                        @include('backend.includes.datatable.bulk-selection')
+                    @foreach($rows as $row)
+                        <tr class="dt-row">
+                            @include('backend.includes.datatable.bulk-selection')
 
-                        <!-- pre columns !-->
-                        <td class="td artwork-img">
-                            <img
-                                @click="artworkImage = @js($row->image_url);"
-                                src="{{ $row->image_url }}"
-                                alt="" width="50"
-                                data-bs-toggle="modal" data-bs-target="#artworkImage"
-                            >
-                        </td>
+                            <!-- pre columns !-->
+                            <td class="td artwork-img">
+                                <img @click="artworkImage = @js($row->image_url);" src="{{ $row->image_url }}" alt=""
+                                    width="50" data-bs-toggle="modal" data-bs-target="#artworkImage">
+                            </td>
 
-                        @include('backend.includes.datatable.content')
+                            @include('backend.includes.datatable.content')
 
-                        <td>
-                            @include('backend.includes.datatable.actions')
-                        </td>
-                    </tr>
-                @endforeach
+                            <td>
+                                @include('backend.includes.datatable.actions')
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
-            <div class="modal fade" id="artworkImage" tabindex="-1" >
+            <div class="modal fade" id="artworkImage" tabindex="-1">
                 <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                     <div class="modal-content">
                         <div class="modal-header">

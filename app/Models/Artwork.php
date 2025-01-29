@@ -29,13 +29,14 @@ class Artwork extends Model implements HasMedia
         'data' => SchemalessAttributes::class,
     ];
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
 
         static::creating(fn($model) => $model->data->scale = $model->calculateScale());
         static::updating(fn($model) => $model->data->scale = $model->calculateScale());
 
-        static::deleted(function(self $model) {
+        static::deleted(function (self $model) {
             $model->surfaceStates()->detach();
         });
     }
@@ -43,7 +44,8 @@ class Artwork extends Model implements HasMedia
     public function collection()
     {
         return $this->belongsTo(
-            ArtworkCollection::class, 'artwork_collection_id'
+            ArtworkCollection::class,
+            'artwork_collection_id'
         )->withDefault(['name' => 'No Collection']);
     }
 
@@ -61,7 +63,7 @@ class Artwork extends Model implements HasMedia
     {
         return Attribute::make(
             get: fn($value) => $this->getFirstMediaUrl('image')
-                ? $this->getFirstMediaUrl('image') : $value
+            ? $this->getFirstMediaUrl('image') : $value
         );
     }
 
@@ -74,26 +76,30 @@ class Artwork extends Model implements HasMedia
 
     public function calculateScale()
     {
-        if (!$this->data->width_inch || !$this->data->height_inch){
+        if (!$this->data->width_inch || !$this->data->height_inch) {
             return 1;
         }
 
         $maxWidth = $maxHeight = 1000;
-        $scaleWidth = $maxWidth/$this->data->width_inch;
-        $scaleHeight = $maxHeight/$this->data->height_inch;
+        $scaleWidth = $maxWidth / $this->data->width_inch;
+        $scaleHeight = $maxHeight / $this->data->height_inch;
 
-        return intval(min($scaleWidth, $scaleHeight));
+        return intval(max($scaleWidth, $scaleHeight));
     }
 
     public function resizeImage()
     {
         $media = $this->getFirstMedia('image');
 
+        ini_set('memory_limit', '1G');
+
         $image = Image::make($media->getPath());
+
         $image->resize(
             $this->data->scale * $this->data->width_inch,
             $this->data->scale * $this->data->height_inch
         );
+
         $this->addMediaFromBase64($image->encode('data-url'))
             ->usingFileName($media->file_name)
             ->usingName($media->name)

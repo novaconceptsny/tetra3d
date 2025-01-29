@@ -103,11 +103,11 @@ class TourController extends Controller
         $sculptures = !empty($sculpture_list) ? SculptureModel::whereIn('artwork_collection_id', $sculpture_list)->get() : array();
 
         foreach($sculptures as $row) {
-            $row->data = json_decode($row->data);
+            // $row->data = json_decode($row->data);
             $row->data->length = number_format((float)$row->data->length, 2);
             $row->data->width = number_format((float)$row->data->width, 2);
             $row->data->height = number_format((float)$row->data->height, 2);
-            $row->data = $row->data->length.'x'.$row->data->width.'x'.$row->data->height.' meter';
+            $row->dimensions = $row->data->length.'x'.$row->data->width.'x'.$row->data->height.' meter';
         }
 
         $tourModel = $tour ? TourModel::where('tour_id', $tour->id)->get() : null;
@@ -144,19 +144,19 @@ class TourController extends Controller
             } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
                 $targetRotation = [
                     'x' => 0,
-                    'y' => 3.14,
+                    'y' => pi(),
                     'z' => 0,
                 ];
             } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
                 $targetRotation = [
                     'x' => 0,
-                    'y' => 1.57,
+                    'y' => pi() / 2,
                     'z' => 0,
                 ];
             } else {
                 $targetRotation = [
                     'x' => 0,
-                    'y' => -1.57,
+                    'y' => - pi() / 2,
                     'z' => 0,
                 ];
             }
@@ -185,9 +185,12 @@ class TourController extends Controller
             
         for ($index = 0; $index < count($artworkData); $index++) {
             $artworkId = $artworkData[$index]['artwork_id'] ?? null; // Safely access artwork_id
+            $surfacestateId = $artworkData[$index]['surface_state_id'] ?? null; 
             if ($artworkId) {
                 $artInfo = Artwork::find($artworkId); // Find by ID
+                $surfaceInfo = SurfaceState::find($surfacestateId); 
                 if ($artInfo) {
+                    $artworkData[$index]['surface_id'] = $surfaceInfo->surface_id;
                     $artworkData[$index]['image_url'] = $artInfo->image_url;
                     $artworkData[$index]['imageWidth'] = ($artInfo->data['width_inch'] ?? 0) * 0.0254; // Safely access width_inch
                     $artworkData[$index]['imageHeight'] = ($artInfo->data['height_inch'] ?? 0) * 0.0254; // Safely access height_inch

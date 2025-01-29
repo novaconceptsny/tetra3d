@@ -12,6 +12,8 @@ class CanvasManager {
         this.user_id = data.userId;
         this.assignedArtworks = data.assignedArtworks;
         this.surfaceStateId = data.surfaceStateId;
+        console.log(this.surfaceStateId, "surfaceStateId")
+        console.log(this.assignedArtworks, "assignedArtworks")
         this.surface = data.surface;
         this.latestState = data.latestState;
 
@@ -461,7 +463,7 @@ class CanvasManager {
         this.updateSavedVersion();
     }
 
-    updateSavedVersion(event) {
+    updateSavedVersion() {
         if (this.isInactive()) {
             return;
         }
@@ -502,7 +504,6 @@ class CanvasManager {
         });
 
         const captureHotspot = () => {
-            console.log( "captureHotspot")
             this.boundingBox.opacity = 0;  // hide bounding box
             this.artworkCanvas.backgroundImage.opacity = 0;  // hide background image
 

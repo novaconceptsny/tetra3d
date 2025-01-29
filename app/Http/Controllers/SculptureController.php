@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Layout;
 use App\Models\SpotsPosition;
-use Illuminate\Http\Request;
-use App\Http\Requests;
+use App\Models\Activity;
 use App\Models\Sculpture;
+use Illuminate\Http\Request;
 
 class SculptureController extends Controller
 {
     //
-    public function load(Request $request) {
+    public function load(Request $request)
+    {
         $request->validate([
             "layout_id" => 'required',
             "spot_id" => 'required',
         ]);
-        
+
         $data = $request->all();
         $sculpture_datas = Sculpture::where('layout_id', $data['layout_id'])->get();
         $spot_position = SpotsPosition::where('spot_id', $data['spot_id'])->get();
@@ -25,7 +27,7 @@ class SculptureController extends Controller
                 'sculpture_data' => 'no_sculpture',
                 'spot_position' => 'no_spot_data'
             ]);
-        } elseif($spot_position->isEmpty()) {
+        } elseif ($spot_position->isEmpty()) {
             return response()->json([
                 'sculpture_data' => 'no_sculpture',
                 'spot_position' => 'no_spot_data'
@@ -45,8 +47,22 @@ class SculptureController extends Controller
         ]);
         $data = $request->all();
         $sculpture_datas = Sculpture::where('layout_id', $data['layout_id'])->where('sculpture_id', $data['sculpture_id'])->get();
+
+        $layout = Layout::findOrFail($data['layout_id']);
+        $url = route('tours.show', ['tour' => $layout->tour_id, 'layout_id' => $layout->id], false);
+        $activity = "Sculptures updated in layout {$layout->id}";
+
+        Activity::create([
+            'project_id' => $layout->project_id,
+            'layout_id' => $layout->id,
+            'tour_id' => $layout->tour_id,
+            'activity' => $activity,
+            'url' => $url,
+        ]);
+
         if ($sculpture_datas->isEmpty()) {
-            $createdData = Sculpture::create($data);
+            Sculpture::create($data);
+
             return response()->json([
                 'response' => $data
             ]);
@@ -61,6 +77,7 @@ class SculptureController extends Controller
                 $sculpture_data->rotation_z = $data['rotation_z'];
                 $sculpture_data->save();
             }
+
             return response()->json([
                 'request' => $sculpture_datas
             ]);
@@ -82,6 +99,19 @@ class SculptureController extends Controller
         } else {
             foreach ($sculpture_datas as $sculpture_data)
                 $sculpture_data->delete();
+
+            $activity = "Sculptures deleted in layout {$data['layout_id']}";
+            $layout = Layout::findOrFail($data['layout_id']);
+            $url = route('tours.show', ['tour' => $layout->tour_id, 'layout_id' => $layout->id], false);
+
+            Activity::create([
+                'project_id' => $layout->project_id,
+                'layout_id' => $layout->id,
+                'tour_id' => $layout->tour_id,
+                'activity' => $activity,
+                'url' => $url,
+            ]);
+
             return response()->json([
                 'response' => 'success'
             ]);

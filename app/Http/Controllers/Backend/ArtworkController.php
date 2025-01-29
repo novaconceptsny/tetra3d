@@ -6,7 +6,6 @@ use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
-use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ArtworkController extends Controller
@@ -35,7 +34,11 @@ class ArtworkController extends Controller
         $request->validate(ValidationRules::storeArtwork());
 
         $artwork = Artwork::create($request->only([
-            'name', 'artist', 'type', 'data', 'artwork_collection_id'
+            'name',
+            'artist',
+            'type',
+            'data',
+            'artwork_collection_id'
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)
@@ -56,6 +59,8 @@ class ArtworkController extends Controller
 
     public function edit(Artwork $artwork)
     {
+
+        error_log($artwork);
         $data = array();
 
         $data['route'] = route('backend.artworks.update', $artwork);
@@ -71,7 +76,11 @@ class ArtworkController extends Controller
         $request->validate(ValidationRules::updateArtwork());
 
         $artwork->update($request->only([
-            'name', 'artist', 'type', 'data', 'artwork_collection_id'
+            'name',
+            'artist',
+            'type',
+            'data',
+            'artwork_collection_id'
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)
@@ -79,8 +88,8 @@ class ArtworkController extends Controller
 
         // refresh model, to ensure the media is attached!
         $artwork->refresh();
-        $artwork->resizeImage();
 
+        $artwork->resizeImage();
 
         return redirect()->back()->with('success', 'Artwork updated successfully');
     }
