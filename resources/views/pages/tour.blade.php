@@ -416,6 +416,7 @@
                         load_artModels(artworks_data[i].artwork_id,
                             artworks_data[i].surface_id,
                             artworks_data[i].image_url,
+                            artworks_data[i].surfacestateId,
                             artworks_data[i].imageWidth,
                             artworks_data[i].imageHeight,
                             artworks_data[i].position_x * 30 - spot_position.x * 30,
@@ -812,7 +813,7 @@
 
     }
 
-    function load_artModels(art_id, surface_id, image_url, imageWidth, imageHeight, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
+    function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
 
         // Load a texture (image)
         const textureLoader = new THREE.TextureLoader();
@@ -842,6 +843,7 @@
             const plane = new THREE.Mesh(geometry, material);
             plane.userData.type = "artwork";
             plane.userData.art_id = art_id;
+            plane.userData.surfacestateId = surfacestateId;
             plane.userData.surface_id = surface_id;
             plane.userData.layout_id = layout_id;
             plane.userData.spot_id = spot_id;
