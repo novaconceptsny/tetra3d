@@ -50,11 +50,8 @@ class SurfaceStateController extends Controller
             $selectedSurfaceState = SurfaceState::findOrFail($surface_state_id);
         }
 
-        // if (!$create_new_state && !$surface_state_id) {
-        //     $selectedSurfaceState = $surface->getCurrentState($layout->id);
-        // }
         if (!$create_new_state && !$surface_state_id) {
-            $selectedSurfaceState = $surface->getLastState($layout->id);
+            $selectedSurfaceState = $surface->getCurrentState($layout->id);
         }
 
         $surface->background_url = $surface->getFirstMediaUrl('background');
