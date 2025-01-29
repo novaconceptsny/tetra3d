@@ -12,6 +12,8 @@ class CanvasManager {
         this.user_id = data.userId;
         this.assignedArtworks = data.assignedArtworks;
         this.surfaceStateId = data.surfaceStateId;
+        console.log(this.surfaceStateId, "surfaceStateId")
+        console.log(this.assignedArtworks, "assignedArtworks")
         this.surface = data.surface;
         this.latestState = data.latestState;
 
