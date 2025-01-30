@@ -253,16 +253,20 @@ class SurfaceStateController extends Controller
 
         }
 
-        if ($request->new) {
-            $state = $surface->createNewState($request->layout_id);
-            $state->update([
-                'name' => $request->name,
-            ]);
-        } else {
-            $state = $request->get('surface_state_id')
-                ? SurfaceState::findOrFail($request->surface_state_id)
-                : $surface->getCurrentState($request->layout_id);
-        }
+        // if ($request->new) {
+        //     $state = $surface->createNewState($request->layout_id);
+        //     $state->update([
+        //         'name' => $request->name,
+        //     ]);
+        // } else {
+        //     $state = $request->get('surface_state_id')
+        //         ? SurfaceState::findOrFail($request->surface_state_id)
+        //         : $surface->getCurrentState($request->layout_id);
+        // }
+
+        $state = $request->get('surface_state_id')
+            ? SurfaceState::findOrFail($request->surface_state_id)
+            : $surface->getCurrentState($request->layout_id);
 
         $state->update([
             'canvas' => json_decode($request->canvasState, true),
