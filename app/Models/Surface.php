@@ -70,6 +70,11 @@ class Surface extends Model implements HasMedia
         return $this->states()->current()->forLayout($layout_id)->first();
     }
 
+    public function getLastState($layout_id)
+    {
+        return $this->states()->current()->forLayout($layout_id)->orderBy('id', 'desc')->first();
+    }
+
     public function createNewState($layout_id)
     {
         $this->states()->where('layout_id', $layout_id)->update([

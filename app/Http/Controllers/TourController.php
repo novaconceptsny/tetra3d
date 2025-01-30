@@ -192,6 +192,7 @@ class TourController extends Controller
                 if ($artInfo) {
                     $artworkData[$index]['surface_id'] = $surfaceInfo->surface_id;
                     $artworkData[$index]['image_url'] = $artInfo->image_url;
+                    $artworkData[$index]['surfacestateId'] =  $surfacestateId;
                     $artworkData[$index]['imageWidth'] = ($artInfo->data['width_inch'] ?? 0) * 0.0254; // Safely access width_inch
                     $artworkData[$index]['imageHeight'] = ($artInfo->data['height_inch'] ?? 0) * 0.0254; // Safely access height_inch
                 }

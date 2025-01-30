@@ -90,7 +90,11 @@ class SurfaceStateController extends Controller
         }
 
         foreach ($surface->states as $surfaceState) {
-
+            // Skip if this state doesn't match the selected state ID
+            if ($selectedSurfaceState && $surfaceState->id !== $selectedSurfaceState->id) {
+                continue;
+            }
+            
             $assignedArtworks = $surfaceState?->artworks->map(function ($artwork) {
                 $artwork->image_url .= "?uuid=" . str()->uuid();
                 return $artwork;
