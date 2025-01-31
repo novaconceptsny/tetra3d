@@ -97,7 +97,7 @@ class SurfaceStateController extends Controller
             });
 
             // Skip if no artworks are assigned
-            if ($assignedArtworks->isEmpty()) {
+            if ($selectedSurfaceState &&$assignedArtworks->isEmpty()) {
                 continue;
             }
 
