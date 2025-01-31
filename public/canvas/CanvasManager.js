@@ -240,6 +240,12 @@ class CanvasManager {
         let imgUrl = selectedElement.dataset.imgUrl;
         let artworkId = selectedElement.dataset.artworkId;
         let scale = selectedElement.dataset.scale;
+
+        if (window.location.protocol === 'https:' && imgUrl.startsWith('http:')) {
+            // Replace the http:// with the current website origin
+            imgUrl = `${window.location.origin}${new URL(imgUrl).pathname}`;
+        }
+
         return { title, imgUrl, artworkId, scale };
     }
 
