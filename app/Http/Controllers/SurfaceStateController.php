@@ -137,10 +137,10 @@ class SurfaceStateController extends Controller
         // Update the `updated_at` field of the `$layout` to the current time
         $layout->touch();
 
-        $assigned_artworks = json_decode($request->assigned_artwork, true);
+        $initial_artworks = json_decode($request->assigned_artwork, true);
         
         // Check if there are no artworks assigned
-        if (empty($assigned_artworks)) {
+        if (empty($initial_artworks)) {
             // If state exists and has no artworks, delete it
             if ($request->get('surface_state_id')) {
                 $state = SurfaceState::findOrFail($request->surface_state_id);
@@ -158,6 +158,8 @@ class SurfaceStateController extends Controller
             return redirect()->back()->with('error', 'Cannot save state without artworks');
         }
 
+        $assigned_artworks = array();
+
         $boundingBoxWidth = $surface->data["bounding_box_width"];
         $boundingBoxHeight = $surface->data["bounding_box_height"];
         $boundingBoxTop = $surface->data["bounding_box_top"];
@@ -166,7 +168,7 @@ class SurfaceStateController extends Controller
         // Fetch surface information using surface_id
         $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
 
-        foreach ($assigned_artworks as $artwork) {
+        foreach ($initial_artworks as $artwork) {
 
             $offset = 0.005;
 
