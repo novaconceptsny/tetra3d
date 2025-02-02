@@ -96,11 +96,6 @@ class SurfaceStateController extends Controller
                 return $artwork;
             });
 
-            // Skip if no artworks are assigned and there are multiple states
-            if ($selectedSurfaceState && $assignedArtworks->isEmpty() && $surface->states->count() > 1) {
-                continue;
-            }
-
             $canvases[$surfaceState->id ?? 'new'] = [
                 'canvasId' => "artwork_canvas_" . ($surfaceState->id ?? 'new'),
                 'surface' => $surface->only([
@@ -142,17 +137,36 @@ class SurfaceStateController extends Controller
         // Update the `updated_at` field of the `$layout` to the current time
         $layout->touch();
 
+        $assigned_artworks = json_decode($request->assigned_artwork, true);
+        
+        // Check if there are no artworks assigned
+        if (empty($assigned_artworks)) {
+            // If state exists and has no artworks, delete it
+            if ($request->get('surface_state_id')) {
+                $state = SurfaceState::findOrFail($request->surface_state_id);
+                $state->delete();
+                
+                return redirect()->route($request->return_to_versions ? "tours.surfaces" : "tours.show", [
+                    $surface->tour,
+                    'spot_id' => $request->spot_id,
+                    'layout_id' => $request->layout_id,
+                    'hlookat' => $request->hlookat,
+                    'vlookat' => $request->vlookat,
+                ])->with('success', 'Surface state removed due to no artworks');
+            }
+            
+            return redirect()->back()->with('error', 'Cannot save state without artworks');
+        }
+
         $boundingBoxWidth = $surface->data["bounding_box_width"];
         $boundingBoxHeight = $surface->data["bounding_box_height"];
         $boundingBoxTop = $surface->data["bounding_box_top"];
         $boundingBoxLeft = $surface->data["bounding_box_left"];
 
-        $assigned_artworks = array();
-
         // Fetch surface information using surface_id
         $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
 
-        foreach (json_decode($request->assigned_artwork, true) as $artwork) {
+        foreach ($assigned_artworks as $artwork) {
 
             $offset = 0.005;
 
@@ -275,19 +289,22 @@ class SurfaceStateController extends Controller
 
         $state->setAsActive();
 
-        $state->addMediaFromBase64(resizeBase64Image(
-            $request->thumbnail,
-            $request->reverseScale
-        ))
-            ->usingFileName('thumbnail.png')
-            ->toMediaCollection('thumbnail');
+        // Only save screenshots if there are assigned artworks
+        if (!empty($assigned_artworks)) {
+            $state->addMediaFromBase64(resizeBase64Image(
+                $request->thumbnail,
+                $request->reverseScale
+            ))
+                ->usingFileName('thumbnail.png')
+                ->toMediaCollection('thumbnail');
 
-        $state->addMediaFromBase64(resizeBase64Image(
-            $request->hotspot,
-            $request->reverseScale
-        ))
-            ->usingFileName('hotspot.png')
-            ->toMediaCollection('hotspot');
+            $state->addMediaFromBase64(resizeBase64Image(
+                $request->hotspot,
+                $request->reverseScale
+            ))
+                ->usingFileName('hotspot.png')
+                ->toMediaCollection('hotspot');
+        }
 
         $state->artworks()->detach();
         foreach ($assigned_artworks as $assigned_artwork) {
