@@ -76,7 +76,7 @@ class SurfaceStateController extends Controller
             ->orderBy('id') // Ensure the lowest ID is first
             ->get();
 
-        if ($states->count() === 0) {
+        if ($states->count() === 0 || !$states->count() || $create_new_state) {
             $newState = new SurfaceState();
             $newState->user_id = auth()->id();
             $newState->layout_id = $layout->id;
