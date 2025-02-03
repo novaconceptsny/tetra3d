@@ -302,7 +302,7 @@ class SurfaceStateController extends Controller
         if ($records->count() > 1) {
             SurfaceState::where('surface_id', $surface->id)
                 ->where('layout_id', $layout->id)
-                ->leftjoin('artwork_surface_state', 'surface_state.id', '=', 'artwork_surface_state.surface_state_id')
+                ->leftjoin('artwork_surface_state', 'surface_states.id', '=', 'artwork_surface_state.surface_state_id')
                 ->whereNull('artwork_surface_state.artwork_id')
                 ->delete();
         }
