@@ -298,12 +298,12 @@ class SurfaceStateController extends Controller
             ->where('layout_id', $layout->id)
             ->orderBy('id') // Ensure the lowest ID is first
             ->get();
-        // Step 2: If there are duplicates, delete all except the first one
+
         if ($records->count() > 1) {
-            $firstRecord = $records->first(); // Keep the first one
             SurfaceState::where('surface_id', $surface->id)
                 ->where('layout_id', $layout->id)
-                ->where('id', '!=', $firstRecord->id) // Delete all other duplicates
+                ->leftjoin('artwork_surface_state', 'surface_state.id', '=', 'artwork_surface_state.surface_state_id')
+                ->whereNull('artwork_surface_state.artwork_id')
                 ->delete();
         }
 
