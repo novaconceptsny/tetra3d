@@ -71,37 +71,25 @@ class SurfaceStateController extends Controller
 
         $canvases = array();
 
-        if (!$surface->states->count() || $create_new_state) {
+        $states = SurfaceState::where('surface_id', $surface->id)
+            ->where('layout_id', $layout->id)
+            ->orderBy('id') // Ensure the lowest ID is first
+            ->get();
+
+        if ($states->count() === 0) {
             $newState = new SurfaceState();
+            $newState->user_id = auth()->id();
+            $newState->layout_id = $layout->id;
+            $newState->surface_id = $surface->id;
+            $newState->name = 'Version 1';
+            $newState->save();
 
-            // initialize new state
-            if (!$surface->states->count()) {
-                $newState->user_id = auth()->id();
-                $newState->layout_id = $layout->id;
-                $newState->surface_id = $surface->id;
-                $newState->name = 'Version 1';
-                $newState->save();
-
-                $data['currentSurfaceStateId'] = $newState->id;
-                $data['selectedSurfaceState'] = $newState;
-            }
+            $data['currentSurfaceStateId'] = $newState->id;
+            $data['selectedSurfaceState'] = $newState;
 
             $surface->states[] = $newState;
-        } else {
-            // Delete states that have no artworks
-            foreach ($surface->states as $state) {
-                if ($state->artworks->count() === 0) {
-                    $state->delete();
-                }
-            }
-            // Reload states after deletion
-            $surface->load([
-                'states' => fn($query) => $query->forLayout($layout->id),
-                'states.artworks.media',
-                'states.comments.user',
-                'states.likes.user'
-            ]);
         }
+
 
         foreach ($surface->states as $surfaceState) {
  
@@ -153,25 +141,6 @@ class SurfaceStateController extends Controller
 
         $initial_artworks = json_decode($request->assigned_artwork, true);
         
-        // Check if there are no artworks assigned
-        if (empty($initial_artworks)) {
-            // If state exists and has no artworks, delete it
-            if ($request->get('surface_state_id')) {
-                $state = SurfaceState::findOrFail($request->surface_state_id);
-                $state->delete();
-                
-                return redirect()->route($request->return_to_versions ? "tours.surfaces" : "tours.show", [
-                    $surface->tour,
-                    'spot_id' => $request->spot_id,
-                    'layout_id' => $request->layout_id,
-                    'hlookat' => $request->hlookat,
-                    'vlookat' => $request->vlookat,
-                ])->with('success', 'Surface state removed due to no artworks');
-            }
-            
-            return redirect()->back()->with('error', 'Cannot save state without artworks');
-        }
-
         $assigned_artworks = array();
 
         $boundingBoxWidth = $surface->data["bounding_box_width"];
