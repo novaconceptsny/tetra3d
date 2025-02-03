@@ -87,6 +87,20 @@ class SurfaceStateController extends Controller
             }
 
             $surface->states[] = $newState;
+        } else {
+            // Delete states that have no artworks
+            foreach ($surface->states as $state) {
+                if ($state->artworks->count() === 0) {
+                    $state->delete();
+                }
+            }
+            // Reload states after deletion
+            $surface->load([
+                'states' => fn($query) => $query->forLayout($layout->id),
+                'states.artworks.media',
+                'states.comments.user',
+                'states.likes.user'
+            ]);
         }
 
         foreach ($surface->states as $surfaceState) {
