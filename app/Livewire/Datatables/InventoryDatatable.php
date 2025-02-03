@@ -43,7 +43,7 @@ class InventoryDatatable extends BaseDatatable
 
     public function render()
     {
-        $data = array();
+        $data = [];
 
         $data['heading'] = __('Inventory');
 
