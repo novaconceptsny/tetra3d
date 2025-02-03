@@ -253,17 +253,6 @@ class SurfaceStateController extends Controller
 
         }
 
-        // if ($request->new) {
-        //     $state = $surface->createNewState($request->layout_id);
-        //     $state->update([
-        //         'name' => $request->name,
-        //     ]);
-        // } else {
-        //     $state = $request->get('surface_state_id')
-        //         ? SurfaceState::findOrFail($request->surface_state_id)
-        //         : $surface->getCurrentState($request->layout_id);
-        // }
-
         $state = $request->get('surface_state_id')
             ? SurfaceState::findOrFail($request->surface_state_id)
             : $surface->getCurrentState($request->layout_id);
@@ -304,6 +293,19 @@ class SurfaceStateController extends Controller
 
         $state->addActivity($request->new ? 'created' : 'updated');
         $state->save();
+
+        $records = SurfaceState::where('surface_id', $surface->id)
+            ->where('layout_id', $layout->id)
+            ->orderBy('id') // Ensure the lowest ID is first
+            ->get();
+        // Step 2: If there are duplicates, delete all except the first one
+        if ($records->count() > 1) {
+            $firstRecord = $records->first(); // Keep the first one
+            SurfaceState::where('surface_id', $surface->id)
+                ->where('layout_id', $layout->id)
+                ->where('id', '!=', $firstRecord->id) // Delete all other duplicates
+                ->delete();
+        }
 
         return redirect()->route($route, [
             $surface->tour,
