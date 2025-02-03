@@ -71,21 +71,20 @@ class SurfaceStateController extends Controller
 
         $canvases = array();
 
-        $states = SurfaceState::where('surface_id', $surface->id)
-            ->where('layout_id', $layout->id)
-            ->orderBy('id') // Ensure the lowest ID is first
-            ->get();
-
-        if ($states->count() === 0 || !$states->count() || $create_new_state) {
+        if (!$surface->states->count() || $create_new_state) {
             $newState = new SurfaceState();
-            $newState->user_id = auth()->id();
-            $newState->layout_id = $layout->id;
-            $newState->surface_id = $surface->id;
-            $newState->name = 'Version 1';
-            $newState->save();
 
-            $data['currentSurfaceStateId'] = $newState->id;
-            $data['selectedSurfaceState'] = $newState;
+            // initialize new state
+            if (!$surface->states->count()) {
+                $newState->user_id = auth()->id();
+                $newState->layout_id = $layout->id;
+                $newState->surface_id = $surface->id;
+                $newState->name = 'Version 1';
+                $newState->save();
+
+                $data['currentSurfaceStateId'] = $newState->id;
+                $data['selectedSurfaceState'] = $newState;
+            }
 
             $surface->states[] = $newState;
         }
