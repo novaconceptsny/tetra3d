@@ -15,7 +15,7 @@ class CanvasManager {
         console.log(this.surfaceStateId, "surfaceStateId")
         console.log(this.assignedArtworks, "assignedArtworks")
         this.surface = data.surface;
-        this.latestState = data.latestState;
+        this.latestState = data.latestState;``
 
         this.canvasApi = new CanvasApi({
             updateEndpoint: data.updateEndpoint,
@@ -114,9 +114,9 @@ class CanvasManager {
         this.fileNameInput.on('keydown', (event) => this.handleEnterKeyOnSaveAs(event));
         this.removeBtn.on('click', () => this.removeSelectedArtwork());
         this.cancelBtn.on('click', () => this.removeAllArtwork());
-        this.saveBtn.on('click', () => this.updateSavedVersion());
-        this.saveAsBtn.on('click', () => this.saveNewVersion());
-        this.confirmSaveBtn.on('click', () => this.confirmSave());
+        //this.saveBtn.on('click', () => this.updateSavedVersion());
+        //this.saveAsBtn.on('click', () => this.saveNewVersion());
+        //this.confirmSaveBtn.on('click', () => this.confirmSave());
         this.return360Btn.on('click', (event) => this.returnTo360(event));
         this.cropBtn.hide();
         this.disableSaveButton();
@@ -448,15 +448,22 @@ class CanvasManager {
         if (this.isInactive()) {
             return;
         }
-
+        /*
+        let artworks = this.canvasState.assignedArtwork.length;
+        console.log("test");
+        console.log("artwork num:"+artworks);
+        debugger;
+        */
+       
         if (!this.surfaceStateId) {
             let artworks = this.canvasState.assignedArtwork.length;
-
+            
+            
             if (artworks < 1) {
                 window.location = event.currentTarget.attributes.href.value
                 return;
             }
-
+            /*
             if (confirm("You have unsaved changes. Are you sure you want to proceed to 360?") === true) {
                 window.location = event.currentTarget.attributes.href.value
                 return;
@@ -464,18 +471,21 @@ class CanvasManager {
                 this.saveNewVersion(event);
                 return;
             }
-
+            */
         }
 
         this.updateSavedVersion();
     }
 
     updateSavedVersion() {
+        
+        //return to 360 button will all go through here
+
         if (this.isInactive()) {
             return;
         }
-
-        if (this.canvasHasOverlap()) {
+        
+        if (this.canvasHasOverlap()) { // not used
             window.alert('There is an overlap');
             return;
         }
@@ -487,10 +497,11 @@ class CanvasManager {
         if (!this.canvasState.isOverlap) {
             this.setAssignmentProperties(this.reverseScale);
             let updates = this.trackChanges();
-
+            
             this.disableSaveButton();
 
             let screenshots = this.exportArtAssignments(this.canvasState['currentVersionData'].version_name);
+
 
             this.canvasApi.updateSurfaceState({
                 surfaceStateId: this.surfaceStateId,
@@ -501,6 +512,7 @@ class CanvasManager {
                 userId: this.user_id,
                 spotId: this.spot_id,
             });
+
         }
     }
 
@@ -514,7 +526,7 @@ class CanvasManager {
             this.boundingBox.opacity = 0;  // hide bounding box
             this.artworkCanvas.backgroundImage.opacity = 0;  // hide background image
 
-            const href = this.artworkCanvas.toDataURL({
+            const href = this.artworkCanvas.toDataURL({ //screenshot action here
                 format: 'png',
                 left: this.boundingBox.left,
                 top: this.boundingBox.top,
@@ -526,7 +538,7 @@ class CanvasManager {
             this.artworkCanvas.backgroundImage.opacity = 100;
             return href;
         };
-
+        
         return { 'thumbnail': captureCanvas(), 'hotspot': captureHotspot() };
     }
 

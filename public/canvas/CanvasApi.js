@@ -4,12 +4,13 @@ class CanvasApi {
         this.layoutId = data.layoutId;
         this.hlookat = data.hlookat;
         this.vlookat = data.vlookat;
+        console.log("dsfdsfsdf");
     }
 
     async createSurfaceState(data) {
         let canvasState = JSON.parse(JSON.stringify(data.canvasState));
         canvasState.savedVersion = true;
-
+        
         let payload = {
             "name": data.filename,
             "assigned_artwork": data.assignedArtwork,
@@ -27,11 +28,11 @@ class CanvasApi {
         this.fakeFormPost(this.updateEndpoint, payload);
 
     }
-
+    
     updateSurfaceState(data) {
+
         let updates = data.updates;
         let screenshots = data.screenshots;
-
         let payload = {
             "surface_state_id": data.surfaceStateId,
             "assigned_artwork": updates['assignedArtwork'],
@@ -57,7 +58,7 @@ class CanvasApi {
             method: 'post'
         });
         let token = $('meta[name="_token"]').attr('content');
-
+        
         $.each(payload, function (key, val) {
             $('<input>').attr({
                 type: "hidden",

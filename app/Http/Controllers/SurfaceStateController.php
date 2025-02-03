@@ -268,7 +268,17 @@ class SurfaceStateController extends Controller
         $state = $request->get('surface_state_id')
             ? SurfaceState::findOrFail($request->surface_state_id)
             : $surface->getCurrentState($request->layout_id);
-
+            //dd($request->surface_state_id);
+            $layoutId=SurfaceState::findOrFail($request->surface_state_id)->layout_id;
+            $surfaceId=SurfaceState::findOrFail($request->surface_state_id)->surface_id;
+            $tempArr = SurfaceState::where('surface_id', $surfaceId)
+                    ->where('layout_id', $layoutId)
+                    ->leftJoin('artwork_surface_state', 'surface_states.id', '=', 'artwork_surface_state.surface_state_id')
+                    ->whereNull('artwork_surface_state.artwork_id') // Ensures no associated artwork
+                    ->select('surface_states.*') // Select only surface states columns
+                    ->get()
+                    ->toArray();
+        dd($tempArr);
         $state->update([
             'canvas' => json_decode($request->canvasState, true),
         ]);
