@@ -46,7 +46,7 @@
                     </div>
                     <div class="modal-body">
                         @if(isset($tour))
-                            <livewire:tour-map :tour="$tour" :layout-id="request('layout_id')"
+                            <livewire:tour-map :tour="$tour" :spot="$spot" :layout-id="request('layout_id')"
                                 :shared_tour_id="$shared_tour_id ?? null" />
                         @endif
                     </div>
