@@ -23,7 +23,10 @@ class TourController extends Controller
         
         foreach($tours as $tour) {
             $models = TourModel::where('tour_id', $tour->id)->get();
-            $tour['has_model'] = !$models->isEmpty();
+            $hasModel = !$models->isEmpty();
+            
+            // Update the has_model column in database
+            $tour->update(['has_model' => $hasModel]);
         }
         
         return view('backend.tour.index', compact('tours'));
