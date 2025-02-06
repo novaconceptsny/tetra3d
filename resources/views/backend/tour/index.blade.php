@@ -7,6 +7,15 @@
 @endsection
 
 @section('content')
+    <style>
+        .switch input[type="checkbox"]:disabled + .slider {
+            cursor: not-allowed;
+        }
+        .switch input[type="checkbox"]:disabled {
+            cursor: not-allowed;
+        }
+    </style>
+
     <div class="card">
         <div class="card-header">
             <div class="float-end">
@@ -23,6 +32,7 @@
                     <thead>
                     <tr>
                         <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('3D Model') }}</th>
                         <th scope="col">{{ __('Spots') }}</th>
                         <th scope="col">{{ __('Surfaces') }}</th>
                         <th scope="col">{{ __('Company') }}</th>
@@ -33,6 +43,12 @@
                     @forelse($tours as $tour)
                         <tr>
                             <td><a href="{{ route('tours.show', $tour) }}" target="_blank">{{ $tour->name }}</a></td>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" class="spot-toggle" data-spot-id="{{ $tour->id }}" {{ $tour['has_model'] ? 'checked' : '' }} disabled>
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
                             <td><a href="{{ route('backend.tours.spots.index', $tour) }}">{{ $tour->spots_count }} Spots</a></td>
                             <td><a href="{{ route('backend.tours.surfaces.index', $tour) }}">{{ $tour->surfaces_count }} Surfaces</a></td>
                             <td>{{ $tour->company->name }}</td>

@@ -6,6 +6,7 @@ use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Tour;
+use App\Models\TourModel;
 use Arr;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,12 @@ class TourController extends Controller
     public function index()
     {
         $tours = Tour::withCount('surfaces', 'spots')->get();
+        
+        foreach($tours as $tour) {
+            $models = TourModel::where('tour_id', $tour->id)->get();
+            $tour['has_model'] = !$models->isEmpty();
+        }
+        
         return view('backend.tour.index', compact('tours'));
     }
 
