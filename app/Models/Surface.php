@@ -109,7 +109,7 @@ class Surface extends Model implements HasMedia
         return $this->belongsTo(Tour::class);
     }
 
-    public function getStateThumbnail($state, $tour_is_shared = false, $space_model = null)
+    public function getStateThumbnail($state, $tour_is_shared = false, $has_model = 0)
     {
         // if the tour is shared tour, and no state present,
         // we will show blank surface
@@ -121,7 +121,7 @@ class Surface extends Model implements HasMedia
         if (!$state){
             return asset('images/defaults/no-artwork.png');
         }
-        if ($space_model == null || $space_model["name"] == 'null')  {
+        if ($has_model === 0)  {
             if (!$state){
                 return asset('images/defaults/no-artwork.png');
             }
