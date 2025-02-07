@@ -20,15 +20,6 @@ class TourController extends Controller
     public function index()
     {
         $tours = Tour::withCount('surfaces', 'spots')->get();
-        
-        foreach($tours as $tour) {
-            $models = TourModel::where('tour_id', $tour->id)->get();
-            $hasModel = !$models->isEmpty();
-            
-            // Update the has_model column in database
-            $tour->update(['has_model' => $hasModel]);
-        }
-        
         return view('backend.tour.index', compact('tours'));
     }
 
