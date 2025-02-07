@@ -9,6 +9,7 @@ use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\SculptureModel;
 use App\Models\Project;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,12 +27,15 @@ class SculptureController extends Controller
 
     public function create()
     {
-        $data = array();
-
-        $data['route'] = route('backend.sculptures.store');
-        $data['method'] = 'POST';
-        $data['artwork_collections'] = ArtworkCollection::all();
-        return view('backend.sculpture.form', $data);
+        $companies = Company::all();
+        $artwork_collections = ArtworkCollection::all();
+        
+        return view('backend.sculpture.form', [
+            'route' => route('backend.sculptures.store'),
+            'method' => 'POST',
+            'companies' => $companies,
+            'artwork_collections' => $artwork_collections,
+        ]);
     }
 
     /**
