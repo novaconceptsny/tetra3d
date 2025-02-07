@@ -13,7 +13,6 @@ $sculpture = $sculpture ?? null;
 $edit_mode = (bool) $sculpture;
 $heading = $heading ?? ($sculpture ? __('Edit Sculpture') : __('Add New Sculpture'));
 $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
-$initial_company_collections = $artwork_collections->where('company_id', old('company_id', $sculpture?->company_id));
 @endphp
 
 <div class="card mb-3">
@@ -43,19 +42,26 @@ $initial_company_collections = $artwork_collections->where('company_id', old('co
                             <x-backend::media-attachment name="interaction" rules="max:20480"
                                 :media="$sculpture?->getFirstMedia('interaction')" />
                         </div>
+                        
                         <x-backend::inputs.select col="col-12 mb-3" id="sculpture-company-select"
                             name="company_id" label="Company" required>
+                            <option value="">Select Company</option>
                             @foreach($companies as $company)
                                 <x-backend::inputs.select-option :value="$company->id" :text="$company->name"
                                     :selected="$sculpture?->company_id" />
                             @endforeach
                         </x-backend::inputs.select>
+
                         <x-backend::inputs.select col="col-12 mb-3" id="sculpture-collection-select"
                             name="artwork_collection_id" label="Collection" required>
-                            @foreach($initial_company_collections as $collection)
-                                <x-backend::inputs.select-option :value="$collection->id" :text="$collection->name"
-                                    :selected="$sculpture?->artwork_collection_id" />
-                            @endforeach
+                            @if($sculpture)
+                                @foreach($artwork_collections->where('company_id', $sculpture->company_id) as $collection)
+                                    <x-backend::inputs.select-option :value="$collection->id" :text="$collection->name"
+                                        :selected="$sculpture?->artwork_collection_id" />
+                                @endforeach
+                            @else
+                                <option value="">Select Company First</option>
+                            @endif
                         </x-backend::inputs.select>
                         <x-backend::inputs.text col="col-12 mb-3" id="sculpture_name" name="name"
                             value="{!! $sculpture?->name !!}" label="Name" required />
@@ -257,8 +263,15 @@ $initial_company_collections = $artwork_collections->where('company_id', old('co
         // Clear current options
         collectionSelect.innerHTML = '';
         
+        if (!companyId) {
+            const option = new Option('Select Company First', '', true, true);
+            option.disabled = true;
+            collectionSelect.add(option);
+            return;
+        }
+        
         // Filter collections for selected company
-        const companyCollections = artwork_collections.filter(collection => 
+        const companyCollections = artwork_collection.filter(collection => 
             collection.company_id == companyId
         );
         
@@ -270,7 +283,7 @@ $initial_company_collections = $artwork_collections->where('company_id', old('co
             });
         } else {
             // Add a placeholder option if no collections exist
-            const option = new Option('No collections available', '', true, true);
+            const option = new Option('No collections available for this company', '', true, true);
             option.disabled = true;
             collectionSelect.add(option);
         }
