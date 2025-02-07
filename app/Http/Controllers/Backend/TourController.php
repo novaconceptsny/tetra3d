@@ -110,4 +110,13 @@ class TourController extends Controller
         return redirect()->back()->with('success', 'Tour deleted successfully');
 
     }
+
+    public function toggleModel(Tour $tour)
+    {
+        $tour->update([
+            'has_model' => !$tour->has_model
+        ]);
+
+        return response()->json(['success' => true]);
+    }
 }

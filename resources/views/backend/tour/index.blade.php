@@ -7,15 +7,6 @@
 @endsection
 
 @section('content')
-    <style>
-        .switch input[type="checkbox"]:disabled + .slider {
-            cursor: not-allowed;
-        }
-        .switch input[type="checkbox"]:disabled {
-            cursor: not-allowed;
-        }
-    </style>
-
     <div class="card">
         <div class="card-header">
             <div class="float-end">
@@ -45,7 +36,7 @@
                             <td><a href="{{ route('tours.show', $tour) }}" target="_blank">{{ $tour->name }}</a></td>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" class="spot-toggle" data-spot-id="{{ $tour->id }}" {{ $tour['has_model'] ? 'checked' : '' }} disabled>
+                                    <input type="checkbox" class="spot-toggle" data-spot-id="{{ $tour->id }}" {{ $tour['has_model'] ? 'checked' : '' }}>
                                     <span class="slider round"></span>
                                 </label>
                             </td>
@@ -95,4 +86,36 @@
         </div>
         <div class="card-footer py-0"></div>
     </div>
+
+    @section('scripts')
+    <script>
+        console.log("testttttttttt")
+        document.querySelectorAll('.spot-toggle').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const tourId = this.dataset.spotId;
+                
+                fetch(`/backend/tours/${tourId}/toggle-model`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        // Revert checkbox if update failed
+                        this.checked = !this.checked;
+                    }
+                })
+                .catch(error => {
+                    // Revert checkbox on error
+                    this.checked = !this.checked;
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+    @endsection
 @endsection
