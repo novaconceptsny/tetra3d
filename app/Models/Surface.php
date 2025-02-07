@@ -118,9 +118,6 @@ class Surface extends Model implements HasMedia
             return '';
         }
 
-        if (!$state){
-            return asset('images/defaults/no-artwork.png');
-        }
         if ($has_model === 0)  {
             if (!$state){
                 return asset('images/defaults/no-artwork.png');
