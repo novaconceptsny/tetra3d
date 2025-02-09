@@ -48,8 +48,8 @@
                                                 <h5 class="modal-title" id="confirmModalLabel{{ $tour->id }}">Confirm Change</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to switch this tour to 3D?
+                                            <div class="modal-body" id="modalBody{{ $tour->id }}">
+                                                <!-- Modal message will be set dynamically -->
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -115,23 +115,18 @@
                 const tourId = this.dataset.spotId;
                 const currentState = this.checked;
                 
-                // Only show modal when trying to check the checkbox
-                if (currentState) {
-                    // If checking, show the confirmation modal
-                    const modal = new bootstrap.Modal(document.getElementById(`confirmModal${tourId}`));
-                    // Reset checkbox to its original state when showing modal
-                    this.checked = false;
-                    modal.show();
-                } else {
-                    // If unchecking, proceed with the original logic
-                    this.checked = true; // Keep the current state until API responds
-                    updateTourModel(tourId, this)
-                        .then(success => {
-                            if (!success) {
-                                this.checked = true; // Revert if API call failed
-                            }
-                        });
-                }
+                // Show confirmation modal for both enabling and disabling
+                const modal = new bootstrap.Modal(document.getElementById(`confirmModal${tourId}`));
+                const modalBody = document.getElementById(`modalBody${tourId}`);
+                
+                // Set appropriate message based on the action
+                modalBody.textContent = currentState 
+                    ? "Are you sure you want to switch this tour to 3D?"
+                    : "Are you sure you want to disable 3D mode for this tour?";
+                
+                // Reset checkbox to its original state when showing modal
+                this.checked = !currentState;
+                modal.show();
             });
         });
 
@@ -143,8 +138,10 @@
                 const modal = bootstrap.Modal.getInstance(document.getElementById(`confirmModal${tourId}`));
                 
                 updateTourModel(tourId, checkbox)
-                    .then(() => {
-                        modal.hide();
+                    .then(success => {
+                        if (success) {
+                            modal.hide();
+                        }
                     });
             });
         });
