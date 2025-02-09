@@ -46,12 +46,15 @@ class SculptureController extends Controller
         $request->validate(ValidationRules::storeSculpture());
 
         $sculptureModel = SculptureModel::create($request->only([
+            'company_id',
             'name',
             'artist',
             'type',
             'data',
             'artwork_collection_id'
         ]));
+
+        error_log($sculptureModel);
 
         $sculptureModel->addFromMediaLibraryRequest($request->sculpture)
             ->toMediaCollection('sculpture');
@@ -66,7 +69,8 @@ class SculptureController extends Controller
 
         
         Activity::create([
-            'user_id' => auth()->id(),
+            'user_id' => auth()->user()->id,
+            'company_id' => $sculptureModel->company_id,
             'activity' => "Sculpture '{$sculptureModel->name}' Created",
         ]);
 
@@ -97,6 +101,7 @@ class SculptureController extends Controller
         $data['method'] = 'PUT';
         $data['sculpture'] = $sculpture;
         $data['artwork_collections'] = ArtworkCollection::all();
+        $data['companies'] = Company::all();
 
         return view('backend.sculpture.form', $data);
     }
@@ -109,6 +114,7 @@ class SculptureController extends Controller
         $request->validate(ValidationRules::updateSculpture());
 
         $sculpture->update($request->only([
+            'company_id',
             'name',
             'artist',
             'type',
