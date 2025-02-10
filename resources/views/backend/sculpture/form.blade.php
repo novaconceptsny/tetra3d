@@ -270,6 +270,10 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
             return;
         }
         
+        // Add default "Select a Collection" option
+        const defaultOption = new Option('Select a Collection', '');
+        collectionSelect.add(defaultOption);
+        
         // Filter collections for selected company
         const companyCollections = artwork_collection.filter(collection => 
             collection.company_id == companyId

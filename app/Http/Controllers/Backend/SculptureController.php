@@ -68,11 +68,11 @@ class SculptureController extends Controller
         $sculptureModel->refresh();
 
         
-        Activity::create([
-            'user_id' => auth()->user()->id,
-            'company_id' => $sculptureModel->company_id,
-            'activity' => "Sculpture '{$sculptureModel->name}' Created",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->user()->id,
+        //     'company_id' => $sculptureModel->company_id,
+        //     'activity' => "Sculpture '{$sculptureModel->name}' Created",
+        // ]);
 
         return redirect()->back()->with('success', 'Sculpture created successfully');
     }
@@ -90,10 +90,10 @@ class SculptureController extends Controller
      */
     public function edit(SculptureModel $sculpture)
     {
-        Activity::create([
-            'user_id' => auth()->id(),
-            'activity' => "Sculpture '{$sculpture->name}' Edited",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->id(),
+        //     'activity' => "Sculpture '{$sculpture->name}' Edited",
+        // ]);
 
         $data = array();
 
@@ -133,10 +133,10 @@ class SculptureController extends Controller
 
         $sculpture->refresh();
 
-        Activity::create([
-            'user_id' => auth()->id(),
-            'activity' => "Sculpture '{$sculpture->name}' Updated",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->id(),
+        //     'activity' => "Sculpture '{$sculpture->name}' Updated",
+        // ]);
 
         return view('backend.sculpture.index')->with('success', 'Sculpture updated successfully');
     }
@@ -148,10 +148,10 @@ class SculptureController extends Controller
     {
         $sculpture->delete();
 
-        Activity::create([
-            'user_id' => auth()->id(),
-            'activity' => "Sculpture '{$sculpture->name}' Deleted",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->id(),
+        //     'activity' => "Sculpture '{$sculpture->name}' Deleted",
+        // ]);
 
         return redirect()->back()->with('success', 'Sculpture deleted successfully');
     }
