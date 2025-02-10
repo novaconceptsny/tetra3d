@@ -114,35 +114,37 @@ class InventoryDatatable extends BaseDatatable
 
         $artworkRows = $artworkQuery
             ->whereAnyColumnLike($this->search)
-            ->paginate($this->perPage);
+            ->get();
 
         $sculptureRows = $sculptureQuery
             ->whereAnyColumnLike($this->search)
-            ->paginate($this->perPage);
+            ->get();
 
-        $sculptureRows->getCollection()->transform(function ($row) {
+        $sculptureRows->transform(function ($row) {
             $row->company_name = $row->company->name;
             $row->collection_name = $row->collection?->name;
             $row->route_prefix = 'sculpture';
             return $row;
         });
 
-        $artworkRows->getCollection()->transform(function ($row) {
+        $artworkRows->transform(function ($row) {
             $row->company_name = $row->company->name;
             $row->collection_name = $row->collection?->name;
             $row->route_prefix = 'artwork';
             return $row;
         });
 
-        $mergedCollection = $artworkRows->merge($sculptureRows);
+        // Merge collections first, then sort
+        $mergedCollection = $artworkRows->concat($sculptureRows);
         
-        // Sort the merged collection by date
+        // Sort the entire merged collection by date
         if ($this->sortBy === 'created_at') {
             $mergedCollection = $mergedCollection->sortBy([
                 ['created_at', $this->sortOrder === 'desc' ? 'desc' : 'asc']
             ]);
         }
 
+        // Apply pagination after sorting
         $page = request()->get('page', 1);
         $perPage = $this->perPage;
         $items = $mergedCollection->forPage($page, $perPage);
