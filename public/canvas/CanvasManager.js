@@ -15,6 +15,7 @@ class CanvasManager {
         console.log(this.surfaceStateId, "surfaceStateId")
         console.log(this.assignedArtworks, "assignedArtworks")
         this.surface = data.surface;
+        this.surfaceData = this.surface.data;
         this.latestState = data.latestState;
 
         this.canvasApi = new CanvasApi({
@@ -136,6 +137,9 @@ class CanvasManager {
 
         this.registerArtworkSelectionEvent();
         this.registerCanvasUpdateEvent();
+
+        // Add guide-related initialization
+        this.initializeGuides();
     }
 
     registerCanvasUpdateEvent() {
@@ -729,6 +733,188 @@ class CanvasManager {
 
     isActive() {
         return this.active;
+    }
+
+    initializeGuides() {
+        document.getElementById('add-horz-guide')?.addEventListener('click', () => this.createGuide(true));
+        document.getElementById('add-vert-guide')?.addEventListener('click', () => this.createGuide(false));
+
+        // Listen for guide movement
+        this.artworkCanvas.on('object:moving', (e) => {
+            const obj = e.target;
+            if (obj && obj.type === 'line' && obj.isGuide) {
+                this.updateGuide(obj);
+            }
+        });
+    }
+
+    pixelsToFeetInches(pixels) {
+        // Convert pixels to feet/inches based on your canvas's actual width
+        const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
+        const totalInches = pixels * inchesPerPixel;
+
+        const feet = Math.floor(totalInches / 12);
+        const inches = Math.round(totalInches % 12);
+
+        return feet > 0 ? `${feet}'${inches}"` : `${inches}"`;
+    }
+
+    createGuide(isHorizontal) {
+        if (this.isInactive()) return;
+
+        const boundingBoxWidth = this.surfaceData['bounding_box_width'] * this.baseScale;
+        const boundingBoxHeight = this.surfaceData['bounding_box_height'] * this.baseScale;
+        const boundingBoxTop = this.surfaceData['bounding_box_top'] * this.baseScale;
+        const boundingBoxLeft = this.surfaceData['bounding_box_left'] * this.baseScale;
+
+        let line, labelA, labelB;
+
+        if (isHorizontal) {
+            line = new fabric.Line([0, 0, boundingBoxWidth, 0], {
+                stroke: '#FF4444',
+                strokeWidth: 1,
+                left: boundingBoxLeft,
+                top: boundingBoxTop + boundingBoxHeight / 2,
+                hasControls: false,
+                hasBorders: false,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                selectable: true,
+                hoverCursor: 'move',
+                padding: 10,
+                isGuide: true
+            });
+
+            labelA = new fabric.Text('0', {
+                fontSize: 12,
+                fill: '#FF4444',
+                backgroundColor: 'white',
+                left: 10 + boundingBoxLeft,
+                selectable: false,
+                evented: false
+            });
+
+            labelB = new fabric.Text('0', {
+                fontSize: 12,
+                fill: '#FF4444',
+                backgroundColor: 'white',
+                left: 10 + boundingBoxLeft,
+                selectable: false,
+                evented: false
+            });
+        } else {
+            line = new fabric.Line([0, 0, 0, boundingBoxHeight], {
+                stroke: '#4444FF',
+                strokeWidth: 1,
+                left: boundingBoxLeft + boundingBoxWidth / 2,
+                top: boundingBoxTop,
+                hasControls: false,
+                hasBorders: false,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                selectable: true,
+                hoverCursor: 'move',
+                padding: 10,
+                isGuide: true
+            });
+
+            labelA = new fabric.Text('0', {
+                fontSize: 12,
+                fill: '#4444FF',
+                backgroundColor: 'white',
+                selectable: false,
+                evented: false
+            });
+
+            labelB = new fabric.Text('0', {
+                fontSize: 12,
+                fill: '#4444FF',
+                backgroundColor: 'white',
+                selectable: false,
+                evented: false
+            });
+        }
+
+        line.labelA = labelA;
+        line.labelB = labelB;
+
+        this.artworkCanvas.add(line);
+        this.artworkCanvas.add(labelA);
+        this.artworkCanvas.add(labelB);
+
+        this.updateGuide(line);
+        this.artworkCanvas.renderAll();
+    }
+
+    updateGuide(line) {
+        const isHorizontal = line.y1 === line.y2;
+        const boundingBoxWidth = this.surfaceData['bounding_box_width'] * this.baseScale;
+        const boundingBoxHeight = this.surfaceData['bounding_box_height'] * this.baseScale;
+        const boundingBoxTop = this.surfaceData['bounding_box_top'] * this.baseScale;
+        const boundingBoxLeft = this.surfaceData['bounding_box_left'] * this.baseScale;
+
+        if (isHorizontal) {
+            const y = line.top;
+            const x = line.left;
+            line.set({
+                x1: 0,
+                y1: 0,
+                x2: boundingBoxWidth,
+                y2: 0,
+                left: x,
+                top: y
+            });
+
+            const distTop = this.pixelsToFeetInches(y);
+            const distBottom = this.pixelsToFeetInches(boundingBoxHeight - y);
+
+            line.labelA.set({
+                text: distTop,
+                left: 10 + boundingBoxLeft,
+                top: y - 20
+            });
+
+            line.labelB.set({
+                text: distBottom,
+                left: 10 + boundingBoxLeft,
+                top: y + 5
+            });
+        } else {
+            const x = line.left;
+            const y = line.top;
+            line.set({
+                x1: 0,
+                y1: 0,
+                x2: 0,
+                y2: boundingBoxHeight,
+                left: x,
+                top: y
+            });
+
+            const distLeft = this.pixelsToFeetInches(x);
+            const distRight = this.pixelsToFeetInches(boundingBoxWidth - x);
+
+            line.labelA.set({
+                text: distLeft,
+                left: x - 40,
+                top: 10 + boundingBoxTop
+            });
+
+            line.labelB.set({
+                text: distRight,
+                left: x + 5,
+                top: 10 + boundingBoxTop
+            });
+        }
+
+        line.labelA.setCoords();
+        line.labelB.setCoords();
+
+        this.artworkCanvas.bringToFront(line);
+        this.artworkCanvas.bringToFront(line.labelA);
+        this.artworkCanvas.bringToFront(line.labelB);
     }
 }
 

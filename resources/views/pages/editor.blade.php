@@ -43,6 +43,14 @@
             <div class="col-9 main-col position-relative"
                 x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
                 <x-editor-actions />
+                <div class="guide-controls mb-2">
+                    <button class="btn btn-outline-secondary btn-sm" id="add-horz-guide">
+                        <i class="fal fa-arrows-alt-h"></i> Add Horizontal Guide
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" id="add-vert-guide">
+                        <i class="fal fa-arrows-alt-v"></i> Add Vertical Guide
+                    </button>
+                </div>
                 <div x-cloak style="position: absolute; inset: auto 10px 0 auto; z-index: 10; background:#ffc107 "
                     class="alert alert-warning alert-dismissible fade show rounded-0 border-0"
                     x-show="changedCanvases > 1">
