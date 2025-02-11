@@ -885,7 +885,9 @@ class CanvasManager {
         const boundingBoxLeft = this.surfaceData['bounding_box_left'] * this.baseScale;
 
         if (isHorizontal) {
-            const y = line.top;
+            // Constrain vertical position within bounding box
+            let y = Math.min(Math.max(line.top, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
+            
             line.set({
                 x1: 0,
                 y1: 0,
@@ -910,7 +912,9 @@ class CanvasManager {
                 top: y + 5
             });
         } else {
-            const x = line.left;
+            // Constrain horizontal position within bounding box
+            let x = Math.min(Math.max(line.left, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
+            
             line.set({
                 x1: 0,
                 y1: 0,
