@@ -42,12 +42,26 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
                             <x-backend::media-attachment name="interaction" rules="max:20480"
                                 :media="$sculpture?->getFirstMedia('interaction')" />
                         </div>
+                        
+                        <x-backend::inputs.select col="col-12 mb-3" id="sculpture-company-select"
+                            name="company_id" label="Company" required>
+                            <option value="">Select Company</option>
+                            @foreach($companies as $company)
+                                <x-backend::inputs.select-option :value="$company->id" :text="$company->name"
+                                    :selected="$sculpture?->company_id" />
+                            @endforeach
+                        </x-backend::inputs.select>
+
                         <x-backend::inputs.select col="col-12 mb-3" id="sculpture-collection-select"
                             name="artwork_collection_id" label="Collection" required>
-                            @foreach($artwork_collections as $collection)
-                                <x-backend::inputs.select-option :value="$collection->id" :text="$collection->name"
-                                    :selected="$sculpture?->artwork_collection_id" />
-                            @endforeach
+                            @if($sculpture)
+                                @foreach($artwork_collections->where('company_id', $sculpture->company_id) as $collection)
+                                    <x-backend::inputs.select-option :value="$collection->id" :text="$collection->name"
+                                        :selected="$sculpture?->artwork_collection_id" />
+                                @endforeach
+                            @else
+                                <option value="">Select Company First</option>
+                            @endif
                         </x-backend::inputs.select>
                         <x-backend::inputs.text col="col-12 mb-3" id="sculpture_name" name="name"
                             value="{!! $sculpture?->name !!}" label="Name" required />
@@ -239,6 +253,51 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
     $('#sculpture_type').on('keydown', function (event) {
         if (event.keyCode == 13) {
             event.preventDefault();
+        }
+    });
+
+    document.getElementById('sculpture-company-select').addEventListener('change', function() {
+        const companyId = this.value;
+        const collectionSelect = document.getElementById('sculpture-collection-select');
+        
+        // Clear current options
+        collectionSelect.innerHTML = '';
+        
+        if (!companyId) {
+            const option = new Option('Select Company First', '', true, true);
+            option.disabled = true;
+            collectionSelect.add(option);
+            return;
+        }
+        
+        // Add default "Select a Collection" option
+        const defaultOption = new Option('Select a Collection', '');
+        collectionSelect.add(defaultOption);
+        
+        // Filter collections for selected company
+        const companyCollections = artwork_collection.filter(collection => 
+            collection.company_id == companyId
+        );
+        
+        // Add new options
+        if (companyCollections.length > 0) {
+            companyCollections.forEach(collection => {
+                const option = new Option(collection.name, collection.id);
+                collectionSelect.add(option);
+            });
+        } else {
+            // Add a placeholder option if no collections exist
+            const option = new Option('No collections available for this company', '', true, true);
+            option.disabled = true;
+            collectionSelect.add(option);
+        }
+    });
+
+    // Trigger change event on page load if company is selected
+    window.addEventListener('load', function() {
+        const companySelect = document.getElementById('sculpture-company-select');
+        if (companySelect.value) {
+            companySelect.dispatchEvent(new Event('change'));
         }
     });
 </script>

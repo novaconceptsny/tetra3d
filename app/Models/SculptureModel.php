@@ -16,7 +16,7 @@ class SculptureModel extends Model implements HasMedia
 {
     use HasCompany, InteractsWithMedia, Sortable, Searchable;
 
-    protected $fillable = ['artwork_collection_id', 'name', 'artist', 'type', 'sculpture_url', 'image_url', 'data'] ;
+    protected $fillable = ['artwork_collection_id', 'company_id', 'name', 'artist', 'type', 'sculpture_url', 'image_url', 'data'] ;
 
     protected $guarded = ['id'];
 

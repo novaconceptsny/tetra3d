@@ -177,7 +177,7 @@
             readonly: "{{ $readonly || $tour_is_shared}}",
 
             @foreach ($spot->surfaces as $surface)
-                {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared, $tourModel) }}',
+                {{ "surface_{$surface->id}" }}: '{{ $surface->getStateThumbnail($surface->state, $tour_is_shared, $tour->has_model) }}',
             @endforeach
             },
         });
@@ -275,6 +275,7 @@
     var space_model = @json($tourModel);
     var tour_is_shared = @json($tour_is_shared);
     var user_name = @json($userName);
+    var has_model = {{ $tour->has_model === 1 ? 'true' : 'false' }};
 
     var sculptureUrls = {
             @foreach($sculptures as $sculpture)
@@ -328,7 +329,7 @@
     });
 
     var delay_interval = setInterval(function () {
-        if (window.scene !== undefined) {
+        if (window.scene !== undefined && has_model) {
             clearInterval(delay_interval);
             if (space_model == null || space_model.name == 'null') {
                 alert("No 3D space model");

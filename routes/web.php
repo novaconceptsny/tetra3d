@@ -80,4 +80,7 @@ Route::group([
     Route::resource('tours.spots', 'SpotController')->shallow();
     Route::resource('tours.surfaces', 'SurfaceController')
         ->shallow();
+
+    Route::patch('/tours/{tour}/toggle-model', 'TourController@toggleModel')
+        ->name('backend.tours.toggle-model');
 });

@@ -9,6 +9,7 @@ use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\SculptureModel;
 use App\Models\Project;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,12 +27,15 @@ class SculptureController extends Controller
 
     public function create()
     {
-        $data = array();
-
-        $data['route'] = route('backend.sculptures.store');
-        $data['method'] = 'POST';
-        $data['artwork_collections'] = ArtworkCollection::all();
-        return view('backend.sculpture.form', $data);
+        $companies = Company::all();
+        $artwork_collections = ArtworkCollection::all();
+        
+        return view('backend.sculpture.form', [
+            'route' => route('backend.sculptures.store'),
+            'method' => 'POST',
+            'companies' => $companies,
+            'artwork_collections' => $artwork_collections,
+        ]);
     }
 
     /**
@@ -42,12 +46,15 @@ class SculptureController extends Controller
         $request->validate(ValidationRules::storeSculpture());
 
         $sculptureModel = SculptureModel::create($request->only([
+            'company_id',
             'name',
             'artist',
             'type',
             'data',
             'artwork_collection_id'
         ]));
+
+        error_log($sculptureModel);
 
         $sculptureModel->addFromMediaLibraryRequest($request->sculpture)
             ->toMediaCollection('sculpture');
@@ -61,10 +68,11 @@ class SculptureController extends Controller
         $sculptureModel->refresh();
 
         
-        Activity::create([
-            'user_id' => auth()->id(),
-            'activity' => "Sculpture '{$sculptureModel->name}' Created",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->user()->id,
+        //     'company_id' => $sculptureModel->company_id,
+        //     'activity' => "Sculpture '{$sculptureModel->name}' Created",
+        // ]);
 
         return redirect()->back()->with('success', 'Sculpture created successfully');
     }
@@ -82,10 +90,10 @@ class SculptureController extends Controller
      */
     public function edit(SculptureModel $sculpture)
     {
-        Activity::create([
-            'user_id' => auth()->id(),
-            'activity' => "Sculpture '{$sculpture->name}' Edited",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->id(),
+        //     'activity' => "Sculpture '{$sculpture->name}' Edited",
+        // ]);
 
         $data = array();
 
@@ -93,6 +101,7 @@ class SculptureController extends Controller
         $data['method'] = 'PUT';
         $data['sculpture'] = $sculpture;
         $data['artwork_collections'] = ArtworkCollection::all();
+        $data['companies'] = Company::all();
 
         return view('backend.sculpture.form', $data);
     }
@@ -105,6 +114,7 @@ class SculptureController extends Controller
         $request->validate(ValidationRules::updateSculpture());
 
         $sculpture->update($request->only([
+            'company_id',
             'name',
             'artist',
             'type',
@@ -123,10 +133,10 @@ class SculptureController extends Controller
 
         $sculpture->refresh();
 
-        Activity::create([
-            'user_id' => auth()->id(),
-            'activity' => "Sculpture '{$sculpture->name}' Updated",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->id(),
+        //     'activity' => "Sculpture '{$sculpture->name}' Updated",
+        // ]);
 
         return view('backend.sculpture.index')->with('success', 'Sculpture updated successfully');
     }
@@ -138,10 +148,10 @@ class SculptureController extends Controller
     {
         $sculpture->delete();
 
-        Activity::create([
-            'user_id' => auth()->id(),
-            'activity' => "Sculpture '{$sculpture->name}' Deleted",
-        ]);
+        // Activity::create([
+        //     'user_id' => auth()->id(),
+        //     'activity' => "Sculpture '{$sculpture->name}' Deleted",
+        // ]);
 
         return redirect()->back()->with('success', 'Sculpture deleted successfully');
     }

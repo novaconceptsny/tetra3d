@@ -15,6 +15,15 @@ class Tour extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'name',
+        'company_id',
+        'created_at',
+        'updated_at',
+        'has_model'
+    ];
+
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('thumbnail')->singleFile();

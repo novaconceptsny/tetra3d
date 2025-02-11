@@ -23,6 +23,7 @@
                     <thead>
                     <tr>
                         <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('3D Model') }}</th>
                         <th scope="col">{{ __('Spots') }}</th>
                         <th scope="col">{{ __('Surfaces') }}</th>
                         <th scope="col">{{ __('Company') }}</th>
@@ -33,6 +34,31 @@
                     @forelse($tours as $tour)
                         <tr>
                             <td><a href="{{ route('tours.show', $tour) }}" target="_blank">{{ $tour->name }}</a></td>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" class="spot-toggle" data-spot-id="{{ $tour->id }}" {{ $tour['has_model'] ? 'checked' : '' }}>
+                                    <span class="slider round"></span>
+                                </label>
+                                
+                                <!-- Add modal for each tour -->
+                                <div class="modal fade" id="confirmModal{{ $tour->id }}" tabindex="-1" aria-labelledby="confirmModalLabel{{ $tour->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmModalLabel{{ $tour->id }}">Confirm Change</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body" id="modalBody{{ $tour->id }}">
+                                                <!-- Modal message will be set dynamically -->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-primary confirm-toggle" data-tour-id="{{ $tour->id }}">Confirm</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
                             <td><a href="{{ route('backend.tours.spots.index', $tour) }}">{{ $tour->spots_count }} Spots</a></td>
                             <td><a href="{{ route('backend.tours.surfaces.index', $tour) }}">{{ $tour->surfaces_count }} Surfaces</a></td>
                             <td>{{ $tour->company->name }}</td>
@@ -79,4 +105,69 @@
         </div>
         <div class="card-footer py-0"></div>
     </div>
+
+    @section('scripts')
+    <script>
+        document.querySelectorAll('.spot-toggle').forEach(checkbox => {
+            checkbox.addEventListener('change', function(e) {
+                // Prevent the default checkbox behavior
+                e.preventDefault();
+                const tourId = this.dataset.spotId;
+                const currentState = this.checked;
+                
+                // Show confirmation modal for both enabling and disabling
+                const modal = new bootstrap.Modal(document.getElementById(`confirmModal${tourId}`));
+                const modalBody = document.getElementById(`modalBody${tourId}`);
+                
+                // Set appropriate message based on the action
+                modalBody.textContent = currentState 
+                    ? "Are you sure you want to switch this tour to 3D?"
+                    : "Are you sure you want to disable 3D mode for this tour?";
+                
+                // Reset checkbox to its original state when showing modal
+                this.checked = !currentState;
+                modal.show();
+            });
+        });
+
+        // Add event listeners for confirm buttons
+        document.querySelectorAll('.confirm-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const tourId = this.dataset.tourId;
+                const checkbox = document.querySelector(`.spot-toggle[data-spot-id="${tourId}"]`);
+                const modal = bootstrap.Modal.getInstance(document.getElementById(`confirmModal${tourId}`));
+                
+                updateTourModel(tourId, checkbox)
+                    .then(success => {
+                        if (success) {
+                            modal.hide();
+                        }
+                    });
+            });
+        });
+
+        function updateTourModel(tourId, checkbox) {
+            return fetch(`/backend/tours/${tourId}/toggle-model`, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    checkbox.checked = !checkbox.checked;
+                    return true;
+                }
+                return false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                return false;
+            });
+        }
+    </script>
+    @endsection
 @endsection

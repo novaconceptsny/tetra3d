@@ -6,6 +6,7 @@ use App\Helpers\ValidationRules;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Tour;
+use App\Models\TourModel;
 use Arr;
 use Illuminate\Http\Request;
 
@@ -99,5 +100,14 @@ class TourController extends Controller
 
         return redirect()->back()->with('success', 'Tour deleted successfully');
 
+    }
+
+    public function toggleModel(Tour $tour)
+    {
+        $tour->update([
+            'has_model' => !$tour->has_model
+        ]);
+
+        return response()->json(['success' => true]);
     }
 }

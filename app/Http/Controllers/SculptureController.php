@@ -50,7 +50,8 @@ class SculptureController extends Controller
 
         $layout = Layout::findOrFail($data['layout_id']);
         $url = route('tours.show', ['tour' => $layout->tour_id, 'layout_id' => $layout->id], false);
-        $activity = "Sculptures updated in layout {$layout->id}";
+        // $activity = "Sculptures updated in layout {$layout->id}";
+        $activity = "Sculpture updated";
 
         Activity::create([
             'project_id' => $layout->project_id,
@@ -100,7 +101,8 @@ class SculptureController extends Controller
             foreach ($sculpture_datas as $sculpture_data)
                 $sculpture_data->delete();
 
-            $activity = "Sculptures deleted in layout {$data['layout_id']}";
+            // $activity = "Sculptures deleted in layout {$data['layout_id']}";
+            $activity = "Sculpture deleted";
             $layout = Layout::findOrFail($data['layout_id']);
             $url = route('tours.show', ['tour' => $layout->tour_id, 'layout_id' => $layout->id], false);
 
