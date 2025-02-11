@@ -867,8 +867,8 @@ class CanvasManager {
                 top: y
             });
 
-            const distTop = this.pixelsToFeetInches(y);
-            const distBottom = this.pixelsToFeetInches(boundingBoxHeight - y);
+            const distTop = this.pixelsToFeetInches(y - boundingBoxTop);
+            const distBottom = this.pixelsToFeetInches(boundingBoxTop + boundingBoxHeight - y);
 
             line.labelA.set({
                 text: distTop,
@@ -893,8 +893,8 @@ class CanvasManager {
                 top: y
             });
 
-            const distLeft = this.pixelsToFeetInches(x);
-            const distRight = this.pixelsToFeetInches(boundingBoxWidth - x);
+            const distLeft = this.pixelsToFeetInches(x - boundingBoxLeft);
+            const distRight = this.pixelsToFeetInches(boundingBoxLeft + boundingBoxWidth - x);
 
             line.labelA.set({
                 text: distLeft,
