@@ -857,13 +857,12 @@ class CanvasManager {
 
         if (isHorizontal) {
             const y = line.top;
-            const x = line.left;
             line.set({
                 x1: 0,
                 y1: 0,
                 x2: boundingBoxWidth,
                 y2: 0,
-                left: x,
+                left: boundingBoxLeft,
                 top: y
             });
 
@@ -883,14 +882,13 @@ class CanvasManager {
             });
         } else {
             const x = line.left;
-            const y = line.top;
             line.set({
                 x1: 0,
                 y1: 0,
                 x2: 0,
                 y2: boundingBoxHeight,
                 left: x,
-                top: y
+                top: boundingBoxTop
             });
 
             const distLeft = this.pixelsToFeetInches(x - boundingBoxLeft);
