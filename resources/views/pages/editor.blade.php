@@ -50,6 +50,9 @@
                     <button class="btn btn-outline-secondary btn-sm" id="add-vert-guide">
                         <i class="fal fa-arrows-alt-v"></i> Add Vertical Guide
                     </button>
+                    <button class="btn btn-outline-secondary btn-sm" id="toggle-guides" data-hidden="false">
+                        <i class="fal fa-eye"></i> Hide Guides
+                    </button>
                 </div>
                 <div x-cloak style="position: absolute; inset: auto 10px 0 auto; z-index: 10; background:#ffc107 "
                     class="alert alert-warning alert-dismissible fade show rounded-0 border-0"

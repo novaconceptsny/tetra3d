@@ -736,8 +736,12 @@ class CanvasManager {
     }
 
     initializeGuides() {
+        // Add a guides array to track all guide lines
+        this.guides = [];
+
         document.getElementById('add-horz-guide')?.addEventListener('click', () => this.createGuide(true));
         document.getElementById('add-vert-guide')?.addEventListener('click', () => this.createGuide(false));
+        document.getElementById('toggle-guides')?.addEventListener('click', () => this.toggleGuides());
 
         // Listen for guide movement
         this.artworkCanvas.on('object:moving', (e) => {
@@ -769,6 +773,18 @@ class CanvasManager {
 
         let line, labelA, labelB;
 
+        // Reset toggle button state to show all guides
+        const button = document.getElementById('toggle-guides');
+        button.setAttribute('data-hidden', 'false');
+        button.innerHTML = '<i class="fal fa-eye"></i> Hide Guides';
+
+        // Make all existing guides visible
+        this.guides.forEach(guide => {
+            guide.line.visible = true;
+            guide.labelA.visible = true;
+            guide.labelB.visible = true;
+        });
+
         if (isHorizontal) {
             line = new fabric.Line([0, 0, boundingBoxWidth, 0], {
                 stroke: '#FF4444',
@@ -783,7 +799,8 @@ class CanvasManager {
                 selectable: true,
                 hoverCursor: 'move',
                 padding: 10,
-                isGuide: true
+                isGuide: true,
+                visible: true  // Always visible when created
             });
 
             labelA = new fabric.Text('0', {
@@ -792,7 +809,8 @@ class CanvasManager {
                 backgroundColor: 'white',
                 left: 10 + boundingBoxLeft,
                 selectable: false,
-                evented: false
+                evented: false,
+                visible: true  // Always visible when created
             });
 
             labelB = new fabric.Text('0', {
@@ -801,7 +819,8 @@ class CanvasManager {
                 backgroundColor: 'white',
                 left: 10 + boundingBoxLeft,
                 selectable: false,
-                evented: false
+                evented: false,
+                visible: true  // Always visible when created
             });
         } else {
             line = new fabric.Line([0, 0, 0, boundingBoxHeight], {
@@ -817,7 +836,8 @@ class CanvasManager {
                 selectable: true,
                 hoverCursor: 'move',
                 padding: 10,
-                isGuide: true
+                isGuide: true,
+                visible: true  // Always visible when created
             });
 
             labelA = new fabric.Text('0', {
@@ -825,7 +845,8 @@ class CanvasManager {
                 fill: '#4444FF',
                 backgroundColor: 'white',
                 selectable: false,
-                evented: false
+                evented: false,
+                visible: true  // Always visible when created
             });
 
             labelB = new fabric.Text('0', {
@@ -833,12 +854,20 @@ class CanvasManager {
                 fill: '#4444FF',
                 backgroundColor: 'white',
                 selectable: false,
-                evented: false
+                evented: false,
+                visible: true  // Always visible when created
             });
         }
 
         line.labelA = labelA;
         line.labelB = labelB;
+
+        // Add the guide and its labels to our guides array
+        this.guides.push({
+            line: line,
+            labelA: labelA,
+            labelB: labelB
+        });
 
         this.artworkCanvas.add(line);
         this.artworkCanvas.add(labelA);
@@ -913,6 +942,21 @@ class CanvasManager {
         this.artworkCanvas.bringToFront(line);
         this.artworkCanvas.bringToFront(line.labelA);
         this.artworkCanvas.bringToFront(line.labelB);
+    }
+
+    toggleGuides() {
+        const button = document.getElementById('toggle-guides');
+        const isHidden = !(button.getAttribute('data-hidden') === 'true');
+        this.guides.forEach(guide => {
+            guide.line.visible = !isHidden;
+            guide.labelA.visible = !isHidden;
+            guide.labelB.visible = !isHidden;
+        });
+
+        button.setAttribute('data-hidden', (isHidden).toString());
+        button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Guides`;
+
+        this.artworkCanvas.renderAll();
     }
 }
 
