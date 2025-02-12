@@ -43,17 +43,6 @@
             <div class="col-9 main-col position-relative"
                 x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
                 <x-editor-actions />
-                <div class="guide-controls mb-2">
-                    <button class="btn btn-outline-secondary btn-sm" id="add-horz-guide">
-                        <i class="fal fa-arrows-alt-h"></i> Add Horizontal Guide
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm" id="add-vert-guide">
-                        <i class="fal fa-arrows-alt-v"></i> Add Vertical Guide
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm" id="toggle-guides" data-hidden="false">
-                        <i class="fal fa-eye"></i> Hide Guides
-                    </button>
-                </div>
                 <div x-cloak style="position: absolute; inset: auto 10px 0 auto; z-index: 10; background:#ffc107 "
                     class="alert alert-warning alert-dismissible fade show rounded-0 border-0"
                     x-show="changedCanvases > 1">
@@ -64,73 +53,22 @@
 
                 <div class="d-inline-flex tabs-container mb-1 pe-2">
                     @foreach($canvases as $canvas)
-                            <!-- <div class="tab" :class="activeCanvas === @js($canvas['canvasId']) ? 'active' : ''" x-data="{
-                            hasChanges: false,
-                            surfaceStateId: @js($canvas['surfaceStateId']),
-
-                            init(){
-                              document.addEventListener('onCanvasUpdated', (e) => {
-                                if (e.detail.surfaceStateId === this.surfaceStateId && this.hasChanges === false){
-                                  this.hasChanges = true;
-                                  this.changedCanvases++
-                                }
-                              })
-                            }
-                           }"
-                                @click="activeCanvas = @js($canvas['canvasId']); $dispatch('canvasChanged', { surfaceStateId: @js($canvas['surfaceStateId']) })">
-                                <div> -->
-
-                                    <!-- <span> -->
-                                        <!-- <i x-cloak x-show="hasChanges" class="fa fa-circle fa-xs text-warning change-icon"></i> -->
-                                        <!-- <span class="surface-name">{{ $canvas['surfaceStateName'] }}</span> -->
-                                    <!-- </span> -->
-                                    
-                                    <!-- @if($canvas['surfaceStateId'])
-                              <a href="{{ route('surfaces.active', $canvas['surfaceStateId']) }}"
-                                 class="surface-active">
-                                <i class="fa-regular {{ $canvas['surfaceStateId'] == $currentSurfaceStateId ? ' fa-circle-check' : ' fa-circle' }}"></i>
-                              </a>
-                            @endif
-                            @if($canvas['surfaceStateId'])
-                              <form class="d-inline" method="post"
-                                  action="{{ route('surfaces.destroy', $canvas['surfaceStateId']) }}">
-                                @method('delete')
-                                @csrf
-                                <button class="cross-btn"
-                                    onclick="return confirm('Are you sure you want to delete this version?');"
-                                    style="line-height: 0">
-                                  {{--                                                <i class="fas fa-trash"></i>--}}
-                                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1.875 3.75H3.125H13.125" stroke="black" stroke-width="1.5"
-                                        stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path
-                                      d="M5 3.75V2.5C5 2.16848 5.1317 1.85054 5.36612 1.61612C5.60054 1.3817 5.91848 1.25 6.25 1.25H8.75C9.08152 1.25 9.39946 1.3817 9.63388 1.61612C9.8683 1.85054 10 2.16848 10 2.5V3.75M11.875 3.75V12.5C11.875 12.8315 11.7433 13.1495 11.5089 13.3839C11.2745 13.6183 10.9565 13.75 10.625 13.75H4.375C4.04348 13.75 3.72554 13.6183 3.49112 13.3839C3.2567 13.1495 3.125 12.8315 3.125 12.5V3.75H11.875Z"
-                                      stroke="black" stroke-width="1.5" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                                    <path d="M6.25 6.875V10.625" stroke="black" stroke-width="1.5"
-                                        stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M8.75 6.875V10.625" stroke="black" stroke-width="1.5"
-                                        stroke-linecap="round" stroke-linejoin="round"/>
-                                  </svg>
-
-                                </button>
-                              </form>
-                            @endif -->
-                                <!-- </div>
-                            </div> -->
                     @endforeach
 
-                    <!-- @if(!request('new'))
-                            <a href="{{ route('surfaces.show', [$surface->id, 'layout_id' => $layout->id, 'new' => 1]) }}"
-                               class="h-full d-flex justify-content-center align-items-center px-2 bg-transparent text-decoration-none">
-                                <i class="fas fa-plus btn"></i>
-                            </a>
-                        @endif -->
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide">
+                            <i class="fal fa-arrows-alt-h"></i> Add Horizontal Guide
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-vert-guide">
+                            <i class="fal fa-arrows-alt-v"></i> Add Vertical Guide
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-guides" data-hidden="false">
+                            <i class="fal fa-eye"></i> Hide Guides
+                        </button>
 
-                    <x-menu-item text="Return to 360 View" class="view-360" :img="asset('redesign/images/360-icon.png')"
-                        target="_self" id="return_to_360" :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))" />
-
+                        <x-menu-item text="Return to 360 View" class="view-360" :img="asset('redesign/images/360-icon.png')"
+                            target="_self" id="return_to_360" :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))" />
+                    </div>
                 </div>
 
                 @foreach($canvases as $canvas)
@@ -198,3 +136,15 @@
 <script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
 
 @endsection
+
+<style>
+.white-bg-button {
+    background-color: white !important;
+}
+
+.white-bg-button:hover {
+    background-color: black !important;
+    color: white !important;
+    border-color: black !important;
+}
+</style>

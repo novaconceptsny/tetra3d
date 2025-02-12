@@ -452,6 +452,21 @@ class CanvasManager {
             return;
         }
 
+        // Hide all guides before returning
+        this.guides.forEach(guide => {
+            guide.line.visible = false;
+            guide.labelA.visible = false;
+            guide.labelB.visible = false;
+        });
+        this.artworkCanvas.renderAll();
+
+        // Update the toggle button state
+        const button = document.getElementById('toggle-guides');
+        if (button) {
+            button.setAttribute('data-hidden', 'true');
+            button.innerHTML = '<i class="fal fa-eye"></i> Show Guides';
+        }
+
         if (!this.surfaceStateId) {
             let artworks = this.canvasState.assignedArtwork.length;
 
@@ -467,7 +482,6 @@ class CanvasManager {
                 this.saveNewVersion(event);
                 return;
             }
-
         }
 
         this.updateSavedVersion();
