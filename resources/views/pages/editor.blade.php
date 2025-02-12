@@ -140,7 +140,18 @@
 <style>
 .white-bg-button {
     background-color: white !important;
+    color: black !important;
     height: 36px !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: var(--light-font) !important;
+    line-height: normal !important;
+    text-decoration: none !important;
+    font-family: var(--main-font-family) !important;
+    box-shadow: none !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0px !important;
+    padding: 4px 8px;
 }
 
 .white-bg-button:hover {
