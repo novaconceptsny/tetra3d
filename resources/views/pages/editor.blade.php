@@ -151,7 +151,7 @@
     box-shadow: none !important;
     border: 1px solid #000000 !important;
     border-radius: 0px !important;
-    padding: 4px 8px;
+    padding: 4px 8px !important;
 }
 
 .white-bg-button:hover {
