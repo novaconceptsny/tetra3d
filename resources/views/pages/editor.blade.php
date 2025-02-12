@@ -140,6 +140,7 @@
 <style>
 .white-bg-button {
     background-color: white !important;
+    height: 36px !important;
 }
 
 .white-bg-button:hover {

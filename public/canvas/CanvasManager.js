@@ -423,6 +423,13 @@ class CanvasManager {
 
         const selectedObjs = this.artworkCanvas.getActiveObjects();
         selectedObjs.forEach((obj) => {
+            if (obj.isGuide) {
+                // Remove associated labels for guide lines
+                this.artworkCanvas.remove(obj.labelA);
+                this.artworkCanvas.remove(obj.labelB);
+                // Remove the guide from our guides array
+                this.guides = this.guides.filter(guide => guide.line !== obj);
+            }
             this.artworkCanvas.remove(obj);
             this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => art.getArtworkId() !== obj.id);
         });
