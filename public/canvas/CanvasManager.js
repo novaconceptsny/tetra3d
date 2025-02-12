@@ -424,6 +424,13 @@ class CanvasManager {
 
         const selectedObjs = this.artworkCanvas.getActiveObjects();
         selectedObjs.forEach((obj) => {
+            if (obj.isGuide) {
+                // Remove associated labels for guide lines
+                this.artworkCanvas.remove(obj.labelA);
+                this.artworkCanvas.remove(obj.labelB);
+                // Remove the guide from our guides array
+                this.guides = this.guides.filter(guide => guide.line !== obj);
+            }
             this.artworkCanvas.remove(obj);
             this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => art.getArtworkId() !== obj.id);
         });
@@ -453,6 +460,21 @@ class CanvasManager {
             return;
         }
 
+        // Hide all guides before returning
+        this.guides.forEach(guide => {
+            guide.line.visible = false;
+            guide.labelA.visible = false;
+            guide.labelB.visible = false;
+        });
+        this.artworkCanvas.renderAll();
+
+        // Update the toggle button state
+        const button = document.getElementById('toggle-guides');
+        if (button) {
+            button.setAttribute('data-hidden', 'true');
+            button.innerHTML = '<i class="fal fa-eye"></i> Show Guides';
+        }
+
         if (!this.surfaceStateId) {
             let artworks = this.canvasState.assignedArtwork.length;
 
@@ -468,7 +490,6 @@ class CanvasManager {
                 this.saveNewVersion(event);
                 return;
             }
-
         }
 
         this.updateSavedVersion();
