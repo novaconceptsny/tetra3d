@@ -806,79 +806,66 @@ class CanvasManager {
             guide.labelB.visible = true;
         });
 
-        if (isHorizontal) {
-            line = new fabric.Line([0, 0, boundingBoxWidth, 0], {
-                stroke: '#FF4444',
-                strokeWidth: 1,
-                left: boundingBoxLeft,
-                top: boundingBoxTop + boundingBoxHeight / 2,
-                hasControls: false,
-                hasBorders: false,
-                lockRotation: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                selectable: true,
-                hoverCursor: 'move',
-                padding: 10,
-                isGuide: true,
-                visible: true  // Always visible when created
-            });
+        // Create the guide line with proper initial properties
+        line = new fabric.Line([0, 0, isHorizontal ? boundingBoxWidth : 0, isHorizontal ? 0 : boundingBoxHeight], {
+            stroke: isHorizontal ? '#FF4444' : '#4444FF',
+            strokeWidth: 1,
+            left: isHorizontal ? boundingBoxLeft : boundingBoxLeft + boundingBoxWidth / 2,
+            top: isHorizontal ? boundingBoxTop + boundingBoxHeight / 2 : boundingBoxTop,
+            hasControls: false,
+            hasBorders: false,
+            lockRotation: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            selectable: true,
+            evented: true,
+            lockMovementX: isHorizontal ? true : false,
+            lockMovementY: isHorizontal ? false : true,
+            hoverCursor: 'move',
+            padding: 10,
+            isGuide: true,
+            visible: true
+        });
 
-            labelA = new fabric.Text('0', {
-                fontSize: 12,
-                fill: '#FF4444',
-                backgroundColor: 'white',
-                left: 10 + boundingBoxLeft,
-                selectable: false,
-                evented: false,
-                visible: true  // Always visible when created
-            });
+        labelA = new fabric.Textbox('0', {
+            fontSize: 12,
+            fill: isHorizontal ? '#FF4444' : '#4444FF',
+            backgroundColor: 'white',
+            left: 10 + (isHorizontal ? boundingBoxLeft : boundingBoxLeft + boundingBoxWidth / 2),
+            selectable: true,
+            editable: true,
+            width: 50,
+            height: 20,
+            visible: true,
+            hasControls: false,
+            hasBorders: false,
+            lockMovementX: true,  // Lock all movement
+            lockMovementY: true,  // Lock all movement
+            isGuideLabel: true,
+            hoverCursor: 'text',
+            moveCursor: 'text',
+            cursorColor: 'black'
+        });
 
-            labelB = new fabric.Text('0', {
-                fontSize: 12,
-                fill: '#FF4444',
-                backgroundColor: 'white',
-                left: 10 + boundingBoxLeft,
-                selectable: false,
-                evented: false,
-                visible: true  // Always visible when created
-            });
-        } else {
-            line = new fabric.Line([0, 0, 0, boundingBoxHeight], {
-                stroke: '#4444FF',
-                strokeWidth: 1,
-                left: boundingBoxLeft + boundingBoxWidth / 2,
-                top: boundingBoxTop,
-                hasControls: false,
-                hasBorders: false,
-                lockRotation: true,
-                lockScalingX: true,
-                lockScalingY: true,
-                selectable: true,
-                hoverCursor: 'move',
-                padding: 10,
-                isGuide: true,
-                visible: true  // Always visible when created
-            });
-
-            labelA = new fabric.Text('0', {
-                fontSize: 12,
-                fill: '#4444FF',
-                backgroundColor: 'white',
-                selectable: false,
-                evented: false,
-                visible: true  // Always visible when created
-            });
-
-            labelB = new fabric.Text('0', {
-                fontSize: 12,
-                fill: '#4444FF',
-                backgroundColor: 'white',
-                selectable: false,
-                evented: false,
-                visible: true  // Always visible when created
-            });
-        }
+        labelB = new fabric.Textbox('0', {
+            fontSize: 12,
+            fill: isHorizontal ? '#FF4444' : '#4444FF',
+            backgroundColor: 'white',
+            left: 10 + (isHorizontal ? boundingBoxLeft : boundingBoxLeft + boundingBoxWidth / 2),
+            selectable: true,
+            editable: true,
+            width: 50,
+            height: 20,
+            visible: true,
+            hasControls: false,
+            hasBorders: false,
+            lockMovementX: true,  // Lock all movement
+            lockMovementY: true,  // Lock all movement
+            isGuideLabel: true,
+            hoverCursor: 'text',
+            moveCursor: 'text',
+            cursorColor: 'black'
+        });
 
         line.labelA = labelA;
         line.labelB = labelB;
@@ -896,6 +883,33 @@ class CanvasManager {
 
         this.updateGuide(line);
         this.artworkCanvas.renderAll();
+        // Try adding editing:exited event as backup
+        labelA.on('editing:exited', (opt) => {
+            console.log('Label A editing exited:', opt);  // Debug log
+            this.handleLabelInput(labelA, line, 'A');
+        });
+
+        labelB.on('editing:exited', (opt) => {
+            console.log('Label B editing exited:', opt);  // Debug log
+            this.handleLabelInput(labelB, line, 'B');
+        });
+
+        // Add keydown handlers for Enter key
+        labelA.on('keydown', (e) => {
+            if (e.keyCode === 13) { // Enter key
+                this.handleLabelInput(labelA, line, 'A');
+                labelA.exitEditing();
+                this.artworkCanvas.renderAll();
+            }
+        });
+
+        labelB.on('keydown', (e) => {
+            if (e.keyCode === 13) { // Enter key
+                this.handleLabelInput(labelB, line, 'B');
+                labelB.exitEditing();
+                this.artworkCanvas.renderAll();
+            }
+        });
     }
 
     updateGuide(line) {
@@ -906,7 +920,6 @@ class CanvasManager {
         const boundingBoxLeft = this.surfaceData['bounding_box_left'] * this.baseScale;
 
         if (isHorizontal) {
-            // Constrain vertical position within bounding box
             let y = Math.min(Math.max(line.top, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
             
             line.set({
@@ -915,7 +928,14 @@ class CanvasManager {
                 x2: boundingBoxWidth,
                 y2: 0,
                 left: boundingBoxLeft,
-                top: y
+                top: y,
+                selectable: true,
+                evented: true,
+                hasControls: false,
+                hasBorders: false,
+                lockMovementX: true,
+                lockMovementY: false,
+                hoverCursor: 'move'
             });
 
             const distTop = this.pixelsToFeetInches(y - boundingBoxTop);
@@ -924,16 +944,25 @@ class CanvasManager {
             line.labelA.set({
                 text: distTop,
                 left: 10 + boundingBoxLeft,
-                top: y - 20
+                top: y - 20,
+                backgroundColor: 'white',
+                lockMovementX: true,
+                lockMovementY: true,
+                hoverCursor: 'text',
+                moveCursor: 'text'
             });
 
             line.labelB.set({
                 text: distBottom,
                 left: 10 + boundingBoxLeft,
-                top: y + 5
+                top: y + 5,
+                backgroundColor: 'white',
+                lockMovementX: true,
+                lockMovementY: true,
+                hoverCursor: 'text',
+                moveCursor: 'text'
             });
         } else {
-            // Constrain horizontal position within bounding box
             let x = Math.min(Math.max(line.left, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
             
             line.set({
@@ -942,7 +971,14 @@ class CanvasManager {
                 x2: 0,
                 y2: boundingBoxHeight,
                 left: x,
-                top: boundingBoxTop
+                top: boundingBoxTop,
+                selectable: true,
+                evented: true,
+                hasControls: false,
+                hasBorders: false,
+                lockMovementX: false,
+                lockMovementY: true,
+                hoverCursor: 'move'
             });
 
             const distLeft = this.pixelsToFeetInches(x - boundingBoxLeft);
@@ -951,13 +987,23 @@ class CanvasManager {
             line.labelA.set({
                 text: distLeft,
                 left: x - 40,
-                top: 10 + boundingBoxTop
+                top: 10 + boundingBoxTop,
+                backgroundColor: 'white',
+                lockMovementX: true,
+                lockMovementY: true,
+                hoverCursor: 'text',
+                moveCursor: 'text'
             });
 
             line.labelB.set({
                 text: distRight,
                 left: x + 5,
-                top: 10 + boundingBoxTop
+                top: 10 + boundingBoxTop,
+                backgroundColor: 'white',
+                lockMovementX: true,
+                lockMovementY: true,
+                hoverCursor: 'text',
+                moveCursor: 'text'
             });
         }
 
@@ -967,6 +1013,104 @@ class CanvasManager {
         this.artworkCanvas.bringToFront(line);
         this.artworkCanvas.bringToFront(line.labelA);
         this.artworkCanvas.bringToFront(line.labelB);
+    }
+
+    handleLabelInput(textbox, guideLine, labelType) {
+        if (this.isInactive()) return;
+
+        const value = textbox.text || textbox.get('text');
+        
+        if (!value) {
+            console.warn('No text value found in textbox');
+            return;
+        }
+
+        const pixels = this.feetInchesToPixels(value);
+        
+        if (pixels === null) {
+            console.warn('Invalid measurement format. Use format like "5\'6\"" or "5\'" or "6\""');
+            this.updateGuide(guideLine);
+            return;
+        }
+
+        const boundingBoxTop = this.surfaceData['bounding_box_top'] * this.baseScale;
+        const boundingBoxLeft = this.surfaceData['bounding_box_left'] * this.baseScale;
+        const boundingBoxHeight = this.surfaceData['bounding_box_height'] * this.baseScale;
+        const boundingBoxWidth = this.surfaceData['bounding_box_width'] * this.baseScale;
+
+        const isHorizontal = guideLine.y1 === guideLine.y2;
+
+        // Store original properties
+        const originalProps = {
+            selectable: guideLine.selectable,
+            evented: guideLine.evented,
+            hasControls: guideLine.hasControls,
+            hasBorders: guideLine.hasBorders,
+            lockMovementX: guideLine.lockMovementX,
+            lockMovementY: guideLine.lockMovementY,
+            hoverCursor: guideLine.hoverCursor
+        };
+
+        if (isHorizontal) {
+            let newY;
+            if (labelType === 'A') {
+                newY = boundingBoxTop + pixels;
+            } else {
+                newY = (boundingBoxTop + boundingBoxHeight) - pixels;
+            }
+            
+            newY = Math.min(Math.max(newY, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
+            guideLine.set({
+                top: newY,
+                ...originalProps  // Preserve original properties
+            });
+        } else {
+            let newX;
+            if (labelType === 'A') {
+                newX = boundingBoxLeft + pixels;
+            } else {
+                newX = (boundingBoxLeft + boundingBoxWidth) - pixels;
+            }
+            
+            newX = Math.min(Math.max(newX, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
+            guideLine.set({
+                left: newX,
+                ...originalProps  // Preserve original properties
+            });
+        }
+
+        // Force update the guide's interactive properties
+        guideLine.set({
+            selectable: true,
+            evented: true,
+            hasControls: false,
+            hasBorders: false,
+            lockMovementX: isHorizontal ? true : false,
+            lockMovementY: isHorizontal ? false : true,
+            hoverCursor: 'move'
+        });
+
+        this.updateGuide(guideLine);
+        this.artworkCanvas.renderAll();
+
+        // Re-enable the guide's interactivity
+        this.artworkCanvas.setActiveObject(guideLine);
+    }
+
+    feetInchesToPixels(value) {
+        // Accept input in format: "5'6"" or "5'" or "6""
+        const regex = /^(?:(\d+)')?(?:(\d+)")?$/;
+        const match = value.trim().match(regex);
+        
+        if (!match) return null;
+        
+        const feet = parseInt(match[1] || 0);
+        const inches = parseInt(match[2] || 0);
+        
+        const totalInches = (feet * 12) + inches;
+        const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
+        
+        return totalInches / inchesPerPixel;
     }
 
     toggleGuides() {
