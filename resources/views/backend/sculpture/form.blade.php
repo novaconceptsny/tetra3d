@@ -259,6 +259,7 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
     document.getElementById('sculpture-company-select').addEventListener('change', function() {
         const companyId = this.value;
         const collectionSelect = document.getElementById('sculpture-collection-select');
+        const currentSelectedValue = collectionSelect.value; // Store current selection
         
         // Clear current options
         collectionSelect.innerHTML = '';
@@ -283,6 +284,10 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         if (companyCollections.length > 0) {
             companyCollections.forEach(collection => {
                 const option = new Option(collection.name, collection.id);
+                // If this was the previously selected option, mark it as selected
+                if (collection.id == currentSelectedValue) {
+                    option.selected = true;
+                }
                 collectionSelect.add(option);
             });
         } else {
@@ -293,10 +298,13 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         }
     });
 
-    // Trigger change event on page load if company is selected
+    // Modify the window load event handler to only trigger if we're not in edit mode
     window.addEventListener('load', function() {
         const companySelect = document.getElementById('sculpture-company-select');
-        if (companySelect.value) {
+        const sculptureForm = document.getElementById('sculpture_form');
+        const isEditMode = sculptureForm.querySelector('input[name="_method"]').value === 'PUT';
+        
+        if (!isEditMode && companySelect.value) {
             companySelect.dispatchEvent(new Event('change'));
         }
     });
