@@ -1040,17 +1040,6 @@ class CanvasManager {
 
         const isHorizontal = guideLine.y1 === guideLine.y2;
 
-        // Store original properties
-        const originalProps = {
-            selectable: guideLine.selectable,
-            evented: guideLine.evented,
-            hasControls: guideLine.hasControls,
-            hasBorders: guideLine.hasBorders,
-            lockMovementX: guideLine.lockMovementX,
-            lockMovementY: guideLine.lockMovementY,
-            hoverCursor: guideLine.hoverCursor
-        };
-
         if (isHorizontal) {
             let newY;
             if (labelType === 'A') {
@@ -1062,7 +1051,13 @@ class CanvasManager {
             newY = Math.min(Math.max(newY, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
             guideLine.set({
                 top: newY,
-                ...originalProps  // Preserve original properties
+                selectable: true,
+                evented: true,
+                hasControls: false,
+                hasBorders: false,
+                lockMovementX: true,
+                lockMovementY: false,
+                hoverCursor: 'move'
             });
         } else {
             let newX;
@@ -1075,26 +1070,22 @@ class CanvasManager {
             newX = Math.min(Math.max(newX, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
             guideLine.set({
                 left: newX,
-                ...originalProps  // Preserve original properties
+                selectable: true,
+                evented: true,
+                hasControls: false,
+                hasBorders: false,
+                lockMovementX: false,
+                lockMovementY: true,
+                hoverCursor: 'move'
             });
         }
 
-        // Force update the guide's interactive properties
-        guideLine.set({
-            selectable: true,
-            evented: true,
-            hasControls: false,
-            hasBorders: false,
-            lockMovementX: isHorizontal ? true : false,
-            lockMovementY: isHorizontal ? false : true,
-            hoverCursor: 'move'
-        });
-
         this.updateGuide(guideLine);
-        this.artworkCanvas.renderAll();
-
-        // Re-enable the guide's interactivity
+        
+        // Ensure the guide remains selectable and draggable
+        guideLine.setCoords();
         this.artworkCanvas.setActiveObject(guideLine);
+        this.artworkCanvas.renderAll();
     }
 
     feetInchesToPixels(value) {
