@@ -31,6 +31,11 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
                             <h5>{{ __('Sculpture Model') }}</h5>
                             <x-backend::media-attachment name="sculpture" rules="max:20480" id="sculpture-model-upload"
                                 :media="$sculpture?->getFirstMedia('sculpture')" />
+                            @if($sculpture?->getFirstMedia('sculpture'))
+                                <div class="uploaded-file-name mt-2 text-muted">
+                                    File: {{ $sculpture->getFirstMedia('sculpture')->file_name }}
+                                </div>
+                            @endif
                         </div>
                         <div class="col-12 mb-3">
                             <h5>{{ __('Thumbnail Image') }}</h5>
@@ -41,6 +46,11 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
                             <h5>{{ __('Interaction Model') }}</h5>
                             <x-backend::media-attachment name="interaction" rules="max:20480"
                                 :media="$sculpture?->getFirstMedia('interaction')" />
+                            @if($sculpture?->getFirstMedia('interaction'))
+                                <div class="uploaded-file-name mt-2 text-muted">
+                                    File: {{ $sculpture->getFirstMedia('interaction')->file_name }}
+                                </div>
+                            @endif
                         </div>
                         
                         <x-backend::inputs.select col="col-12 mb-3" id="sculpture-company-select"
@@ -139,6 +149,7 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
     function previewImage(input) {
         const previewContainer = input.closest('.d-flex').querySelector('.media-library-thumb');
         const file = input.files[0];
+        const fileNameDisplay = input.closest('.mb-3').querySelector('.uploaded-file-name');
         
         if (file) {
             // Create preview container if it doesn't exist
@@ -152,6 +163,16 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
             
             // Clear existing content
             container.innerHTML = '';
+            
+            // Display file name
+            if (!fileNameDisplay) {
+                const nameElement = document.createElement('div');
+                nameElement.className = 'uploaded-file-name mt-2 text-muted';
+                nameElement.textContent = `File: ${file.name}`;
+                input.closest('.mb-3').appendChild(nameElement);
+            } else {
+                fileNameDisplay.textContent = `File: ${file.name}`;
+            }
             
             if (file.type.startsWith('image/')) {
                 const img = document.createElement('img');

@@ -15,9 +15,9 @@
                      alt="{{ $media->file_name }}"  
                      class="media-library-thumb-img" 
                      style="object-fit: fill">
-            @endif
-            @if($showFilename)
-                <span class="fs-6" style="white-space: nowrap">{{ $media->file_name }}</span>
+                @if($showFilename)
+                    <span class="fs-6" style="white-space: nowrap">{{ $media->file_name }}</span>
+                @endif
             @endif
         </div>
     @endif
