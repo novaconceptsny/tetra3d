@@ -25,6 +25,8 @@
                         <th>Created By</th>
                         <th>Last modified</th>
                         <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
 
                     @forelse($project->layouts()->orderBy('updated_at', 'desc')->get() as $layout)
