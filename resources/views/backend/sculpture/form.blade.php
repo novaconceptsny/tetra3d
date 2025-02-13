@@ -134,6 +134,53 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         }
     }
 </script>
+
+<script>
+    function previewImage(input) {
+        const previewContainer = input.closest('.d-flex').querySelector('.media-library-thumb');
+        const file = input.files[0];
+        
+        if (file) {
+            // Create preview container if it doesn't exist
+            if (!previewContainer) {
+                const newPreview = document.createElement('div');
+                newPreview.className = 'media-library-thumb m-0 me-2';
+                input.closest('.d-flex').prepend(newPreview);
+            }
+            
+            const container = previewContainer || input.closest('.d-flex').querySelector('.media-library-thumb');
+            
+            // Clear existing content
+            container.innerHTML = '';
+            
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.className = 'media-library-thumb-img';
+                img.style.objectFit = 'fill';
+                img.src = URL.createObjectURL(file);
+                img.alt = file.name;
+                container.appendChild(img);
+                
+                const span = document.createElement('span');
+                span.className = 'fs-6';
+                span.style.whiteSpace = 'nowrap';
+                span.textContent = file.name;
+                container.appendChild(span);
+            }
+        }
+    }
+
+    // Add event listeners for file inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                previewImage(this);
+            });
+        });
+    });
+</script>
+
 <script type="module">
     let container, stats, controls, isMouseDown;
     let camera, cameraTarget, scene, renderer;
