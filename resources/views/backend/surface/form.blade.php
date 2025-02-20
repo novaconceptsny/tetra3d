@@ -31,6 +31,7 @@
                     <x-backend::tab.content id="surface_form" :active="true">
                         <div class="row g-3">
                             <x-backend::inputs.text name="name" value="{{ $surface ? $surface->name : '' }}"/>
+                            <x-backend::inputs.text name="display_name" label="Display Name" value="{{ $surface ? $surface->display_name : '' }}"/>
                             <div class="col-4">
                                 <h5>{{ __('Background Image') }}</h5>
                                 <x-backend::media-attachment

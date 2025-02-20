@@ -35,17 +35,19 @@ class SurfaceController extends Controller
 
     public function store(Request $request, Tour $tour)
     {
-        $request->validate([
-            'name' => 'required'
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'display_name' => 'required|string|max:255',
+            'data' => 'array',
+            'company_id' => 'required|exists:companies,id'
         ]);
 
-        $request->merge([
-            'company_id' => $tour->company_id
+        $surface = $tour->surfaces()->create([
+            'name' => $validated['name'],
+            'display_name' => $validated['display_name'],
+            'data' => $validated['data'] ?? [],
+            'company_id' => $validated['company_id']
         ]);
-
-        $surface = $tour->surfaces()->create($request->only([
-            'name', 'company_id', 'data',
-        ]));
 
         $surface->addFromMediaLibraryRequest($request->main)
             ->toMediaCollection('main');
@@ -78,13 +80,17 @@ class SurfaceController extends Controller
 
     public function update(Request $request, Surface $surface)
     {
-        $request->validate([
-            'name' => 'required'
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'display_name' => 'required|string|max:255',
+            'data' => 'array',
         ]);
 
-        $surface->update($request->only([
-            'name', 'data'
-        ]));
+        $surface->update([
+            'name' => $validated['name'],
+            'display_name' => $validated['display_name'],
+            'data' => $validated['data'] ?? [],
+        ]);
 
         $surface->addFromMediaLibraryRequest($request->main)
             ->toMediaCollection('main');

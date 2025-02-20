@@ -25,6 +25,7 @@
                     <tr>
                         <th scope="col">{{ __('Tour') }}</th>
                         <th scope="col">{{ __('Name') }}</th>
+                        <th scope="col">{{ __('Display Name') }}</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -33,6 +34,7 @@
                         <tr>
                             <td>{{ $tour->name }}</td>
                             <td><a href="{{ route('backend.surfaces.edit', $surface) }}">{{ $surface->friendly_name }}</a></td>
+                            <td>{{ $surface->display_name }}</td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$surface">
                                     <x-backend::dropdown.item

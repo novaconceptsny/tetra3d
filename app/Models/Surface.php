@@ -16,10 +16,18 @@ class Surface extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'name',
+        'display_name',
+        'data',
+        // ... other fillable fields ...
+    ];
+
     public static bool $organiseMediaByCollection = true;
 
     public $casts = [
         'data' => SchemalessAttributes::class,
+        'display_name' => 'string',
     ];
 
     public static function boot()
