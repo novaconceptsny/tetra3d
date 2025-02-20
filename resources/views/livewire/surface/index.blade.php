@@ -13,6 +13,11 @@
                                     src="{{ $activeState->getFirstMediaUrl('thumbnail') }}"
                                     alt="{{ $surface->display_name }}"
                                 />
+                            @else
+                                <img 
+                                    src="{{ $surface->getFirstMediaUrl('background') }}"
+                                    alt="{{ $surface->display_name }}"
+                                />
                             @endif
                         </div>
                     </div>
