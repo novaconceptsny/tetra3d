@@ -18,7 +18,7 @@
 @section('content')
     <section class="version">
         <div class="container-fluid version-wrapper">
-            <livewire:surface.index :layout="$layout" :tour="$tour"/>
+            <livewire:surface.index :layout="$layout" :tour="$tour" :spot="$spot" />
         </div>
     </section>
 @endsection

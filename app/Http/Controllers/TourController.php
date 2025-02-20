@@ -36,6 +36,7 @@ class TourController extends Controller
         $data = array();
         $data['layout'] = $layout;
         $data['tour'] = $tour;
+        $data['spot'] = $tour->surfaces->first()->spots()->first();
         $data['surfaces'] = $tour->surfaces;
         $data['navEnabled'] = false;
 
