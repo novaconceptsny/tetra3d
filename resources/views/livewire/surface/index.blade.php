@@ -32,7 +32,6 @@
                         :model="$surface" 
                         field="display_name" 
                         wire:key="editable_field_{{$surface->id}}"
-                        @field-saved="$dispatch('surface-name-updated')"
                     />
                 </h5>
             </div>
@@ -64,30 +63,3 @@
         }
     </style>
 </div>
-
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.addEventListener('surface-name-updated', function() {
-                Swal.fire({
-                    title: 'Warning',
-                    text: 'All layouts of this tour will have updated surface.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Proceed',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If user clicks "Proceed", the change is already saved
-                        // You can add additional actions here if needed
-                    } else {
-                        // If user clicks "Cancel", you might want to revert the change
-                        // You'll need to implement this functionality if needed
-                        Livewire.dispatch('revertSurfaceName');
-                    }
-                });
-            });
-        });
-    </script>
-@endsection
