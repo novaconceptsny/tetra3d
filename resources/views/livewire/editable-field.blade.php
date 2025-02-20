@@ -1,7 +1,7 @@
 <{{$element}} >
 <span x-data>
     @if($editing)
-        <input type="text" wire:model.live="value" x-on:click.away="$wire.updateValue()" @keydown.enter="$wire.updateValue()">
+        <input type="text" wire:model.live="value" x-on:click.away="if (confirm('All layouts of this tour will have updated surface. Proceed?')) { $wire.updateValue() }" @keydown.enter="if (confirm('All layouts of this tour will have updated surface. Proceed?')) { $wire.updateValue() }">
         @error('title') <span class="error">{{ $message }}</span> @enderror
     @else
         {{ $value }}
