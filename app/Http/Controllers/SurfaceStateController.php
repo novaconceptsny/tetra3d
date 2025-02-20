@@ -326,6 +326,24 @@ class SurfaceStateController extends Controller
         $state->setAsActive();
         return redirect()->back()->with('success', 'Active set updated');
     }
+
+    public function create(Surface $surface, Request $request)
+    {
+        // Create a new state
+        $state = $surface->states()->create([
+            'active' => true,
+            // Add other default values as needed
+        ]);
+
+        // Redirect to the show page with the new state
+        return redirect()->route('surfaces.show', [
+            'surface' => $surface,
+            'layout_id' => $request->layout_id,
+            'surface_state_id' => $state->id,
+            'return_to_versions' => $request->return_to_versions
+        ]);
+    }
+
     // Helper Functions
     private function normalize($vector)
     {

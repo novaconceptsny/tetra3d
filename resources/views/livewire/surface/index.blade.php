@@ -4,7 +4,12 @@
     <div class="row g-4">
         @foreach($surfaces as $surface)
             <div class="col-6 col-md-4" wire:key="surface_{{$surface->id}}">
-                <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layout->id, 'new' => 1]) }}">
+                @if($surface->states->count() > 0)
+                    @php $activeState = $surface->states->firstWhere('active', true) ?? $surface->states->first() @endphp
+                    <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layout->id, 'surface_state_id' => $activeState->id, 'return_to_versions' => true]) }}" class="me-1">
+                @else
+                    <a href="{{ route('surface-states.create', ['surface' => $surface, 'layout_id' => $layout->id, 'return_to_versions' => true]) }}" class="me-1">
+                @endif
                     <div class="surface-card">
                         <div class="surface-preview">
                             @if($surface->states->count() > 0)
