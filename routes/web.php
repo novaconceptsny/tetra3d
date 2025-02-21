@@ -45,7 +45,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
     });
 
-    Route::get('/surface-states/create', [SurfaceStateController::class, 'create'])->name('surface-states.create');
 });
 
 
