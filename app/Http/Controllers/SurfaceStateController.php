@@ -63,6 +63,7 @@ class SurfaceStateController extends Controller
         $data['tour'] = $surface->tour;
         $data['spot'] = $spot;
         $data['surface'] = $surface;
+        $data['return_to_versions'] = $return_to_versions;
         $data['selectedSurfaceState'] = $selectedSurfaceState;
         $data['currentSurfaceStateId'] = $surface->getCurrentState($layout->id)?->id;
 

@@ -3,6 +3,7 @@
 @section('outside-menu')
 @php
     $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
+    $return_to_versions = $return_to_versions ?? null;
 @endphp
 <div class="menu-links d-flex align-items-center gap-4">
     <x-menu-item text="Current Surface" icon="fal fa-question" :route="route('tours.surfaces', $query_params)"
@@ -66,8 +67,14 @@
                             <i class="fal fa-eye"></i> Hide Guides
                         </button>
 
-                        <x-menu-item text="Return to 360 View" class="view-360" :img="asset('redesign/images/360-icon.png')"
-                            target="_self" id="return_to_360" :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))" />
+                        <x-menu-item 
+                            text="{{ $return_to_versions ? 'Return to List View' : 'Return to 360 View' }}" 
+                            class="view-360"
+                            :img="$return_to_versions ? null : asset('redesign/images/360-icon.png')"
+                            target="_self" 
+                            id="return_to_360" 
+                            :route="route('tours.show', array_merge(request()->all(), ['tour' => $tour]))" 
+                        />
                     </div>
                 </div>
 

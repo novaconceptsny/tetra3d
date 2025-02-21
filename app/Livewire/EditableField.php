@@ -8,8 +8,9 @@ use Livewire\Component;
 
 class EditableField extends Component
 {
-    public $editing = false;
     public $value;
+    public $originalValue;
+    public $editing = false;
     public $field;
     public Model $model;
     public $element = 'span';
@@ -22,6 +23,14 @@ class EditableField extends Component
     public function mount(Model $model)
     {
         $this->value = $model->{$this->field};
+        $this->originalValue = $this->value;
+    }
+
+    public function updating($name, $value)
+    {
+        if ($name === 'editing' && $value === true) {
+            $this->originalValue = $this->value;
+        }
     }
 
     public function render()

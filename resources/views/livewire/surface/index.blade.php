@@ -1,14 +1,14 @@
 <div>
     <h6 class="mb-4">List view</h6>
 
-    <div class="row g-4">
+    <div class="row g-4" style="justify-content: space-between; display: flex; flex-wrap: wrap;">
         @foreach($surfaces as $surface)
-            <div class="col-6 col-md-4" wire:key="surface_{{$surface->id}}">
+            <div class="col-6 col-md-4" style="width: 30%;" wire:key="surface_{{$surface->id}}">
                 @if($surface->states->count() > 0)
                     @php $activeState = $surface->states->firstWhere('active', true) ?? $surface->states->first() @endphp
-                    <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layout->id, 'surface_state_id' => $activeState->id, 'return_to_versions' => true]) }}" class="me-1">
+                    <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layout->id, 'surface_state_id' => $activeState->id, 'return_to_versions' => true]) }}" class="surface-link">
                 @else
-                    <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layout->id, 'new' => 1]) }}">
+                    <a href="{{ route('surfaces.show', [$surface, 'layout_id' => $layout->id, 'new' => 1]) }}" class="surface-link">
                 @endif
                     <div class="surface-card">
                         <div class="surface-preview">
@@ -47,6 +47,12 @@
             transform: scale(1.02);
         }
 
+        .surface-link {
+            display: block;
+            margin-bottom: 1.5rem;
+            text-decoration: none;
+        }
+
         .surface-preview {
             aspect-ratio: 1;
             overflow: hidden;
@@ -54,6 +60,7 @@
             border-radius: 4px;
             width: 100%;
             height: 300px;
+            margin-bottom: 0.75rem;
         }
 
         .surface-preview img {
