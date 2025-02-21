@@ -43,10 +43,10 @@
             <button onclick="toggleLayout()" class="toggle-layout">Space Model</button>
         </div>
     @endif
-    @if (!isset($tourModel))
+    <!-- @if (!isset($tourModel))
         <x-menu-item text="List View" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))" />
-    @endif
+    @endif -->
     <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self" />
     <x-menu-item :visible="$layout && !$tour_is_shared" target="_self"
         onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
