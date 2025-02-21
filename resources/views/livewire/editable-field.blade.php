@@ -3,6 +3,7 @@
     @if($editing)
         <input type="text" 
             wire:model.live="value" 
+            x-init="$el.select()""
             x-on:click.away="if (!confirm('All layouts of this tour will have updated surface. Proceed?')) { 
                 $wire.$set('editing', false);
                 $wire.$set('value', '{!! $originalValue !!}');
