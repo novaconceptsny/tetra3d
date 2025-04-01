@@ -45,6 +45,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
     });
 
+    Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
+
+    Route::get('/photo', 'PhotoController@index')->name('photo.index');
+
 });
 
 

@@ -34,13 +34,22 @@
                     <ul class="navbar-nav mx-auto link-nav">
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page"
-                               href="{{ route('dashboard') }}">{{ __('Projects') }}</a>
+                               href="{{ route('dashboard') }}">{{ __('Tour 3D') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('tour-360.index') }}">{{ __('Tour 360') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('photo.index') }}">{{ __('Photo') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('inventory.index') }}">{{ __('Inventory') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Activity') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Tutorial') }}</a>
                         </li>
                     </ul>
                 @endif
