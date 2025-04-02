@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/wire-elements-pro/css/bootstrap-overlay-component.css') }}">
 
     @yield('styles')
+    @stack('styles')
     @livewireStyles
 </head>
 
