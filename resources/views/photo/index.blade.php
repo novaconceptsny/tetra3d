@@ -699,7 +699,7 @@
     }
     /* Modal Styling */
     .modal-content {
-        border-radius: 10px;
+        border-radius: 10px !important;
     }
     .modal-header {
         border-bottom: none;
@@ -972,15 +972,15 @@
         color: #333;
     }
     #surfaceModal .form-control {
-        border: none;
-        border-bottom: 1px solid #333;
-        border-radius: 0;
-        padding: 5px 0;
-        font-size: 14px;
+        border: none !important;
+        border-bottom: 1px solid #333 !important;
+        border-radius: 0 !important;
+        padding: 5px 0 !important;
+        font-size: 14px !important;
     }
     #surfaceModal .form-control:focus {
-        box-shadow: none;
-        border-bottom: 1px solid #333;
+        box-shadow: none !important;
+        border-bottom: 1px solid #333 !important;
     }
     #surfaceModal .input-group {
         display: flex;
@@ -999,16 +999,16 @@
     }
     #surfaceModal .btn-save {
         width: 100%;
-        background-color: #f0f0f0;
+        background-color: #f0f0f0 !important;
         border: 1px solid #ddd;
         border-radius: 5px;
         padding: 10px;
         font-size: 14px;
         font-weight: bold;
-        color: #333;
+        color: #333 !important;
     }
     #surfaceModal .btn-save:hover {
-        background-color: #e0e0e0;
+        background-color: #e0e0e0 !important;
     }
 
 </style>
