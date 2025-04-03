@@ -37,7 +37,15 @@
                                     <span class="collection-name">Digital Art</span>
                                     <span class="collection-items">18 items</span>
                                 </div>
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
+
+                                <div class="dropdown position-absolute top-0 end-0">
+                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v ms-auto"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                    </ul>
+                                </div>
                             </li>
                             <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
                                 <i class="fas fa-image collection-icon"></i>
@@ -45,7 +53,15 @@
                                     <span class="collection-name">Sculptures</span>
                                     <span class="collection-items">12 items</span>
                                 </div>
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
+
+                                <div class="dropdown position-absolute top-0 end-0">
+                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v ms-auto"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                    </ul>
+                                </div>
                             </li>
                             <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
                                 <i class="fas fa-image collection-icon"></i>
@@ -53,7 +69,14 @@
                                     <span class="collection-name">Rob's Collection</span>
                                     <span class="collection-items">1024 items</span>
                                 </div>
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                                <div class="dropdown position-absolute top-0 end-0">
+                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v ms-auto"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                    </ul>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -75,37 +98,62 @@
                             </div>
                             <div class="col-md-3">
                         <div class="card shadow-sm">
-                            <img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 1">
+                            <div class="overflow-hidden img-home"><img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 1"></div>
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <p class="card-text">Living Room 1</p>
-                                <i class="fas fa-ellipsis-v"></i>
+                                <div class="dropdown">
+                                     <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                         <i class="fas fa-ellipsis-v ms-auto"></i>
+                                     </button>
+                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                     </ul>
+                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm">
-                            <img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 2">
+                            <div class="overflow-hidden img-home"><img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 2"></div>
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <p class="card-text">Living Room 1</p>
-                                <i class="fas fa-ellipsis-v"></i>
+                                <div class="dropdown">
+                                     <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                         <i class="fas fa-ellipsis-v ms-auto"></i>
+                                     </button>
+                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm">
-                            <img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 3">
+                            <div class="overflow-hidden img-home"><img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 3"></div>
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <p class="card-text">Living Room 1</p>
-                                <i class="fas fa-ellipsis-v"></i>
+                                <div class="dropdown">
+                                     <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                         <i class="fas fa-ellipsis-v ms-auto"></i>
+                                     </button>
+                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card shadow-sm">
-                            <img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 4">
+                            <div class="overflow-hidden img-home"><img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 4"></div>
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <p class="card-text">Living Room 1</p>
-                                <i class="fas fa-ellipsis-v"></i>
+                                <div class="dropdown">
+                                     <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                         <i class="fas fa-ellipsis-v ms-auto"></i>
+                                     </button>
+                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -127,15 +175,36 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-center align-items-center card">
                                 <span class="surface-name">North Wall</span>
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                                <div class="dropdown position-absolute top-0 end-0">
+                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v ms-auto"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                    </ul>
+                                </div>
                             </li>
                             <li class="list-group-item d-flex justify-content-center align-items-center card">
                                 <span class="surface-name">North Wall</span>
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                                <div class="dropdown position-absolute top-0 end-0">
+                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v ms-auto"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                    </ul>
+                                </div>
                             </li>
                             <li class="list-group-item d-flex justify-content-center align-items-center card">
                                 <span class="surface-name">North Wall</span>
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                                <div class="dropdown position-absolute top-0 end-0">
+                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v ms-auto"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                    </ul>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -253,15 +322,31 @@
             </div>
         </div>
 
+        <!-- Modal xác nhận xóa -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this item?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 @endsection
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 @endpush
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-        });
 
         let selectedImages = [];
 
@@ -311,10 +396,19 @@
                 colDiv.classList.add('col-md-3');
                 colDiv.innerHTML = `
                     <div class="card shadow-sm">
-                        <img src="${image.src}" class="card-img-top img-fluid" alt="${image.name}">
+                        <div class="overflow-hidden img-home">
+                            <img src="${image.src}" class="card-img-top img-fluid" alt="${image.name}">
+                        </div>
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <p class="card-text">${image.name}</p>
-                            <i class="fas fa-ellipsis-v"></i>
+                            <div class="dropdown">
+                                <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ms-auto"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -326,10 +420,40 @@
             document.getElementById('imagePreviewContainer').innerHTML = '';
             document.getElementById('imageInput').value = '';
 
-            // Đóng modal
+            // close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
             modal.hide();
         }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-item')) {
+                e.preventDefault();
+
+                let currentElement = e.target;
+                while (currentElement) {
+                    if (currentElement.classList.contains('list-group-item')) {
+                        itemToDelete = currentElement;
+                        break;
+                    }
+                    if (currentElement.classList.contains('col-md-3')) {
+                        itemToDelete = currentElement;
+                        break;
+                    }
+                    currentElement = currentElement.parentElement;
+                }
+            }
+        });
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+            if (itemToDelete) {
+                itemToDelete.remove();
+                itemToDelete = null;
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+                modal.hide();
+            } else {
+                console.error('No item to delete. itemToDelete is not defined.');
+            }
+        });
 
     </script>
 @endpush
@@ -337,14 +461,11 @@
 @push('styles')
 <style>
 
-.container-fluid {
-    padding-left:  12px !important;
-    padding-right:  12px !important;
-}
-    body {
-        font-family: "Inter", sans-serif;
-        background-color: #f8f9fa;
+    .container-fluid {
+        padding-left:  12px !important;
+        padding-right:  12px !important;
     }
+
     /* Header */
     .project-name {
         font-size: 30px;
@@ -400,6 +521,10 @@
         font-size: 24px;
         font-weight: bold;
         margin-bottom: 15px;
+    }
+
+    .photos-section .img-home{
+        height: 164px;
     }
     .card {
         border: none;
