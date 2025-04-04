@@ -487,7 +487,7 @@
             });
             
             const surfaceModal = document.getElementById('surfaceModal');
-            let currentIndex = null; // Lưu chỉ số của surface đang chỉnh sửa
+            let currentIndex = null;
             
             // Xử lý khi modal được mở
             surfaceModal.addEventListener('show.bs.modal', function (event) {
@@ -557,11 +557,11 @@
                         surfaceItem.querySelector('span').textContent = surfaceName;
                     }
             
-                    // Đóng modal
+                     // Close modal
                     const modal = bootstrap.Modal.getInstance(surfaceModal);
                     modal.hide();
                 } else {
-                    alert('Vui lòng điền đầy đủ thông tin!');
+                    alert('Please fill in all information!');
                 }
             });
             
