@@ -3,6 +3,7 @@
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\SurfaceStateController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PhotoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
 
     Route::get('/photo', 'PhotoController@index')->name('photo.index');
+
+    Route::post('/projects/{project}/collections', [PhotoController::class, 'updateCollections'])->name('projects.collections.update');
 
 });
 

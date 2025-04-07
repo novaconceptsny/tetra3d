@@ -8,7 +8,7 @@
                 <div class="container">
                     <div class="row align-items-center py-3">
                         <div class="col">
-                            <div class="project-name">Project name</div>
+                            <div class="project-name">{{ $project->name }}</div>
                         </div>
                         <div class="col text-end">
                             <button class="btn btn-primary"><i class="fas fa-pen"></i> Edit project</button>
@@ -32,22 +32,24 @@
                                     <span class="add-collection-text">Add Collection</span>
                                 </button>
                             </li>
-                            @foreach($projectCollections as $collection)
-                            <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
-                                <i class="fas fa-image collection-icon"></i>
-                                <div class="collection-info">
-                                    <span class="collection-name">{{ $collection->name }}</span>
-                                    <span class="collection-items">{{ $collection->photos_count ?? 0 }} items</span>
-                                </div>
-                                <div class="dropdown position-absolute top-0 end-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v ms-auto"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                    </ul>
-                                </div>
-                            </li>
+                            @foreach($artworkCollections as $artworkCollection)
+                                @if($project->artworkCollections->contains($artworkCollection->id))
+                                    <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
+                                        <i class="fas fa-image collection-icon"></i>
+                                        <div class="collection-info">
+                                            <span class="collection-name">{{ $artworkCollection->name }}</span>
+                                            <span class="collection-items">{{ $artworkCollection->photos_count ?? 0 }} items</span>
+                                        </div>
+                                        <div class="dropdown position-absolute top-0 end-0">
+                                            <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                @endif
                             @endforeach
                         </ul>
                     </div>
@@ -164,17 +166,20 @@
                         <h5 class="modal-title" id="addCollectionModalLabel">Collections</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <select wire:model.live="selectedProject" class="form-control">
-                            <option value="">Select Collection</option>
+                    <form action="{{ route('projects.collections.update', $project->id) }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <select name="collection_id" class="form-control" required>
+                                <option value="">Select Collection</option>
                                 @foreach($artworkCollections as $artworkCollection)
-                                    <option value="{{$artworkCollection->id}}">{{$artworkCollection->name}}</option>
+                                    <option value="{{ $artworkCollection->id }}">{{ $artworkCollection->name }}</option>
                                 @endforeach
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">Update</button>
-                    </div>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -359,10 +364,10 @@
                                         <i class="fas fa-ellipsis-v ms-auto"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${image.src}">Size Surface</a></li>
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${image.src}">Surface Size</a></li>
                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                    </ul>
+                                    </ul
                                 </div>
                             </div>
                         </div>
