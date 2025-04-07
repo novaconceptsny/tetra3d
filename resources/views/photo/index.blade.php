@@ -324,26 +324,35 @@
                     reader.onload = function (e) {
                         const imageData = {
                             src: e.target.result,
-                            name: file.name
+                            name: file.name.replace(/\.[^/.]+$/, "") // Remove file extension
                         };
                         selectedImages.push(imageData);
 
                         const previewDiv = document.createElement('div');
                         previewDiv.classList.add('image-preview');
                         previewDiv.innerHTML = `
-                                <p>${imageData.name}</p>
-                                <div>
-                                    <img src="${imageData.src}" alt="${imageData.name}" class="img-fluid">
-                                    <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
-                                        <i class="fas fa-times"></i>
-                                    </div>
+                            <div class="preview-header">
+                                <input type="text" 
+                                       class="form-control image-name-input" 
+                                       value="${imageData.name}"
+                                       onchange="updateImageName(this, ${selectedImages.length - 1})">
+                                <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
+                                    <i class="fas fa-times"></i>
                                 </div>
-                            `;
+                            </div>
+                            <div class="preview-image">
+                                <img src="${imageData.src}" alt="${imageData.name}" class="img-fluid">
+                            </div>
+                        `;
                         previewContainer.appendChild(previewDiv);
                     };
                     reader.readAsDataURL(file);
                 }
             }
+        }
+
+        function updateImageName(input, index) {
+            selectedImages[index].name = input.value;
         }
 
         function removeImage(element, index) {
@@ -358,25 +367,25 @@
                 const colDiv = document.createElement('div');
                 colDiv.classList.add('col-md-3', 'photo-item');
                 colDiv.innerHTML = `
-                        <div class="card shadow-sm photo-card">
-                            <div class="overflow-hidden img-home">
-                                <img src="${image.src}" class="card-img-top img-fluid" alt="${image.name}">
-                            </div>
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <p class="card-text">${image.name}</p>
-                                <div class="dropdown">
-                                    <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v ms-auto"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${image.src}">Surface Size</a></li>
-                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
-                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                    </ul
-                                </div>
+                    <div class="card shadow-sm photo-card">
+                        <div class="overflow-hidden img-home">
+                            <img src="${image.src}" class="card-img-top img-fluid" alt="${image.name}">
+                        </div>
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <p class="card-text">${image.name}</p>
+                            <div class="dropdown">
+                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ms-auto"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-title="${image.name}" data-image="${image.src}">Surface Size</a></li>
+                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                </ul>
                             </div>
                         </div>
-                    `;
+                    </div>
+                `;
                 photosContainer.appendChild(colDiv);
             });
 
@@ -385,7 +394,7 @@
             document.getElementById('imagePreviewContainer').innerHTML = '';
             document.getElementById('imageInput').value = '';
 
-            // close modal
+            // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
             modal.hide();
         }
@@ -524,48 +533,13 @@
 
 
 
-        document.getElementById('saveLayout').addEventListener('click', function () {
-            const titleImage = document.getElementById('titleImage').value;
-
-            if (titleImage) {
-                const surfaceItem = document.querySelectorAll('.layout-item')[currentIndexImage];
-                const enterLink = surfaceItem.querySelector('.enter-link');
-                const span = surfaceItem.querySelector('span');
-
-                if (enterLink) {
-                    enterLink.setAttribute('data-title', titleImage);
-                }
-
-                if (span) {
-                    span.textContent = titleImage;
-                }
-
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(surfaceModalImage);
-                modal.hide();
-            } else {
-                alert('Please fill in all information!');
-            }
-        });
-
-        document.getElementById('toggleButton').addEventListener('click', function() {
-            const photosSection = document.querySelector('.photos-section');
-
-            photosSection.classList.toggle('overflow-hidden');
-            photosSection.classList.toggle('expanded');
-        });
-
-        document.getElementById('toggleButtonSurfaces').addEventListener('click', function() {
-            const photosSection = document.querySelector('.surfaces-section');
-
-            photosSection.classList.toggle('overflow-hidden');
-            photosSection.classList.toggle('expanded');
-        });
-
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('imageCanvas');
             const ctx = canvas.getContext('2d');
+            const widthInput = document.getElementById('rectWidth');
+            const heightInput = document.getElementById('rectHeight');
             let backgroundImage = null;
+            let currentImageElement = null; // Store reference to current image element
             
             // Set fixed canvas dimensions
             const CANVAS_WIDTH = 800;
@@ -656,6 +630,9 @@
                 const button = event.relatedTarget;
                 if (!button) return;
                 
+                // Store reference to the card that contains the image
+                currentImageElement = button.closest('.photo-card');
+                
                 const image = button.getAttribute('data-image');
                 if (!image) {
                     console.error('No image data found');
@@ -686,7 +663,7 @@
                     console.error('Error setting image source:', error);
                 }
                 
-                // Update modal title
+                // Update modal title and input
                 const title = button.getAttribute('data-title') || 'Untitled';
                 const modalTitle = imageModal.querySelector('#imageModalLabel');
                 const titleInput = imageModal.querySelector('#titleImage');
@@ -812,6 +789,44 @@
                 isDragging = false;
                 selectedCorner = null;
                 canvas.style.cursor = 'default';
+            });
+
+            // Add save button handler
+            document.getElementById('saveLayout').addEventListener('click', function() {
+                if (!widthInput || !heightInput) {
+                    console.error('Width or height input not found');
+                    return;
+                }
+
+                const titleInput = document.getElementById('titleImage');
+                const newTitle = titleInput.value;
+
+                // Update the surface data
+                const surfaceData = {
+                    width: parseInt(widthInput.value) || 100,
+                    height: parseInt(heightInput.value) || 100,
+                    rect: { ...rect },
+                    title: newTitle
+                };
+
+                console.log('Saving surface data:', surfaceData);
+
+                // Update the image title in the card if we have a reference to it
+                if (currentImageElement) {
+                    // Update the card title
+                    const cardTitle = currentImageElement.querySelector('.card-text');
+                    if (cardTitle) cardTitle.textContent = newTitle;
+
+                    // Update the Surface Size link data-title attribute
+                    const surfaceSizeLink = currentImageElement.querySelector('[data-bs-target="#imageModal"]');
+                    if (surfaceSizeLink) surfaceSizeLink.setAttribute('data-title', newTitle);
+                }
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(imageModal);
+                if (modal) {
+                    modal.hide();
+                }
             });
         });
 
@@ -1016,39 +1031,40 @@
         margin-bottom: 20px;
     }
     .image-preview {
-        position: relative;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+    .preview-header {
         display: flex;
-        height: 100px;
-        justify-content: space-between;
         align-items: center;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .image-name-input {
+        flex-grow: 1;
+        margin-right: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 5px 10px;
+    }
+    .preview-image {
+        padding: 10px;
+    }
+    .preview-image img {
         width: 100%;
-    }
-    .image-preview img {
-        max-width: 100px;
         height: auto;
-        border-radius: 5px;
+        border-radius: 4px;
     }
-    .image-preview .remove-btn {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background-color: #fff;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .remove-btn {
         cursor: pointer;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        padding: 5px 10px;
+        color: #dc3545;
     }
-    .image-preview .remove-btn i {
-        font-size: 12px;
-        color: #6c757d;
-    }
-    .image-preview p {
-        font-size: 14px;
-        margin: 5px 0 0 0;
+    .remove-btn:hover {
+        color: #c82333;
     }
     .select-image-btn {
         border: 1px solid #ddd;
@@ -1470,6 +1486,49 @@
 
     .input-group .form-control:focus {
         box-shadow: none;
+    }
+
+    .image-preview {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+
+    .preview-header {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .image-name-input {
+        flex-grow: 1;
+        margin-right: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 5px 10px;
+    }
+
+    .preview-image {
+        padding: 10px;
+    }
+
+    .preview-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
+
+    .remove-btn {
+        cursor: pointer;
+        padding: 5px 10px;
+        color: #dc3545;
+    }
+
+    .remove-btn:hover {
+        color: #c82333;
     }
 </style>
 @endpush
