@@ -59,8 +59,10 @@
                 <div class="col-md-12 col-xl-7 order-md-3 order-xl-2 mb-3">
                     <!-- Photos Section -->
                     <div class="photos-section bg-white rounded overflow-hidden">
-                        <div style="font-size: 24px; font-weight: bold;">Photos
-                            <button class="btn enter-link" id="toggleButton">Enter</button></div>
+                        <div     style="font-size: 24px; font-weight: bold;">Photos
+                            <button class="btn enter-link" id="toggleButton">Enter</button>
+                            <button class="btn enter-link" id="duplicateImages">Duplicate images</button>
+                        </div>
                         <div class="row g-3" id="photosContainer">
                             <div class="col-md-3 d-flex photo-item">
                                 <div class="card shadow-sm photo-card add-image-card w-100 justify-content-center">
@@ -126,16 +128,13 @@
             <!-- Layout Section -->
             <div class="layout-section">
                 <div style="font-size: 24px; font-weight: bold;">Layout 1</div>
-                <div class="row g-3">
+                <div class="row g-3" id="layout1Container">
                     <div class="col-md-3 layout-item">
-                        <div class="card shadow-sm bg-white">
-                            <img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 1">
-                            <div class="card-body d-flex justify-content-between align-items-end">
-                                <p class="card-text"><span>Living Room 1</span> <br> <small>Created: June 19th, 2024</small></p>
-                                <button type="button" class="btn enter-link" data-bs-toggle="modal" data-bs-target="#imageModal" data-title="Living Room 1" data-image="images/livingroom.png">
-                                    Enter
-                                </button>
-                            </div>
+                        <div class="card bg-white card-layout">
+                            <button class="add-image-btn">
+                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                <span class="add-image-text">Add Layout</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -144,7 +143,7 @@
             <!-- Layout 2 Section -->
             <div class="layout-section">
                 <div style="font-size: 24px; font-weight: bold;">Layout 2</div>
-                <div class="row g-3">
+                <div class="row g-3" id="layout2Container">
                     <div class="col-md-3 layout-item">
                         <div class="card bg-white card-layout">
                             <button class="add-image-btn">
@@ -828,6 +827,76 @@
                     modal.hide();
                 }
             });
+
+            // Handle duplicate images button click
+            document.getElementById('duplicateImages').addEventListener('click', function() {
+                // Get all current photos (excluding the "Add Image" card)
+                const photoContainer = document.getElementById('photosContainer');
+                const photos = photoContainer.querySelectorAll('.photo-item:not(:first-child)');
+
+                console.log(photos, 'photos');
+                
+                if (!photos.length) {
+                    alert('No images to duplicate');
+                    return;
+                }
+
+                // Create layout content
+                let layoutHTML = '';
+
+                // Add each photo to the layout
+                photos.forEach(photo => {
+                    const img = photo.querySelector('img');
+                    const title = photo.querySelector('.card-text').textContent;
+                    
+                    if (img && title) {
+                        const now = new Date();
+                        layoutHTML += `
+                            <div class="col-md-3 layout-item">
+                                <div class="card shadow-sm bg-white">
+                                    <div class="overflow-hidden img-home">
+                                        <img src="${img.src}" class="card-img-top img-fluid" alt="${title}">
+                                    </div>
+                                    <div class="card-body d-flex justify-content-between align-items-end">
+                                        <p class="card-text">
+                                            <span>${title}</span><br>
+                                            <small>Created: ${now.toLocaleDateString()}</small>
+                                        </p>
+                                        <button type="button" 
+                                                class="btn enter-link" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#imageModal" 
+                                                data-title="${title}" 
+                                                data-image="${img.src}">
+                                            Enter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                // Add the "Add Layout" button to the end
+                layoutHTML += `
+                    <div class="col-md-3 layout-item">
+                        <div class="card bg-white card-layout">
+                            <button class="add-image-btn">
+                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                <span class="add-image-text">Add Layout</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Find the layout1Container and update its content
+                const layoutSection = document.getElementById('layout1Container');
+                if (layoutSection) {
+                    layoutSection.innerHTML = layoutHTML;
+                } else {
+                    console.error('Layout 1 container not found');
+                }
+            });
         });
 
 </script>
@@ -928,7 +997,10 @@
     }
     /* Layout Section */
     .layout-section {
-        margin-top: 30px;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #fff;
+        border-radius: 0.5rem;
     }
     .layout-section h2 {
         font-size: 24px;
@@ -1529,6 +1601,29 @@
 
     .remove-btn:hover {
         color: #c82333;
+    }
+
+    .layout-item .card {
+        height: 100%;
+    }
+
+    .layout-item .img-home {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .layout-item .img-home img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-layout {
+        height: 100%;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 @endpush
