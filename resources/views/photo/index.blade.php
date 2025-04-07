@@ -359,6 +359,8 @@
                                         <i class="fas fa-ellipsis-v ms-auto"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="${image.src}">Size Surface</a></li>
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                                     </ul>
                                 </div>
