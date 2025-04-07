@@ -537,6 +537,7 @@
             const ctx = canvas.getContext('2d');
             const widthInput = document.getElementById('rectWidth');
             const heightInput = document.getElementById('rectHeight');
+            let corners = [];
             let backgroundImage = null;
             let currentImageElement = null; // Store reference to current image element
             
@@ -568,7 +569,8 @@
                 return { x, y, width: drawWidth, height: drawHeight };
             }
 
-            function drawCanvas() {
+            function drawCanvas(endPoints) {
+                let points;
                 if (!backgroundImage) return;
                 
                 // Clear canvas
@@ -583,25 +585,34 @@
                     fitDimensions.width,
                     fitDimensions.height
                 );
-                
-                // Draw rectangle
+                          
+
+                // Define corners with their labels
+                if(endPoints.length === 0){
+                    points = [
+                        { x: rect.x, y: rect.y, label: '1' },                           // top-left
+                        { x: rect.x + rect.width, y: rect.y, label: '2' },             // top-right
+                        { x: rect.x + rect.width, y: rect.y + rect.height, label: '3' }, // bottom-right
+                        { x: rect.x, y: rect.y + rect.height, label: '4' }             // bottom-left
+                    ];
+                }else{
+                    points = endPoints;
+                }
+
+                ctx.beginPath();
                 ctx.strokeStyle = 'red';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
-                
-                // Draw corner dots with labels
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+
+               // Draw corner dots with labels
                 const dotRadius = 8;
                 ctx.fillStyle = '#00ff00';
-                
-                // Define corners with their labels
-                const corners = [
-                    { x: rect.x, y: rect.y, label: '1' },                           // top-left
-                    { x: rect.x + rect.width, y: rect.y, label: '2' },             // top-right
-                    { x: rect.x + rect.width, y: rect.y + rect.height, label: '3' }, // bottom-right
-                    { x: rect.x, y: rect.y + rect.height, label: '4' }             // bottom-left
-                ];
-                
-                corners.forEach(corner => {
+
+                points.forEach(corner => {
                     // Draw dot
                     ctx.beginPath();
                     ctx.arc(corner.x, corner.y, dotRadius, 0, Math.PI * 2);
@@ -618,9 +629,21 @@
                     ctx.fillStyle = '#00ff00';
                 });
 
-                // Update input fields
-                widthInput.value = Math.round(rect.width);
-                heightInput.value = Math.round(rect.height);
+                // Calculate width and height based on corner positions
+                const width = Math.sqrt(
+                    Math.pow(points[1].x - points[0].x, 2) + 
+                    Math.pow(points[1].y - points[0].y, 2)
+                );
+                
+                const height = Math.sqrt(
+                    Math.pow(points[3].x - points[0].x, 2) + 
+                    Math.pow(points[3].y - points[0].y, 2)
+                );
+
+                // Update input fields with rounded values
+                widthInput.value = Math.round(width);
+                heightInput.value = Math.round(height);
+                corners = points;
             }
 
             // Handle modal open
@@ -653,7 +676,7 @@
                         height: 100
                     };
                     
-                    drawCanvas();
+                    drawCanvas(corners);
                 };
                 
                 try {
@@ -692,19 +715,11 @@
             // Mouse event handlers
             canvas.addEventListener('mousedown', (e) => {
                 const pos = getMousePos(canvas, e);
-                
-                // Check if mouse is over any corner dot
-                const corners = [
-                    { x: rect.x, y: rect.y, name: 'topLeft' },
-                    { x: rect.x + rect.width, y: rect.y, name: 'topRight' },
-                    { x: rect.x, y: rect.y + rect.height, name: 'bottomLeft' },
-                    { x: rect.x + rect.width, y: rect.y + rect.height, name: 'bottomRight' }
-                ];
-                
+                             
                 for (const corner of corners) {
                     if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
                         isDragging = true;
-                        selectedCorner = corner.name;
+                        selectedCorner = corner.label;
                         canvas.style.cursor = 'grabbing';
                         break;
                     }
@@ -713,14 +728,6 @@
 
             canvas.addEventListener('mousemove', (e) => {
                 const pos = getMousePos(canvas, e);
-
-                // Update cursor style on hover
-                const corners = [
-                    { x: rect.x, y: rect.y },
-                    { x: rect.x + rect.width, y: rect.y },
-                    { x: rect.x, y: rect.y + rect.height },
-                    { x: rect.x + rect.width, y: rect.y + rect.height }
-                ];
 
                 let isOverCorner = false;
                 for (const corner of corners) {
@@ -735,47 +742,15 @@
                 }
 
                 if (!isDragging) return;
-                
-                switch (selectedCorner) {
-                    case 'topLeft':
-                        const newWidth1 = rect.width + (rect.x - pos.x);
-                        const newHeight1 = rect.height + (rect.y - pos.y);
-                        if (newWidth1 > 10 && newHeight1 > 10) {
-                            rect.x = pos.x;
-                            rect.y = pos.y;
-                            rect.width = newWidth1;
-                            rect.height = newHeight1;
-                        }
-                        break;
-                    case 'topRight':
-                        const newWidth2 = pos.x - rect.x;
-                        const newHeight2 = rect.height + (rect.y - pos.y);
-                        if (newWidth2 > 10 && newHeight2 > 10) {
-                            rect.y = pos.y;
-                            rect.width = newWidth2;
-                            rect.height = newHeight2;
-                        }
-                        break;
-                    case 'bottomLeft':
-                        const newWidth3 = rect.width + (rect.x - pos.x);
-                        const newHeight3 = pos.y - rect.y;
-                        if (newWidth3 > 10 && newHeight3 > 10) {
-                            rect.x = pos.x;
-                            rect.width = newWidth3;
-                            rect.height = newHeight3;
-                        }
-                        break;
-                    case 'bottomRight':
-                        const newWidth4 = pos.x - rect.x;
-                        const newHeight4 = pos.y - rect.y;
-                        if (newWidth4 > 10 && newHeight4 > 10) {
-                            rect.width = newWidth4;
-                            rect.height = newHeight4;
-                        }
-                        break;
+
+                // Free-form corner dragging with fixed opposite corners
+                if (selectedCorner) {
+                    const minSize = 10; // Minimum rectangle size
+                    corners[selectedCorner-1].x = pos.x;
+                    corners[selectedCorner-1].y = pos.y;
+
+                    drawCanvas(corners);
                 }
-                
-                drawCanvas();
             });
 
             canvas.addEventListener('mouseup', () => {
