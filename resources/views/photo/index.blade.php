@@ -32,22 +32,23 @@
                                     <span class="add-collection-text">Add Collection</span>
                                 </button>
                             </li>
+                            @foreach($projectCollections as $collection)
                             <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
                                 <i class="fas fa-image collection-icon"></i>
-
                                 <div class="collection-info">
-                                    <span class="collection-name">Digital Art</span>
-                                    <span class="collection-items">18 items</span>
+                                    <span class="collection-name">{{ $collection->name }}</span>
+                                    <span class="collection-items">{{ $collection->photos_count ?? 0 }} items</span>
                                 </div>
                                 <div class="dropdown position-absolute top-0 end-0">
-                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-ellipsis-v ms-auto"></i>
                                     </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <ul class="dropdown-menu">
                                         <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                                     </ul>
                                 </div>
                             </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
@@ -67,22 +68,26 @@
                                     </button>
                                 </div>
                             </div>
+                            @foreach($photos as $photo)
                             <div class="col-md-3 photo-item">
                                 <div class="card shadow-sm photo-card">
-                                    <div class="overflow-hidden img-home"><img src="images/livingroom.png" class="card-img-top img-fluid" alt="Living Room 1"></div>
+                                    <div class="overflow-hidden img-home">
+                                        <img src="{{ $photo->getUrl() }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                    </div>
                                     <div class="card-body d-flex justify-content-between align-items-center">
-                                        <p class="card-text">Living Room 1</p>
+                                        <p class="card-text">{{ $photo->name }}</p>
                                         <div class="dropdown">
-                                            <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="fas fa-ellipsis-v ms-auto"></i>
                                             </button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -160,11 +165,12 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="tags-container">
-                            <span class="tag">Sample 1 <i class="fas fa-times"></i></span>
-                            <span class="tag">Sample 2 <i class="fas fa-times"></i></span>
-                            <input type="text" class="tag-input" placeholder="Add a tag...">
-                        </div>
+                        <select wire:model.live="selectedProject" class="form-control">
+                            <option value="">Select Collection</option>
+                                @foreach($artworkCollections as $artworkCollection)
+                                    <option value="{{$artworkCollection->id}}">{{$artworkCollection->name}}</option>
+                                @endforeach
+                        </select>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary">Update</button>
