@@ -151,7 +151,8 @@
         </div>
 
         <!-- Modal for Add Collection -->
-        <div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -159,19 +160,14 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <x-backend::inputs.select2 name="artwork_collection_ids[]" label="Collections" :multiple="true">
-                            @foreach($artworkCollections as $artworkCollection)
-                                <x-backend::inputs.select-option
-                                    :multiple="true"
-                                    :value="$artworkCollection->id"
-                                    :text="$artworkCollection->name"
-                                    :selected="[]"
-                                />
-                            @endforeach
-                        </x-backend::inputs.select2>
+                        <div class="tags-container">
+                            <span class="tag">Sample 1 <i class="fas fa-times"></i></span>
+                            <span class="tag">Sample 2 <i class="fas fa-times"></i></span>
+                            <input type="text" class="tag-input" placeholder="Add a tag...">
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light w-100" id="updateCollections">Update</button>
+                        <button type="button" class="btn btn-primary">Update</button>
                     </div>
                 </div>
             </div>
@@ -600,44 +596,6 @@
 
                 // Hiển thị hình vuông
                 rectangle.style.display = 'block';
-            });
-        });
-
-        $(document).ready(function() {
-            // Initialize select2
-            $('.select2-multiple').select2({
-                placeholder: "Select collections",
-                allowClear: true,
-                tags: true,
-                theme: "bootstrap-5",
-                width: '100%'
-            });
-
-            // Handle collection updates
-            $('#updateCollections').click(function() {
-                const selectedCollections = $('.select2-multiple').select2('data');
-
-                // Here you would typically make an AJAX call to update collections
-                // For example:
-                /*
-                $.ajax({
-                    url: '/api/update-collections',
-                    method: 'POST',
-                    data: {
-                        collection_ids: $('.select2-multiple').val()
-                    },
-                    success: function(response) {
-                        // Handle success
-                        $('#addCollectionModal').modal('hide');
-                        // Refresh collections list
-                    },
-                    error: function(error) {
-                        // Handle error
-                    }
-                });
-                */
-
-                $('#addCollectionModal').modal('hide');
             });
         });
 
