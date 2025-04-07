@@ -261,36 +261,41 @@
 
         <!-- Modal -->
         <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="imageModalLabel">IMAGE TITLE</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="mb-3">
-                                    <input type="text" class="form-control mb-2" id="titleImage" placeholder="Image Title">
-                                    <!-- <textarea name="" id="textareaModal" rows="5" class="form-control w-100 text-start">Add new surface North wall West wall</textarea> -->
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="titleImage" placeholder="Image title (editable)">
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button type="button" id="saveLayout" class="btn btn-light">Save</button>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">Width</span>
+                                    <input type="number" class="form-control" id="rectWidth" value="100">
+                                    <span class="input-group-text">cm</span>
                                 </div>
                             </div>
-                            <div class="col-md-5">
-                                <div class="modal-footer">
-                                    <button type="button" id="saveLayout" class="btn btn-light" data-bs-dismiss="modal">Save</button>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">Height</span>
+                                    <input type="number" class="form-control" id="rectHeight" value="100">
+                                    <span class="input-group-text">cm</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center">
-                            <div class="image-container">
-                                <img src="images/7.jpg" class="img-fluid modal-image" id="modalImage" alt="Hình ảnh trong modal">
-                                <div id="rectangle" class="rectangle">
-                                    <div class="dot top-left"></div>
-                                    <div class="dot top-right"></div>
-                                    <div class="dot bottom-left"></div>
-                                    <div class="dot bottom-right"></div>
-                                </div>
-                            </div>
+
+                        <div class="text-center position-relative">
+                            <canvas id="imageCanvas" class="img-fluid"></canvas>
                         </div>
                     </div>
                 </div>
@@ -558,62 +563,259 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            const modalImage = document.getElementById('modalImage');
-            const rectangle = document.getElementById('rectangle');
-            const modal = document.getElementById('imageModal');
+            const canvas = document.getElementById('imageCanvas');
+            const ctx = canvas.getContext('2d');
+            let backgroundImage = null;
+            
+            // Set fixed canvas dimensions
+            const CANVAS_WIDTH = 800;
+            const CANVAS_HEIGHT = 600;
+            canvas.width = CANVAS_WIDTH;
+            canvas.height = CANVAS_HEIGHT;
+            
+            function fitImageToCanvas(img) {
+                const imgRatio = img.width / img.height;
+                const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
+                let drawWidth, drawHeight, x, y;
 
-            // Khi modal đóng, ẩn hình vuông
-            modal.addEventListener('hidden.bs.modal', () => {
-                rectangle.style.display = 'none';
+                if (imgRatio > canvasRatio) {
+                    // Image is wider than canvas ratio
+                    drawWidth = CANVAS_WIDTH;
+                    drawHeight = CANVAS_WIDTH / imgRatio;
+                    x = 0;
+                    y = (CANVAS_HEIGHT - drawHeight) / 2;
+                } else {
+                    // Image is taller than canvas ratio
+                    drawHeight = CANVAS_HEIGHT;
+                    drawWidth = CANVAS_HEIGHT * imgRatio;
+                    x = (CANVAS_WIDTH - drawWidth) / 2;
+                    y = 0;
+                }
+
+                return { x, y, width: drawWidth, height: drawHeight };
+            }
+
+            function drawCanvas() {
+                if (!backgroundImage) return;
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                
+                // Draw background image fitted to canvas
+                const fitDimensions = fitImageToCanvas(backgroundImage);
+                ctx.drawImage(
+                    backgroundImage,
+                    fitDimensions.x,
+                    fitDimensions.y,
+                    fitDimensions.width,
+                    fitDimensions.height
+                );
+                
+                // Draw rectangle
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+                
+                // Draw corner dots with labels
+                const dotRadius = 8;
+                ctx.fillStyle = '#00ff00';
+                
+                // Define corners with their labels
+                const corners = [
+                    { x: rect.x, y: rect.y, label: '1' },                           // top-left
+                    { x: rect.x + rect.width, y: rect.y, label: '2' },             // top-right
+                    { x: rect.x + rect.width, y: rect.y + rect.height, label: '3' }, // bottom-right
+                    { x: rect.x, y: rect.y + rect.height, label: '4' }             // bottom-left
+                ];
+                
+                corners.forEach(corner => {
+                    // Draw dot
+                    ctx.beginPath();
+                    ctx.arc(corner.x, corner.y, dotRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Draw label
+                    ctx.fillStyle = 'black';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(corner.label, corner.x, corner.y);
+                    
+                    // Reset fill style for next dot
+                    ctx.fillStyle = '#00ff00';
+                });
+
+                // Update input fields
+                widthInput.value = Math.round(rect.width);
+                heightInput.value = Math.round(rect.height);
+            }
+
+            // Handle modal open
+            const imageModal = document.getElementById('imageModal');
+            imageModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (!button) return;
+                
+                const image = button.getAttribute('data-image');
+                if (!image) {
+                    console.error('No image data found');
+                    return;
+                }
+                
+                // Create new image object
+                backgroundImage = new Image();
+                backgroundImage.onerror = function() {
+                    console.error('Failed to load image');
+                };
+                
+                backgroundImage.onload = function() {
+                    // Initialize rectangle in center of canvas
+                    rect = {
+                        x: (CANVAS_WIDTH - 100) / 2,
+                        y: (CANVAS_HEIGHT - 100) / 2,
+                        width: 100,
+                        height: 100
+                    };
+                    
+                    drawCanvas();
+                };
+                
+                try {
+                    backgroundImage.src = image;
+                } catch (error) {
+                    console.error('Error setting image source:', error);
+                }
+                
+                // Update modal title
+                const title = button.getAttribute('data-title') || 'Untitled';
+                const modalTitle = imageModal.querySelector('#imageModalLabel');
+                const titleInput = imageModal.querySelector('#titleImage');
+                if (modalTitle) modalTitle.textContent = title;
+                if (titleInput) titleInput.value = title;
             });
 
-            // Nhấp vào ảnh
-            modalImage.addEventListener('click', (e) => {
-                // Lấy kích thước hiển thị của ảnh
-                const rect = modalImage.getBoundingClientRect();
-                const imageWidth = rect.width; // Chiều rộng ảnh trong pixel
-                console.log(imageWidth);
-                const imageHeight = rect.height; // Chiều cao ảnh trong pixel
+            let isDragging = false;
+            let selectedCorner = null;
 
-                // Giả sử ảnh gốc là 100cm, tính tỷ lệ cm-to-px
-                const cmToPxRatio = 100; // 1cm = ?px
-                const squareSize = 100; // Kích thước hình vuông (100cm) trong pixel
+            function getMousePos(canvas, evt) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                return {
+                    x: (evt.clientX - rect.left) * scaleX,
+                    y: (evt.clientY - rect.top) * scaleY
+                };
+            }
 
-                // Tính tọa độ nhấp chuột tương đối với ảnh
-                const clickXInImage = e.clientX - rect.left; // Tọa độ X trong ảnh
-                const clickYInImage = e.clientY - rect.top;  // Tọa độ Y trong ảnh
+            function isOverCornerDot(mouseX, mouseY, cornerX, cornerY) {
+                const dotRadius = 8;
+                const distance = Math.sqrt((mouseX - cornerX) ** 2 + (mouseY - cornerY) ** 2);
+                return distance <= dotRadius * 2; // Increased hit area for better touch
+            }
 
-                // Đặt vị trí cho hình vuông (căn giữa điểm nhấp chuột)
-                const rectX = clickXInImage - squareSize / 2;
-                const rectY = clickYInImage - squareSize / 2;
+            // Mouse event handlers
+            canvas.addEventListener('mousedown', (e) => {
+                const pos = getMousePos(canvas, e);
+                
+                // Check if mouse is over any corner dot
+                const corners = [
+                    { x: rect.x, y: rect.y, name: 'topLeft' },
+                    { x: rect.x + rect.width, y: rect.y, name: 'topRight' },
+                    { x: rect.x, y: rect.y + rect.height, name: 'bottomLeft' },
+                    { x: rect.x + rect.width, y: rect.y + rect.height, name: 'bottomRight' }
+                ];
+                
+                for (const corner of corners) {
+                    if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
+                        isDragging = true;
+                        selectedCorner = corner.name;
+                        canvas.style.cursor = 'grabbing';
+                        break;
+                    }
+                }
+            });
 
-                // Đặt kích thước và vị trí cho hình vuông
-                rectangle.style.width = `${squareSize}px`;
-                rectangle.style.height = `${squareSize}px`;
-                rectangle.style.left = `${rectX}px`;
-                rectangle.style.top = `${rectY}px`;
+            canvas.addEventListener('mousemove', (e) => {
+                const pos = getMousePos(canvas, e);
 
-                // Tính toán hiệu ứng zoom
-                const zoomLevel = 2; // Phóng to 2x (có thể điều chỉnh)
-                const zoomedImageWidth = imageWidth * zoomLevel;
-                const zoomedImageHeight = imageHeight * zoomLevel;
+                // Update cursor style on hover
+                const corners = [
+                    { x: rect.x, y: rect.y },
+                    { x: rect.x + rect.width, y: rect.y },
+                    { x: rect.x, y: rect.y + rect.height },
+                    { x: rect.x + rect.width, y: rect.y + rect.height }
+                ];
 
-                // Đặt background-image và background-size cho hình vuông
-                rectangle.style.backgroundImage = `url(${modalImage.src})`;
-                rectangle.style.backgroundSize = `${zoomedImageWidth}px ${zoomedImageHeight}px`;
+                let isOverCorner = false;
+                for (const corner of corners) {
+                    if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
+                        canvas.style.cursor = 'grab';
+                        isOverCorner = true;
+                        break;
+                    }
+                }
+                if (!isOverCorner && !isDragging) {
+                    canvas.style.cursor = 'default';
+                }
 
-                // Tính background-position để hiển thị khu vực zoom
-                const bgPosX = clickXInImage * zoomLevel - squareSize / 2;
-                const bgPosY = clickYInImage * zoomLevel - squareSize / 2;
-                rectangle.style.backgroundPosition = `-${bgPosX}px -${bgPosY}px`;
+                if (!isDragging) return;
+                
+                switch (selectedCorner) {
+                    case 'topLeft':
+                        const newWidth1 = rect.width + (rect.x - pos.x);
+                        const newHeight1 = rect.height + (rect.y - pos.y);
+                        if (newWidth1 > 10 && newHeight1 > 10) {
+                            rect.x = pos.x;
+                            rect.y = pos.y;
+                            rect.width = newWidth1;
+                            rect.height = newHeight1;
+                        }
+                        break;
+                    case 'topRight':
+                        const newWidth2 = pos.x - rect.x;
+                        const newHeight2 = rect.height + (rect.y - pos.y);
+                        if (newWidth2 > 10 && newHeight2 > 10) {
+                            rect.y = pos.y;
+                            rect.width = newWidth2;
+                            rect.height = newHeight2;
+                        }
+                        break;
+                    case 'bottomLeft':
+                        const newWidth3 = rect.width + (rect.x - pos.x);
+                        const newHeight3 = pos.y - rect.y;
+                        if (newWidth3 > 10 && newHeight3 > 10) {
+                            rect.x = pos.x;
+                            rect.width = newWidth3;
+                            rect.height = newHeight3;
+                        }
+                        break;
+                    case 'bottomRight':
+                        const newWidth4 = pos.x - rect.x;
+                        const newHeight4 = pos.y - rect.y;
+                        if (newWidth4 > 10 && newHeight4 > 10) {
+                            rect.width = newWidth4;
+                            rect.height = newHeight4;
+                        }
+                        break;
+                }
+                
+                drawCanvas();
+            });
 
-                // Hiển thị hình vuông
-                rectangle.style.display = 'block';
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+                selectedCorner = null;
+                canvas.style.cursor = 'default';
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isDragging = false;
+                selectedCorner = null;
+                canvas.style.cursor = 'default';
             });
         });
 
 </script>
-
 
 
 @endpush
@@ -1218,6 +1420,56 @@
     .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
         background-color: #0d6efd;
         color: white;
+    }
+
+    #imageCanvas {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        background-color: #f8f8f8; /* Light gray background to show canvas bounds */
+    }
+
+    .modal-lg {
+        max-width: 900px;
+    }
+
+    #titleImage {
+        border: none;
+        border-bottom: 1px solid #333;
+        border-radius: 0;
+        padding: 5px 0;
+    }
+
+    #titleImage:focus {
+        box-shadow: none;
+        border-bottom: 2px solid #333;
+    }
+
+    #saveLayout {
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        padding: 5px 20px;
+    }
+
+    .input-group {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .input-group-text {
+        background: none;
+        border: none;
+        color: #6c757d;
+    }
+
+    .input-group .form-control {
+        border: none;
+        text-align: center;
+    }
+
+    .input-group .form-control:focus {
+        box-shadow: none;
     }
 </style>
 @endpush
