@@ -507,6 +507,20 @@
             }
         });
 
+        document.getElementById('toggleButton').addEventListener('click', function() {
+            const photosSection = document.querySelector('.photos-section');
+
+            photosSection.classList.toggle('overflow-hidden');
+            photosSection.classList.toggle('expanded');
+        });
+
+        document.getElementById('toggleButtonSurfaces').addEventListener('click', function() {
+            const photosSection = document.querySelector('.surfaces-section');
+
+            photosSection.classList.toggle('overflow-hidden');
+            photosSection.classList.toggle('expanded');
+        });
+
         const surfaceModalImage = document.getElementById('imageModal');
         let currentIndexImage = null;
 
