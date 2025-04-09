@@ -17,7 +17,7 @@ class Photo extends Model
     ];
 
     protected $casts = [
-        'data' => 'array'
+        'data' => 'object'
     ];
 
     public function project()

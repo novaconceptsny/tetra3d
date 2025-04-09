@@ -19,16 +19,32 @@ class PhotoStateController extends Controller
             $layout = Layout::findOrFail($layoutId);
             $project = Project::findOrFail($layout->project_id);
             
-            // Log each variable separately with labels
-            error_log("Layout: " . json_encode($layout, JSON_PRETTY_PRINT));
-            error_log("Project: " . json_encode($project, JSON_PRETTY_PRINT));
-            error_log("Photo: " . json_encode($photo, JSON_PRETTY_PRINT));
-
             $data            = [];
             $data['project'] = $project;
             $data['layout']  = $layout;
-            $data['photo']   = $photo;
+            $data['surface']   = $photo;
+            $data['navEnabled'] = false;
+            $data['navbarLight'] = true;
 
+            $canvases = array();
+            $assignedArtworks = array();
+
+            $canvases[$photo->id ?? 'new'] = [
+                'canvasId' => "artwork_canvas_" . ($photo->id ?? 'new'),
+                'surface' => $photo->only([
+                    'id',
+                    'name',
+                    'background_url',
+                    'data'
+                ]),
+                'assignedArtworks' => $assignedArtworks,
+                'userId' => auth()->id(),
+                'photoId' => $photo->id,
+                'layoutId' => $layout->id,
+                'photoEditable' => true
+            ];
+
+            $data['canvases'] = $canvases;
             return view('pages.photoeditor', $data);
         } catch (\Exception $e) {
             // Log the error

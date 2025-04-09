@@ -854,6 +854,10 @@
                     return null;
                 }
 
+                // Get natural dimensions of the image
+                const naturalWidth = img.naturalWidth;
+                const naturalHeight = img.naturalHeight;
+
                 // Fetch the image and convert to blob
                 return fetch(imgSrc)
                     .then(response => response.blob())
@@ -861,6 +865,8 @@
                         // Add the image file to FormData
                         formData.append(`images[]`, blob, `${title}.jpg`);
                         formData.append(`names[]`, title);
+                        formData.append(`widths[]`, naturalWidth);
+                        formData.append(`heights[]`, naturalHeight);
                         return {
                             name: title,
                             index: index

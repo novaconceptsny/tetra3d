@@ -17,6 +17,7 @@ class CanvasManager {
         this.surface = data.surface;
         this.surfaceData = this.surface.data;
         this.latestState = data.latestState;
+        this.photoEditable = data.photoEditable;
 
         this.canvasApi = new CanvasApi({
             updateEndpoint: data.updateEndpoint,
@@ -49,6 +50,7 @@ class CanvasManager {
         this.boundingBox = null;
         this.imgWidth = this.surface.data.img_width;
         this.imgHeight = this.surface.data.img_height;
+        console.log(this.imgWidth, this.imgHeight,  this.surface.data, "llllllllllllllllllllll")
         this.baseWidth = null;
         this.baseScale = null;
 
