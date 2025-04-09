@@ -41,6 +41,27 @@ class PhotoController extends Controller
     {
         try {
             return DB::transaction(function () use ($request, $project) {
+                // Check if project has no layouts and create default layout
+                if ($project->layouts->isEmpty()) {
+                    // Get the first tour's ID from the project
+                    $firstTour = $project->tours->first();
+                    
+                    if (!$firstTour) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'No tours found for this project'
+                        ], 422);
+                    }
+
+                    $layout = $project->layouts()->create([
+                        'name' => 'Layout_1',
+                        'tour_id' => $firstTour->id,
+                        'user_id' => auth()->id()
+                    ]);
+                } else {
+                    $layout = $project->layouts->first();
+                }
+
                 // First, delete all existing photos for this project
                 Photo::where('project_id', $project->id)->delete();
                 
@@ -81,7 +102,9 @@ class PhotoController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Photos duplicated successfully',
-                    'photos' => $savedPhotos
+                    'photos' => $savedPhotos,
+                    'layout' => $layout, // Send layout data back to frontend
+                    'hasNewLayout' => $project->layouts->isEmpty() // Tell frontend if this was a new layout
                 ]);
             });
         } catch (\Exception $e) {

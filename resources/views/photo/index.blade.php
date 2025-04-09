@@ -918,8 +918,30 @@
                 .then(data => {
                     if (data.success) {
                         let layoutHTML = '';
-                        const layoutId = document.getElementById('layout1Container').dataset.layoutId;
+                        const layoutId = data.layout.id;
 
+                        // If this was a new layout, we need to create the layout section first
+                        if (data.hasNewLayout) {
+                            // Create new layout section if it doesn't exist
+                            const layoutsContainer = document.querySelector('.main-content');
+                            const noLayoutsMessage = document.querySelector('.layout-section');
+                            
+                            if (noLayoutsMessage) {
+                                noLayoutsMessage.remove(); // Remove "No layouts available" message
+                            }
+
+                            // Create new layout section
+                            const newLayoutSection = document.createElement('div');
+                            newLayoutSection.className = 'layout-section';
+                            newLayoutSection.innerHTML = `
+                                <div style="font-size: 24px; font-weight: bold;">${data.layout.name}</div>
+                                <div class="row g-3" id="layout1Container" data-layout-id="${layoutId}">
+                                </div>
+                            `;
+                            layoutsContainer.appendChild(newLayoutSection);
+                        }
+
+                        // Generate HTML for photos
                         data.photos.forEach(photo => {
                             const now = new Date();
                             layoutHTML += `
@@ -958,7 +980,7 @@
                             </div>
                         `;
 
-                        // Find the layout1Container and update its content
+                        // Find the layout container and update its content
                         const layoutSection = document.getElementById('layout1Container');
                         if (layoutSection) {
                             layoutSection.innerHTML = layoutHTML;
