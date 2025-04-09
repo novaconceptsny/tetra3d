@@ -129,7 +129,7 @@
             @foreach($project->layouts as $layout)
                 <div class="layout-section">
                     <div style="font-size: 24px; font-weight: bold;">{{ $layout->name }}</div>
-                    <div class="row g-3" id="layout{{ $loop->iteration }}Container">
+                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
                         <div class="col-md-3 layout-item">
                             <div class="card bg-white card-layout">
                                 <button class="add-image-btn">
@@ -305,659 +305,659 @@
 @push('scripts')
 <script>
     const projectId = {{ $project->id }};
+    let selectedImages = [];
 
-        let selectedImages = [];
+    function navigateToPhoto(photoId, layoutId) {
+        window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
+    }
 
-        function previewImages(event) {
-            const files = event.target.files;
-            const previewContainer = document.getElementById('imagePreviewContainer');
+    function previewImages(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('imagePreviewContainer');
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (file.type === 'image/jpeg' || file.type === 'image/png') {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const imageData = {
-                            src: e.target.result,
-                            name: file.name.replace(/\.[^/.]+$/, "") // Remove file extension
-                        };
-                        selectedImages.push(imageData);
-
-                        const previewDiv = document.createElement('div');
-                        previewDiv.classList.add('image-preview');
-                        previewDiv.innerHTML = `
-                            <div class="preview-header">
-                                <input type="text" 
-                                       class="form-control image-name-input" 
-                                       value="${imageData.name}"
-                                       onchange="updateImageName(this, ${selectedImages.length - 1})">
-                                <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
-                                    <i class="fas fa-times"></i>
-                                </div>
-                            </div>
-                            <div class="preview-image">
-                                <img src="${imageData.src}" alt="${imageData.name}" class="img-fluid">
-                            </div>
-                        `;
-                        previewContainer.appendChild(previewDiv);
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.type === 'image/jpeg' || file.type === 'image/png') {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageData = {
+                        src: e.target.result,
+                        name: file.name.replace(/\.[^/.]+$/, "") // Remove file extension
                     };
-                    reader.readAsDataURL(file);
-                }
+                    selectedImages.push(imageData);
+
+                    const previewDiv = document.createElement('div');
+                    previewDiv.classList.add('image-preview');
+                    previewDiv.innerHTML = `
+                        <div class="preview-header">
+                            <input type="text" 
+                                   class="form-control image-name-input" 
+                                   value="${imageData.name}"
+                                   onchange="updateImageName(this, ${selectedImages.length - 1})">
+                            <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="preview-image">
+                            <img src="${imageData.src}" alt="${imageData.name}" class="img-fluid">
+                        </div>
+                    `;
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
             }
         }
+    }
 
-        function updateImageName(input, index) {
-            selectedImages[index].name = input.value;
-        }
+    function updateImageName(input, index) {
+        selectedImages[index].name = input.value;
+    }
 
-        function removeImage(element, index) {
-            selectedImages.splice(index, 1);
-            element.closest('.image-preview').remove();
-        }
+    function removeImage(element, index) {
+        selectedImages.splice(index, 1);
+        element.closest('.image-preview').remove();
+    }
 
-        function saveImages() {
-            const photosContainer = document.getElementById('photosContainer');
-            
-            // Add each photo to the container
-            selectedImages.forEach(imageData => {
-                const colDiv = document.createElement('div');
-                colDiv.classList.add('col-md-3', 'photo-item');
-                colDiv.innerHTML = `
-                    <div class="card shadow-sm photo-card">
-                        <div class="overflow-hidden img-home">
-                            <img src="${imageData.src}" class="card-img-top img-fluid" alt="${imageData.name}">
-                        </div>
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <p class="card-text">${imageData.name}</p>
-                            <div class="dropdown">
-                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v ms-auto"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-title="${imageData.name}" data-image="${imageData.src}">Surface Size</a></li>
-                                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
-                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                </ul>
-                            </div>
+    function saveImages() {
+        const photosContainer = document.getElementById('photosContainer');
+        
+        // Add each photo to the container
+        selectedImages.forEach(imageData => {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.innerHTML = `
+                <div class="card shadow-sm photo-card">
+                    <div class="overflow-hidden img-home">
+                        <img src="${imageData.src}" class="card-img-top img-fluid" alt="${imageData.name}">
+                    </div>
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <p class="card-text">${imageData.name}</p>
+                        <div class="dropdown">
+                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-title="${imageData.name}" data-image="${imageData.src}">Surface Size</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                            </ul>
                         </div>
                     </div>
-                `;
-                photosContainer.appendChild(colDiv);
-            });
+                </div>
+            `;
+            photosContainer.appendChild(colDiv);
+        });
 
-            // Reset modal
-            selectedImages = [];
-            document.getElementById('imagePreviewContainer').innerHTML = '';
-            document.getElementById('imageInput').value = '';
+        // Reset modal
+        selectedImages = [];
+        document.getElementById('imagePreviewContainer').innerHTML = '';
+        document.getElementById('imageInput').value = '';
+
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
+        modal.hide();
+    }
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-item')) {
+            e.preventDefault();
+
+            let currentElement = e.target;
+            while (currentElement) {
+                if (currentElement.classList.contains('list-group-item')) {
+                    itemToDelete = currentElement;
+                    break;
+                }
+                if (currentElement.classList.contains('col-md-3')) {
+                    itemToDelete = currentElement;
+                    break;
+                }
+                currentElement = currentElement.parentElement;
+            }
+        }
+    });
+
+    document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+        if (itemToDelete) {
+            itemToDelete.remove();
+            itemToDelete = null;
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+            modal.hide();
+        } else {
+            console.error('No item to delete. itemToDelete is not defined.');
+        }
+    });
+
+    const surfaceModal = document.getElementById('surfaceModal');
+    let currentIndex = null; // Lưu chỉ số của surface đang chỉnh sửa
+
+    // Xử lý khi modal được mở
+    surfaceModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Nút đã kích hoạt modal
+        const action = button.getAttribute('data-action'); // "add" hoặc "edit"
+
+        const modalTitle = surfaceModal.querySelector('.modal-title');
+        const surfaceNameInput = surfaceModal.querySelector('#surfaceName');
+        const surfaceWidthInput = surfaceModal.querySelector('#surfaceWidth');
+        const surfaceHeightInput = surfaceModal.querySelector('#surfaceHeight');
+
+        if (action === 'add') {
+            // Thêm mới surface
+            modalTitle.textContent = 'ADD SURFACE';
+            surfaceNameInput.value = '';
+            surfaceWidthInput.value = '';
+            surfaceHeightInput.value = '';
+            currentIndex = null;
+        } else if (action === 'edit') {
+            // Sửa surface
+            modalTitle.textContent = 'EDIT SURFACE';
+            const surfaceItem = button.closest('.list-group-item');
+            const name = surfaceItem.getAttribute('data-name');
+            const width = surfaceItem.getAttribute('data-width');
+            const height = surfaceItem.getAttribute('data-height');
+            surfaceNameInput.value = name;
+            surfaceWidthInput.value = width;
+            surfaceHeightInput.value = height;
+            currentIndex = Array.from(document.querySelectorAll('.list-group-item')).indexOf(surfaceItem);
+        }
+    });
+
+    // Xử lý khi nhấn nút Save
+    document.getElementById('saveSurface').addEventListener('click', function () {
+        const surfaceName = document.getElementById('surfaceName').value;
+        const surfaceWidth = document.getElementById('surfaceWidth').value;
+        const surfaceHeight = document.getElementById('surfaceHeight').value;
+
+        if (surfaceName && surfaceWidth && surfaceHeight) {
+            if (currentIndex === null) {
+                // Thêm mới surface
+                const surfaceList = document.querySelector('.surfaces-section .list-group');
+                const newSurface = document.createElement('li');
+                newSurface.className = 'list-group-item d-flex justify-content-between align-items-center card surface-item';
+                newSurface.setAttribute('data-name', surfaceName);
+                newSurface.setAttribute('data-width', surfaceWidth);
+                newSurface.setAttribute('data-height', surfaceHeight);
+                newSurface.innerHTML = `
+                        <span class="surface-name">${surfaceName}</span>
+                        <div class="dropdown position-absolute top-0 end-0">
+                            <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
+                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                            </ul>
+                        </div>
+                    `;
+                surfaceList.appendChild(newSurface);
+            } else {
+                // Sửa surface
+                const surfaceItem = document.querySelectorAll('.list-group-item')[currentIndex];
+                surfaceItem.setAttribute('data-name', surfaceName);
+                surfaceItem.setAttribute('data-width', surfaceWidth);
+                surfaceItem.setAttribute('data-height', surfaceHeight);
+                surfaceItem.querySelector('span').textContent = surfaceName;
+            }
 
             // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
+            const modal = bootstrap.Modal.getInstance(surfaceModal);
             modal.hide();
+        } else {
+            alert('Please fill in all information!');
+        }
+    });
+
+    document.getElementById('toggleButton').addEventListener('click', function() {
+        const photosSection = document.querySelector('.photos-section');
+
+        photosSection.classList.toggle('overflow-hidden');
+        photosSection.classList.toggle('expanded');
+    });
+
+    document.getElementById('toggleButtonSurfaces').addEventListener('click', function() {
+        const photosSection = document.querySelector('.surfaces-section');
+
+        photosSection.classList.toggle('overflow-hidden');
+        photosSection.classList.toggle('expanded');
+    });
+
+    const surfaceModalImage = document.getElementById('imageModal');
+    let currentIndexImage = null;
+
+    surfaceModalImage.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        const title = button.getAttribute('data-title');
+        const image = button.getAttribute('data-image');
+
+        const modalTitle = this.querySelector('#imageModalLabel');
+        const titleImage = this.querySelector('#titleImage');
+        // const modalTextTitle = this.querySelector('#textareaModal');
+        modalTitle.textContent = title;
+        titleImage.value = title;
+        // modalTextTitle.value = title;
+
+        const imageItem = button.closest('.layout-item');
+
+        currentIndexImage = Array.from(document.querySelectorAll('.layout-item')).indexOf(imageItem);
+        const modalImage = this.querySelector('.modal-image');
+        modalImage.src = image;
+    });
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        const widthInput = document.getElementById('rectWidth');
+        const heightInput = document.getElementById('rectHeight');
+        let corners = [];
+        let backgroundImage = null;
+        let currentImageElement = null; // Store reference to current image element
+        
+        // Set fixed canvas dimensions
+        const CANVAS_WIDTH = 800;
+        const CANVAS_HEIGHT = 600;
+        canvas.width = CANVAS_WIDTH;
+        canvas.height = CANVAS_HEIGHT;
+        
+        function fitImageToCanvas(img) {
+            const imgRatio = img.width / img.height;
+            const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
+            let drawWidth, drawHeight, x, y;
+
+            if (imgRatio > canvasRatio) {
+                // Image is wider than canvas ratio
+                drawWidth = CANVAS_WIDTH;
+                drawHeight = CANVAS_WIDTH / imgRatio;
+                x = 0;
+                y = (CANVAS_HEIGHT - drawHeight) / 2;
+            } else {
+                // Image is taller than canvas ratio
+                drawHeight = CANVAS_HEIGHT;
+                drawWidth = CANVAS_HEIGHT * imgRatio;
+                x = (CANVAS_WIDTH - drawWidth) / 2;
+                y = 0;
+            }
+
+            return { x, y, width: drawWidth, height: drawHeight };
         }
 
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('delete-item')) {
-                e.preventDefault();
-
-                let currentElement = e.target;
-                while (currentElement) {
-                    if (currentElement.classList.contains('list-group-item')) {
-                        itemToDelete = currentElement;
-                        break;
-                    }
-                    if (currentElement.classList.contains('col-md-3')) {
-                        itemToDelete = currentElement;
-                        break;
-                    }
-                    currentElement = currentElement.parentElement;
-                }
-            }
-        });
-
-        document.getElementById('confirmDeleteButton').addEventListener('click', function() {
-            if (itemToDelete) {
-                itemToDelete.remove();
-                itemToDelete = null;
-                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
-                modal.hide();
-            } else {
-                console.error('No item to delete. itemToDelete is not defined.');
-            }
-        });
-
-        const surfaceModal = document.getElementById('surfaceModal');
-        let currentIndex = null; // Lưu chỉ số của surface đang chỉnh sửa
-
-        // Xử lý khi modal được mở
-        surfaceModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget; // Nút đã kích hoạt modal
-            const action = button.getAttribute('data-action'); // "add" hoặc "edit"
-
-            const modalTitle = surfaceModal.querySelector('.modal-title');
-            const surfaceNameInput = surfaceModal.querySelector('#surfaceName');
-            const surfaceWidthInput = surfaceModal.querySelector('#surfaceWidth');
-            const surfaceHeightInput = surfaceModal.querySelector('#surfaceHeight');
-
-            if (action === 'add') {
-                // Thêm mới surface
-                modalTitle.textContent = 'ADD SURFACE';
-                surfaceNameInput.value = '';
-                surfaceWidthInput.value = '';
-                surfaceHeightInput.value = '';
-                currentIndex = null;
-            } else if (action === 'edit') {
-                // Sửa surface
-                modalTitle.textContent = 'EDIT SURFACE';
-                const surfaceItem = button.closest('.list-group-item');
-                const name = surfaceItem.getAttribute('data-name');
-                const width = surfaceItem.getAttribute('data-width');
-                const height = surfaceItem.getAttribute('data-height');
-                surfaceNameInput.value = name;
-                surfaceWidthInput.value = width;
-                surfaceHeightInput.value = height;
-                currentIndex = Array.from(document.querySelectorAll('.list-group-item')).indexOf(surfaceItem);
-            }
-        });
-
-        // Xử lý khi nhấn nút Save
-        document.getElementById('saveSurface').addEventListener('click', function () {
-            const surfaceName = document.getElementById('surfaceName').value;
-            const surfaceWidth = document.getElementById('surfaceWidth').value;
-            const surfaceHeight = document.getElementById('surfaceHeight').value;
-
-            if (surfaceName && surfaceWidth && surfaceHeight) {
-                if (currentIndex === null) {
-                    // Thêm mới surface
-                    const surfaceList = document.querySelector('.surfaces-section .list-group');
-                    const newSurface = document.createElement('li');
-                    newSurface.className = 'list-group-item d-flex justify-content-between align-items-center card surface-item';
-                    newSurface.setAttribute('data-name', surfaceName);
-                    newSurface.setAttribute('data-width', surfaceWidth);
-                    newSurface.setAttribute('data-height', surfaceHeight);
-                    newSurface.innerHTML = `
-                            <span class="surface-name">${surfaceName}</span>
-                            <div class="dropdown position-absolute top-0 end-0">
-                                <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v ms-auto"></i>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
-                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                </ul>
-                            </div>
-                        `;
-                    surfaceList.appendChild(newSurface);
-                } else {
-                    // Sửa surface
-                    const surfaceItem = document.querySelectorAll('.list-group-item')[currentIndex];
-                    surfaceItem.setAttribute('data-name', surfaceName);
-                    surfaceItem.setAttribute('data-width', surfaceWidth);
-                    surfaceItem.setAttribute('data-height', surfaceHeight);
-                    surfaceItem.querySelector('span').textContent = surfaceName;
-                }
-
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(surfaceModal);
-                modal.hide();
-            } else {
-                alert('Please fill in all information!');
-            }
-        });
-
-        document.getElementById('toggleButton').addEventListener('click', function() {
-            const photosSection = document.querySelector('.photos-section');
-
-            photosSection.classList.toggle('overflow-hidden');
-            photosSection.classList.toggle('expanded');
-        });
-
-        document.getElementById('toggleButtonSurfaces').addEventListener('click', function() {
-            const photosSection = document.querySelector('.surfaces-section');
-
-            photosSection.classList.toggle('overflow-hidden');
-            photosSection.classList.toggle('expanded');
-        });
-
-        const surfaceModalImage = document.getElementById('imageModal');
-        let currentIndexImage = null;
-
-        surfaceModalImage.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-
-            const title = button.getAttribute('data-title');
-            const image = button.getAttribute('data-image');
-
-            const modalTitle = this.querySelector('#imageModalLabel');
-            const titleImage = this.querySelector('#titleImage');
-            // const modalTextTitle = this.querySelector('#textareaModal');
-            modalTitle.textContent = title;
-            titleImage.value = title;
-            // modalTextTitle.value = title;
-
-            const imageItem = button.closest('.layout-item');
-
-            currentIndexImage = Array.from(document.querySelectorAll('.layout-item')).indexOf(imageItem);
-            const modalImage = this.querySelector('.modal-image');
-            modalImage.src = image;
-        });
-
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('imageCanvas');
-            const ctx = canvas.getContext('2d');
-            const widthInput = document.getElementById('rectWidth');
-            const heightInput = document.getElementById('rectHeight');
-            let corners = [];
-            let backgroundImage = null;
-            let currentImageElement = null; // Store reference to current image element
+        function drawCanvas(endPoints) {
+            let points;
+            if (!backgroundImage) return;
             
-            // Set fixed canvas dimensions
-            const CANVAS_WIDTH = 800;
-            const CANVAS_HEIGHT = 600;
-            canvas.width = CANVAS_WIDTH;
-            canvas.height = CANVAS_HEIGHT;
+            // Clear canvas
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             
-            function fitImageToCanvas(img) {
-                const imgRatio = img.width / img.height;
-                const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
-                let drawWidth, drawHeight, x, y;
+            // Draw background image fitted to canvas
+            const fitDimensions = fitImageToCanvas(backgroundImage);
+            ctx.drawImage(
+                backgroundImage,
+                fitDimensions.x,
+                fitDimensions.y,
+                fitDimensions.width,
+                fitDimensions.height
+            );
+                      
 
-                if (imgRatio > canvasRatio) {
-                    // Image is wider than canvas ratio
-                    drawWidth = CANVAS_WIDTH;
-                    drawHeight = CANVAS_WIDTH / imgRatio;
-                    x = 0;
-                    y = (CANVAS_HEIGHT - drawHeight) / 2;
-                } else {
-                    // Image is taller than canvas ratio
-                    drawHeight = CANVAS_HEIGHT;
-                    drawWidth = CANVAS_HEIGHT * imgRatio;
-                    x = (CANVAS_WIDTH - drawWidth) / 2;
-                    y = 0;
-                }
-
-                return { x, y, width: drawWidth, height: drawHeight };
+            // Define corners with their labels
+            if(endPoints.length === 0){
+                points = [
+                    { x: rect.x, y: rect.y, label: '1' },                           // top-left
+                    { x: rect.x + rect.width, y: rect.y, label: '2' },             // top-right
+                    { x: rect.x + rect.width, y: rect.y + rect.height, label: '3' }, // bottom-right
+                    { x: rect.x, y: rect.y + rect.height, label: '4' }             // bottom-left
+                ];
+            }else{
+                points = endPoints;
             }
 
-            function drawCanvas(endPoints) {
-                let points;
-                if (!backgroundImage) return;
-                
-                // Clear canvas
-                ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                
-                // Draw background image fitted to canvas
-                const fitDimensions = fitImageToCanvas(backgroundImage);
-                ctx.drawImage(
-                    backgroundImage,
-                    fitDimensions.x,
-                    fitDimensions.y,
-                    fitDimensions.width,
-                    fitDimensions.height
-                );
-                          
+            ctx.beginPath();
+            ctx.strokeStyle = 'red';
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.closePath();
+            ctx.stroke();
 
-                // Define corners with their labels
-                if(endPoints.length === 0){
-                    points = [
-                        { x: rect.x, y: rect.y, label: '1' },                           // top-left
-                        { x: rect.x + rect.width, y: rect.y, label: '2' },             // top-right
-                        { x: rect.x + rect.width, y: rect.y + rect.height, label: '3' }, // bottom-right
-                        { x: rect.x, y: rect.y + rect.height, label: '4' }             // bottom-left
-                    ];
-                }else{
-                    points = endPoints;
-                }
+           // Draw corner dots with labels
+            const dotRadius = 8;
+            ctx.fillStyle = '#00ff00';
 
+            points.forEach(corner => {
+                // Draw dot
                 ctx.beginPath();
-                ctx.strokeStyle = 'red';
-                ctx.moveTo(points[0].x, points[0].y);
-                for (let i = 1; i < points.length; i++) {
-                ctx.lineTo(points[i].x, points[i].y);
-                }
-                ctx.closePath();
-                ctx.stroke();
-
-               // Draw corner dots with labels
-                const dotRadius = 8;
+                ctx.arc(corner.x, corner.y, dotRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw label
+                ctx.fillStyle = 'black';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(corner.label, corner.x, corner.y);
+                
+                // Reset fill style for next dot
                 ctx.fillStyle = '#00ff00';
-
-                points.forEach(corner => {
-                    // Draw dot
-                    ctx.beginPath();
-                    ctx.arc(corner.x, corner.y, dotRadius, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Draw label
-                    ctx.fillStyle = 'black';
-                    ctx.font = 'bold 12px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(corner.label, corner.x, corner.y);
-                    
-                    // Reset fill style for next dot
-                    ctx.fillStyle = '#00ff00';
-                });
-
-                // Calculate width and height based on corner positions
-                const width = Math.sqrt(
-                    Math.pow(points[1].x - points[0].x, 2) + 
-                    Math.pow(points[1].y - points[0].y, 2)
-                );
-                
-                const height = Math.sqrt(
-                    Math.pow(points[3].x - points[0].x, 2) + 
-                    Math.pow(points[3].y - points[0].y, 2)
-                );
-
-                // Update input fields with rounded values
-                widthInput.value = Math.round(width);
-                heightInput.value = Math.round(height);
-                corners = points;
-            }
-
-            // Handle modal open
-            const imageModal = document.getElementById('imageModal');
-            imageModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                if (!button) return;
-                
-                // Store reference to the card that contains the image
-                currentImageElement = button.closest('.photo-card');
-                
-                const image = button.getAttribute('data-image');
-                if (!image) {
-                    console.error('No image data found');
-                    return;
-                }
-                
-                // Create new image object
-                backgroundImage = new Image();
-                backgroundImage.onerror = function() {
-                    console.error('Failed to load image');
-                };
-                
-                backgroundImage.onload = function() {
-                    // Initialize rectangle in center of canvas
-                    rect = {
-                        x: (CANVAS_WIDTH - 100) / 2,
-                        y: (CANVAS_HEIGHT - 100) / 2,
-                        width: 100,
-                        height: 100
-                    };
-                    
-                    drawCanvas(corners);
-                };
-                
-                try {
-                    backgroundImage.src = image;
-                } catch (error) {
-                    console.error('Error setting image source:', error);
-                }
-                
-                // Update modal title and input
-                const title = button.getAttribute('data-title') || 'Untitled';
-                const modalTitle = imageModal.querySelector('#imageModalLabel');
-                const titleInput = imageModal.querySelector('#titleImage');
-                if (modalTitle) modalTitle.textContent = title;
-                if (titleInput) titleInput.value = title;
             });
 
-            let isDragging = false;
-            let selectedCorner = null;
+            // Calculate width and height based on corner positions
+            const width = Math.sqrt(
+                Math.pow(points[1].x - points[0].x, 2) + 
+                Math.pow(points[1].y - points[0].y, 2)
+            );
+            
+            const height = Math.sqrt(
+                Math.pow(points[3].x - points[0].x, 2) + 
+                Math.pow(points[3].y - points[0].y, 2)
+            );
 
-            function getMousePos(canvas, evt) {
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                return {
-                    x: (evt.clientX - rect.left) * scaleX,
-                    y: (evt.clientY - rect.top) * scaleY
+            // Update input fields with rounded values
+            widthInput.value = Math.round(width);
+            heightInput.value = Math.round(height);
+            corners = points;
+        }
+
+        // Handle modal open
+        const imageModal = document.getElementById('imageModal');
+        imageModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            if (!button) return;
+            
+            // Store reference to the card that contains the image
+            currentImageElement = button.closest('.photo-card');
+            
+            const image = button.getAttribute('data-image');
+            if (!image) {
+                console.error('No image data found');
+                return;
+            }
+            
+            // Create new image object
+            backgroundImage = new Image();
+            backgroundImage.onerror = function() {
+                console.error('Failed to load image');
+            };
+            
+            backgroundImage.onload = function() {
+                // Initialize rectangle in center of canvas
+                rect = {
+                    x: (CANVAS_WIDTH - 100) / 2,
+                    y: (CANVAS_HEIGHT - 100) / 2,
+                    width: 100,
+                    height: 100
                 };
+                
+                drawCanvas(corners);
+            };
+            
+            try {
+                backgroundImage.src = image;
+            } catch (error) {
+                console.error('Error setting image source:', error);
             }
+            
+            // Update modal title and input
+            const title = button.getAttribute('data-title') || 'Untitled';
+            const modalTitle = imageModal.querySelector('#imageModalLabel');
+            const titleInput = imageModal.querySelector('#titleImage');
+            if (modalTitle) modalTitle.textContent = title;
+            if (titleInput) titleInput.value = title;
+        });
 
-            function isOverCornerDot(mouseX, mouseY, cornerX, cornerY) {
-                const dotRadius = 8;
-                const distance = Math.sqrt((mouseX - cornerX) ** 2 + (mouseY - cornerY) ** 2);
-                return distance <= dotRadius * 2; // Increased hit area for better touch
+        let isDragging = false;
+        let selectedCorner = null;
+
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: (evt.clientX - rect.left) * scaleX,
+                y: (evt.clientY - rect.top) * scaleY
+            };
+        }
+
+        function isOverCornerDot(mouseX, mouseY, cornerX, cornerY) {
+            const dotRadius = 8;
+            const distance = Math.sqrt((mouseX - cornerX) ** 2 + (mouseY - cornerY) ** 2);
+            return distance <= dotRadius * 2; // Increased hit area for better touch
+        }
+
+        // Mouse event handlers
+        canvas.addEventListener('mousedown', (e) => {
+            const pos = getMousePos(canvas, e);
+                         
+            for (const corner of corners) {
+                if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
+                    isDragging = true;
+                    selectedCorner = corner.label;
+                    canvas.style.cursor = 'grabbing';
+                    break;
+                }
             }
+        });
 
-            // Mouse event handlers
-            canvas.addEventListener('mousedown', (e) => {
-                const pos = getMousePos(canvas, e);
-                             
-                for (const corner of corners) {
-                    if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
-                        isDragging = true;
-                        selectedCorner = corner.label;
-                        canvas.style.cursor = 'grabbing';
-                        break;
-                    }
+        canvas.addEventListener('mousemove', (e) => {
+            const pos = getMousePos(canvas, e);
+
+            let isOverCorner = false;
+            for (const corner of corners) {
+                if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
+                    canvas.style.cursor = 'grab';
+                    isOverCorner = true;
+                    break;
                 }
-            });
-
-            canvas.addEventListener('mousemove', (e) => {
-                const pos = getMousePos(canvas, e);
-
-                let isOverCorner = false;
-                for (const corner of corners) {
-                    if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
-                        canvas.style.cursor = 'grab';
-                        isOverCorner = true;
-                        break;
-                    }
-                }
-                if (!isOverCorner && !isDragging) {
-                    canvas.style.cursor = 'default';
-                }
-
-                if (!isDragging) return;
-
-                // Free-form corner dragging with fixed opposite corners
-                if (selectedCorner) {
-                    const minSize = 10; // Minimum rectangle size
-                    corners[selectedCorner-1].x = pos.x;
-                    corners[selectedCorner-1].y = pos.y;
-
-                    drawCanvas(corners);
-                }
-            });
-
-            canvas.addEventListener('mouseup', () => {
-                isDragging = false;
-                selectedCorner = null;
+            }
+            if (!isOverCorner && !isDragging) {
                 canvas.style.cursor = 'default';
+            }
+
+            if (!isDragging) return;
+
+            // Free-form corner dragging with fixed opposite corners
+            if (selectedCorner) {
+                const minSize = 10; // Minimum rectangle size
+                corners[selectedCorner-1].x = pos.x;
+                corners[selectedCorner-1].y = pos.y;
+
+                drawCanvas(corners);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            selectedCorner = null;
+            canvas.style.cursor = 'default';
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+            selectedCorner = null;
+            canvas.style.cursor = 'default';
+        });
+
+        // Add save button handler
+        document.getElementById('saveLayout').addEventListener('click', function() {
+            if (!widthInput || !heightInput) {
+                console.error('Width or height input not found');
+                return;
+            }
+
+            const titleInput = document.getElementById('titleImage');
+            const newTitle = titleInput.value;
+
+            // Update the surface data
+            const surfaceData = {
+                width: parseInt(widthInput.value) || 100,
+                height: parseInt(heightInput.value) || 100,
+                rect: { ...rect },
+                title: newTitle
+            };
+
+            console.log('Saving surface data:', surfaceData);
+
+            // Update the image title in the card if we have a reference to it
+            if (currentImageElement) {
+                // Update the card title
+                const cardTitle = currentImageElement.querySelector('.card-text');
+                if (cardTitle) cardTitle.textContent = newTitle;
+
+                // Update the Surface Size link data-title attribute
+                const surfaceSizeLink = currentImageElement.querySelector('[data-bs-target="#imageModal"]');
+                if (surfaceSizeLink) surfaceSizeLink.setAttribute('data-title', newTitle);
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(imageModal);
+            if (modal) {
+                modal.hide();
+            }
+        });
+
+        // Handle duplicate images button click
+        document.getElementById('duplicateImages').addEventListener('click', function() {
+            const photoContainer = document.getElementById('photosContainer');
+            if (!photoContainer) {
+                console.error('Photo container not found');
+                return;
+            }
+
+            const photos = photoContainer.querySelectorAll('.photo-item:not(:first-child)');
+            console.log('Found photos:', photos.length);
+            
+            if (!photos.length) {
+                alert('No images to duplicate');
+                return;
+            }
+
+            // Create FormData to handle file uploads
+            const formData = new FormData();
+            
+            // Prepare photos data and handle image uploads
+            const processPhotos = Array.from(photos).map((photo, index) => {
+                const img = photo.querySelector('img');
+                const titleElement = photo.querySelector('.card-text');
+                
+                if (!img || !titleElement) {
+                    console.error('Missing required elements in photo:', photo);
+                    return null;
+                }
+
+                const title = titleElement.textContent.trim();
+                const imgSrc = img.getAttribute('src');
+                
+                if (!imgSrc || !title) {
+                    console.error('Missing image source or title');
+                    return null;
+                }
+
+                // Fetch the image and convert to blob
+                return fetch(imgSrc)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        // Add the image file to FormData
+                        formData.append(`images[]`, blob, `${title}.jpg`);
+                        formData.append(`names[]`, title);
+                        return {
+                            name: title,
+                            index: index
+                        };
+                    });
             });
 
-            canvas.addEventListener('mouseleave', () => {
-                isDragging = false;
-                selectedCorner = null;
-                canvas.style.cursor = 'default';
-            });
+            // Wait for all image processing to complete
+            Promise.all(processPhotos)
+                .then(photoData => {
+                    // Filter out any null values from failed processing
+                    photoData = photoData.filter(data => data !== null);
 
-            // Add save button handler
-            document.getElementById('saveLayout').addEventListener('click', function() {
-                if (!widthInput || !heightInput) {
-                    console.error('Width or height input not found');
-                    return;
-                }
-
-                const titleInput = document.getElementById('titleImage');
-                const newTitle = titleInput.value;
-
-                // Update the surface data
-                const surfaceData = {
-                    width: parseInt(widthInput.value) || 100,
-                    height: parseInt(heightInput.value) || 100,
-                    rect: { ...rect },
-                    title: newTitle
-                };
-
-                console.log('Saving surface data:', surfaceData);
-
-                // Update the image title in the card if we have a reference to it
-                if (currentImageElement) {
-                    // Update the card title
-                    const cardTitle = currentImageElement.querySelector('.card-text');
-                    if (cardTitle) cardTitle.textContent = newTitle;
-
-                    // Update the Surface Size link data-title attribute
-                    const surfaceSizeLink = currentImageElement.querySelector('[data-bs-target="#imageModal"]');
-                    if (surfaceSizeLink) surfaceSizeLink.setAttribute('data-title', newTitle);
-                }
-                
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(imageModal);
-                if (modal) {
-                    modal.hide();
-                }
-            });
-
-            // Handle duplicate images button click
-            document.getElementById('duplicateImages').addEventListener('click', function() {
-                const photoContainer = document.getElementById('photosContainer');
-                if (!photoContainer) {
-                    console.error('Photo container not found');
-                    return;
-                }
-
-                const photos = photoContainer.querySelectorAll('.photo-item:not(:first-child)');
-                console.log('Found photos:', photos.length);
-                
-                if (!photos.length) {
-                    alert('No images to duplicate');
-                    return;
-                }
-
-                // Create FormData to handle file uploads
-                const formData = new FormData();
-                
-                // Prepare photos data and handle image uploads
-                const processPhotos = Array.from(photos).map((photo, index) => {
-                    const img = photo.querySelector('img');
-                    const titleElement = photo.querySelector('.card-text');
-                    
-                    if (!img || !titleElement) {
-                        console.error('Missing required elements in photo:', photo);
-                        return null;
+                    if (photoData.length === 0) {
+                        throw new Error('No valid photos to process');
                     }
 
-                    const title = titleElement.textContent.trim();
-                    const imgSrc = img.getAttribute('src');
-                    
-                    if (!imgSrc || !title) {
-                        console.error('Missing image source or title');
-                        return null;
+                    // Add this check before making the fetch request
+                    const token = document.querySelector('meta[name="csrf-token"]');
+                    if (!token) {
+                        throw new Error('CSRF token not found');
                     }
 
-                    // Fetch the image and convert to blob
-                    return fetch(imgSrc)
-                        .then(response => response.blob())
-                        .then(blob => {
-                            // Add the image file to FormData
-                            formData.append(`images[]`, blob, `${title}.jpg`);
-                            formData.append(`names[]`, title);
-                            return {
-                                name: title,
-                                index: index
-                            };
-                        });
-                });
+                    // Send the FormData to the server
+                    return fetch(`/projects/${projectId}/photos/duplicate`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token.content,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        let layoutHTML = '';
+                        const layoutId = document.getElementById('layout1Container').dataset.layoutId;
 
-                // Wait for all image processing to complete
-                Promise.all(processPhotos)
-                    .then(photoData => {
-                        // Filter out any null values from failed processing
-                        photoData = photoData.filter(data => data !== null);
-
-                        if (photoData.length === 0) {
-                            throw new Error('No valid photos to process');
-                        }
-
-                        // Add this check before making the fetch request
-                        const token = document.querySelector('meta[name="csrf-token"]');
-                        if (!token) {
-                            throw new Error('CSRF token not found');
-                        }
-
-                        // Send the FormData to the server
-                        return fetch(`/projects/${projectId}/photos/duplicate`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': token.content,
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        });
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            // Create layout content
-                            let layoutHTML = '';
-
-                            // Add each photo to the layout
-                            data.photos.forEach(photo => {
-                                const now = new Date();
-                                layoutHTML += `
-                                    <div class="col-md-3 layout-item">
-                                        <div class="card shadow-sm bg-white">
-                                            <div class="overflow-hidden img-home">
-                                                <img src="${photo.url}" class="card-img-top img-fluid" alt="${photo.name}">
-                                            </div>
-                                            <div class="card-body d-flex justify-content-between align-items-end">
-                                                <p class="card-text">
-                                                    <span>${photo.name}</span><br>
-                                                    <small>Created: ${now.toLocaleDateString()}</small>
-                                                </p>
-                                                <button type="button" 
-                                                        class="btn enter-link" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#imageModal" 
-                                                        data-title="${photo.name}" 
-                                                        data-image="${photo.url}">
-                                                    Enter
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            });
-
-                            // Add the "Add Layout" button to the end
+                        data.photos.forEach(photo => {
+                            const now = new Date();
                             layoutHTML += `
                                 <div class="col-md-3 layout-item">
-                                    <div class="card bg-white card-layout">
-                                        <button class="add-image-btn">
-                                            <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                            <span class="add-image-text">Add Layout</span>
-                                        </button>
+                                    <div class="card shadow-sm bg-white">
+                                        <div class="overflow-hidden img-home">
+                                            <img src="${photo.url}" class="card-img-top img-fluid" alt="${photo.name}">
+                                        </div>
+                                        <div class="card-body d-flex justify-content-between align-items-end">
+                                            <p class="card-text">
+                                                <span>${photo.name}</span><br>
+                                                <small>Created: ${now.toLocaleDateString()}</small>
+                                            </p>
+                                            <button type="button" 
+                                                    class="btn enter-link" 
+                                                    onclick="navigateToPhoto(${photo.id}, ${layoutId})"
+                                                    data-photo-id="${photo.id}"
+                                                    data-layout-id="${layoutId}">
+                                                Enter
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             `;
+                        });
 
-                            // Find the layout1Container and update its content
-                            const layoutSection = document.getElementById('layout1Container');
-                            if (layoutSection) {
-                                layoutSection.innerHTML = layoutHTML;
-                            } else {
-                                console.error('Layout section not found');
-                            }
+                        // Add the "Add Layout" button to the end
+                        layoutHTML += `
+                            <div class="col-md-3 layout-item">
+                                <div class="card bg-white card-layout">
+                                    <button class="add-image-btn">
+                                        <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                        <span class="add-image-text">Add Layout</span>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+
+                        // Find the layout1Container and update its content
+                        const layoutSection = document.getElementById('layout1Container');
+                        if (layoutSection) {
+                            layoutSection.innerHTML = layoutHTML;
+                        } else {
+                            console.error('Layout section not found');
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Failed to duplicate photos: ' + error.message);
-                    });
-            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to duplicate photos: ' + error.message);
+                });
         });
-
+    });
 </script>
 
 

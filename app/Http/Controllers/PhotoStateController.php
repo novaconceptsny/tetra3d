@@ -4,86 +4,39 @@ namespace App\Http\Controllers;
 use App\Models\Layout;
 use App\Models\Photo;
 use App\Models\Project;
-use App\Models\Spot;
-use App\Models\SurfaceState;
 use Illuminate\Http\Request;
 
 class PhotoStateController extends Controller
 {
     public function show(Photo $photo)
     {
-        $layout  = Layout::findOrFail(request('layout_id'));
-        $project = Project::findOrFail($layout->project_id);
+        try {
+            $layoutId = request('layout_id');
+            if (!$layoutId) {
+                throw new \Exception('Layout ID is required');
+            }
 
-        $surface->load([
-            'states' => fn($query) => $query->forLayout($layout->id),
-            'states.artworks.media',
-            'states.comments.user',
-            'states.likes.user',
-        ]);
+            $layout = Layout::findOrFail($layoutId);
+            $project = Project::findOrFail($layout->project_id);
+            
+            // Log each variable separately with labels
+            error_log("Layout: " . json_encode($layout, JSON_PRETTY_PRINT));
+            error_log("Project: " . json_encode($project, JSON_PRETTY_PRINT));
+            error_log("Photo: " . json_encode($photo, JSON_PRETTY_PRINT));
 
-        if ($spot_id = request('spot_id')) {
-            $spot = Spot::findOrFail($spot_id);
-        } else {
-            $spot = $surface->tour->spots->first();
+            $data            = [];
+            $data['project'] = $project;
+            $data['layout']  = $layout;
+            $data['photo']   = $photo;
+
+            return view('pages.photoeditor', $data);
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Error in PhotoStateController@show: ' . $e->getMessage());
+            
+            // Redirect back with error message
+            return redirect()->back()->with('error', 'Unable to load photo editor: ' . $e->getMessage());
         }
-
-        $referer      = str(request()->headers->get('referer'))->before('?');
-        $versions_url = str(
-            route('tours.surfaces', $spot->tour_id)
-        )->before('?');
-
-        $return_to_versions = request(
-            'return_to_versions',
-            $referer == $versions_url
-        );
-
-        $selectedSurfaceState = null;
-        $create_new_state     = request('new');
-
-        if ($surface_state_id = request('surface_state_id')) {
-            $selectedSurfaceState = SurfaceState::findOrFail($surface_state_id);
-        }
-
-        if (! $create_new_state && ! $surface_state_id) {
-            $selectedSurfaceState = $surface->getCurrentState($layout->id);
-        }
-
-        $surface->background_url = $surface->getFirstMediaUrl('background');
-
-        $data            = [];
-        $data['project'] = $project;
-        $data['layout']  = $layout;
-        $data['photo']   = $photo;
-
-        $data['navEnabled']  = false;
-        $data['navbarLight'] = true;
-
-        $canvases = [];
-
-        $canvases[$photo->id ?? 'new'] = [
-            'canvasId'         => "artwork_canvas_" . ($photo->id ?? 'new'),
-            'photo'            => $photo->only([
-                'id',
-                'name',
-                'background_url',
-                'data',
-            ]),
-            'assignedArtworks' => $assignedArtworks,
-            'photoStateId'     => $photo?->id,
-            'userId'           => auth()->id(),
-            'spotId'           => $spot->id,
-            'latestState'      => $photo ? $photo->canvas : [],
-            'layoutId'         => $layout->id,
-            'updateEndpoint'   => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
-            'hlookat'          => request('hlookat', $spot->xml->view['hlookat']),
-            'vlookat'          => request('vlookat', $spot->xml->view['vlookat']),
-            'photoStateName'   => $photo->name ?? 'Untitled',
-        ];
-
-        $data['canvases'] = $canvases;
-
-        return view('pages.photoeditor', $data);
     }
 
 }
