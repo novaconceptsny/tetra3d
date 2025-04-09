@@ -41,23 +41,34 @@ class PhotoController extends Controller
     {
         try {
             return DB::transaction(function () use ($request, $project) {
-                $photos = $request->input('photos', []);
-                $savedPhotos = [];
-
-                // Delete all existing photos for this project
+                // First, delete all existing photos for this project
                 Photo::where('project_id', $project->id)->delete();
-
-                // Save the new photos
-                foreach ($photos as $photoData) {
-                    $photo = new Photo([
-                        'project_id' => $project->id,
-                        'name' => $photoData['name'],
-                        'background_url' => $photoData['background_url'],
-                        'data' => $photoData['data'] ?? '{}',
-                    ]);
-                    
-                    $photo->save();
-                    $savedPhotos[] = $photo;
+                
+                $savedPhotos = [];
+                
+                if ($request->hasFile('images')) {
+                    foreach($request->file('images') as $index => $image) {
+                        // Generate unique filename
+                        $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+                        
+                        // Store the file in the storage/app/public/media/photos directory
+                        $path = $image->storeAs('media/photos', $filename, 'public');
+                        
+                        // Create new photo record
+                        $photo = new Photo([
+                            'project_id' => $project->id,
+                            'name' => $request->names[$index],
+                            'background_url' => '/storage/' . $path,
+                            'data' => '{}',
+                        ]);
+                        
+                        $photo->save();
+                        $savedPhotos[] = [
+                            'id' => $photo->id,
+                            'name' => $photo->name,
+                            'url' => asset($photo->background_url)
+                        ];
+                    }
                 }
 
                 return response()->json([
@@ -73,4 +84,5 @@ class PhotoController extends Controller
             ], 500);
         }
     }
+
 }
