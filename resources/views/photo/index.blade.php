@@ -85,6 +85,8 @@
                                                 <i class="fas fa-ellipsis-v ms-auto"></i>
                                             </button>
                                             <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-title="{{ $photo->name }}" data-image="{{ $photo->getUrl() }}">Surface Size</a></li>
+                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
                                                 <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                                             </ul>
                                         </div>
@@ -270,7 +272,7 @@
                                 <button type="button" id="saveLayout" class="btn btn-light">Save</button>
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="input-group">
@@ -330,8 +332,8 @@
                     previewDiv.classList.add('image-preview');
                     previewDiv.innerHTML = `
                         <div class="preview-header">
-                            <input type="text" 
-                                   class="form-control image-name-input" 
+                            <input type="text"
+                                   class="form-control image-name-input"
                                    value="${imageData.name}"
                                    onchange="updateImageName(this, ${selectedImages.length - 1})">
                             <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
@@ -360,7 +362,7 @@
 
     function saveImages() {
         const photosContainer = document.getElementById('photosContainer');
-        
+
         // Add each photo to the container
         selectedImages.forEach(imageData => {
             const colDiv = document.createElement('div');
@@ -554,13 +556,13 @@
         let corners = [];
         let backgroundImage = null;
         let currentImageElement = null; // Store reference to current image element
-        
+
         // Set fixed canvas dimensions
         const CANVAS_WIDTH = 800;
         const CANVAS_HEIGHT = 600;
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
-        
+
         function fitImageToCanvas(img) {
             const imgRatio = img.width / img.height;
             const canvasRatio = CANVAS_WIDTH / CANVAS_HEIGHT;
@@ -586,10 +588,10 @@
         function drawCanvas(endPoints) {
             let points;
             if (!backgroundImage) return;
-            
+
             // Clear canvas
             ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            
+
             // Draw background image fitted to canvas
             const fitDimensions = fitImageToCanvas(backgroundImage);
             ctx.drawImage(
@@ -599,7 +601,7 @@
                 fitDimensions.width,
                 fitDimensions.height
             );
-                      
+
 
             // Define corners with their labels
             if(endPoints.length === 0){
@@ -631,26 +633,26 @@
                 ctx.beginPath();
                 ctx.arc(corner.x, corner.y, dotRadius, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 // Draw label
                 ctx.fillStyle = 'black';
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(corner.label, corner.x, corner.y);
-                
+
                 // Reset fill style for next dot
                 ctx.fillStyle = '#00ff00';
             });
 
             // Calculate width and height based on corner positions
             const width = Math.sqrt(
-                Math.pow(points[1].x - points[0].x, 2) + 
+                Math.pow(points[1].x - points[0].x, 2) +
                 Math.pow(points[1].y - points[0].y, 2)
             );
-            
+
             const height = Math.sqrt(
-                Math.pow(points[3].x - points[0].x, 2) + 
+                Math.pow(points[3].x - points[0].x, 2) +
                 Math.pow(points[3].y - points[0].y, 2)
             );
 
@@ -665,22 +667,22 @@
         imageModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             if (!button) return;
-            
+
             // Store reference to the card that contains the image
             currentImageElement = button.closest('.photo-card');
-            
+
             const image = button.getAttribute('data-image');
             if (!image) {
                 console.error('No image data found');
                 return;
             }
-            
+
             // Create new image object
             backgroundImage = new Image();
             backgroundImage.onerror = function() {
                 console.error('Failed to load image');
             };
-            
+
             backgroundImage.onload = function() {
                 // Initialize rectangle in center of canvas
                 rect = {
@@ -689,16 +691,16 @@
                     width: 100,
                     height: 100
                 };
-                
+
                 drawCanvas(corners);
             };
-            
+
             try {
                 backgroundImage.src = image;
             } catch (error) {
                 console.error('Error setting image source:', error);
             }
-            
+
             // Update modal title and input
             const title = button.getAttribute('data-title') || 'Untitled';
             const modalTitle = imageModal.querySelector('#imageModalLabel');
@@ -729,7 +731,7 @@
         // Mouse event handlers
         canvas.addEventListener('mousedown', (e) => {
             const pos = getMousePos(canvas, e);
-                         
+
             for (const corner of corners) {
                 if (isOverCornerDot(pos.x, pos.y, corner.x, corner.y)) {
                     isDragging = true;
@@ -801,6 +803,9 @@
 
             // Update the image title in the card if we have a reference to it
             if (currentImageElement) {
+                // Store corners data in the photo element's dataset
+                currentImageElement.dataset.corners = JSON.stringify(corners);
+
                 // Update the card title
                 const cardTitle = currentImageElement.querySelector('.card-text');
                 if (cardTitle) cardTitle.textContent = newTitle;
@@ -809,7 +814,7 @@
                 const surfaceSizeLink = currentImageElement.querySelector('[data-bs-target="#imageModal"]');
                 if (surfaceSizeLink) surfaceSizeLink.setAttribute('data-title', newTitle);
             }
-            
+
             // Close modal
             const modal = bootstrap.Modal.getInstance(imageModal);
             if (modal) {
@@ -827,7 +832,7 @@
 
             const photos = photoContainer.querySelectorAll('.photo-item:not(:first-child)');
             console.log('Found photos:', photos.length);
-            
+
             if (!photos.length) {
                 alert('No images to duplicate');
                 return;
@@ -835,12 +840,12 @@
 
             // Create FormData to handle file uploads
             const formData = new FormData();
-            
+
             // Prepare photos data and handle image uploads
             const processPhotos = Array.from(photos).map((photo, index) => {
                 const img = photo.querySelector('img');
                 const titleElement = photo.querySelector('.card-text');
-                
+
                 if (!img || !titleElement) {
                     console.error('Missing required elements in photo:', photo);
                     return null;
@@ -848,7 +853,7 @@
 
                 const title = titleElement.textContent.trim();
                 const imgSrc = img.getAttribute('src');
-                
+
                 if (!imgSrc || !title) {
                     console.error('Missing image source or title');
                     return null;
@@ -857,6 +862,9 @@
                 // Get natural dimensions of the image
                 const naturalWidth = img.naturalWidth;
                 const naturalHeight = img.naturalHeight;
+
+                // Get corners data if it exists (you might need to adjust how you store/retrieve this)
+                const corners = photo.dataset.corners ? JSON.parse(photo.dataset.corners) : [];
 
                 // Fetch the image and convert to blob
                 return fetch(imgSrc)
@@ -867,6 +875,7 @@
                         formData.append(`names[]`, title);
                         formData.append(`widths[]`, naturalWidth);
                         formData.append(`heights[]`, naturalHeight);
+                        formData.append(`corners[]`, JSON.stringify(corners)); // Add corners data
                         return {
                             name: title,
                             index: index
@@ -924,8 +933,8 @@
                                                 <span>${photo.name}</span><br>
                                                 <small>Created: ${now.toLocaleDateString()}</small>
                                             </p>
-                                            <button type="button" 
-                                                    class="btn enter-link" 
+                                            <button type="button"
+                                                    class="btn enter-link"
                                                     onclick="navigateToPhoto(${photo.id}, ${layoutId})"
                                                     data-photo-id="${photo.id}"
                                                     data-layout-id="${layoutId}">

@@ -54,10 +54,11 @@ class PhotoController extends Controller
                         // Store the file in the storage/app/public/media/photos directory
                         $path = $image->storeAs('media/photos', $filename, 'public');
                         
-                        // Create data array with image dimensions as strings
+                        // Create data array with image dimensions and corners
                         $data = [
                             'img_width' => (string)$request->widths[$index],
-                            'img_height' => (string)$request->heights[$index]
+                            'img_height' => (string)$request->heights[$index],
+                            'corners' => $request->corners[$index] ?? [] // Add corners data
                         ];
 
                         // Create new photo record

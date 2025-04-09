@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('background_url');
-            $table->json('data')->default('{}');
+            $table->json('data');
             $table->timestamps();
         });
     }
