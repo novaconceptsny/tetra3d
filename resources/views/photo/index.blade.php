@@ -125,35 +125,30 @@
                 </div>
             </div>
 
-            <!-- Layout Section -->
-            <div class="layout-section">
-                <div style="font-size: 24px; font-weight: bold;">Layout 1</div>
-                <div class="row g-3" id="layout1Container">
-                    <div class="col-md-3 layout-item">
-                        <div class="card bg-white card-layout">
-                            <button class="add-image-btn">
-                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                <span class="add-image-text">Add Layout</span>
-                            </button>
+            <!-- Layout Sections -->
+            @foreach($project->layouts as $layout)
+                <div class="layout-section">
+                    <div style="font-size: 24px; font-weight: bold;">{{ $layout->name }}</div>
+                    <div class="row g-3" id="layout{{ $loop->iteration }}Container">
+                        <div class="col-md-3 layout-item">
+                            <div class="card bg-white card-layout">
+                                <button class="add-image-btn">
+                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                    <span class="add-image-text">Add Layout</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
 
-            <!-- Layout 2 Section -->
-            <div class="layout-section">
-                <div style="font-size: 24px; font-weight: bold;">Layout 2</div>
-                <div class="row g-3" id="layout2Container">
-                    <div class="col-md-3 layout-item">
-                        <div class="card bg-white card-layout">
-                            <button class="add-image-btn">
-                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                <span class="add-image-text">Add Layout</span>
-                            </button>
-                        </div>
-                    </div>
+            <!-- If no layouts exist, show a message or default layouts -->
+            @if($project->layouts->isEmpty())
+                <div class="layout-section">
+                    <div style="font-size: 24px; font-weight: bold;">No layouts available</div>
+                    <!-- Add your default content here -->
                 </div>
-            </div>
+            @endif
         </div>
 
         <!-- Modal for Add Collection -->

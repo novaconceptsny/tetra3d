@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\SurfaceStateController;
+use App\Http\Controllers\PhotoStateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PhotoController;
 
@@ -44,6 +45,10 @@ Route::group(['middleware' => 'auth'], function () {
         // surface state
         Route::get('surfaces/{state}/active', 'SurfaceStateController@active')->name('surfaces.active');
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
+    });
+
+    Route::controller(PhotoStateController::class)->group(function () {
+        Route::get('photos/{surface}', 'show')->name('photos.show');
     });
 
     Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');

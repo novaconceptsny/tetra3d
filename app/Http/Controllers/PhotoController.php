@@ -10,7 +10,7 @@ class PhotoController extends Controller
     public function index(Project $project)
     {
         $project = Project::relevant()
-            ->with(['company', 'tours', 'artworkCollections'])
+            ->with(['company', 'tours', 'artworkCollections', 'layouts'])
             ->withCount('contributors')
             ->first();
         $artworkCollections = ArtworkCollection::forCompany($project->company_id)->get();
