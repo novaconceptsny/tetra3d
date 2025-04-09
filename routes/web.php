@@ -57,6 +57,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/projects/{project}/collections', [PhotoController::class, 'updateCollections'])->name('projects.collections.update');
 
+    Route::post('/projects/{project}/photos/duplicate', [PhotoController::class, 'duplicatePhotos'])->name('projects.photos.duplicate');
+
 });
 
 

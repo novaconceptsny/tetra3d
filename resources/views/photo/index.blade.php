@@ -304,6 +304,7 @@
 @endpush
 @push('scripts')
 <script>
+    const projectId = {{ $project->id }};
 
         let selectedImages = [];
 
@@ -816,70 +817,135 @@
             document.getElementById('duplicateImages').addEventListener('click', function() {
                 // Get all current photos (excluding the "Add Image" card)
                 const photoContainer = document.getElementById('photosContainer');
-                const photos = photoContainer.querySelectorAll('.photo-item:not(:first-child)');
+                if (!photoContainer) {
+                    console.error('Photo container not found');
+                    return;
+                }
 
-                console.log(photos, 'photos');
+                const photos = photoContainer.querySelectorAll('.photo-item:not(:first-child)');
+                console.log('Found photos:', photos.length); // Debug log
                 
                 if (!photos.length) {
                     alert('No images to duplicate');
                     return;
                 }
 
-                // Create layout content
-                let layoutHTML = '';
-
-                // Add each photo to the layout
+                // Prepare photos data for server
+                const photosData = [];
                 photos.forEach(photo => {
                     const img = photo.querySelector('img');
-                    const title = photo.querySelector('.card-text').textContent;
+                    const titleElement = photo.querySelector('.card-text');
                     
-                    if (img && title) {
-                        const now = new Date();
+                    // Add null checks
+                    if (!img || !titleElement) {
+                        console.error('Missing required elements in photo:', photo);
+                        return;
+                    }
+
+                    const title = titleElement.textContent.trim();
+                    const imgSrc = img.getAttribute('src');
+                    
+                    if (!imgSrc || !title) {
+                        console.error('Missing image source or title');
+                        return;
+                    }
+
+                    photosData.push({
+                        name: title,
+                        background_url: imgSrc,
+                        data: {}
+                    });
+                });
+
+                console.log('Photos data prepared:', photosData); // Debug log
+
+                if (photosData.length === 0) {
+                    alert('No valid photos to duplicate');
+                    return;
+                }
+
+                // Add this check before making the fetch request
+                const token = document.querySelector('meta[name="csrf-token"]');
+                if (!token) {
+                    console.error('CSRF token not found');
+                    return;
+                }
+
+                // Modify the fetch request
+                fetch(`/projects/${projectId}/photos/duplicate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token.content,
+                        // You might also want to add this header for added security
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ photos: photosData })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Create layout content
+                        let layoutHTML = '';
+
+                        // Add each photo to the layout
+                        data.photos.forEach(photo => {
+                            const now = new Date();
+                            layoutHTML += `
+                                <div class="col-md-3 layout-item">
+                                    <div class="card shadow-sm bg-white">
+                                        <div class="overflow-hidden img-home">
+                                            <img src="${photo.background_url}" class="card-img-top img-fluid" alt="${photo.name}">
+                                        </div>
+                                        <div class="card-body d-flex justify-content-between align-items-end">
+                                            <p class="card-text">
+                                                <span>${photo.name}</span><br>
+                                                <small>Created: ${now.toLocaleDateString()}</small>
+                                            </p>
+                                            <button type="button" 
+                                                    class="btn enter-link" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#imageModal" 
+                                                    data-title="${photo.name}" 
+                                                    data-image="${photo.background_url}">
+                                                Enter
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        // Add the "Add Layout" button to the end
                         layoutHTML += `
                             <div class="col-md-3 layout-item">
-                                <div class="card shadow-sm bg-white">
-                                    <div class="overflow-hidden img-home">
-                                        <img src="${img.src}" class="card-img-top img-fluid" alt="${title}">
-                                    </div>
-                                    <div class="card-body d-flex justify-content-between align-items-end">
-                                        <p class="card-text">
-                                            <span>${title}</span><br>
-                                            <small>Created: ${now.toLocaleDateString()}</small>
-                                        </p>
-                                        <button type="button" 
-                                                class="btn enter-link" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#imageModal" 
-                                                data-title="${title}" 
-                                                data-image="${img.src}">
-                                            Enter
-                                        </button>
-                                    </div>
+                                <div class="card bg-white card-layout">
+                                    <button class="add-image-btn">
+                                        <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                        <span class="add-image-text">Add Layout</span>
+                                    </button>
                                 </div>
                             </div>
                         `;
+
+                        // Find the layout1Container and update its content
+                        const layoutSection = document.getElementById('layout1Container');
+                        if (layoutSection) {
+                            layoutSection.innerHTML = layoutHTML;
+                        } else {
+                            console.error('Layout section not found');
+                        }
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to duplicate photos: ' + error.message);
                 });
-
-                // Add the "Add Layout" button to the end
-                layoutHTML += `
-                    <div class="col-md-3 layout-item">
-                        <div class="card bg-white card-layout">
-                            <button class="add-image-btn">
-                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                <span class="add-image-text">Add Layout</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-
-                // Find the layout1Container and update its content
-                const layoutSection = document.getElementById('layout1Container');
-                if (layoutSection) {
-                    layoutSection.innerHTML = layoutHTML;
-                } else {
-                    console.error('Layout 1 container not found');
-                }
             });
         });
 
