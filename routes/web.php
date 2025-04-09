@@ -48,7 +48,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::controller(PhotoStateController::class)->group(function () {
-        Route::get('photos/{surface}', 'show')->name('photos.show');
+        Route::get('photos/{photo}', 'show')->name('photos.show');
     });
 
     Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');

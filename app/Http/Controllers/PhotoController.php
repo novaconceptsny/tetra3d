@@ -5,6 +5,7 @@ use App\Models\ArtworkCollection;
 use App\Models\Project;
 use App\Models\Photo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PhotoController extends Controller
 {
@@ -38,25 +39,38 @@ class PhotoController extends Controller
 
     public function duplicatePhotos(Request $request, Project $project)
     {
-        $photos = $request->input('photos', []);
-        $savedPhotos = [];
+        try {
+            return DB::transaction(function () use ($request, $project) {
+                $photos = $request->input('photos', []);
+                $savedPhotos = [];
 
-        foreach ($photos as $photoData) {
-            $photo = new Photo([
-                'project_id' => $project->id,
-                'name' => $photoData['name'],
-                'background_url' => $photoData['background_url'],
-                'data' => $photoData['data'] ?? '{}',
-            ]);
-            
-            $photo->save();
-            $savedPhotos[] = $photo;
+                // Delete all existing photos for this project
+                Photo::where('project_id', $project->id)->delete();
+
+                // Save the new photos
+                foreach ($photos as $photoData) {
+                    $photo = new Photo([
+                        'project_id' => $project->id,
+                        'name' => $photoData['name'],
+                        'background_url' => $photoData['background_url'],
+                        'data' => $photoData['data'] ?? '{}',
+                    ]);
+                    
+                    $photo->save();
+                    $savedPhotos[] = $photo;
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Photos duplicated successfully',
+                    'photos' => $savedPhotos
+                ]);
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to duplicate photos: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Photos duplicated successfully',
-            'photos' => $savedPhotos
-        ]);
     }
 }
