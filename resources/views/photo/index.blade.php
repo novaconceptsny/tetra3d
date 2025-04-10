@@ -72,28 +72,6 @@
                                     </button>
                                 </div>
                             </div>
-                            @foreach($photos as $photo)
-                            <div class="col-md-3 photo-item">
-                                <div class="card shadow-sm photo-card">
-                                    <div class="overflow-hidden img-home">
-                                        <img src="{{ $photo->getUrl() }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
-                                    </div>
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <p class="card-text">{{ $photo->name }}</p>
-                                        <div class="dropdown">
-                                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v ms-auto"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-title="{{ $photo->name }}" data-image="{{ $photo->getUrl() }}">Surface Size</a></li>
-                                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
-                                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -105,9 +83,9 @@
 
                         <ul class="list-group">
                             @foreach($surfaces as $surface)
-                                <li class="list-group-item d-flex justify-content-center align-items-center card surface-item" 
-                                    data-name="{{ $surface->name }}" 
-                                    data-width="{{ $surface->data['img_width'] ?? '' }}" 
+                                <li class="list-group-item d-flex justify-content-center align-items-center card surface-item"
+                                    data-name="{{ $surface->name }}"
+                                    data-width="{{ $surface->data['img_width'] ?? '' }}"
                                     data-height="{{ $surface->data['img_height'] ?? '' }}">
                                     <span class="surface-name">{{ $surface->name }}</span>
                                     <div class="dropdown position-absolute top-0 end-0">
@@ -306,10 +284,49 @@
 @push('scripts')
 <script>
     const projectId = {{ $project->id }};
+    let photosData = [];
     let selectedImages = [];
+
+    // Initialize photosData with existing photos
+    const existing_photos = @json($photos);
+    if (existing_photos && existing_photos.length > 0) {
+        existing_photos.forEach(photo => {
+            photosData.push({
+                id: photo.id,
+                src: photo.background_url,
+                name: photo.name,
+                corners: photo.data['corners'] || calculateDefaultCorners(),
+                width: photo.data['img_width'],
+                height: photo.data['img_height']
+            });
+        });
+    }
 
     function navigateToPhoto(photoId, layoutId) {
         window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
+    }
+
+    function calculateDefaultCorners() {
+        // Default dimensions for the rectangle
+        const width = 800;
+        const height = 800;
+        const defaultWidth = 100;
+        const defaultHeight = 100;
+
+        // Calculate starting position to center the rectangle
+        const startX = (width - defaultWidth) / 2;
+        const startY = (height - defaultHeight) / 2;
+
+        return [
+            { x: startX, y: startY, label: '1' },                                    // top-left
+            { x: startX + defaultWidth, y: startY, label: '2' },                    // top-right
+            { x: startX + defaultWidth, y: startY + defaultHeight, label: '3' },    // bottom-right
+            { x: startX, y: startY + defaultHeight, label: '4' }                    // bottom-left
+        ];
+    }
+
+    function generateUniqueId() {
+        return 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
     function previewImages(event) {
@@ -321,9 +338,14 @@
             if (file.type === 'image/jpeg' || file.type === 'image/png') {
                 const reader = new FileReader();
                 reader.onload = function (e) {
+                    const img = new Image();
                     const imageData = {
+                        id: generateUniqueId(),
                         src: e.target.result,
-                        name: file.name.replace(/\.[^/.]+$/, "") // Remove file extension
+                        name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
+                        corners: calculateDefaultCorners(),
+                        width: img.width,
+                        height: img.height
                     };
                     selectedImages.push(imageData);
 
@@ -355,7 +377,7 @@
     }
 
     function removeImage(element, index) {
-        selectedImages.splice(index, 1);
+        photosData.splice(index, 1);
         element.closest('.image-preview').remove();
     }
 
@@ -378,7 +400,10 @@
                                 <i class="fas fa-ellipsis-v ms-auto"></i>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal" data-title="${imageData.name}" data-image="${imageData.src}">Surface Size</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
+                                    data-title="${imageData.name}"
+                                    data-image="${imageData.src}"
+                                    data-photo-id="${imageData.id}">Surface Size</a></li>
                                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
                                 <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                             </ul>
@@ -389,6 +414,7 @@
             photosContainer.appendChild(colDiv);
         });
 
+        photosData = [...photosData, ...selectedImages];
         // Reset modal
         selectedImages = [];
         document.getElementById('imagePreviewContainer').innerHTML = '';
@@ -527,16 +553,18 @@
 
     surfaceModalImage.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
+        if (!button) return;
 
         const title = button.getAttribute('data-title');
         const image = button.getAttribute('data-image');
+        const photoId = button.getAttribute('data-photo-id');
+
+        this.setAttribute('data-photo-id', photoId);
 
         const modalTitle = this.querySelector('#imageModalLabel');
         const titleImage = this.querySelector('#titleImage');
-        // const modalTextTitle = this.querySelector('#textareaModal');
-        modalTitle.textContent = title;
-        titleImage.value = title;
-        // modalTextTitle.value = title;
+        if (modalTitle) modalTitle.textContent = title;
+        if (titleImage) titleImage.value = title;
 
         const imageItem = button.closest('.layout-item');
 
@@ -548,6 +576,44 @@
 
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Display existing photos
+        const photosContainer = document.getElementById('photosContainer');
+
+        // First, clear any existing content except the "Add Image" button
+        const addImageCard = photosContainer.querySelector('.photo-item');
+        photosContainer.innerHTML = '';
+        photosContainer.appendChild(addImageCard);
+
+        // Add each photo from photosData
+        photosData.forEach(photo => {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.innerHTML = `
+                <div class="card shadow-sm photo-card">
+                    <div class="overflow-hidden img-home">
+                        <img src="${photo.src}" class="card-img-top img-fluid" alt="${photo.name}">
+                    </div>
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <p class="card-text">${photo.name}</p>
+                        <div class="dropdown">
+                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
+                                    data-title="${photo.name}"
+                                    data-image="${photo.src}"
+                                    data-photo-id="${photo.id}">Surface Size</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            photosContainer.appendChild(colDiv);
+        });
+
         const canvas = document.getElementById('imageCanvas');
         const ctx = canvas.getContext('2d');
         const widthInput = document.getElementById('rectWidth');
@@ -555,6 +621,7 @@
         let corners = [];
         let backgroundImage = null;
         let currentImageElement = null; // Store reference to current image element
+
 
         // Set fixed canvas dimensions
         const CANVAS_WIDTH = 800;
@@ -671,6 +738,13 @@
             currentImageElement = button.closest('.photo-card');
 
             const image = button.getAttribute('data-image');
+
+            const photoId = button.getAttribute('data-photo-id');
+
+            corners = photosData.find(p => p.id === photoId).corners;
+
+            console.log(corners, "pppppppppppppppp");
+
             if (!image) {
                 console.error('No image data found');
                 return;
@@ -681,6 +755,7 @@
             backgroundImage.onerror = function() {
                 console.error('Failed to load image');
             };
+
 
             backgroundImage.onload = function() {
                 // Initialize rectangle in center of canvas
@@ -862,19 +937,17 @@
                 const naturalWidth = img.naturalWidth;
                 const naturalHeight = img.naturalHeight;
 
-                // Get corners data if it exists (you might need to adjust how you store/retrieve this)
-                const corners = photo.dataset.corners ? JSON.parse(photo.dataset.corners) : [];
+                // Get corners data from the photo's dataset
+                const cornersData = photosData[index].corners;
 
-                // Fetch the image and convert to blob
                 return fetch(imgSrc)
                     .then(response => response.blob())
                     .then(blob => {
-                        // Add the image file to FormData
                         formData.append(`images[]`, blob, `${title}.jpg`);
                         formData.append(`names[]`, title);
                         formData.append(`widths[]`, naturalWidth);
                         formData.append(`heights[]`, naturalHeight);
-                        formData.append(`corners[]`, JSON.stringify(corners)); // Add corners data
+                        formData.append(`corners[]`, JSON.stringify(cornersData)); // Stringify corners data
                         return {
                             name: title,
                             index: index
@@ -924,7 +997,7 @@
                             // Create new layout section if it doesn't exist
                             const layoutsContainer = document.querySelector('.main-content');
                             const noLayoutsMessage = document.querySelector('.layout-section');
-                            
+
                             if (noLayoutsMessage) {
                                 noLayoutsMessage.remove(); // Remove "No layouts available" message
                             }
