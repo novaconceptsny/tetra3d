@@ -104,24 +104,23 @@
                         <div style="font-size: 24px; font-weight: bold;">Surfaces <button class="btn enter-link" id="toggleButtonSurfaces">Enter</button></div>
 
                         <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-center align-items-center card surface-item">
-                                <button class="add-image-btn" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="add">
-                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                    <span class="add-image-text">Add Surface</span>
-                                </button>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-center align-items-center card surface-item" data-name="North Wall" data-width="600" data-height="300">
-                                <span class="surface-name">North Wall</span>
-                                <div class="dropdown position-absolute top-0 end-0">
-                                    <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v ms-auto"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                        <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
-                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                    </ul>
-                                </div>
-                            </li>
+                            @foreach($surfaces as $surface)
+                                <li class="list-group-item d-flex justify-content-center align-items-center card surface-item" 
+                                    data-name="{{ $surface->name }}" 
+                                    data-width="{{ $surface->data['img_width'] ?? '' }}" 
+                                    data-height="{{ $surface->data['img_height'] ?? '' }}">
+                                    <span class="surface-name">{{ $surface->name }}</span>
+                                    <div class="dropdown position-absolute top-0 end-0">
+                                        <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v ms-auto"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
+                                            <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\ArtworkCollection;
 use App\Models\Project;
 use App\Models\Photo;
+use App\Models\Surface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,12 +16,16 @@ class PhotoController extends Controller
             ->with(['company', 'tours', 'artworkCollections', 'layouts'])
             ->withCount('contributors')
             ->first();
-        $artworkCollections = ArtworkCollection::forCompany($project->company_id)->get();
+
+        // Get surfaces based on company_id and tour_ids
+        $surfaces = Surface::where('company_id', $project->company_id)
+            ->whereIn('tour_id', $project->tours->pluck('id'))
+            ->get();
         
-        // Load photos for this project
+        $artworkCollections = ArtworkCollection::forCompany($project->company_id)->get();
         $photos = Photo::where('project_id', $project->id)->get();
 
-        return view('photo.index', compact('artworkCollections', 'project', 'photos'));
+        return view('photo.index', compact('artworkCollections', 'project', 'photos', 'surfaces'));
     }
 
     public function updateCollections(Request $request, Project $project)
