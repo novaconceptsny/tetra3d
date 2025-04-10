@@ -50,9 +50,11 @@ class CanvasManager {
         this.boundingBox = null;
         this.imgWidth = this.surface.data.img_width;
         this.imgHeight = this.surface.data.img_height;
-        console.log(this.imgWidth, this.imgHeight,  this.surface.data, "llllllllllllllllllllll")
+        this.corners = this.surface.data.corners || [];
         this.baseWidth = null;
         this.baseScale = null;
+
+        this.photoScale = 1;
 
         this.reverseScale = null;
         this.defaultScales = {};
@@ -86,12 +88,21 @@ class CanvasManager {
             //shrink by width
             this.baseScale = mainWidth / this.imgWidth; //Here is the relative data when the screen is zoomed
             this.reverseScale = 1 / this.baseScale;
+
+            if(this.photoEditable){
+                this.photoScale = mainWidth /this.surfaceData.bounding_box_width;
+            }
         } else {
             //The picture is narrower than the screen ratio
             //shrink by height
             this.baseScale = mainHeight / this.imgHeight; //Here is the relative data when the screen is zoomed
             this.reverseScale = 1 / this.baseScale;
+
+            if(this.photoEditable){
+                this.photoScale = mainHeight /this.surfaceData.bounding_box_height;
+            }
         }
+
 
 
         this.boundingBox = new fabric.Rect({
@@ -142,6 +153,42 @@ class CanvasManager {
 
         // Add guide-related initialization
         this.initializeGuides();
+
+        this.initializeArea(this.photoEditable, this.surfaceData);
+    }
+
+    initializeArea(photoEditable, surfaceData) {
+        const corners = surfaceData.corners;
+        const boundingBoxLeft = surfaceData.bounding_box_left;
+        const boundingBoxTop = surfaceData.bounding_box_top;
+
+        if (photoEditable && corners.length > 0) {
+            // Scale the corner points using baseScale
+            const scaledPoints = corners.map(point => ({
+                x: (point.x - boundingBoxLeft) * this.photoScale,
+                y: (point.y - boundingBoxTop) * this.photoScale
+            }));
+
+            // Create a flat array of points for the polygon
+            const points = [];
+            scaledPoints.forEach(point => {
+                points.push({ x: point.x, y: point.y });
+            });
+
+            // Create a polygon using the points
+            const polygon = new fabric.Polygon(points, {
+                fill: 'rgba(128, 128, 128, 0.1)', // Light grey with 0.1 opacity
+                stroke: 'grey',
+                strokeWidth: 2,
+                selectable: false,
+                evented: false,
+                objectCaching: false
+            });
+
+            // Add the polygon to the canvas
+            this.artworkCanvas.add(polygon);
+            this.artworkCanvas.renderAll();
+        }
     }
 
     registerCanvasUpdateEvent() {
@@ -923,7 +970,7 @@ class CanvasManager {
 
         if (isHorizontal) {
             let y = Math.min(Math.max(line.top, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
-            
+
             line.set({
                 x1: 0,
                 y1: 0,
@@ -966,7 +1013,7 @@ class CanvasManager {
             });
         } else {
             let x = Math.min(Math.max(line.left, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
-            
+
             line.set({
                 x1: 0,
                 y1: 0,
@@ -1021,14 +1068,14 @@ class CanvasManager {
         if (this.isInactive()) return;
 
         const value = textbox.text || textbox.get('text');
-        
+
         if (!value) {
             console.warn('No text value found in textbox');
             return;
         }
 
         const pixels = this.feetInchesToPixels(value);
-        
+
         if (pixels === null) {
             console.warn('Invalid measurement format. Use format like "5\'6\"" or "5\'" or "6\""');
             this.updateGuide(guideLine);
@@ -1049,7 +1096,7 @@ class CanvasManager {
             } else {
                 newY = (boundingBoxTop + boundingBoxHeight) - pixels;
             }
-            
+
             newY = Math.min(Math.max(newY, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
             guideLine.set({
                 top: newY,
@@ -1068,7 +1115,7 @@ class CanvasManager {
             } else {
                 newX = (boundingBoxLeft + boundingBoxWidth) - pixels;
             }
-            
+
             newX = Math.min(Math.max(newX, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
             guideLine.set({
                 left: newX,
@@ -1083,7 +1130,7 @@ class CanvasManager {
         }
 
         this.updateGuide(guideLine);
-        
+
         // Ensure the guide remains selectable and draggable
         guideLine.setCoords();
         this.artworkCanvas.setActiveObject(guideLine);
@@ -1094,15 +1141,15 @@ class CanvasManager {
         // Accept input in format: "5'6"" or "5'" or "6""
         const regex = /^(?:(\d+)')?(?:(\d+)")?$/;
         const match = value.trim().match(regex);
-        
+
         if (!match) return null;
-        
+
         const feet = parseInt(match[1] || 0);
         const inches = parseInt(match[2] || 0);
-        
+
         const totalInches = (feet * 12) + inches;
         const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
-        
+
         return totalInches / inchesPerPixel;
     }
 

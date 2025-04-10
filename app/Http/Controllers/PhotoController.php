@@ -87,6 +87,10 @@ class PhotoController extends Controller
                         $data = [
                             'img_width' => (string)$request->widths[$index],
                             'img_height' => (string)$request->heights[$index],
+                            'bounding_box_top' => (string)$request->boundingBoxTop[$index],
+                            'bounding_box_left' => (string)$request->boundingBoxLeft[$index],
+                            'bounding_box_width' => (string)$request->boundingBoxWidth[$index],
+                            'bounding_box_height' => (string)$request->boundingBoxHeight[$index],
                             'corners' => $cornersData // Store parsed corners data
                         ];
 

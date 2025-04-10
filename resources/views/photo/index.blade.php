@@ -292,12 +292,16 @@
     if (existing_photos && existing_photos.length > 0) {
         existing_photos.forEach(photo => {
             photosData.push({
-                id: photo.id,
+                id: String(photo.id),
                 src: photo.background_url,
                 name: photo.name,
                 corners: photo.data['corners'] || calculateDefaultCorners(),
                 width: photo.data['img_width'],
-                height: photo.data['img_height']
+                height: photo.data['img_height'],
+                boundingBoxTop: photo.data['bounding_box_top'],
+                boundingBoxLeft: photo.data['bounding_box_left'],
+                boundingBoxWidth : photo.data['bounding_box_width'],
+                boundingBoxHeight : photo.data['bounding_box_height'],
             });
         });
     }
@@ -307,15 +311,15 @@
     }
 
     function calculateDefaultCorners() {
-        // Default dimensions for the rectangle
-        const width = 800;
-        const height = 800;
+
         const defaultWidth = 100;
         const defaultHeight = 100;
 
+        const CANVAS_WIDTH = 800;
+        const CANVAS_HEIGHT = 600;
         // Calculate starting position to center the rectangle
-        const startX = (width - defaultWidth) / 2;
-        const startY = (height - defaultHeight) / 2;
+        const startX = (CANVAS_WIDTH - defaultWidth) / 2;
+        const startY = (CANVAS_HEIGHT - defaultHeight) / 2;
 
         return [
             { x: startX, y: startY, label: '1' },                                    // top-left
@@ -345,7 +349,11 @@
                         name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
                         corners: calculateDefaultCorners(),
                         width: img.width,
-                        height: img.height
+                        height: img.height,
+                        boundingBoxTop: 0,
+                        boundingBoxLeft: 0,
+                        boundingBoxWidth: 0,
+                        boundingBoxHeight: 0
                     };
                     selectedImages.push(imageData);
 
@@ -739,11 +747,10 @@
 
             const image = button.getAttribute('data-image');
 
+
             const photoId = button.getAttribute('data-photo-id');
 
             corners = photosData.find(p => p.id === photoId).corners;
-
-            console.log(corners, "pppppppppppppppp");
 
             if (!image) {
                 console.error('No image data found');
@@ -765,12 +772,20 @@
                     width: 100,
                     height: 100
                 };
-
                 drawCanvas(corners);
             };
 
             try {
                 backgroundImage.src = image;
+                const fitDimensions = fitImageToCanvas(backgroundImage);
+                photosData.map(photo => {
+                    if(photo.id === photoId){
+                        photo.boundingBoxTop = fitDimensions.y;
+                        photo.boundingBoxLeft = fitDimensions.x;
+                        photo.boundingBoxWidth = fitDimensions.width;
+                        photo.boundingBoxHeight = fitDimensions.height;
+                    }
+                });
             } catch (error) {
                 console.error('Error setting image source:', error);
             }
@@ -947,6 +962,10 @@
                         formData.append(`names[]`, title);
                         formData.append(`widths[]`, naturalWidth);
                         formData.append(`heights[]`, naturalHeight);
+                        formData.append(`boundingBoxTop[]`, photosData[index].boundingBoxTop);
+                        formData.append(`boundingBoxLeft[]`, photosData[index].boundingBoxLeft);
+                        formData.append(`boundingBoxWidth[]`, photosData[index].boundingBoxWidth);
+                        formData.append(`boundingBoxHeight[]`, photosData[index].boundingBoxHeight);
                         formData.append(`corners[]`, JSON.stringify(cornersData)); // Stringify corners data
                         return {
                             name: title,
