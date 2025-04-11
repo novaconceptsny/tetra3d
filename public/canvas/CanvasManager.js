@@ -183,8 +183,8 @@ class CanvasManager {
 
             // Create a polygon using the points
             const polygon = new fabric.Polygon(points, {
-                fill: 'rgba(128, 128, 128, 0.1)', // Light grey with 0.1 opacity
-                stroke: 'grey',
+                fill: 'rgba(0, 255, 0, 0.1)', // Light grey with 0.1 opacity
+                stroke: 'green',
                 strokeWidth: 2,
                 selectable: false,
                 evented: false,
