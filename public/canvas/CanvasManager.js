@@ -1264,18 +1264,19 @@ class CanvasManager {
             // Create new Fabric image from warped result
             fabric.Image.fromURL(tempCanvas.toDataURL(), (warpedImage) => {
                 warpedImage.set({
-                    selectable: true,
-                    hasControls: true,
-                    cornerStyle: 'circle',
-                    transparentCorners: false,
-                    cornerColor: 'rgba(102,153,255,0.5)',
-                    cornerSize: 12,
-                    padding: 5
+                    selectable: false,        // Make non-selectable
+                    hasControls: false,       // Remove controls
+                    lockMovementX: true,      // Lock horizontal movement
+                    lockMovementY: true,      // Lock vertical movement
+                    lockRotation: true,       // Lock rotation
+                    lockScalingX: true,       // Lock horizontal scaling
+                    lockScalingY: true,       // Lock vertical scaling
+                    hoverCursor: 'default'    // Change cursor on hover
                 });
                 
                 // Add to main canvas
                 this.artworkCanvas.add(warpedImage);
-                this.artworkCanvas.setActiveObject(warpedImage);
+                // this.artworkCanvas.setActiveObject(warpedImage);
                 this.artworkCanvas.renderAll();
 
                 // Clean up
