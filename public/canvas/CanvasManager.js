@@ -17,7 +17,7 @@ class CanvasManager {
         this.surface = data.surface;
         this.surfaceData = this.surface.data;
         this.latestState = data.latestState;
-        this.photoEditable = data.photoEditable;
+        this.photoEditable = data.photoEditable || false;
 
         this.canvasApi = new CanvasApi({
             updateEndpoint: data.updateEndpoint,
@@ -51,6 +51,10 @@ class CanvasManager {
         this.imgWidth = this.surface.data.img_width;
         this.imgHeight = this.surface.data.img_height;
         this.corners = this.surface.data.corners || [];
+        this.areaSrcPoints = [];
+        this.Minv = null;
+        this.dstMat = null;
+        this.M = null;
         this.baseWidth = null;
         this.baseScale = null;
 
@@ -89,8 +93,8 @@ class CanvasManager {
             this.baseScale = mainWidth / this.imgWidth; //Here is the relative data when the screen is zoomed
             this.reverseScale = 1 / this.baseScale;
 
-            if(this.photoEditable){
-                this.photoScale = mainWidth /this.surfaceData.bounding_box_width;
+            if (this.photoEditable) {
+                this.photoScale = mainWidth / this.surfaceData.bounding_box_width;
             }
         } else {
             //The picture is narrower than the screen ratio
@@ -98,8 +102,8 @@ class CanvasManager {
             this.baseScale = mainHeight / this.imgHeight; //Here is the relative data when the screen is zoomed
             this.reverseScale = 1 / this.baseScale;
 
-            if(this.photoEditable){
-                this.photoScale = mainHeight /this.surfaceData.bounding_box_height;
+            if (this.photoEditable) {
+                this.photoScale = mainHeight / this.surfaceData.bounding_box_height;
             }
         }
 
@@ -148,13 +152,14 @@ class CanvasManager {
         // Call out all the artwork and display it on the page.
         this.renderArtworks();
 
-        this.registerArtworkSelectionEvent();
+        this.registerArtworkSelectionEvent(this.photoEditable);
         this.registerCanvasUpdateEvent();
 
         // Add guide-related initialization
         this.initializeGuides();
 
         this.initializeArea(this.photoEditable, this.surfaceData);
+
     }
 
     initializeArea(photoEditable, surfaceData) {
@@ -173,6 +178,7 @@ class CanvasManager {
             const points = [];
             scaledPoints.forEach(point => {
                 points.push({ x: point.x, y: point.y });
+                this.areaSrcPoints.push({ x: point.x, y: point.y });
             });
 
             // Create a polygon using the points
@@ -214,17 +220,24 @@ class CanvasManager {
         this.addSavedVersionEvents();
     }
 
-    registerArtworkSelectionEvent() {
+    registerArtworkSelectionEvent(photoEditable) {
         $('#site__body').on('click', '.artwork-img', (el) => {
             if (!this.active) {
                 return false
             }
 
             let target = el.currentTarget;
-            let newSelection = this.newArtworkSelection(target);
-            this.placeSelectedImage(newSelection);
-            this.unsavedChanges = true;
-            this.toggleRemoveButton();
+
+            if (!photoEditable) {
+                let newSelection = this.newArtworkSelection(target);
+                this.placeSelectedImage(newSelection);
+                this.unsavedChanges = true;
+                this.toggleRemoveButton();
+            } else {
+                let imgData = this.getSelectionData(target);
+                this.addWarpedArtwork(imgData);
+            }
+
         })
     }
 
@@ -1166,6 +1179,132 @@ class CanvasManager {
         button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Guides`;
 
         this.artworkCanvas.renderAll();
+    }
+
+    addWarpedArtwork(imgData) {
+        const { imgUrl } = imgData;
+        
+        // Clean up existing matrices
+        if (this.dstMat) this.dstMat.delete();
+        if (this.Minv) this.Minv.delete();
+        if (this.M) this.M.delete();
+
+        // Get the polygon area dimensions
+        const bounds = this.calculatePolygonBounds(this.areaSrcPoints);
+        const paddedWidth = bounds.width;
+        const paddedHeight = bounds.height;
+        
+        // Create source points from the wall area corners
+        let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, this.areaSrcPoints.flatMap(p => [p.x, p.y]));
+
+        // Create destination points as a rectangle
+        let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+            0, 0,
+            paddedWidth, 0,
+            paddedWidth, paddedHeight,
+            0, paddedHeight
+        ]);
+
+        // Calculate transformation matrices
+        this.M = cv.getPerspectiveTransform(dstTri, srcTri); // Note: Swapped order
+        this.Minv = cv.getPerspectiveTransform(srcTri, dstTri);
+
+        // Clean up temporary matrices
+        srcTri.delete();
+        dstTri.delete();
+
+        // Load the image and apply transformation
+        fabric.Image.fromURL(imgUrl, (img) => {
+            this.updateTransformedArtwork(img, this.M, bounds); // Pass M instead of Minv
+        }, { crossOrigin: 'anonymous' });
+    }
+
+    updateTransformedArtwork(fabricImage, transformMatrix, bounds) {
+        try {
+            if (!fabricImage || !transformMatrix) {
+                console.error('Missing required parameters');
+                return;
+            }
+
+            // Calculate scale to fit artwork within the wall area
+            const scale = Math.min(
+                bounds.width / fabricImage.width,
+                bounds.height / fabricImage.height
+            ) * 0.8; // 80% of max size to ensure it fits
+
+            // Create temporary canvas for the original image
+            const tempCanvas = document.createElement('canvas');
+            const scaledWidth = fabricImage.width * scale;
+            const scaledHeight = fabricImage.height * scale;
+            tempCanvas.width = scaledWidth;
+            tempCanvas.height = scaledHeight;
+            
+            // Draw the original image onto temp canvas
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(fabricImage.getElement(), 0, 0, scaledWidth, scaledHeight);
+
+            // Convert to OpenCV matrix
+            let srcMat = cv.imread(tempCanvas);
+            let dstMat = new cv.Mat();
+            
+            // Apply perspective transform
+            cv.warpPerspective(
+                srcMat,
+                dstMat,
+                transformMatrix,
+                new cv.Size(this.artworkCanvas.width, this.artworkCanvas.height),
+                cv.INTER_LINEAR,
+                cv.BORDER_TRANSPARENT,
+                new cv.Scalar()
+            );
+
+            // Convert result back to canvas
+            cv.imshow(tempCanvas, dstMat);
+
+            // Create new Fabric image from warped result
+            fabric.Image.fromURL(tempCanvas.toDataURL(), (warpedImage) => {
+                warpedImage.set({
+                    selectable: true,
+                    hasControls: true,
+                    cornerStyle: 'circle',
+                    transparentCorners: false,
+                    cornerColor: 'rgba(102,153,255,0.5)',
+                    cornerSize: 12,
+                    padding: 5
+                });
+                
+                // Add to main canvas
+                this.artworkCanvas.add(warpedImage);
+                this.artworkCanvas.setActiveObject(warpedImage);
+                this.artworkCanvas.renderAll();
+
+                // Clean up
+                tempCanvas.remove();
+            });
+
+            // Clean up OpenCV resources
+            srcMat.delete();
+            dstMat.delete();
+
+        } catch (error) {
+            console.error('Error in updateTransformedArtwork:', error);
+        }
+    }
+
+    // Helper function to calculate polygon bounds
+    calculatePolygonBounds(points) {
+        const xs = points.map(p => p.x);
+        const ys = points.map(p => p.y);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+        const minY = Math.min(...ys);
+        const maxY = Math.max(...ys);
+        return {
+            width: maxX - minX,
+            height: maxY - minY,
+            x: minX,
+            y: minY
+        };
     }
 }
 

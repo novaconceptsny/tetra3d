@@ -61,12 +61,19 @@
 @endsection
 
 @section('scripts')
-<script>
-    let canvases = @json($canvases);
-</script>
-<script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>
-<script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
+    <script>
+        let canvases = @json($canvases);
+    </script>
+    <script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>
+    <script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
 
+    <!-- Define onOpenCvReady before loading OpenCV.js -->
+    <script>
+        async function onOpenCvReady() { window.cv = await window.cv }
+    </script>
+
+    <!-- OpenCV.js -->
+    <script src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
 @endsection
 
 <style>
