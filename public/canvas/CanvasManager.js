@@ -1193,7 +1193,7 @@ class CanvasManager {
     }
 
     addWarpedArtwork(imgData) {
-        const { imgUrl } = imgData;
+        const { imgUrl, artworkId } = imgData;
         
         // Clean up existing matrices
         if (this.dstMat) this.dstMat.delete();
@@ -1217,8 +1217,14 @@ class CanvasManager {
         ]);
 
         // Calculate transformation matrices
-        this.M = cv.getPerspectiveTransform(dstTri, srcTri); // Note: Swapped order
+        this.M = cv.getPerspectiveTransform(dstTri, srcTri);
         this.Minv = cv.getPerspectiveTransform(srcTri, dstTri);
+
+        // Store initial position for reference
+        this.initialWarpPosition = {
+            x: 0,
+            y: 0
+        };
 
         // Clean up temporary matrices
         srcTri.delete();
@@ -1226,11 +1232,11 @@ class CanvasManager {
 
         // Load the image and apply transformation
         fabric.Image.fromURL(imgUrl, (img) => {
-            this.updateTransformedArtwork(img, this.M, bounds); // Pass M instead of Minv
+            this.updateTransformedArtwork(img, this.M, bounds, artworkId);
         }, { crossOrigin: 'anonymous' });
     }
 
-    updateTransformedArtwork(fabricImage, transformMatrix, bounds) {
+    updateTransformedArtwork(fabricImage, transformMatrix, bounds, artworkId) {
         try {
             if (!fabricImage || !transformMatrix) {
                 console.error('Missing required parameters');
@@ -1241,7 +1247,7 @@ class CanvasManager {
             const scale = Math.min(
                 bounds.width / fabricImage.width,
                 bounds.height / fabricImage.height
-            ) * 0.8; // 80% of max size to ensure it fits
+            ) * 0.5;
 
             // Create temporary canvas for the original image
             const tempCanvas = document.createElement('canvas');
@@ -1275,19 +1281,46 @@ class CanvasManager {
             // Create new Fabric image from warped result
             fabric.Image.fromURL(tempCanvas.toDataURL(), (warpedImage) => {
                 warpedImage.set({
-                    selectable: false,        // Make non-selectable
-                    hasControls: false,       // Remove controls
-                    lockMovementX: true,      // Lock horizontal movement
-                    lockMovementY: true,      // Lock vertical movement
-                    lockRotation: true,       // Lock rotation
-                    lockScalingX: true,       // Lock horizontal scaling
-                    lockScalingY: true,       // Lock vertical scaling
-                    hoverCursor: 'default'    // Change cursor on hover
+                    id: artworkId,
+                    left: this.initialWarpPosition.x,
+                    top: this.initialWarpPosition.y,
+                    selectable: false,
+                    hasControls: false,
+                    hasBorders: false,
+                    lockRotation: true,
+                    lockScalingX: true,
+                    lockScalingY: true,
+                    lockMovementX: true,
+                    lockMovementY: true,
+                    cornerStyle: 'circle',
+                    transparentCorners: false,
+                    cornerColor: 'rgba(102,153,255,0.5)',
+                    cornerSize: 8,
+                    padding: 5,
+                    originalMatrix: transformMatrix.clone(), // Store original transformation
+                    originalPosition: { ...this.initialWarpPosition }
                 });
                 
+                // Add movement constraints
+                warpedImage.on('moving', (evt) => {
+                    const obj = evt.target;
+                    // Keep the artwork within the polygon area
+                    const polygon = this.areaPolygon;
+                    if (polygon) {
+                        const points = polygon.points;
+                        const minX = Math.min(...points.map(p => p.x));
+                        const maxX = Math.max(...points.map(p => p.x));
+                        const minY = Math.min(...points.map(p => p.y));
+                        const maxY = Math.max(...points.map(p => p.y));
+
+                        obj.left = Math.min(Math.max(obj.left, minX), maxX - obj.width);
+                        obj.top = Math.min(Math.max(obj.top, minY), maxY - obj.height);
+                    }
+                });
+
                 // Add to main canvas
                 this.artworkCanvas.add(warpedImage);
-                // this.artworkCanvas.setActiveObject(warpedImage);
+                this.artworkCanvas.setActiveObject(warpedImage);
                 this.artworkCanvas.renderAll();
 
                 // Clean up
