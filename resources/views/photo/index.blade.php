@@ -109,6 +109,30 @@
                 <div class="layout-section">
                     <div style="font-size: 24px; font-weight: bold;">{{ $layout->name }}</div>
                     <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
+                        @foreach($photos->where('layout_id', $layout->id) as $photo)
+                            <div class="col-md-3 layout-item">
+                                <div class="card shadow-sm bg-white">
+                                    <div class="overflow-hidden img-home">
+                                        <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                    </div>
+                                    <div class="card-body d-flex justify-content-between align-items-end">
+                                        <p class="card-text">
+                                            <span>{{ $photo->name }}</span><br>
+                                            <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
+                                        </p>
+                                        <button type="button" 
+                                                class="btn enter-link"
+                                                onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
+                                                data-photo-id="{{ $photo->id }}"
+                                                data-layout-id="{{ $layout->id }}">
+                                            Enter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        
+                        <!-- Add Layout button at the end -->
                         <div class="col-md-3 layout-item">
                             <div class="card bg-white card-layout">
                                 <button class="add-image-btn">
