@@ -132,15 +132,17 @@
                             </div>
                         @endforeach
 
-                        <!-- Add Layout button at the end -->
-                        <div class="col-md-3 layout-item">
-                            <div class="card bg-white card-layout">
-                                <button class="add-image-btn">
-                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                    <span class="add-image-text">Add Layout</span>
-                                </button>
+                        @if($loop->last)
+                            <!-- Add Layout button only in the last layout -->
+                            <div class="col-md-3 layout-item">
+                                <div class="card bg-white card-layout">
+                                    <button class="add-image-btn">
+                                        <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                        <span class="add-image-text">Add Layout</span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             @endforeach
@@ -983,31 +985,18 @@
                     return null;
                 }
 
-                // Get natural dimensions of the image
-                const naturalWidth = img.naturalWidth;
-                const naturalHeight = img.naturalHeight;
-
-                // Get corners data from the photo's dataset
-                const cornersData = photosData[index].corners;
-
                 return fetch(imgSrc)
                     .then(response => response.blob())
                     .then(blob => {
                         formData.append(`images[]`, blob, `${title}.jpg`);
                         formData.append(`names[]`, title);
-                        formData.append(`widths[]`, naturalWidth);
-                        formData.append(`heights[]`, naturalHeight);
-                        formData.append(`boundingBoxTop[]`, photosData[index].boundingBoxTop);
-                        formData.append(`boundingBoxLeft[]`, photosData[index].boundingBoxLeft);
-                        formData.append(`boundingBoxWidth[]`, photosData[index].boundingBoxWidth);
-                        formData.append(`boundingBoxHeight[]`, photosData[index].boundingBoxHeight);
-                        formData.append(`corners[]`, JSON.stringify(cornersData));
-                        // Add layout_id if it exists in the current layout container
-                        const layoutContainer = document.querySelector('.layout-section .row');
-                        if (layoutContainer) {
-                            const layoutId = layoutContainer.dataset.layoutId;
-                            formData.append(`layout_ids[]`, layoutId || '');
-                        }
+                        formData.append(`widths[]`, photosData[index].width || '');
+                        formData.append(`heights[]`, photosData[index].height || '');
+                        formData.append(`boundingBoxTop[]`, photosData[index].boundingBoxTop || '');
+                        formData.append(`boundingBoxLeft[]`, photosData[index].boundingBoxLeft || '');
+                        formData.append(`boundingBoxWidth[]`, photosData[index].boundingBoxWidth || '');
+                        formData.append(`boundingBoxHeight[]`, photosData[index].boundingBoxHeight || '');
+                        formData.append(`corners[]`, JSON.stringify(photosData[index].corners || []));
                         return {
                             name: title,
                             index: index
@@ -1018,20 +1007,17 @@
             // Wait for all image processing to complete
             Promise.all(processPhotos)
                 .then(photoData => {
-                    // Filter out any null values from failed processing
                     photoData = photoData.filter(data => data !== null);
 
                     if (photoData.length === 0) {
                         throw new Error('No valid photos to process');
                     }
 
-                    // Add this check before making the fetch request
                     const token = document.querySelector('meta[name="csrf-token"]');
                     if (!token) {
                         throw new Error('CSRF token not found');
                     }
 
-                    // Send the FormData to the server
                     return fetch(`/projects/${projectId}/photos/duplicate`, {
                         method: 'POST',
                         headers: {
@@ -1049,33 +1035,19 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        let layoutHTML = '';
-                        const layoutId = data.layout.id;
+                        // Create new layout section
+                        const layoutsContainer = document.querySelector('.main-content');
+                        const layoutSection = document.createElement('div');
+                        layoutSection.className = 'layout-section';
+                        
+                        // Generate HTML for the new layout
+                        let layoutHTML = `
+                            <div style="font-size: 24px; font-weight: bold;">${data.layout.name}</div>
+                            <div class="row g-3" id="layout${data.layout.id}Container" data-layout-id="${data.layout.id}">
+                        `;
 
-                        // If this was a new layout, we need to create the layout section first
-                        if (data.hasNewLayout) {
-                            // Create new layout section if it doesn't exist
-                            const layoutsContainer = document.querySelector('.main-content');
-                            const noLayoutsMessage = document.querySelector('.layout-section');
-
-                            if (noLayoutsMessage) {
-                                noLayoutsMessage.remove(); // Remove "No layouts available" message
-                            }
-
-                            // Create new layout section
-                            const newLayoutSection = document.createElement('div');
-                            newLayoutSection.className = 'layout-section';
-                            newLayoutSection.innerHTML = `
-                                <div style="font-size: 24px; font-weight: bold;">${data.layout.name}</div>
-                                <div class="row g-3" id="layout1Container" data-layout-id="${layoutId}">
-                                </div>
-                            `;
-                            layoutsContainer.appendChild(newLayoutSection);
-                        }
-
-                        // Generate HTML for photos
+                        // Add photos to the new layout
                         data.photos.forEach(photo => {
-                            const now = new Date();
                             layoutHTML += `
                                 <div class="col-md-3 layout-item">
                                     <div class="card shadow-sm bg-white">
@@ -1085,13 +1057,13 @@
                                         <div class="card-body d-flex justify-content-between align-items-end">
                                             <p class="card-text">
                                                 <span>${photo.name}</span><br>
-                                                <small>Created: ${now.toLocaleDateString()}</small>
+                                                <small>Created: ${photo.created_at}</small>
                                             </p>
                                             <button type="button"
                                                     class="btn enter-link"
-                                                    onclick="navigateToPhoto(${photo.id}, ${layoutId})"
+                                                    onclick="navigateToPhoto(${photo.id}, ${data.layout.id})"
                                                     data-photo-id="${photo.id}"
-                                                    data-layout-id="${layoutId}">
+                                                    data-layout-id="${data.layout.id}">
                                                 Enter
                                             </button>
                                         </div>
@@ -1100,7 +1072,7 @@
                             `;
                         });
 
-                        // Add the "Add Layout" button to the end
+                        // Add the "Add Layout" button
                         layoutHTML += `
                             <div class="col-md-3 layout-item">
                                 <div class="card bg-white card-layout">
@@ -1110,15 +1082,12 @@
                                     </button>
                                 </div>
                             </div>
-                        `;
+                        </div>`;
 
-                        // Find the layout container and update its content
-                        const layoutSection = document.getElementById('layout1Container');
-                        if (layoutSection) {
-                            layoutSection.innerHTML = layoutHTML;
-                        } else {
-                            console.error('Layout section not found');
-                        }
+                        layoutSection.innerHTML = layoutHTML;
+                        
+                        // Add the new layout section to the page
+                        layoutsContainer.appendChild(layoutSection);
                     }
                 })
                 .catch(error => {
