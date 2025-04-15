@@ -94,9 +94,10 @@ class PhotoController extends Controller
                             'corners' => $cornersData // Store parsed corners data
                         ];
 
-                        // Create new photo record
+                        // Create new photo record with layout_id
                         $photo = new Photo([
                             'project_id' => $project->id,
+                            'layout_id' => $layout->id, // Add layout_id here
                             'name' => $request->names[$index],
                             'background_url' => '/storage/' . $path,
                             'data' => $data,
@@ -115,8 +116,8 @@ class PhotoController extends Controller
                     'success' => true,
                     'message' => 'Photos duplicated successfully',
                     'photos' => $savedPhotos,
-                    'layout' => $layout, // Send layout data back to frontend
-                    'hasNewLayout' => $project->layouts->isEmpty() // Tell frontend if this was a new layout
+                    'layout' => $layout,
+                    'hasNewLayout' => $project->layouts->isEmpty()
                 ]);
             });
         } catch (\Exception $e) {

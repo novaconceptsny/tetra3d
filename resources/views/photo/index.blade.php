@@ -966,7 +966,13 @@
                         formData.append(`boundingBoxLeft[]`, photosData[index].boundingBoxLeft);
                         formData.append(`boundingBoxWidth[]`, photosData[index].boundingBoxWidth);
                         formData.append(`boundingBoxHeight[]`, photosData[index].boundingBoxHeight);
-                        formData.append(`corners[]`, JSON.stringify(cornersData)); // Stringify corners data
+                        formData.append(`corners[]`, JSON.stringify(cornersData));
+                        // Add layout_id if it exists in the current layout container
+                        const layoutContainer = document.querySelector('.layout-section .row');
+                        if (layoutContainer) {
+                            const layoutId = layoutContainer.dataset.layoutId;
+                            formData.append(`layout_ids[]`, layoutId || '');
+                        }
                         return {
                             name: title,
                             index: index
