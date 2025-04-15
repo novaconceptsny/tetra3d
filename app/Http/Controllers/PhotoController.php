@@ -23,7 +23,9 @@ class PhotoController extends Controller
             ->get();
         
         $artworkCollections = ArtworkCollection::forCompany($project->company_id)->get();
-        $photos = Photo::where('project_id', $project->id)->get();
+        $photos = Photo::where('project_id', $project->id)
+            ->groupBy('name')
+            ->get();
 
         return view('photo.index', compact('artworkCollections', 'project', 'photos', 'surfaces'));
     }

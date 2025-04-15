@@ -120,7 +120,7 @@
                                             <span>{{ $photo->name }}</span><br>
                                             <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
                                         </p>
-                                        <button type="button" 
+                                        <button type="button"
                                                 class="btn enter-link"
                                                 onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
                                                 data-photo-id="{{ $photo->id }}"
@@ -131,7 +131,7 @@
                                 </div>
                             </div>
                         @endforeach
-                        
+
                         <!-- Add Layout button at the end -->
                         <div class="col-md-3 layout-item">
                             <div class="card bg-white card-layout">
@@ -150,6 +150,15 @@
                 <div class="layout-section">
                     <div style="font-size: 24px; font-weight: bold;">No layouts available</div>
                     <!-- Add your default content here -->
+
+                        <div class="col-md-3 layout-item">
+                            <div class="card bg-white card-layout">
+                                <button class="add-image-btn">
+                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                    <span class="add-image-text">Add Layout</span>
+                                </button>
+                            </div>
+                        </div>
                 </div>
             @endif
         </div>
