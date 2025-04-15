@@ -61,7 +61,7 @@
                     <div class="photos-section bg-white rounded overflow-hidden">
                         <div     style="font-size: 24px; font-weight: bold;">Photos
                             <button class="btn enter-link" id="toggleButton">Enter</button>
-                            <button class="btn enter-link" id="duplicateImages">Duplicate images</button>
+                            <!-- <button class="btn enter-link" id="duplicateImages">Duplicate images</button> -->
                         </div>
                         <div class="row g-3" id="photosContainer">
                             <div class="col-md-3 d-flex photo-item">
@@ -911,8 +911,8 @@
             }
         });
 
-        // Handle duplicate images button click
-        document.getElementById('duplicateImages').addEventListener('click', function() {
+        // Function to handle image duplication
+        function handleDuplication() {
             const photoContainer = document.getElementById('photosContainer');
             if (!photoContainer) {
                 console.error('Photo container not found');
@@ -1084,6 +1084,17 @@
                     console.error('Error:', error);
                     alert('Failed to duplicate photos: ' + error.message);
                 });
+        }
+
+        // Add click handler for duplicate images button
+        // document.getElementById('duplicateImages').addEventListener('click', handleDuplication);
+
+        // Add click handler for all "Add Layout" buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.add-image-btn') && e.target.closest('.card-layout')) {
+                e.preventDefault();
+                handleDuplication();
+            }
         });
     });
 </script>
