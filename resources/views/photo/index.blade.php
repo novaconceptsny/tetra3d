@@ -713,6 +713,8 @@
                 points = [...endPoints];
             }
 
+            console.log('points', points);
+
             ctx.beginPath();
             ctx.strokeStyle = 'red';
             ctx.moveTo(points[0].x, points[0].y);
