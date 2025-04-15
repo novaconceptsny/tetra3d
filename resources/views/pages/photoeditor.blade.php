@@ -40,6 +40,9 @@
                         <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-guides" data-hidden="false">
                             <i class="fal fa-eye"></i> Hide Guides
                         </button>
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-area" data-hidden="false">
+                            <i class="fal fa-eye"></i> Hide Area
+                        </button>
                     </div>
                 </div>
 

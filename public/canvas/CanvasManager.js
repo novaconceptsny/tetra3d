@@ -73,6 +73,8 @@ class CanvasManager {
         this.fileNameInput = $('#file_name');
         this.confirmationModal = $('#confirmation_modal');
 
+        this.areaPolygon = null;
+
         this.initialize()
     }
 
@@ -160,6 +162,8 @@ class CanvasManager {
 
         this.initializeArea(this.photoEditable, this.surfaceData);
 
+        // Add area toggle button event listener
+        document.getElementById('toggle-area')?.addEventListener('click', () => this.toggleArea());
     }
 
     initializeArea(photoEditable, surfaceData) {
@@ -182,8 +186,8 @@ class CanvasManager {
             });
 
             // Create a polygon using the points
-            const polygon = new fabric.Polygon(points, {
-                fill: 'rgba(0, 255, 0, 0.1)', // Light grey with 0.1 opacity
+            this.areaPolygon = new fabric.Polygon(points, {
+                fill: 'rgba(0, 255, 0, 0.1)',
                 stroke: 'green',
                 strokeWidth: 2,
                 selectable: false,
@@ -192,8 +196,15 @@ class CanvasManager {
             });
 
             // Add the polygon to the canvas
-            this.artworkCanvas.add(polygon);
+            this.artworkCanvas.add(this.areaPolygon);
             this.artworkCanvas.renderAll();
+
+            // Initialize the toggle button state
+            const button = document.getElementById('toggle-area');
+            if (button) {
+                button.setAttribute('data-hidden', 'false');
+                button.innerHTML = '<i class="fal fa-eye"></i> Hide Area';
+            }
         }
     }
 
@@ -1306,6 +1317,20 @@ class CanvasManager {
             x: minX,
             y: minY
         };
+    }
+
+    toggleArea() {
+        if (!this.areaPolygon) return;
+        
+        const button = document.getElementById('toggle-area');
+        const isHidden = !(button.getAttribute('data-hidden') === 'true');
+        
+        this.areaPolygon.visible = !isHidden;
+        
+        button.setAttribute('data-hidden', isHidden.toString());
+        button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Area`;
+        
+        this.artworkCanvas.renderAll();
     }
 }
 
