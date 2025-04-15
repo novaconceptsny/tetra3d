@@ -11,6 +11,7 @@ class Photo extends Model
 
     protected $fillable = [
         'project_id',
+        'layout_id',
         'name',
         'background_url',
         'data'
