@@ -684,7 +684,7 @@
         }
 
         function drawCanvas(endPoints) {
-            let points;
+            let points = [];
             if (!backgroundImage) return;
 
             // Clear canvas
@@ -710,7 +710,7 @@
                     { x: rect.x, y: rect.y + rect.height, label: '4' }             // bottom-left
                 ];
             }else{
-                points = endPoints;
+                points = [...endPoints];
             }
 
             ctx.beginPath();
