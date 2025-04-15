@@ -52,7 +52,6 @@ class CanvasManager {
         this.imgHeight = this.surface.data.img_height;
         this.corners = this.surface.data.corners || [];
         this.areaSrcPoints = [];
-        this.Minv = null;
         this.dstMat = null;
         this.M = null;
         this.baseWidth = null;
@@ -1197,7 +1196,6 @@ class CanvasManager {
         
         // Clean up existing matrices
         if (this.dstMat) this.dstMat.delete();
-        if (this.Minv) this.Minv.delete();
         if (this.M) this.M.delete();
 
         // Get the polygon area dimensions
@@ -1218,7 +1216,6 @@ class CanvasManager {
 
         // Calculate transformation matrices
         this.M = cv.getPerspectiveTransform(dstTri, srcTri);
-        this.Minv = cv.getPerspectiveTransform(srcTri, dstTri);
 
         // Store initial position for reference
         this.initialWarpPosition = {
