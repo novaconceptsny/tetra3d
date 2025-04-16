@@ -55,4 +55,9 @@ class PhotoStateController extends Controller
         }
     }
 
+    public function update(Request $request, Photo $photo)
+    {
+        dd($request->all());
+    }
+
 }
