@@ -16,7 +16,7 @@ let warpedArtwork = null; //
 let dragOffset = { x: 0, y: 0 };
 // let artworkPosition = { x: 0, y: 0 };
 
-let artworkLoaded = false;
+let artworkLoaded = assignedArtworks.length > 0;
 
 let dragTransformMatrix = null;
 let lastMousePos = { x: 0, y: 0 };
@@ -159,6 +159,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         );
 
         drawPolygon(ctx, srcPoints);
+        calculatePerspectiveTransform();
+        renderAllArtworks();
     };
 
     registerArtworkSelectionEvent();
@@ -200,7 +202,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             }
 
             lastMousePos = { x, y };
-            imageCanvas.style.cursor = 'grabbing';
+            imageCanvas.style.cursor = 'move';
             return;
         }
     });
@@ -284,13 +286,11 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             lastDragOperation = null;
         }
 
-        if (isArtworkDragging) {
-        
-        }
-
         isArtworkDragging = false;
-        updateTransformedArtwork(warpedArtwork);
-        warpedArtwork = null;
+        if (warpedArtwork) {
+            updateTransformedArtwork(warpedArtwork);
+            warpedArtwork = null;
+        }
         imageCanvas.style.cursor = 'default';
     });
 
@@ -328,7 +328,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
 
 
-    function addWarpedArtwork(imgData) {
+
+    function calculatePerspectiveTransform() {
         // Get real wall dimensions in meters
         const realWidth = calculatePolygonBounds(srcPoints).width;
         const realHeight = calculatePolygonBounds(srcPoints).height;
@@ -367,20 +368,6 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         // Store matrices globally
         M = cv.getPerspectiveTransform(srcTri, dstTri);
         Minv = cv.getPerspectiveTransform(dstTri, srcTri);
-
-        // // Warp background image with improved border handling
-        // cv.warpPerspective(
-        //     srcMat,
-        //     dstMat,
-        //     M,
-        //     dsize,
-        //     cv.INTER_CUBIC, // Use cubic interpolation for better quality
-        //     cv.BORDER_REPLICATE // Replicate border pixels instead of using black
-        // );
-
-
-        updateTransformedArtwork(imgData);
-
         // Free memory
         srcMat.delete();
         srcTri.delete();
@@ -398,7 +385,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         assignedArtworks.forEach(artwork => {
             updateTransformedArtwork(artwork);
         });
-          
+
     }
 
     function updateTransformedArtwork(imgData) {
@@ -587,7 +574,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             };
             assignedArtworks.push(newArtwork);
 
-            addWarpedArtwork(newArtwork);
+            updateTransformedArtwork(newArtwork);
         })
     }
 
