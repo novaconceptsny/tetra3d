@@ -4,6 +4,7 @@ const mainWidth = mainContent.offsetWidth;
 const MAX_ARTWORK_DIMENSION = 200;
 
 let srcPoints = [];
+let assignedArtworks = [];
 let warpedArtworkPosition = { x: 0, y: 0 };
 
 let Minv = null;
@@ -13,10 +14,10 @@ let isArtworkDragging = false;
 let warpedArtwork = null; //
 let artworkImg = new Image();
 
-let artworkCanvas = document.createElement('canvas');
-let artworkCtx = artworkCanvas.getContext('2d');
+let artworkTempCanvas = document.createElement('canvas');
+let artworkTempCtx = artworkTempCanvas.getContext('2d');
 let dragOffset = { x: 0, y: 0 };
-let artworkPosition = { x: 0, y: 0 };
+// let artworkPosition = { x: 0, y: 0 };
 
 let artworkLoaded = false;
 
@@ -28,6 +29,10 @@ let lastDragOperation = null;
 
 // Add this variable at the top of your file
 let isAreaVisible = true;
+
+function getId(item = "artwork") {
+    return `${item}-${Math.random().toString(32).slice(-4)}`;
+}
 
 function calculatePolygonBounds(points) {
     const xs = points.map(p => p.x);
@@ -84,6 +89,48 @@ function getSelectionData(selectedElement) {
     return { title, imgUrl, artworkId, scale };
 }
 
+// Add these helper functions
+function isPointInWarpedArtwork(x, y) {
+    if (!M) return null;
+
+    let clickPoint = null;
+    let transformedPoint = null;
+
+    try {
+        // Create a point matrix for the click coordinates
+        clickPoint = cv.matFromArray(1, 1, cv.CV_32FC2, [x, y]);
+        transformedPoint = new cv.Mat();
+
+        // Transform the point to warped space
+        cv.perspectiveTransform(clickPoint, transformedPoint, M);
+
+        // Get the transformed coordinates
+        const tx = transformedPoint.data32F[0];
+        const ty = transformedPoint.data32F[1];
+
+        // Find the artwork that contains this point
+        const foundArtwork = assignedArtworks.find(artwork => {
+            return tx >= artwork.pos.x &&
+                tx <= artwork.pos.x + artwork.artworkCanvas.width &&
+                ty >= artwork.pos.y &&
+                ty <= artwork.pos.y + artwork.artworkCanvas.height;
+        });
+
+        return foundArtwork || null;
+    } catch (error) {
+        console.error('Error in isPointInWarpedArtwork:', error);
+        return null;
+    } finally {
+        // Clean up
+        if (clickPoint) {
+            clickPoint.delete();
+        }
+        if (transformedPoint) {
+            transformedPoint.delete();
+        }
+    }
+}
+
 
 
 Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
@@ -126,7 +173,6 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
     // Modify the existing imageCanvas click listener to this:
     imageCanvas.addEventListener('mousedown', function (evt) {
-
         if (!artworkLoaded) return;
 
         const rect = imageCanvas.getBoundingClientRect();
@@ -134,9 +180,12 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         const y = evt.clientY - rect.top;
 
         // Check if we're clicking on a warped artwork
-        if (warpedArtwork && isPointInWarpedArtwork(x, y)) {
-            console.log("clicked on warped artwork")
+        const clickedArtwork = isPointInWarpedArtwork(x, y);
+        if (clickedArtwork) {
+            console.log("clicked on warped artwork:", clickedArtwork.id);
             isArtworkDragging = true;
+            warpedArtwork = clickedArtwork;
+            warpedArtworkPosition = clickedArtwork.pos;
 
             // Calculate offset between click point and artwork top-left corner
             let clickPoint = cv.matFromArray(1, 1, cv.CV_32FC2, [x, y]);
@@ -195,7 +244,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
                             lastDragOperation = requestAnimationFrame(() => {
                                 try {
-                                    updateTransformedArtwork();
+                                    updateTransformedArtwork(warpedArtwork);
                                 } catch (error) {
                                     console.error('Error in animation frame:', error);
                                 }
@@ -242,7 +291,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
         // Redraw artwork if needed
         if (artworkLoaded && warpedArtwork) {
-            updateTransformedArtwork();
+            updateTransformedArtwork(warpedArtwork);
         }
     }
 
@@ -296,9 +345,6 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
 
     function addWarpedArtwork(imgData) {
-        const { imgUrl, artworkId } = imgData;
-
-
         // Get real wall dimensions in meters
         const realWidth = calculatePolygonBounds(srcPoints).width;
         const realHeight = calculatePolygonBounds(srcPoints).height;
@@ -348,9 +394,9 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             cv.BORDER_REPLICATE // Replicate border pixels instead of using black
         );
 
-        warpedArtwork = artworkCanvas;
+        warpedArtwork = imgData;
 
-        updateTransformedArtwork();
+        updateTransformedArtwork(imgData);
 
         // Free memory
         srcMat.delete();
@@ -358,7 +404,9 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         dstTri.delete();
     }
 
-    function updateTransformedArtwork() {
+    function updateTransformedArtwork(imgData) {
+
+        const { pos, artworkCanvas } = imgData;
 
         try {
             // Create temporary matrices for the transformation
@@ -371,10 +419,10 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             // Add padding to artwork corners to reduce edge artifacts
             const padding = 2; // 2 pixels padding
             const artworkCorners = [
-                { x: warpedArtworkPosition.x - padding, y: warpedArtworkPosition.y - padding },
-                { x: warpedArtworkPosition.x + artworkCanvas.width + padding, y: warpedArtworkPosition.y - padding },
-                { x: warpedArtworkPosition.x + artworkCanvas.width + padding, y: warpedArtworkPosition.y + artworkCanvas.height + padding },
-                { x: warpedArtworkPosition.x - padding, y: warpedArtworkPosition.y + artworkCanvas.height + padding }
+                { x: pos.x - padding, y: pos.y - padding },
+                { x: pos.x + artworkCanvas.width + padding, y: pos.y - padding },
+                { x: pos.x + artworkCanvas.width + padding, y: pos.y + artworkCanvas.height + padding },
+                { x: pos.x - padding, y: pos.y + artworkCanvas.height + padding }
             ];
 
             // Create matrices
@@ -467,10 +515,10 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
                 tempCanvas.remove();
 
                 // Update stored position for original canvas
-                artworkPosition = {
-                    x: transformedArtworkPoints.data32F[0],
-                    y: transformedArtworkPoints.data32F[1]
-                };
+                // artworkPosition = {
+                //     x: transformedArtworkPoints.data32F[0],
+                //     y: transformedArtworkPoints.data32F[1]
+                // };
 
                 // Clean up OpenCV resources
                 artworkTransformMatrix.delete();
@@ -489,75 +537,39 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
     function registerArtworkSelectionEvent() {
         $('#site__body').on('click', '.artwork-img', (el) => {
-
             let target = el.currentTarget;
-
             let imgData = getSelectionData(target);
             artworkLoaded = true;
             artworkImg.src = imgData.imgUrl;
 
             artworkImg.onload = function () {
-                artworkCanvas.width = artworkImg.width * 0.1;
-                artworkCanvas.height = artworkImg.height * 0.1;
-
                 // Calculate scale to fit within MAX_ARTWORK_DIMENSION while maintaining aspect ratio
                 const scaleW = MAX_ARTWORK_DIMENSION / artworkImg.width;
                 const scaleH = MAX_ARTWORK_DIMENSION / artworkImg.height;
                 let artworkScale = Math.min(scaleW, scaleH, 1.0); // Don't scale up, only down
 
                 // Set canvas size to scaled dimensions
-                artworkCanvas.width = artworkImg.width * artworkScale;
-                artworkCanvas.height = artworkImg.height * artworkScale;
+                artworkTempCanvas.width = artworkImg.width * artworkScale;
+                artworkTempCanvas.height = artworkImg.height * artworkScale;
 
                 // Clear and draw scaled image
-                artworkCtx.clearRect(0, 0, artworkCanvas.width, artworkCanvas.height);
-                artworkCtx.save();
-                artworkCtx.scale(artworkScale, artworkScale);
-                artworkCtx.drawImage(artworkImg, 0, 0);
-                artworkCtx.restore();
+                artworkTempCtx.clearRect(0, 0, artworkTempCanvas.width, artworkTempCanvas.height);
+                artworkTempCtx.save();
+                artworkTempCtx.scale(artworkScale, artworkScale);
+                artworkTempCtx.drawImage(artworkImg, 0, 0);
+                artworkTempCtx.restore();
 
-                addWarpedArtwork(imgData);
+                const newArtwork = {
+                    id: getId("artwork"), // Generate a unique UUID
+                    pos: { x: 0, y: 0 },
+                    artworkCanvas: artworkTempCanvas,
+                    ...imgData,
+                };
+                assignedArtworks.push(newArtwork);
+
+                addWarpedArtwork(newArtwork);
             }
-
         })
-    }
-
-    // Add these helper functions
-    function isPointInWarpedArtwork(x, y) {
-        if (!warpedArtwork || !M || !artworkPosition) return false;
-
-        let clickPoint = null;
-        let transformedPoint = null;
-
-        try {
-            // Create a point matrix for the click coordinates
-            clickPoint = cv.matFromArray(1, 1, cv.CV_32FC2, [x, y]);
-            transformedPoint = new cv.Mat();
-
-            // Transform the point to warped space
-            cv.perspectiveTransform(clickPoint, transformedPoint, M);
-
-            // Get the transformed coordinates
-            const tx = transformedPoint.data32F[0];
-            const ty = transformedPoint.data32F[1];
-
-            // Check if the transformed point is within the warped artwork bounds
-            return tx >= warpedArtworkPosition.x &&
-                tx <= warpedArtworkPosition.x + artworkCanvas.width &&
-                ty >= warpedArtworkPosition.y &&
-                ty <= warpedArtworkPosition.y + artworkCanvas.height;
-        } catch (error) {
-            console.error('Error in isPointInWarpedArtwork:', error);
-            return false;
-        } finally {
-            // Clean up
-            if (clickPoint) {
-                clickPoint.delete();
-            }
-            if (transformedPoint) {
-                transformedPoint.delete();
-            }
-        }
     }
 
 
