@@ -67,8 +67,7 @@
     <script>
         let canvases = @json($canvases);
     </script>
-    <script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>
-    <script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
+    <script type="module" src="{{ asset('canvas/maineditor.js') }}"></script>
 
     <!-- Define onOpenCvReady before loading OpenCV.js -->
     <script>
