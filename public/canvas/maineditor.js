@@ -26,6 +26,9 @@ let lastMousePos = { x: 0, y: 0 };
 // Add this variable at the top of your file
 let lastDragOperation = null;
 
+// Add this variable at the top of your file
+let isAreaVisible = true;
+
 function calculatePolygonBounds(points) {
     const xs = points.map(p => p.x);
     const ys = points.map(p => p.y);
@@ -50,7 +53,7 @@ function calculateScaledPoints(corners, boundingBoxLeft, boundingBoxTop, photoSc
 }
 
 function drawPolygon(ctx, points, fillStyle = 'rgba(0, 255, 0, 0.1)', strokeStyle = 'green') {
-    if (!points.length) return;
+    if (!points.length || !isAreaVisible) return;
 
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -211,22 +214,10 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             return;
         }
 
-        // Check if we're hovering over any point
-        let isOverPoint = false;
-        for (let i = 0; i < srcPoints.length; i++) {
-            const point = srcPoints[i];
-            const distance = Math.sqrt((x - point.x) ** 2 + (y - point.y) ** 2);
-            if (distance < dragRadius) {
-                isOverPoint = true;
-                break;
-            }
-        }
 
         // Change cursor style based on hover and drag state
-        if (isDragging) {
-            imageCanvas.style.cursor = 'grabbing';
-        } else if (isOverPoint) {
-            imageCanvas.style.cursor = 'grab';
+        if (isArtworkDragging) {
+            imageCanvas.style.cursor = 'move';
         } else {
             imageCanvas.style.cursor = 'default';
         }
@@ -246,6 +237,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
         // Redraw the base image
         ctx.drawImage(img, 0, 0, imageCanvas.width, imageCanvas.height);
+
+        drawPolygon(ctx, srcPoints);
 
         // Redraw artwork if needed
         if (artworkLoaded && warpedArtwork) {
@@ -281,6 +274,23 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
         isArtworkDragging = false;
         imageCanvas.style.cursor = 'default';
+    });
+
+
+    // Add this event listener after your other initialization code
+    document.getElementById('toggle-area').addEventListener('click', function () {
+        isAreaVisible = !isAreaVisible;
+        const button = this;
+
+        // Update button text and icon
+        if (isAreaVisible) {
+            button.innerHTML = '<i class="fal fa-eye"></i> Hide Area';
+        } else {
+            button.innerHTML = '<i class="fal fa-eye"></i> Show Area';
+        }
+
+        // Redraw the canvas to reflect the change
+        cleanupCanvasState();
     });
 
 
@@ -552,3 +562,4 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
 
 });
+
