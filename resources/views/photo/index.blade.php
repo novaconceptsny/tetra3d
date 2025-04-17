@@ -38,7 +38,7 @@
                                         <i class="fas fa-image collection-icon"></i>
                                         <div class="collection-info">
                                             <span class="collection-name">{{ $artworkCollection->name }}</span>
-                                            <span class="collection-items">{{ $artworkCollection->photos_count ?? 0 }} items</span>
+                                            <span class="collection-items">{{ $artworkCollection->artworks_count }} items</span>
                                         </div>
                                         <div class="dropdown position-absolute top-0 end-0">
                                             <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">

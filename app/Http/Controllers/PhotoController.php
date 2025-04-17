@@ -22,7 +22,9 @@ class PhotoController extends Controller
             ->whereIn('tour_id', $project->tours->pluck('id'))
             ->get();
         
-        $artworkCollections = ArtworkCollection::forCompany($project->company_id)->get();
+        $artworkCollections = ArtworkCollection::forCompany($project->company_id)
+            ->withCount('artworks')
+            ->get();
         $photos = Photo::where('project_id', $project->id)
             ->groupBy('name')
             ->get();
