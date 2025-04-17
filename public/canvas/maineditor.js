@@ -4,7 +4,7 @@ const mainWidth = mainContent.offsetWidth;
 const MAX_ARTWORK_DIMENSION = 200;
 
 let srcPoints = [];
-let assignedArtworks = [];
+
 let warpedArtworkPosition = { x: 0, y: 0 };
 
 let Minv = null;
@@ -16,14 +16,13 @@ let warpedArtwork = null; //
 let dragOffset = { x: 0, y: 0 };
 // let artworkPosition = { x: 0, y: 0 };
 
-let artworkLoaded = assignedArtworks.length > 0;
-
 let dragTransformMatrix = null;
 let lastMousePos = { x: 0, y: 0 };
 
 // Add this variable at the top of your file
 let lastDragOperation = null;
 
+let saveAndReturnBtn = document.getElementById('save-and-return');
 // Add this variable at the top of your file
 let isAreaVisible = true;
 
@@ -87,7 +86,7 @@ function getSelectionData(selectedElement) {
 }
 
 // Add these helper functions
-function isPointInWarpedArtwork(x, y) {
+function isPointInWarpedArtwork(x, y, assignedArtworks) {
     if (!M) return null;
 
     let clickPoint = null;
@@ -137,8 +136,15 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         return;
     }
 
+    const assignedArtworks = canvasData.assignedArtworks;
+
+    const photoId = canvasData.photoId;
+    console.log(assignedArtworks,photoId,  "assignedArtworks")
+    let artworkLoaded = assignedArtworks.length > 0;
     const ctx = imageCanvas.getContext('2d');
     const surface = canvasData.surface;
+    const updateEndpoint = canvasData.updateEndpoint;
+    console.log(updateEndpoint, "updateEndpoint")
     const surfaceData = surface.data;
     const photoScale = mainWidth / surfaceData.bounding_box_width;
 
@@ -179,7 +185,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         const y = evt.clientY - rect.top;
 
         // Check if we're clicking on a warped artwork
-        const clickedArtwork = isPointInWarpedArtwork(x, y);
+        const clickedArtwork = isPointInWarpedArtwork(x, y, assignedArtworks);
         if (clickedArtwork) {
             console.log("clicked on warped artwork:", clickedArtwork.id);
             isArtworkDragging = true;
@@ -578,6 +584,33 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         })
     }
 
+    saveAndReturnBtn.addEventListener('click', function () {
+        let payload = {
+            "_token": document.querySelector('meta[name="csrf-token"]').content,
+            "photoId": photoId,
+            "assigned_artwork": assignedArtworks,
+        };
+        payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
+
+        // Replace fakeFormPost with fetch
+        fetch(updateEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': payload._token
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to save changes');
+        });
+    });
 
 });
 
