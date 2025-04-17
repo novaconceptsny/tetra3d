@@ -105,13 +105,13 @@ class PhotoStateController extends Controller
             // Log the stored data for verification
             \Log::info('Stored position data:', ['last_position' => $position]);
             
-            return redirect()->back()->with('success', 'Photo states updated successfully');
+            return redirect()->route('photo.index')->with('success', 'Photo states updated successfully');
         } catch (\Exception $e) {
             // Rollback transaction on error
             \DB::rollBack();
             
             \Log::error('Error updating photo states: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to update photo states');
+            return redirect()->route('photo.index')->with('error', 'Failed to update photo states');
         }
     }
 
