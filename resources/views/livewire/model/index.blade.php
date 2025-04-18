@@ -174,6 +174,29 @@
         z_input.onchange = function() {
             updateSurfaces(key, 'start_pos_z', this.value);
         }
+
+        let width_input = document.getElementById('surfaceArray_' + key + '_width');
+        width_input.onchange = function() {
+            updateSurfaces(key, 'width', this.value);
+        }
+        let height_input = document.getElementById('surfaceArray_' + key + '_height');
+        height_input.onchange = function() {
+            updateSurfaces(key, 'height', this.value);
+        }
+
+        // Add normal vector input handlers
+        let nx_input = document.getElementById('surfaceArray_' + key + '_normalvector_x');
+        nx_input.onchange = function() {
+            updateSurfaces(key, 'normalvector_x', this.value);
+        }
+        let ny_input = document.getElementById('surfaceArray_' + key + '_normalvector_y');
+        ny_input.onchange = function() {
+            updateSurfaces(key, 'normalvector_y', this.value);
+        }
+        let nz_input = document.getElementById('surfaceArray_' + key + '_normalvector_z');
+        nz_input.onchange = function() {
+            updateSurfaces(key, 'normalvector_z', this.value);
+        }
     }
 
     document.getElementById('tour-model-name').innerHTML = tourModel;
@@ -232,9 +255,48 @@
     function updateSurfaces(key, axis, value) {
         scene.traverse(function(object) {
             if (object.name === key) {
-                if (axis === 'start_pos_x') object.position.x = value;
-                if (axis === 'start_pos_y') object.position.y = value;
-                if (axis === 'start_pos_z') object.position.z = value;
+                if (axis === 'start_pos_x') object.position.x = parseFloat(value);
+                if (axis === 'start_pos_y') object.position.y = parseFloat(value);
+                if (axis === 'start_pos_z') object.position.z = parseFloat(value);
+
+                if (axis === 'width' || axis === 'height') {
+                    const width = axis === 'width' ? parseFloat(value) : object.geometry.parameters.width;
+                    const height = axis === 'height' ? parseFloat(value) : object.geometry.parameters.height;
+                    
+                    const newGeometry = new THREE.PlaneGeometry(width, height);
+                    newGeometry.translate(width / 2, -height / 2, 0);
+                    
+                    object.geometry.dispose();
+                    object.geometry = newGeometry;
+                }
+
+                // Handle normal vector updates
+                if (axis.startsWith('normalvector_')) {
+                    const x = parseFloat(document.getElementById('surfaceArray_' + key + '_normalvector_x').value) || 0;
+                    const y = parseFloat(document.getElementById('surfaceArray_' + key + '_normalvector_y').value) || 0;
+                    const z = parseFloat(document.getElementById('surfaceArray_' + key + '_normalvector_z').value) || 0;
+
+                    // Create the normal vector and normalize it
+                    const normal = new THREE.Vector3(x, y, z);
+                    normal.normalize();
+
+                    // Default plane normal (facing forward)
+                    const defaultNormal = new THREE.Vector3(0, 0, 1);
+
+                    // Calculate rotation axis and angle
+                    const rotationAxis = new THREE.Vector3();
+                    rotationAxis.crossVectors(defaultNormal, normal);
+                    rotationAxis.normalize();
+
+                    const rotationAngle = Math.acos(defaultNormal.dot(normal));
+
+                    // Create quaternion for the rotation
+                    const quaternion = new THREE.Quaternion();
+                    quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
+
+                    // Apply the rotation
+                    object.setRotationFromQuaternion(quaternion);
+                }
             }
         });
     }
