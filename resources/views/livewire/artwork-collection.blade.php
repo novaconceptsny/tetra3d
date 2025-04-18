@@ -16,6 +16,11 @@
                 <option value="{{ $collection->id }}">{{ $collection->name }}</option>
             @endforeach
         </select>
+        <div class="change-icon-layout d-flex justify-content-between align-items-center">
+            <button class="btn border  border-secondary" onclick="setListLayout()"><i class="fas fa-bars"></i></button>
+            <button class="btn border border-secondary" onclick="setGridLayout()"> <i class="fas fa-th-large"></i></button>
+
+        </div>
         {{--<div class="outside">
             <div class="line"></div>
             <button class="editor-comment-btn btn" @click="sidebar = 'comments'">
@@ -25,7 +30,7 @@
         </div>--}}
     </div>
     <div class="card-div">
-        <div class="card-row row">
+        <div class="row card-row">
             @php
                 $firstArtworkColumn = $artworks->getCollection();
                 $secondArtworkColumn = $firstArtworkColumn->splice(0,ceil($firstArtworkColumn->count() / 2));
@@ -35,26 +40,33 @@
             @endphp
 
             @foreach($artworkColumns as $artworkColumn)
-                <div class="col-md-12 col-xl-6">
-                    @foreach($artworkColumn as $artwork)
-                        <div class="card mb-2 artwork-img"
+                @foreach($artworkColumn as $artwork)
+                    <div class="col-12 mb-3 card-col">
+                        <div class="card mb-3 artwork-img"
                              data-img-url="{{ $artwork->image_url. "?uuid=". str()->uuid() }}"
                              data-title="{{$artwork->name}}"
                              data-thumb-url="{{$artwork->image_url}}"
                              data-artwork-id="{{$artwork->id}}"
                              data-scale="{{$artwork->data->scale}}"
                         >
-                            <div class="card-img">
-                                <img src="{{ $artwork->image_url }}" alt="card-img" />
-                            </div>
-                            <div class="card-body">
-                                <div class="paragraph">{{ $artwork->artist }}</div>
-                                <div class="heading">{{ $artwork->name }}</div>
-                                <div class="dimensions">{{ $artwork->dimensions }} inches</div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card-img">
+                                        <img src="{{ $artwork->image_url }}" alt="card-img" />
+                                        {{--                                        <img src="{{ $artwork->image_url }}" alt="card-img" />--}}
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <div class="paragraph">{{ $artwork->artist }}</div>
+                                        <div class="heading">{{ $artwork->name }}</div>
+                                        <div class="dimensions">{{ $artwork->dimensions }} inches</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             @endforeach
         </div>
     </div>

@@ -31,17 +31,31 @@
                 <div class="d-inline-flex tabs-container mb-1 pe-2">
 
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide">
-                            <i class="fal fa-arrows-alt-h"></i> Add Horizontal Guide
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide"  data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Add Horizontal Guide">
+                            <i class="fal fa-arrows-alt-h"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-vert-guide">
-                            <i class="fal fa-arrows-alt-v"></i> Add Vertical Guide
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-vert-guide" data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Add Vertical Guide">
+                            <i class="fal fa-arrows-alt-v"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-guides" data-hidden="false">
-                            <i class="fal fa-eye"></i> Hide Guides
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-guides" data-hidden="false" data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Hide Guides">
+                            <i class="fal fa-eye"></i>
+                            <i class="fal fa-arrows-alt-v"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-area" data-hidden="false">
-                            <i class="fal fa-eye"></i> Hide Area
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-area" data-hidden="false" data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Hide Area">
+                            <i class="fal fa-eye"></i>
+                            <i class="fal fa-square"></i>
                         </button>
                         <x-menu-item
                             text="Save and Return"
@@ -70,6 +84,9 @@
 
 @endsection
 
+@section('styles')
+    <link href="{{ mix('css/page/photoeditor.css') }}" rel="stylesheet">
+@endsection
 @section('scripts')
     <script>
         let canvases = @json($canvases);
@@ -79,6 +96,39 @@
     <!-- Define onOpenCvReady before loading OpenCV.js -->
     <script>
         async function onOpenCvReady() { window.cv = await window.cv }
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function () {
+                this.classList.toggle('active');
+            });
+        });
+
+        function setListLayout() {
+            const cardCols = document.querySelectorAll('.card-row .card-col');
+            cardCols.forEach(col => {
+                col.classList.remove('fix-height');
+                col.classList.remove('col-md-6');
+                col.classList.add('col-12');
+            });
+
+        }
+
+        function setGridLayout() {
+            const cardCols = document.querySelectorAll('.card-row .card-col');
+            cardCols.forEach(col => {
+                col.classList.remove('col-12');
+                col.classList.add('col-md-6');
+                col.classList.add('fix-height');
+            });
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            popoverTriggerList.forEach(function (popoverTriggerEl) {
+                new bootstrap.Popover(popoverTriggerEl);
+            });
+        });
+
     </script>
 
     <!-- OpenCV.js -->

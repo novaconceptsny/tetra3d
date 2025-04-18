@@ -1,3 +1,13 @@
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f9f9f9;
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1700px; /* hoặc bao nhiêu tùy bạn */
+    }
+}
 .container-fluid {
     padding-left: 12px !important;
     padding-right: 12px !important;
@@ -22,6 +32,7 @@
 /* Sidebar */
 .sidebar {
     padding: 20px;
+    border-radius: 8px !important;
 }
 
 .sidebar h2 {
@@ -35,7 +46,7 @@
 .enter-link {
     float: right;
     font-size: 14px;
-    color: #007bff;
+    color: #008577;
     text-decoration: none;
     display: flex;
     justify-content: space-between;
@@ -69,6 +80,7 @@
 /* Photos Section */
 .photos-section {
     padding: 20px;
+    border-radius: 8px !important;
 }
 
 .photos-section h2 {
@@ -100,6 +112,7 @@
 .card-text {
     font-size: 16px;
     margin-bottom: 5px;
+    font-weight: bold;
 }
 
 /* Layout Section */
@@ -107,7 +120,7 @@
     margin-bottom: 2rem;
     padding: 1rem;
     background-color: #fff;
-    border-radius: 0.5rem;
+    border-radius: 8px;
 }
 
 .layout-section h2 {
@@ -117,14 +130,15 @@
 }
 
 .layout-section .card-text small {
-    color: #6c757d;
-    font-size: 12px;
+    color: #222436;
+    font-size: 14px;
+    font-weight: normal;
 }
 
 /* Surfaces Section */
 .surfaces-section {
     padding: 20px;
-    border-left: 1px solid #ddd;
+    border-radius: 8px !important;
 }
 
 .surfaces-section h2 {
@@ -572,7 +586,8 @@
 }
 
 .photos-section,
-.surfaces-section {
+.surfaces-section,
+.sidebar {
     max-height: 357px;
     transition: max-height 0.3s ease;
 }
@@ -801,6 +816,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.main-content .title-box{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 23px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.list-group{
+    max-height: 250px;
+    overflow: hidden;
 }
 
 /* ... rest of the CSS ... */

@@ -434,7 +434,7 @@ header#header nav .nav-container .navbar-collapse .menu-nav .profile .dropdown u
   min-height: 100dvh;
 }
 
-.row > * {
+.login_body .row > * {
   padding: 0;
 }
 

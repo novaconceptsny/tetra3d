@@ -1,0 +1,46 @@
+main section.editor .editor-view .tabs-container {
+  height: 45px;
+  align-items: center;
+  padding: 10px;
+}
+main section.editor .editor-view .tabs-container .white-bg-button {
+  border: none !important;
+  border-radius: 8px !important;
+}
+main section.editor .editor-view .row .side-col .top-div .change-icon-layout {
+  width: 20%;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row {
+  padding: 15px;
+  background: #F7F9FB;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row .card {
+  border: 2px solid #fff;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-inline: 0;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row .card:hover, main section.editor .editor-view .row .side-col .card-div .card-row .card.active {
+  border: 2px solid #008577;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row .card .card-img {
+  max-height: 73px;
+  overflow: hidden;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row .card .card-img img {
+  min-height: auto;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row .fix-height .card .card-img {
+  padding: 0;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row .fix-height .card .card-img img {
+  min-height: 150px;
+  -o-object-fit: contain;
+     object-fit: contain;
+  -o-object-position: top center;
+     object-position: top center;
+}
+main section.editor .editor-view .row .side-col .card-div .card-row .fix-height .card .col-md-4, main section.editor .editor-view .row .side-col .card-div .card-row .fix-height .card .col-md-8 {
+  width: auto !important;
+}

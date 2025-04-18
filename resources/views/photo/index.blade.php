@@ -19,12 +19,12 @@
         </header>
 
         <!-- Main Content -->
-        <div class="container-fluid main-content my-5">
+        <div class="container main-content my-5">
             <div class="row">
                 <!-- Sidebar: Collections -->
                 <div class="col-md-6 col-xl-2 order-md-1 mb-3">
-                    <div class="sidebar bg-white rounded">
-                        <div style="font-size: 24px; font-weight: bold;">Collections <a href="#" class="enter-link">Enter</a></div>
+                    <div class="sidebar bg-white rounded overflow-hidden">
+                        <div class="title-box" >Collections <a href="#" class="enter-link fw-normal">Enter</a></div>
                         <ul class="list-group">
                             <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
                                 <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
@@ -56,11 +56,11 @@
                 </div>
 
                 <!-- Main Content: Photos and Surfaces -->
-                <div class="col-md-12 col-xl-7 order-md-3 order-xl-2 mb-3">
+                <div class="col-md-12 col-xl-8 order-md-3 order-xl-2 mb-3">
                     <!-- Photos Section -->
                     <div class="photos-section bg-white rounded overflow-hidden">
-                        <div     style="font-size: 24px; font-weight: bold;">Photos
-                            <button class="btn enter-link" id="toggleButton">Enter</button>
+                        <div  class="title-box">Photos
+                            <button class="btn enter-link" data-bs-toggle="modal" data-bs-target="#showImageModal" id="toggleButton">Enter</button>
                             <!-- <button class="btn enter-link" id="duplicateImages">Duplicate images</button> -->
                         </div>
                         <div class="row g-3" id="photosContainer">
@@ -77,9 +77,9 @@
                 </div>
 
                 <!-- Surfaces Section -->
-                <div class="col-md-6 col-xl-3 order-md-2">
+                <div class="col-md-6 col-xl-2 order-md-2">
                     <div class="surfaces-section bg-white rounded overflow-hidden">
-                        <div style="font-size: 24px; font-weight: bold;">Surfaces <button class="btn enter-link" id="toggleButtonSurfaces">Enter</button></div>
+                        <div class="title-box">Surfaces <button class="btn enter-link" id="toggleButtonSurfaces">Enter</button></div>
 
                         <ul class="list-group">
                             @foreach($surfaces as $surface)
@@ -106,49 +106,53 @@
 
             <!-- Layout Sections -->
             @foreach($project->layouts as $layout)
-                <div class="layout-section">
-                    <div style="font-size: 24px; font-weight: bold;">{{ $layout->name }}</div>
-                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
-                        @foreach($photos->where('layout_id', $layout->id) as $photo)
-                            <div class="col-md-3 layout-item">
-                                <div class="card shadow-sm bg-white">
-                                    <div class="overflow-hidden img-home">
-                                        <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
-                                    </div>
-                                    <div class="card-body d-flex justify-content-between align-items-end">
-                                        <p class="card-text">
-                                            <span>{{ $photo->name }}</span><br>
-                                            <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
-                                        </p>
-                                        <button type="button"
-                                                class="btn enter-link"
-                                                onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
-                                                data-photo-id="{{ $photo->id }}"
-                                                data-layout-id="{{ $layout->id }}">
-                                            Enter
-                                        </button>
+                <div class="row">
+                <div class="col-12">
+                    <div class="layout-section mt-5">
+                        <div class="title-box">{{ $layout->name }}</div>
+                        <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
+                            @foreach($photos->where('layout_id', $layout->id) as $photo)
+                                <div class="col-md-3 layout-item">
+                                    <div class="card shadow-sm bg-white">
+                                        <div class="overflow-hidden img-home">
+                                            <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                        </div>
+                                        <div class="card-body d-flex justify-content-between align-items-end">
+                                            <p class="card-text">
+                                                <span>{{ $photo->name }}</span><br>
+                                                <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
+                                            </p>
+                                            <button type="button"
+                                                    class="btn enter-link"
+                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
+                                                    data-photo-id="{{ $photo->id }}"
+                                                    data-layout-id="{{ $layout->id }}">
+                                                Enter
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         @endforeach
 
                         <!-- Add Layout button at the end -->
-                        <div class="col-md-3 layout-item">
-                            <div class="card bg-white card-layout">
-                                <button class="add-image-btn">
-                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                    <span class="add-image-text">Add Layout</span>
-                                </button>
+                            <div class="col-md-3 layout-item">
+                                <div class="card bg-white card-layout">
+                                    <button class="add-image-btn">
+                                        <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                        <span class="add-image-text">Add Layout</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             @endforeach
 
             <!-- If no layouts exist, show a message or default layouts -->
             @if($project->layouts->isEmpty())
                 <div class="layout-section">
-                    <div style="font-size: 24px; font-weight: bold;">No layouts available</div>
+                    <div class="title-box">No layouts available</div>
                     <!-- Add your default content here -->
 
                         <div class="col-md-3 layout-item">
@@ -191,7 +195,7 @@
         </div>
 
         <!-- Modal for Add Image -->
-        <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addImageModal" tabindex="2" aria-labelledby="addImageModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -308,6 +312,34 @@
             </div>
         </div>
 
+        <!-- Modal for show image-->
+        <div class="modal fade" id="showImageModal" tabindex="-1" aria-labelledby="showImageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="showImageModalLabel">Photos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="photos-section bg-white rounded overflow-hidden">
+                            <div class="row g-3" id="photosContainer2">
+                                <div class="col-md-3 d-flex photo-item">
+                                    <div class="card shadow-sm photo-card add-image-card w-100 justify-content-center">
+                                        <button class="add-image-btn" onclick="openModalB()">
+                                            <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                            <span class="add-image-text">Add Image</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light w-100" aria-label="Close">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 @endsection
@@ -337,6 +369,17 @@
                 boundingBoxHeight : photo.data['bounding_box_height'],
             });
         });
+    }
+
+    function openModalB() {
+        const modalA = bootstrap.Modal.getInstance(document.getElementById('showImageModal'));
+        modalA.hide();
+
+        // Mở modal B sau khi A đóng
+        document.getElementById('showImageModal').addEventListener('hidden.bs.modal', function () {
+            const modalB = new bootstrap.Modal(document.getElementById('addImageModal'));
+            modalB.show();
+        }, { once: true }); // Chỉ lắng nghe sự kiện 1 lần
     }
 
     function navigateToPhoto(photoId, layoutId) {
@@ -1137,6 +1180,8 @@
                 handleDuplication();
             }
         });
+
+
     });
 </script>
 
