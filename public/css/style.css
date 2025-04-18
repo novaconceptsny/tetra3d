@@ -1,7 +1,13 @@
 @font-face {
   font-family: "Campton";
-  src: url("/fonts/Campton/Campton-BoldDEMO.eot");
-  src: url("/fonts/Campton/Campton-LightDEMO.eot?#iefix") format("embedded-opentype"), url("/fonts/Campton/Campton-LightDEMO.woff2") format("woff2"), url("/fonts/Campton/Campton-LightDEMO.woff") format("woff");
+  src: url(/fonts/Campton-BoldDEMO.eot?114298d730e89ff7a580884aeb86d7de);
+  src: url(/fonts/Campton-LightDEMO.eot?ac68025c073563df4fa7cec8243be0fb?#iefix) format("embedded-opentype"), url(/fonts/Campton-LightDEMO.woff2?839662b7cbfd3242ad61236aa2b21fdd) format("woff2"), url(/fonts/Campton-LightDEMO.woff?04503d209f7d16056f44d69fe83d76d8) format("woff");
+}
+@font-face {
+  font-family: "Mona-Sans Bold";
+  src: url(/fonts/Mona-Sans-Bold.ttf?2da6c3d63c75a91071fe2483355b9518) format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 body {
   font-family: "Roboto", Arial, Helvetica, sans-serif, Arial, Helvetica, sans-serif;

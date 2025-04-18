@@ -24,7 +24,7 @@
                 <!-- Sidebar: Collections -->
                 <div class="col-md-6 col-xl-2 order-md-1 mb-3">
                     <div class="sidebar bg-white rounded overflow-hidden">
-                        <div class="title-box" >Collections <a href="#" class="enter-link fw-normal">Enter</a></div>
+                        <div class="title-box" >Collections <a href="#" class="enter-link fw-normal" data-bs-toggle="modal" data-bs-target="#collectionsModal">Enter</a></div>
                         <ul class="list-group">
                             <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
                                 <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
@@ -79,7 +79,7 @@
                 <!-- Surfaces Section -->
                 <div class="col-md-6 col-xl-2 order-md-2">
                     <div class="surfaces-section bg-white rounded overflow-hidden">
-                        <div class="title-box">Surfaces <button class="btn enter-link" id="toggleButtonSurfaces">Enter</button></div>
+                        <div class="title-box">Surfaces <button class="btn enter-link" id="toggleButtonSurfaces" data-bs-toggle="modal" data-bs-target="#surfaceModalShow">Enter</button></div>
 
                         <ul class="list-group">
                             @foreach($surfaces as $surface)
@@ -321,7 +321,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="photos-section bg-white rounded overflow-hidden">
+                        <div class="photos-section photos-section-popup bg-white rounded overflow-hidden">
                             <div class="row g-3" id="photosContainer2">
                                 <div class="col-md-3 d-flex photo-item">
                                     <div class="card shadow-sm photo-card add-image-card w-100 justify-content-center">
@@ -341,11 +341,95 @@
             </div>
         </div>
 
+        <!-- Modal Collections -->
+        <div class="modal fade" id="collectionsModal" tabindex="-1" aria-labelledby="collectionsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="collectionsModalLabel">Collections</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Danh sách collections -->
+                        <div class="collection-list">
+                            @foreach($artworkCollections as $artworkCollection)
+                                @if($project->artworkCollections->contains($artworkCollection->id))
+                                    <div class="collection-item">
+                                        <span>{{ $artworkCollection->name }}</span>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn update-btn">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Surfaces -->
+        <div class="modal fade" id="surfaceModalShow" tabindex="-1" aria-labelledby="surfacesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="surfacesModalLabel">Surfaces</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Nút Add Surface -->
+
+                        <!-- Danh sách surfaces -->
+                        <div class="surface-list">
+                            <ul class="list-group row list-unstyled">
+                                <li class="col-md-4">
+                                    <button class="add-surface-btn mb-3">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="12" cy="12" r="12" fill="#28a745"/>
+                                            <path d="M12 6V18M6 12H18" stroke="white" stroke-width="2"/>
+                                        </svg>
+                                        Add Surface
+                                    </button>
+                                </li>
+                                @foreach($surfaces as $surface)
+                                    <li class="col-md-4 list-group-item d-flex justify-content-center align-items-center card surface-item"
+                                        data-name="{{ $surface->name }}"
+                                        data-width="{{ $surface->data['img_width'] ?? '' }}"
+                                        data-height="{{ $surface->data['img_height'] ?? '' }}">
+                                        <span class="surface-name">{{ $surface->name }}</span>
+                                        <div class="dropdown position-absolute top-0 end-0">
+                                            <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
+                                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn update-btn">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 @endsection
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 @endpush
+@section('styles')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+          rel="stylesheet">
+@endsection
 @push('scripts')
 <script>
     const projectId = {{ $project->id }};
@@ -498,6 +582,38 @@
             photosContainer.appendChild(colDiv);
         });
 
+        const photosContainer2 = document.getElementById('photosContainer2');
+
+        // Add each photo to the container
+        selectedImages.forEach(imageData => {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.innerHTML = `
+                <div class="card shadow-sm photo-card">
+                    <div class="overflow-hidden img-home">
+                        <img src="${imageData.src}" class="card-img-top img-fluid" alt="${imageData.name}">
+                    </div>
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <p class="card-text">${imageData.name}</p>
+                        <div class="dropdown">
+                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
+                                    data-title="${imageData.name}"
+                                    data-image="${imageData.src}"
+                                    data-photo-id="${imageData.id}">Surface Size</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            photosContainer2.appendChild(colDiv);
+        });
+
         photosData = [...photosData, ...selectedImages];
         // Reset modal
         selectedImages = [];
@@ -618,19 +734,19 @@
         }
     });
 
-    document.getElementById('toggleButton').addEventListener('click', function() {
-        const photosSection = document.querySelector('.photos-section');
+    // document.getElementById('toggleButton').addEventListener('click', function() {
+    //     const photosSection = document.querySelector('.photos-section');
+    //
+    //     photosSection.classList.toggle('overflow-hidden');
+    //     photosSection.classList.toggle('expanded');
+    // });
 
-        photosSection.classList.toggle('overflow-hidden');
-        photosSection.classList.toggle('expanded');
-    });
-
-    document.getElementById('toggleButtonSurfaces').addEventListener('click', function() {
-        const photosSection = document.querySelector('.surfaces-section');
-
-        photosSection.classList.toggle('overflow-hidden');
-        photosSection.classList.toggle('expanded');
-    });
+    // document.getElementById('toggleButtonSurfaces').addEventListener('click', function() {
+    //     const photosSection = document.querySelector('.surfaces-section');
+    //
+    //     photosSection.classList.toggle('overflow-hidden');
+    //     photosSection.classList.toggle('expanded');
+    // });
 
     const surfaceModalImage = document.getElementById('imageModal');
     let currentIndexImage = null;
@@ -696,6 +812,43 @@
                 </div>
             `;
             photosContainer.appendChild(colDiv);
+        });
+
+        const photosContainer2 = document.getElementById('photosContainer2');
+
+        // First, clear any existing content except the "Add Image" button
+        const addImageCard2 = photosContainer2.querySelector('.photo-item');
+        photosContainer2.innerHTML = '';
+        photosContainer2.appendChild(addImageCard2);
+
+        // Add each photo from photosData
+        photosData.forEach(photo => {
+            const colDiv = document.createElement('div');
+            colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.innerHTML = `
+                <div class="card shadow-sm photo-card">
+                    <div class="overflow-hidden img-home">
+                        <img src="${photo.src}" class="card-img-top img-fluid" alt="${photo.name}">
+                    </div>
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <p class="card-text">${photo.name}</p>
+                        <div class="dropdown">
+                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v ms-auto"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
+                                    data-title="${photo.name}"
+                                    data-image="${photo.src}"
+                                    data-photo-id="${photo.id}">Surface Size</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            photosContainer2.appendChild(colDiv);
         });
 
         const canvas = document.getElementById('imageCanvas');

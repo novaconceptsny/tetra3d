@@ -28,7 +28,7 @@
             <div class="col-9 main-col position-relative"
                 x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
 
-                <div class="d-inline-flex tabs-container mb-1 pe-2">
+                <div class="d-inline-flex justify-content-between tabs-container mb-1 pe-2">
 
                     <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide"  data-bs-toggle="popover"
@@ -57,13 +57,35 @@
                             <i class="fal fa-eye"></i>
                             <i class="fal fa-square"></i>
                         </button>
+
+                    </div>
+                    <div class="list-icon-action gap-2">
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" data-bs-toggle="popover"
+                                data-bs-trigger="hover focus"
+                                data-bs-placement="bottom"
+                                data-bs-content="Return">
+                            <i class="fal fa-rotate-left"></i>
+                        </button>
                         <x-menu-item
-                            text="Save and Return"
-                            class="view-360"
+                            :text="null"
+                            class="view-360 white-bg-button"
                             :img="null"
+                            :icon="'fal fa-save'"
                             target="_self"
                             id="save-and-return"
                         />
+                       <button class="btn btn-outline-secondary btn-sm white-bg-button" data-bs-toggle="popover"
+                                         data-bs-trigger="hover focus"
+                                         data-bs-placement="bottom"
+                                         data-bs-content="Download">
+                            <i class="fal fa-download"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" data-bs-toggle="popover"
+                                         data-bs-trigger="hover focus"
+                                         data-bs-placement="bottom"
+                                         data-bs-content="Share">
+                            <i class="fal fa-share-nodes"></i>
+                        </button>
                     </div>
                 </div>
 

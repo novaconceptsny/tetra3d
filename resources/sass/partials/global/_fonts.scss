@@ -5,3 +5,10 @@
     url("#{$fontsDir}/Campton/Campton-LightDEMO.woff2") format("woff2"),
     url("#{$fontsDir}/Campton/Campton-LightDEMO.woff") format("woff");
 }
+
+@font-face {
+    font-family: 'Mona-Sans Bold';
+    src: url('#{$fontsDir}/Mona-sans/Mona-Sans-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

@@ -592,6 +592,8 @@ body {
     transition: max-height 0.3s ease;
 }
 
+
+
 .photos-section.expanded,
 .surfaces-section.expanded {
     max-height: 1000px;
@@ -627,6 +629,10 @@ body {
 .photos-section,
 .surfaces-section {
     max-height: 350px;
+}
+
+.photos-section-popup{
+    max-height: unset;
 }
 
 .image-container {
@@ -831,4 +837,64 @@ body {
     overflow: hidden;
 }
 
+.add-surface-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #e6f3e6;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #333;
+    width: 100%;
+    text-align: left;
+}
+
+.add-surface-btn svg circle {
+    fill: #28a745;
+}
+.surface-item{
+    margin: 0;
+}
+
+.collection-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.surface-item span, .collection-item span {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Nút xóa */
+.delete-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Nút Update */
+.update-btn {
+    background-color: #008577;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-size: 1rem;
+    color: #fff
+}
+
+/* Container cho danh sách */
+.surface-list, .collection-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
 /* ... rest of the CSS ... */

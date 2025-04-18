@@ -52,8 +52,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="card-img">
-                                        <img src="{{ $artwork->image_url }}" alt="card-img" />
-                                        {{--                                        <img src="{{ $artwork->image_url }}" alt="card-img" />--}}
+                                        <img src="{{ $artwork->image_url }}" alt="card-img" class="img-fluid" />
                                     </div>
                                 </div>
                                 <div class="col-md-8">
