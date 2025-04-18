@@ -49,7 +49,7 @@
                              data-artwork-id="{{$artwork->id}}"
                              data-scale="{{$artwork->data->scale}}"
                         >
-                            <div class="row">
+                            <div class="row justify-content-center">
                                 <div class="col-md-4">
                                     <div class="card-img">
                                         <img src="{{ $artwork->image_url }}" alt="card-img" class="img-fluid" />

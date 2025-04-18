@@ -9,6 +9,16 @@ main {
                     border: none !important;
                     border-radius: 8px !important;
                 }
+                .list-icon-action{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    .view-360{
+                        position: relative;
+                        inset: unset;
+                    }
+                }
+
             }
 
             .row {
@@ -99,8 +109,9 @@ main {
                                     max-height: 73px;
                                     overflow: hidden;
                                     img {
-                                        min-height: auto;
-
+                                        max-height: 73px;
+                                        width: 100%;
+                                        min-height: unset;
                                     }
                                 }
 
@@ -120,10 +131,11 @@ main {
                                 .card{
                                     .card-img {
                                         padding: 0;
-
+                                        max-height: none;
+                                        height: auto;
                                         img {
                                             //width: 100%;
-                                            min-height: 150px;
+                                            min-height: unset;
                                             object-fit: contain;
                                             object-position: top center;
                                         }

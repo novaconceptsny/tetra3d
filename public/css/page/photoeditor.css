@@ -40,6 +40,7 @@ main section.editor .editor-view .row .side-col .card-div .card-row .card .card-
 main section.editor .editor-view .row .side-col .card-div .card-row .card .card-img img {
   max-height: 73px;
   width: 100%;
+  min-height: unset;
 }
 main section.editor .editor-view .row .side-col .card-div .card-row .fix-height .card .card-img {
   padding: 0;
