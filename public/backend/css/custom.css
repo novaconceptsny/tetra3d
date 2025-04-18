@@ -1,41 +1,124 @@
-.of-x-visible{
-    overflow-x: visible;
+.of-x-visible {
+  overflow-x: visible;
 }
 
 .has-search .form-control {
-    padding-left: 2.375rem;
+  padding-left: 2.375rem;
 }
 
 .has-search .form-control-feedback {
-    position: absolute;
-    z-index: 333;
-    display: block;
-    width: 2.375rem;
-    /*height: 1rem;*/
-    /*line-height: 2.375rem;*/
-    text-align: center;
-    pointer-events: none;
-    top: 25%;
-    color: #aaa;
+  position: absolute;
+  z-index: 333;
+  display: block;
+  width: 2.375rem;
+  /*height: 1rem;*/
+  /*line-height: 2.375rem;*/
+  text-align: center;
+  pointer-events: none;
+  top: 25%;
+  color: #aaa;
 }
 
 .cursor-pointer {
-    cursor: pointer !important;
+  cursor: pointer !important;
 }
 
 .command-output {
-    max-height: 300px;
-    overflow-y: scroll;
-    margin-top: 10px
+  max-height: 300px;
+  overflow-y: scroll;
+  margin-top: 10px
 }
 
 .loader {
-    z-index: 9999;
-    padding: 5px 16px;
-    background: green;
-    color: white;
-    text-align: center;
-    position: fixed;
-    top: 0;
-    left: 50%;
+  z-index: 9999;
+  padding: 5px 16px;
+  background: green;
+  color: white;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 50%;
 }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 20px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 54px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+  /* Dashed border */
+  hr.dashed {
+    border-top: 3px dashed #3905f4;
+  }
+
+  /* Dotted border */
+  hr.dotted {
+    border-top: 3px dotted #3905f4;
+  }
+
+  
+  /* Solid border */
+  hr.solid {
+    border-top: 3px solid #3905f4;
+  }
+
+  /* Rounded border */
+  hr.rounded {
+    border-top: 8px solid #3905f4;
+    border-radius: 5px;
+  }
