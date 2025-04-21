@@ -5,7 +5,7 @@ body {
 
 @media (min-width: 1400px) {
     .container {
-        max-width: 1700px; /* hoặc bao nhiêu tùy bạn */
+        max-width: 1700px;
     }
 }
 .container-fluid {
@@ -892,9 +892,86 @@ body {
     color: #fff
 }
 
-/* Container cho danh sách */
 .surface-list, .collection-list {
     max-height: 200px;
     overflow-y: auto;
+}
+
+#projectModal .modal-content {
+    border-radius: 10px;
+    padding: 20px;
+}
+#projectModal .modal-header {
+    border-bottom: none;
+}
+#projectModal .modal-body p {
+    color: #6c757d;
+    font-size: 14px;
+}
+#projectModal .modal-body .form-control {
+    border: none !important;
+    border-bottom: 1px solid #ced4da !important;
+    border-radius: 0;
+    box-shadow: none;
+}
+#projectModal .image-upload-box {
+    border: 2px dashed #ced4da;
+    border-radius: 5px;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+#projectModal .image-upload-box span {
+    color: #6c757d;
+    font-size: 14px;
+}
+#projectModal .image-upload-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#projectModal .image-upload-box .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+#projectModal .image-upload-box:hover .overlay {
+    opacity: 1;
+}
+#projectModal .image-name {
+    color: #6c757d;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
+#projectModal .btn-save {
+    background-color: #1abc9c;
+    border: none;
+    width: 100%;
+    padding: 10px;
+    font-weight: bold;
+    color: #fff;
+}
+#projectModal .image-input {
+    display: none;
 }
 /* ... rest of the CSS ... */

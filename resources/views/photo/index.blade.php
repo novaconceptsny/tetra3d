@@ -11,7 +11,7 @@
                             <div class="project-name">{{ $project->name }}</div>
                         </div>
                         <div class="col text-end">
-                            <button class="btn btn-primary"><i class="fas fa-pen"></i> Edit project</button>
+                            <button class="btn btn-primary" data-mode="edit" data-project-name="Living Room" data-bs-toggle="modal" data-bs-target="#projectModal"><i class="fas fa-pen"></i> Edit project</button>
                         </div>
                     </div>
                 </div>
@@ -292,14 +292,24 @@
                                 <div class="input-group">
                                     <span class="input-group-text">Width</span>
                                     <input type="number" class="form-control" id="rectWidth" value="100">
-                                    <span class="input-group-text">cm</span>
+                                    <span class="input-group-text">
+                                        <select class="form-select" aria-label="Default select example">
+                                          <option selected>cm</option>
+                                          <option value="1">inch</option>
+                                        </select>
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-text">Height</span>
                                     <input type="number" class="form-control" id="rectHeight" value="100">
-                                    <span class="input-group-text">cm</span>
+                                    <span class="input-group-text">
+                                        <select class="form-select" aria-label="Default select example">
+                                          <option selected>cm</option>
+                                          <option value="1">inch</option>
+                                        </select>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -325,7 +335,7 @@
                             <div class="row g-3" id="photosContainer2">
                                 <div class="col-md-3 d-flex photo-item">
                                     <div class="card shadow-sm photo-card add-image-card w-100 justify-content-center">
-                                        <button class="add-image-btn" onclick="openModalB()">
+                                        <button class="add-image-btn" data-bs-toggle="modal" data-bs-target="#addImageModal">
                                             <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                             <span class="add-image-text">Add Image</span>
                                         </button>
@@ -419,6 +429,30 @@
             </div>
         </div>
 
+{{--    Modal edit project--}}
+        <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="projectModalLabel">Add new project</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Add a project name and upload a JPEG or PNG image file for the project thumbnail. Max 2048 pixels on the long edge of the image.</p>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="projectNameInput" placeholder="Name">
+                        </div>
+                        <div class="image-upload-box mb-3" id="imageUploadBox">
+                            <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
+                            <span>+ Image</span>
+                            <div class="overlay">Click to replace image</div>
+                        </div>
+                        <div class="image-name" id="imageName"></div>
+                        <button type="button" class="btn btn-save">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 @endsection
 @push('scripts')
@@ -453,17 +487,6 @@
                 boundingBoxHeight : photo.data['bounding_box_height'],
             });
         });
-    }
-
-    function openModalB() {
-        const modalA = bootstrap.Modal.getInstance(document.getElementById('showImageModal'));
-        modalA.hide();
-
-        // Mở modal B sau khi A đóng
-        document.getElementById('showImageModal').addEventListener('hidden.bs.modal', function () {
-            const modalB = new bootstrap.Modal(document.getElementById('addImageModal'));
-            modalB.show();
-        }, { once: true }); // Chỉ lắng nghe sự kiện 1 lần
     }
 
     function navigateToPhoto(photoId, layoutId) {
@@ -1335,6 +1358,70 @@
         });
 
 
+    });
+
+    document.addEventListener('show.bs.modal', function (event) {
+        const modals = document.querySelectorAll('.modal.show');
+        modals.forEach(function (modal) {
+            if (modal !== event.target) {
+                bootstrap.Modal.getInstance(modal).hide();
+            }
+        });
+    });
+
+
+    const projectModal = document.getElementById('projectModal');
+    const modalTitle = document.getElementById('projectModalLabel');
+    const projectNameInput = document.getElementById('projectNameInput');
+    const imageUploadBox = document.getElementById('imageUploadBox');
+    const imageInput = document.getElementById('imageInput');
+    const imageName = document.getElementById('imageName');
+
+    // Xử lý khi modal được mở
+    projectModal.addEventListener('show.bs.modal', (event) => {
+        const button = event.relatedTarget; // Nút đã kích hoạt modal
+        const mode = button.getAttribute('data-mode'); // Lấy mode (create hoặc edit)
+
+        // Cập nhật tiêu đề và giá trị mặc định dựa trên mode
+        if (mode === 'create') {
+            modalTitle.textContent = 'Add new project';
+            projectNameInput.value = '';
+            imageUploadBox.innerHTML = '<span>+ Image</span><div class="overlay">Click to replace image</div>';
+            imageUploadBox.appendChild(imageInput);
+            imageName.textContent = '';
+        } else if (mode === 'edit') {
+            modalTitle.textContent = 'Edit project';
+            const projectName = button.getAttribute('data-project-name');
+            projectNameInput.value = projectName;
+            imageUploadBox.innerHTML = '<span>+ Image</span><div class="overlay">Click to replace image</div>';
+            imageUploadBox.appendChild(imageInput);
+            imageName.textContent = '';
+        }
+    });
+
+    // Xử lý upload ảnh
+    imageUploadBox.addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                imageUploadBox.innerHTML = '';
+                imageUploadBox.appendChild(img);
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.textContent = 'Click to replace image';
+                imageUploadBox.appendChild(overlay);
+                imageUploadBox.appendChild(imageInput);
+                imageName.textContent = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
     });
 </script>
 

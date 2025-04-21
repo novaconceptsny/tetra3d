@@ -1,0 +1,157 @@
+body {
+  background-color: #f9f9f9;
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1700px;
+  }
+}
+.enter-link {
+  float: right;
+  font-size: 14px;
+  color: #008577;
+  text-decoration: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+.favourites-section {
+  background: #fff;
+  margin: 40px 0;
+  padding: 40px 20px;
+}
+.favourites-section h5 {
+  font-size: 24px;
+}
+.favourites-section .favourite-items h4 {
+  font-size: 16px;
+}
+.favourites-section .favourite-items .enter-link {
+  float: none;
+  display: inline-block;
+}
+
+.projects-section .layout-section .card {
+  height: 100%;
+}
+.projects-section .layout-section .card-layout {
+  border: 1px dotted #ccc;
+  align-items: center;
+  justify-content: center;
+}
+.projects-section .layout-section .add-image-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+.projects-section .layout-section .add-image-btn:hover .icon-circle {
+  background-color: #d0e4f5;
+}
+.projects-section .layout-section .icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e6f0fa;
+  border-radius: 50%;
+  margin-bottom: 5px;
+}
+.projects-section .layout-section .icon-circle i {
+  font-size: 16px;
+  color: #000;
+}
+.projects-section .layout-section .add-image-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
+.projects-section .layout-section .card-text small {
+  color: #222436;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+#projectModal .modal-content {
+  border-radius: 10px;
+  padding: 20px;
+}
+#projectModal .modal-header {
+  border-bottom: none;
+}
+#projectModal .modal-body p {
+  color: #6c757d;
+  font-size: 14px;
+}
+#projectModal .modal-body .form-control {
+  border: none !important;
+  border-bottom: 1px solid #ced4da !important;
+  border-radius: 0;
+  box-shadow: none;
+}
+#projectModal .image-upload-box {
+  border: 2px dashed #ced4da;
+  border-radius: 5px;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+#projectModal .image-upload-box span {
+  color: #6c757d;
+  font-size: 14px;
+}
+#projectModal .image-upload-box img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#projectModal .image-upload-box .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#projectModal .image-upload-box:hover .overlay {
+  opacity: 1;
+}
+#projectModal .image-name {
+  color: #6c757d;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 5px;
+}
+#projectModal .btn-save {
+  background-color: #1abc9c;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+  color: #fff;
+}
+#projectModal .image-input {
+  display: none;
+}

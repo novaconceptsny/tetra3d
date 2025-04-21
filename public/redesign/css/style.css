@@ -63,7 +63,7 @@
 }
 
 header#header {
-  padding: 8px 50px;
+  padding: 0 50px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -156,20 +156,15 @@ header#header nav .nav-container .navbar-collapse {
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav {
   align-items: center !important;
-  gap: 117px;
+  gap: 60px;
   height: 100% !important;
-}
-header#header nav .nav-container .navbar-collapse .navbar-nav.link-nav {
-  position: absolute !important;
-  inset: 0 70px 0 120px !important;
-  justify-content: center !important;
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item {
   height: 100%;
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-link {
   height: 100%;
-  padding: 0;
+  padding: 12px 0;
   font-family: var(--main-font-family);
   font-size: 22px;
   font-style: normal;
@@ -177,7 +172,6 @@ header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-lin
   line-height: normal;
   letter-spacing: 2.2px;
   color: #9f9f9f;
-  text-transform: uppercase;
   position: relative;
 }
 header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-link.active {
@@ -2572,14 +2566,6 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   outline: none;
   box-shadow: none;
   background-color: transparent;
-}
-
-.row {
-  margin-inline: 0;
-}
-
-.container-fluid {
-  padding: 0;
 }
 
 .previous-btn {
