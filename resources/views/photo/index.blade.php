@@ -293,9 +293,9 @@
                                     <span class="input-group-text">Width</span>
                                     <input type="number" class="form-control" id="rectWidth" value="100">
                                     <span class="input-group-text">
-                                        <select class="form-select" aria-label="Default select example">
-                                          <option selected>cm</option>
-                                          <option value="1">inch</option>
+                                        <select class="form-select" id="widthUnit" onchange="convertUnits('width')" >
+                                          <option selected value="cm">cm</option>
+                                          <option value="inch">inch</option>
                                         </select>
                                     </span>
                                 </div>
@@ -305,9 +305,9 @@
                                     <span class="input-group-text">Height</span>
                                     <input type="number" class="form-control" id="rectHeight" value="100">
                                     <span class="input-group-text">
-                                        <select class="form-select" aria-label="Default select example">
-                                          <option selected>cm</option>
-                                          <option value="1">inch</option>
+                                        <select class="form-select" id="heightUnit" onchange="convertUnits('height')">
+                                          <option selected value="cm">cm</option>
+                                          <option value="inch">inch</option>
                                         </select>
                                     </span>
                                 </div>
@@ -387,38 +387,39 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Nút Add Surface -->
 
                         <!-- Danh sách surfaces -->
                         <div class="surface-list">
-                            <ul class="list-group row list-unstyled">
-                                <li class="col-md-4">
-                                    <button class="add-surface-btn mb-3">
+                            <div class="row list-unstyled">
+                                <div class="col-md-4">
+                                    <button class="add-surface-btn mb-3" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="add">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <circle cx="12" cy="12" r="12" fill="#28a745"/>
                                             <path d="M12 6V18M6 12H18" stroke="white" stroke-width="2"/>
                                         </svg>
                                         Add Surface
                                     </button>
-                                </li>
+                                </div>
                                 @foreach($surfaces as $surface)
-                                    <li class="col-md-4 list-group-item d-flex justify-content-center align-items-center card surface-item"
-                                        data-name="{{ $surface->name }}"
-                                        data-width="{{ $surface->data['img_width'] ?? '' }}"
-                                        data-height="{{ $surface->data['img_height'] ?? '' }}">
-                                        <span class="surface-name">{{ $surface->name }}</span>
-                                        <div class="dropdown position-absolute top-0 end-0">
-                                            <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v ms-auto"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
-                                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                            </ul>
+                                    <div class="col-md-4 ">
+                                        <div class="list-group-item d-flex justify-content-center align-items-center card surface-item mb-3"
+                                             data-name="{{ $surface->name }}"
+                                             data-width="{{ $surface->data['img_width'] ?? '' }}"
+                                             data-height="{{ $surface->data['img_height'] ?? '' }}">
+                                            <span class="surface-name">{{ $surface->name }}</span>
+                                            <div class="dropdown position-absolute top-0 end-0">
+                                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-ellipsis-v ms-auto"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
+                                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                    </li>
+                                    </div>
                                 @endforeach
-                            </ul>
+                            </div>
 
                         </div>
                     </div>
@@ -1399,7 +1400,6 @@
         }
     });
 
-    // Xử lý upload ảnh
     imageUploadBox.addEventListener('click', () => {
         imageInput.click();
     });
@@ -1422,6 +1422,64 @@
             };
             reader.readAsDataURL(file);
         }
+    });
+
+    function convertUnits(source) {
+        const widthInput = document.getElementById('rectWidth');
+        const heightInput = document.getElementById('rectHeight');
+        const widthUnitSelect = document.getElementById('widthUnit');
+        const heightUnitSelect = document.getElementById('heightUnit');
+
+        let widthValue = parseFloat(widthInput.value);
+        let heightValue = parseFloat(heightInput.value);
+
+        if (isNaN(widthValue) || isNaN(heightValue)) return;
+
+        let newUnit;
+        if (source === 'width') {
+            newUnit = widthUnitSelect.value;
+            heightUnitSelect.value = newUnit;
+        } else {
+            newUnit = heightUnitSelect.value;
+            widthUnitSelect.value = newUnit;
+        }
+        if (newUnit === 'inch') {
+            widthInput.value = (widthValue / 2.54).toFixed(2);
+            heightInput.value = (heightValue / 2.54).toFixed(2);
+        } else {
+            widthInput.value = (widthValue * 2.54).toFixed(2);
+            heightInput.value = (heightValue * 2.54).toFixed(2);
+        }
+    }
+
+    function updateValues(source) {
+        const widthInput = document.getElementById('rectWidth');
+        const heightInput = document.getElementById('rectHeight');
+        const currentUnit = document.getElementById('widthUnit').value;
+
+        let widthValue = parseFloat(widthInput.value);
+        let heightValue = parseFloat(heightInput.value);
+
+        if (isNaN(widthValue) || isNaN(heightValue)) return;
+
+        let widthInCm = currentUnit === 'inch' ? widthValue * 2.54 : widthValue;
+        let heightInCm = currentUnit === 'inch' ? heightValue * 2.54 : heightValue;
+
+        if (source === 'width') {
+            widthInCm = currentUnit === 'inch' ? widthValue * 2.54 : widthValue;
+            heightInput.value = currentUnit === 'inch' ? (heightInCm / 2.54).toFixed(2) : heightInCm.toFixed(2);
+        } else {
+            heightInCm = currentUnit === 'inch' ? heightValue * 2.54 : heightValue;
+            widthInput.value = currentUnit === 'inch' ? (widthInCm / 2.54).toFixed(2) : widthInCm.toFixed(2);
+        }
+    }
+
+    document.getElementById('rectWidth').addEventListener('input', function() {
+        updateValues('width');
+    });
+
+    document.getElementById('rectHeight').addEventListener('input', function() {
+        updateValues('height');
     });
 </script>
 
