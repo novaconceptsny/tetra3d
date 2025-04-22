@@ -134,38 +134,11 @@ class TourController extends Controller
             $startPos = $surfaceInfos[$index]->start_pos;
             $startPos = array_map('floatval', $startPos);
 
-            if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
-                $targetRotation = [
-                    'x' => 0,
-                    'y' => 0,
-                    'z' => 0,
-                ];
-
-            } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
-                $targetRotation = [
-                    'x' => 0,
-                    'y' => pi(),
-                    'z' => 0,
-                ];
-            } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
-                $targetRotation = [
-                    'x' => 0,
-                    'y' => pi() / 2,
-                    'z' => 0,
-                ];
-            } else {
-                $targetRotation = [
-                    'x' => 0,
-                    'y' => - pi() / 2,
-                    'z' => 0,
-                ];
-            }
-
             $surfaceData[$index]['surface_id'] = $surfaceInfos[$index]->surface_id;
             $surfaceData[$index]['start_pos'] = $startPos;
             $surfaceData[$index]['width'] = $surfaceInfos[$index]->width;
             $surfaceData[$index]['height'] = $surfaceInfos[$index]->height;
-            $surfaceData[$index]['rotation'] = $targetRotation;
+            $surfaceData[$index]['normal'] = $normal;
         }
         
         if ($stateArray) {

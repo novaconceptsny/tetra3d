@@ -389,9 +389,9 @@
                             surface_data[i].start_pos['x'] * 30 - spot_position.x * 30,
                             -surface_data[i].start_pos['y'] * 30 + spot_position.y * 30,
                             -surface_data[i].start_pos['z'] * 30 + spot_position.z * 30,
-                            surface_data[i].rotation['x'],
-                            surface_data[i].rotation['y'],
-                            surface_data[i].rotation['z']
+                            surface_data[i].normal['x'],
+                            surface_data[i].normal['y'],
+                            surface_data[i].normal['z']
                         );
                     }
 
@@ -786,15 +786,33 @@
     }
 
 
-    function loadSurfaces(surface_id, width, height, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
-
+    function loadSurfaces(surface_id, width, height, position_x, position_y, position_z, normal_x, normal_y, normal_z) {
         var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
         const geometry = new THREE.PlaneGeometry(width, height);
         geometry.translate(-width / 2, height / 2, 0);
         const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0.5, visible: false });
         const planeMesh = new THREE.Mesh(geometry, material);
-        planeMesh.position.set(position_x, position_y, position_z)
-        planeMesh.rotation.set(rotation_x, rotation_y, rotation_z)
+        planeMesh.position.set(position_x, position_y, position_z);
+
+        // Create normal vector and calculate rotation
+        const normal = new THREE.Vector3(normal_x, normal_y, normal_z).normalize();
+        // Default plane normal (facing forward)
+        const defaultNormal = new THREE.Vector3(0, 0, 1);
+
+        // Calculate rotation axis and angle
+        const rotationAxis = new THREE.Vector3();
+        rotationAxis.crossVectors(defaultNormal, normal);
+        rotationAxis.normalize();
+
+        const rotationAngle = Math.acos(defaultNormal.dot(normal));
+
+        // Create quaternion for the rotation
+        const quaternion = new THREE.Quaternion();
+        quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
+
+        // Apply the rotation
+        planeMesh.setRotationFromQuaternion(quaternion);
+
         planeMesh.userData.surface_id = surface_id;
         planeMesh.userData.layout_id = layout_id;
         planeMesh.userData.spot_id = spot_id;
@@ -802,16 +820,21 @@
         surface_meshes.push(planeMesh);
         scene.add(planeMesh);
 
+        // Convert quaternion to Euler angles for the assign_object_properties function
+        const euler = new THREE.Euler();
+        euler.setFromQuaternion(quaternion);
+
+        console.log(euler, "euler");
+
         assign_object_properties(planeMesh, "artwork", {
             ath: spherical_position.phi,
             atv: spherical_position.theta,
             depth: spherical_position.r,
-            rx: rotation_x * 180 / Math.PI,
-            ry: rotation_y * 180 / Math.PI,
-            rz: rotation_z * 180 / Math.PI,
+            rx: 0,
+            ry: euler.y * 180 / Math.PI,
+            rz: 0,
             scale: 30,
         });
-
     }
 
     function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
@@ -831,9 +854,9 @@
             // Create a geometry with the same aspect ratio
             const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight);
             geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
-            
+
             // Create a material with transparency enabled
-            const material = new THREE.MeshBasicMaterial({ 
+            const material = new THREE.MeshBasicMaterial({
                 map: texture,
                 side: THREE.DoubleSide,
                 transparent: true,  // Enable transparency
