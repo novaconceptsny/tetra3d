@@ -790,7 +790,7 @@
         var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
         const geometry = new THREE.PlaneGeometry(width, height);
         geometry.translate(-width / 2, height / 2, 0);
-        const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0.5, visible: false });
+        const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0.5, visible: false, side: THREE.DoubleSide });
         const planeMesh = new THREE.Mesh(geometry, material);
         planeMesh.position.set(position_x, position_y, position_z);
 
