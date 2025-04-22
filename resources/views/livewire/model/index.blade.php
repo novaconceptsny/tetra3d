@@ -139,6 +139,7 @@
     var spotsPosition = @json($spotsPosition);
     var surfaceArray = @json($surfaceArray);
 
+
     var tourModel = @json($tourModel);
     var tourModelPath = @json($tourModelPath);
     var surfaceModel = @json($surfaceModel);
@@ -277,8 +278,7 @@
                     const z = parseFloat(document.getElementById('surfaceArray_' + key + '_normalvector_z').value) || 0;
 
                     // Create the normal vector and normalize it
-                    const normal = new THREE.Vector3(x, y, z);
-                    normal.normalize();
+                    const normal = new THREE.Vector3(x, y, z).normalize();
 
                     // Default plane normal (facing forward)
                     const defaultNormal = new THREE.Vector3(0, 0, 1);
@@ -421,15 +421,31 @@
 
                 planeMesh.position.set(startPos['x'], startPos['y'], startPos['z'])
                 planeMesh.name = key;
-                if(normalvector['x'] == 0 && normalvector['y'] == 0 && normalvector['z'] ==1){
-                    planeMesh.rotation.set(0, 0, 0);
-                }else if(normalvector['x'] == 0 && normalvector['y'] == 0 && normalvector['z'] ==-1){
-                    planeMesh.rotation.set(0, Math.PI, 0);
-                }else if(normalvector['x'] == 1 && normalvector['y'] == 0 && normalvector['z'] ==0){
-                    planeMesh.rotation.set(0, Math.PI/2, 0);
-                }else{
-                    planeMesh.rotation.set(0, -Math.PI/2, 0);
-                }
+
+                // Create the normal vector and normalize it
+                const normal = new THREE.Vector3(
+                    normalvector['x'],
+                    normalvector['y'],
+                    normalvector['z']
+                ).normalize();
+
+                // Default plane normal (facing forward)
+                const defaultNormal = new THREE.Vector3(0, 0, 1);
+
+                // Calculate rotation axis and angle
+                const rotationAxis = new THREE.Vector3();
+                rotationAxis.crossVectors(defaultNormal, normal);
+                rotationAxis.normalize();
+
+                const rotationAngle = Math.acos(defaultNormal.dot(normal));
+
+                // Create quaternion for the rotation
+                const quaternion = new THREE.Quaternion();
+                quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
+
+                // Apply the rotation
+                planeMesh.setRotationFromQuaternion(quaternion);
+
                 // Store the planeMesh in the surfaceMeshes object with the surface id
                 surfaceMeshes[key] = planeMesh;
                 scene.add(planeMesh);
@@ -464,18 +480,5 @@
         }, 1000);
     });
 
-    $('#tour-model-update').on('click', function(e) {
-        // e.preventDefault();
-        var tour_input = document.getElementById('tour-model-name').innerHTML;
-        var surface_input = document.getElementById('surface-model-name').innerHTML;
-
-        if (tour_input === 'Empty') {
-            alert('Sculpture Model is not exist');
-        } 
-        else if (surface_input === 'Empty') {
-            alert('Thumbnail Image is not exist');
-        } 
-        else document.getElementById('sculpture_form').submit();
-    })
 </script>
 @endsection
