@@ -178,16 +178,17 @@ class SurfaceStateController extends Controller
                 $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft) / $boundingBoxWidth * $planeWidth;
                 $yDistance = ($artwork['topPosition'] - $boundingBoxTop) / $boundingBoxHeight * $planeHeight;
 
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 0,
+                    'z' => 0,
+                ];
+
                 if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
                     $targetPosition = [
                         'x' => $topLeftCorner['x'] - $xDistance,
                         'y' => $topLeftCorner['y'] - $yDistance,
                         'z' => $topLeftCorner['z'] - $offset,
-                    ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => 0,
-                        'z' => 0,
                     ];
 
                 } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
@@ -196,21 +197,11 @@ class SurfaceStateController extends Controller
                         'y' => $topLeftCorner['y'] - $yDistance,
                         'z' => $topLeftCorner['z'] + $offset
                     ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => pi(),
-                        'z' => 0,
-                    ];
                 } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
                     $targetPosition = [
                         'x' => $topLeftCorner['x'] + $offset,
                         'y' => $topLeftCorner['y'] - $yDistance,
                         'z' => $topLeftCorner['z'] - $xDistance
-                    ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => pi() / 2,
-                        'z' => 0,
                     ];
                 } else {
                     // Default case if no known normal is matched
@@ -218,11 +209,6 @@ class SurfaceStateController extends Controller
                         'x' => $topLeftCorner['x'] - $offset,
                         'y' => $topLeftCorner['y'] - $yDistance,
                         'z' => $topLeftCorner['z'] + $xDistance
-                    ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => -pi() / 2,
-                        'z' => 0,
                     ];
                 }
 

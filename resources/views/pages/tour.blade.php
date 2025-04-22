@@ -423,9 +423,9 @@
                             artworks_data[i].position_x * 30 - spot_position.x * 30,
                             -artworks_data[i].position_y * 30 + spot_position.y * 30,
                             -artworks_data[i].position_z * 30 + spot_position.z * 30,
-                            artworks_data[i].rotation_x,
-                            artworks_data[i].rotation_y,
-                            artworks_data[i].rotation_z
+                            artworks_data[i].normal['x'],
+                            artworks_data[i].normal['y'],
+                            artworks_data[i].normal['z']
                         );
                     }
                 });
@@ -824,20 +824,17 @@
         const euler = new THREE.Euler();
         euler.setFromQuaternion(quaternion);
 
-        console.log(euler, "euler");
 
         assign_object_properties(planeMesh, "artwork", {
             ath: spherical_position.phi,
             atv: spherical_position.theta,
             depth: spherical_position.r,
-            rx: 0,
             ry: euler.y * 180 / Math.PI,
-            rz: 0,
             scale: 30,
         });
     }
 
-    function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, rotation_x, rotation_y, rotation_z) {
+    function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, normal_x, normal_y, normal_z) {
 
         // Load a texture (image)
         const textureLoader = new THREE.TextureLoader();
@@ -873,13 +870,34 @@
             plane.userData.spot_id = spot_id;
             scene.add(plane);
 
+                // Create normal vector and calculate rotation
+            const normal = new THREE.Vector3(normal_x, normal_y, normal_z).normalize();
+            // Default plane normal (facing forward)
+            const defaultNormal = new THREE.Vector3(0, 0, 1);
+
+            // Calculate rotation axis and angle
+            const rotationAxis = new THREE.Vector3();
+            rotationAxis.crossVectors(defaultNormal, normal);
+            rotationAxis.normalize();
+
+            const rotationAngle = Math.acos(defaultNormal.dot(normal));
+
+            // Create quaternion for the rotation
+            const quaternion = new THREE.Quaternion();
+            quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
+
+            // Apply the rotation
+            plane.setRotationFromQuaternion(quaternion);
+
+            // Convert quaternion to Euler angles for the assign_object_properties function
+            const euler = new THREE.Euler();
+            euler.setFromQuaternion(quaternion);
+
             assign_object_properties(plane, "artwork", {
                 ath: spherical_position.phi,
                 atv: spherical_position.theta,
                 depth: spherical_position.r,
-                rx: rotation_x * 180 / Math.PI,
-                ry: rotation_y * 180 / Math.PI,
-                rz: rotation_z * 180 / Math.PI,
+                ry: euler.y * 180 / Math.PI,
                 scale: 30,
             });
         }
