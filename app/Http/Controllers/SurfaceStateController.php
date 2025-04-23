@@ -184,33 +184,12 @@ class SurfaceStateController extends Controller
                     'z' => 0,
                 ];
 
-                if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] - $xDistance,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] - $offset,
-                    ];
-
-                } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] + $xDistance,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] + $offset
-                    ];
-                } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] + $offset,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] - $xDistance
-                    ];
-                } else {
-                    // Default case if no known normal is matched
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] - $offset,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] + $xDistance
-                    ];
-                }
+                // Calculate the target position using vector math
+                $targetPosition = [
+                    'x' => $topLeftCorner['x'] + ($normal['x'] * $offset) + ($normal['z'] * $xDistance),
+                    'y' => $topLeftCorner['y'] - $yDistance, // y is always subtracted as it's the vertical offset
+                    'z' => $topLeftCorner['z'] + ($normal['z'] * $offset) - ($normal['x'] * $xDistance)
+                ];
 
                 $assigned_artworks[] = array(
                     'artwork_id' => $artwork['artworkId'],
