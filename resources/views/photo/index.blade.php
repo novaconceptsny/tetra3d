@@ -114,32 +114,49 @@
 
             <!-- Layout Sections -->
             @foreach($project->layouts as $layout)
-                <div class="layout-section mt-5">
-                    <div class="title-box">{{ $layout->name }}</div>
-                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
-                        @foreach($photos->where('layout_id', $layout->id) as $photo)
-                            <div class="col-md-3 layout-item">
-                                <div class="card shadow-sm bg-white">
-                                    <div class="overflow-hidden img-home">
-                                        <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                @if(count($layout->photos))
+                    <div class="layout-section mt-5">
+                        <div class="title-box">{{ $layout->name }}</div>
+                        <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
+                            @foreach($photos->where('layout_id', $layout->id) as $photo)
+                                <div class="col-md-3 layout-item">
+                                    <div class="card shadow-sm bg-white image-item">
+                                        <div class="overflow-hidden img-home">
+                                            <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                        </div>
+                                        <div class="card-body d-flex justify-content-between align-items-end">
+                                            <p class="card-text">
+                                                <span>{{ $photo->name }}</span><br>
+                                                <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
+                                            </p>
+                                            <button type="button"
+                                                    class="btn enter-link"
+                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
+                                                    data-photo-id="{{ $photo->id }}"
+                                                    data-layout-id="{{ $layout->id }}">
+                                                Enter
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="card-body d-flex justify-content-between align-items-end">
-                                        <p class="card-text">
-                                            <span>{{ $photo->name }}</span><br>
-                                            <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
-                                        </p>
-                                        <button type="button"
-                                                class="btn enter-link"
-                                                onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
-                                                data-photo-id="{{ $photo->id }}"
-                                                data-layout-id="{{ $layout->id }}">
-                                            Enter
+                                </div>
+                            @endforeach
+                            @if(count($photos->where('layout_id', $layout->id)) < 4)
+                                <!-- Add Layout button at the end -->
+                                <div class="col-md-3 layout-item">
+                                    <div class="card bg-white card-layout">
+                                        <button class="add-image-btn">
+                                            <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                            <span class="add-image-text">Add Layout</span>
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
-                        @if(count($photos->where('layout_id', $layout->id)) < 4)
+                            @endif
+                        </div>
+                    </div>
+                @else
+                    <div class="layout-section mt-5">
+                        <div class="title-box">Layout_{{ count($project->layouts) }}</div>
+                        <div class="row g-3" id="layoutNewContainer" data-layout-id="">
                             <!-- Add Layout button at the end -->
                             <div class="col-md-3 layout-item">
                                 <div class="card bg-white card-layout">
@@ -149,9 +166,9 @@
                                     </button>
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     </div>
-                </div>
+                @endif
             @endforeach
 
             <!-- If no layouts exist, show a message or default layouts -->
@@ -589,7 +606,7 @@
         // Add each photo to the container
         selectedImages.forEach(imageData => {
             const colDiv = document.createElement('div');
-            colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.classList.add('col-md-3', 'photo-item', 'item-new');
             colDiv.dataset.module = 'photo';
             colDiv.dataset.id = `${imageData.id}`;
 
@@ -624,7 +641,7 @@
         // Add each photo to the container
         selectedImages.forEach(imageData => {
             const colDiv = document.createElement('div');
-            colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.classList.add('col-md-3', 'photo-item', 'item-new');
             colDiv.dataset.module = 'photo';
             colDiv.dataset.id = `${imageData.id}`;
             colDiv.innerHTML = `
@@ -1219,20 +1236,28 @@
                 return;
             }
 
-            const photos = photoContainer.querySelectorAll('.photo-item:not(:first-child)');
+            const photos = photoContainer.querySelectorAll('.item-new:not(:first-child)');
             console.log('Found photos:', photos.length);
+
+            // Create FormData to handle file uploads
+            const formData = new FormData();
+
+            // Prepare photos data and handle image uploads
+            const layoutIdClick = e.target.closest('.layout-section .row').dataset.layoutId;
+            formData.append(`layout_id`, layoutIdClick || null);
+            // const gallery = e.target.closest('.layout-section');
+            // const photos = gallery.querySelectorAll('.image-item');
 
             if (!photos.length) {
                 alert('No images to duplicate');
                 return;
             }
 
-            // Create FormData to handle file uploads
-            const formData = new FormData();
 
-            // Prepare photos data and handle image uploads
+
             const processPhotos = Array.from(photos).map((photo, index) => {
                 const img = photo.querySelector('img');
+                // const titleElement = photo.querySelector('.card-text span');
                 const titleElement = photo.querySelector('.card-text');
 
                 if (!img || !titleElement) {
@@ -1242,7 +1267,6 @@
 
                 const title = titleElement.textContent.trim();
                 const imgSrc = img.getAttribute('src');
-
                 if (!imgSrc || !title) {
                     console.error('Missing image source or title');
                     return null;
@@ -1279,9 +1303,6 @@
                         };
                     });
             });
-
-            const layoutIdClick = e.target.closest('.layout-section .row').dataset.layoutId;
-            formData.append(`layout_id`, layoutIdClick || null);
 
             // Wait for all image processing to complete
             Promise.all(processPhotos)
@@ -1346,7 +1367,7 @@
                             const now = new Date();
                             layoutHTML += `
                                 <div class="col-md-3 layout-item">
-                                    <div class="card shadow-sm bg-white">
+                                    <div class="card shadow-sm bg-white image-item">
                                         <div class="overflow-hidden img-home">
                                             <img src="${photo.url}" class="card-img-top img-fluid" alt="${photo.name}">
                                         </div>

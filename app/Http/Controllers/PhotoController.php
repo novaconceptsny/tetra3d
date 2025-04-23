@@ -49,13 +49,12 @@ class PhotoController extends Controller
     public function duplicatePhotos(Request $request, Project $project)
     {
         try {
-
             return DB::transaction(function () use ($request, $project) {
+                $firstTour = $project->tours->first();
+                $countLayoutProject = count($project->layouts);
                 // Check if project has no layouts and create default layout
                 if ($project->layouts->isEmpty()) {
                     // Get the first tour's ID from the project
-                    $firstTour = $project->tours->first();
-
                     if (!$firstTour) {
                         return response()->json([
                             'success' => false,
@@ -68,7 +67,7 @@ class PhotoController extends Controller
                         'tour_id' => $firstTour->id,
                         'user_id' => auth()->id()
                     ]);
-                }if ($request->layout_id) {
+                } elseif (!empty($request->input('layout_id'))) {
                     $layout_id = $request->layout_id;
                     $layout_click = $project->layouts()->where('id', $layout_id)->with('photos')->first();
                     $count_layout = count($layout_click->photos);
@@ -76,17 +75,21 @@ class PhotoController extends Controller
                         $layout = $layout_click;
                     }else{
                         $layout = $project->layouts()->create([
-                            'name' => 'Layout_'.$count_layout,
+                            'name' => 'Layout_'.$countLayoutProject,
                             'tour_id' => $firstTour->id,
                             'user_id' => auth()->id()
                         ]);
                     }
                 }else{
-                    $layout = $project->layouts->first();
+                    $layout = $project->layouts()->create([
+                        'name' => 'Layout_'.$countLayoutProject,
+                        'tour_id' => $firstTour->id,
+                        'user_id' => auth()->id()
+                    ]);
                 }
 
                 // First, delete all existing photos for this project
-                Photo::where('project_id', $project->id)->delete();
+//                Photo::where('project_id', $project->id)->delete();
 
                 $savedPhotos = [];
 

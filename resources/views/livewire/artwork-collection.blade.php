@@ -16,7 +16,7 @@
                 <option value="{{ $collection->id }}">{{ $collection->name }}</option>
             @endforeach
         </select>
-        <div class="change-icon-layout d-flex justify-content-between align-items-center">
+        <div class="change-icon-layout d-flex justify-content-between align-items-center d-none">
             <button class="btn border  border-secondary" onclick="setListLayout()"><i class="fas fa-bars"></i></button>
             <button class="btn border border-secondary" onclick="setGridLayout()"> <i class="fas fa-th-large"></i></button>
 
