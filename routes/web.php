@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('tours/{tour}', 'TourController@show')->name('tours.show')->withoutMiddleware(['auth']);
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
+    Route::post('artworks/destroy/{id}', 'ArtworksController@destroyCollection')->name('artworks.destroyCollection');
     Route::get('inventory', 'InventoryController@index')->name('inventory.index');
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
     Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');
@@ -45,6 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
         // surface state
         Route::get('surfaces/{state}/active', 'SurfaceStateController@active')->name('surfaces.active');
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
+        Route::post('surfaces/destroy/{id}', 'SurfaceStateController@destroySurface')->name('surfaces.destroy');
     });
 
     Route::controller(PhotoStateController::class)->group(function () {
@@ -55,10 +57,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
 
     Route::get('/photo', 'PhotoController@index')->name('photo.index');
+    Route::post('photo/destroy/{id}', 'PhotoController@destroy')->name('photo.destroy');
 
     Route::post('/projects/{project}/collections', [PhotoController::class, 'updateCollections'])->name('projects.collections.update');
 
     Route::post('/projects/{project}/photos/duplicate', [PhotoController::class, 'duplicatePhotos'])->name('projects.photos.duplicate');
+
+    Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
 
 });
 

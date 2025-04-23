@@ -1,5 +1,7 @@
 {
     "/js/app.js": "/js/app.js",
+    "/js/modules/photo/index.js": "/js/modules/photo/index.js",
+    "/css/page/photo-index.css": "/css/page/photo-index.css",
     "/css/page/tour360.css": "/css/page/tour360.css",
     "/css/page/photoeditor.css": "/css/page/photoeditor.css"
 }

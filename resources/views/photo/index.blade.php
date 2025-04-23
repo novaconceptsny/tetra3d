@@ -11,13 +11,13 @@
                             <div class="project-name">{{ $project->name }}</div>
                         </div>
                         <div class="col text-end">
-                            <button class="btn btn-primary" data-mode="edit" data-project-name="Living Room" data-bs-toggle="modal" data-bs-target="#projectModal"><i class="fas fa-pen"></i> Edit project</button>
+                            <button class="btn btn-primary" data-mode="edit" data-project-name="{{ $project->name }}" data-project-id="{{ $project->id }}" data-bs-toggle="modal" data-bs-target="#projectModal"><i class="fas fa-pen"></i> Edit project</button>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
-
+        <input type="hidden" value="{{ $project->id }}" name="project-id" id="project-id">
         <!-- Main Content -->
         <div class="container main-content my-5">
             <div class="row">
@@ -34,7 +34,7 @@
                             </li>
                             @foreach($artworkCollections as $artworkCollection)
                                 @if($project->artworkCollections->contains($artworkCollection->id))
-                                    <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
+                                    <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="{{ $artworkCollection->id }}">
                                         <i class="fas fa-image collection-icon"></i>
                                         <div class="collection-info">
                                             <span class="collection-name">{{ $artworkCollection->name }}</span>
@@ -82,9 +82,17 @@
                         <div class="title-box">Surfaces <button class="btn enter-link" id="toggleButtonSurfaces" data-bs-toggle="modal" data-bs-target="#surfaceModalShow">Enter</button></div>
 
                         <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-center align-items-center card surface-item">
+                                <button class="add-image-btn" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="add">
+                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                    <span class="add-image-text">Add Surface</span>
+                                </button>
+                            </li>
                             @foreach($surfaces as $surface)
                                 <li class="list-group-item d-flex justify-content-center align-items-center card surface-item"
                                     data-name="{{ $surface->name }}"
+                                    data-id="{{ $surface->id }}"
+                                    data-module="surfaces"
                                     data-width="{{ $surface->data['img_width'] ?? '' }}"
                                     data-height="{{ $surface->data['img_height'] ?? '' }}">
                                     <span class="surface-name">{{ $surface->name }}</span>
@@ -106,35 +114,33 @@
 
             <!-- Layout Sections -->
             @foreach($project->layouts as $layout)
-                <div class="row">
-                <div class="col-12">
-                    <div class="layout-section mt-5">
-                        <div class="title-box">{{ $layout->name }}</div>
-                        <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
-                            @foreach($photos->where('layout_id', $layout->id) as $photo)
-                                <div class="col-md-3 layout-item">
-                                    <div class="card shadow-sm bg-white">
-                                        <div class="overflow-hidden img-home">
-                                            <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
-                                        </div>
-                                        <div class="card-body d-flex justify-content-between align-items-end">
-                                            <p class="card-text">
-                                                <span>{{ $photo->name }}</span><br>
-                                                <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
-                                            </p>
-                                            <button type="button"
-                                                    class="btn enter-link"
-                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
-                                                    data-photo-id="{{ $photo->id }}"
-                                                    data-layout-id="{{ $layout->id }}">
-                                                Enter
-                                            </button>
-                                        </div>
+                <div class="layout-section mt-5">
+                    <div class="title-box">{{ $layout->name }}</div>
+                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
+                        @foreach($photos->where('layout_id', $layout->id) as $photo)
+                            <div class="col-md-3 layout-item">
+                                <div class="card shadow-sm bg-white">
+                                    <div class="overflow-hidden img-home">
+                                        <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                    </div>
+                                    <div class="card-body d-flex justify-content-between align-items-end">
+                                        <p class="card-text">
+                                            <span>{{ $photo->name }}</span><br>
+                                            <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
+                                        </p>
+                                        <button type="button"
+                                                class="btn enter-link"
+                                                onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
+                                                data-photo-id="{{ $photo->id }}"
+                                                data-layout-id="{{ $layout->id }}">
+                                            Enter
+                                        </button>
                                     </div>
                                 </div>
+                            </div>
                         @endforeach
-
-                        <!-- Add Layout button at the end -->
+                        @if(count($photos->where('layout_id', $layout->id)) < 4)
+                            <!-- Add Layout button at the end -->
                             <div class="col-md-3 layout-item">
                                 <div class="card bg-white card-layout">
                                     <button class="add-image-btn">
@@ -143,9 +149,8 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
-                </div>
                 </div>
             @endforeach
 
@@ -404,6 +409,8 @@
                                     <div class="col-md-4 ">
                                         <div class="list-group-item d-flex justify-content-center align-items-center card surface-item mb-3"
                                              data-name="{{ $surface->name }}"
+                                             data-id="{{ $surface->id }}"
+                                             data-module="surfaces"
                                              data-width="{{ $surface->data['img_width'] ?? '' }}"
                                              data-height="{{ $surface->data['img_height'] ?? '' }}">
                                             <span class="surface-name">{{ $surface->name }}</span>
@@ -440,16 +447,19 @@
                     </div>
                     <div class="modal-body">
                         <p>Add a project name and upload a JPEG or PNG image file for the project thumbnail. Max 2048 pixels on the long edge of the image.</p>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" id="projectNameInput" placeholder="Name">
-                        </div>
-                        <div class="image-upload-box mb-3" id="imageUploadBox">
-                            <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
-                            <span>+ Image</span>
-                            <div class="overlay">Click to replace image</div>
-                        </div>
-                        <div class="image-name" id="imageName"></div>
-                        <button type="button" class="btn btn-save">Save</button>
+                        <form action="{{ route('project.update', ['id' => $project->id ]) }}" method="post">
+                            @csrf
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="projectNameInput" name="name" placeholder="Name" value="{{ $project->name }}">
+                            </div>
+                            <div class="image-upload-box mb-3" id="imageUploadBox">
+                                <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
+                                <span>+ Image</span>
+                                <div class="overlay">Click to replace image</div>
+                            </div>
+                            <div class="image-name" id="imageName"></div>
+                            <button type="submit" class="btn btn-save">Save</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -467,7 +477,7 @@
 @endsection
 @push('scripts')
 <script>
-    const projectId = {{ $project->id }};
+    const projectId = $('#project-id').val();
     let photosData = [];
     let selectedImages = [];
 
@@ -580,6 +590,9 @@
         selectedImages.forEach(imageData => {
             const colDiv = document.createElement('div');
             colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.dataset.module = 'photo';
+            colDiv.dataset.id = `${imageData.id}`;
+
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
@@ -612,6 +625,8 @@
         selectedImages.forEach(imageData => {
             const colDiv = document.createElement('div');
             colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.dataset.module = 'photo';
+            colDiv.dataset.id = `${imageData.id}`;
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
@@ -649,11 +664,13 @@
         modal.hide();
     }
 
+    let itemToDelete = '';
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('delete-item')) {
             e.preventDefault();
 
             let currentElement = e.target;
+
             while (currentElement) {
                 if (currentElement.classList.contains('list-group-item')) {
                     itemToDelete = currentElement;
@@ -668,8 +685,32 @@
         }
     });
 
+    function deleteItem(id, module){
+        const formData = new FormData();
+        formData.append('id', id);
+        const token = document.querySelector('meta[name="csrf-token"]');
+        if (!token) {
+            throw new Error('CSRF token not found');
+        }
+
+        // Send the FormData to the server
+        return fetch('/'+module+'/destroy/'+id, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token.content,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+    }
+
     document.getElementById('confirmDeleteButton').addEventListener('click', function() {
         if (itemToDelete) {
+            const id = itemToDelete.getAttribute('data-id');
+            const module = itemToDelete.getAttribute('data-module');
+
+            deleteItem(id, module);
+
             itemToDelete.remove();
             itemToDelete = null;
             const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
@@ -812,6 +853,8 @@
         photosData.forEach(photo => {
             const colDiv = document.createElement('div');
             colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.dataset.module = 'photo';
+            colDiv.dataset.id = `${photo.id}`;
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
@@ -849,6 +892,8 @@
         photosData.forEach(photo => {
             const colDiv = document.createElement('div');
             colDiv.classList.add('col-md-3', 'photo-item');
+            colDiv.dataset.module = 'photo';
+            colDiv.dataset.id = `${photo.id}`;
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
@@ -1167,7 +1212,7 @@
         });
 
         // Function to handle image duplication
-        function handleDuplication() {
+        function handleDuplication(e) {
             const photoContainer = document.getElementById('photosContainer');
             if (!photoContainer) {
                 console.error('Photo container not found');
@@ -1234,6 +1279,9 @@
                         };
                     });
             });
+
+            const layoutIdClick = e.target.closest('.layout-section .row').dataset.layoutId;
+            formData.append(`layout_id`, layoutIdClick || null);
 
             // Wait for all image processing to complete
             Promise.all(processPhotos)
@@ -1354,7 +1402,7 @@
         document.addEventListener('click', function(e) {
             if (e.target.closest('.add-image-btn') && e.target.closest('.card-layout')) {
                 e.preventDefault();
-                handleDuplication();
+                handleDuplication(e);
             }
         });
 
@@ -1483,9 +1531,9 @@
     });
 </script>
 
-
+{{--<script src="{{ mix('js/modules/photo/index.js') }}"></script>--}}
 @endpush
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/photo-index.css') }}">
+<link href="{{ mix('css/page/photo-index.css') }}" rel="stylesheet">
 @endpush

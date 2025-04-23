@@ -12,6 +12,9 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/style.scss', 'public/css')
+    .js('resources/js/modules/photo/index.js','public/js/modules/photo/index.js')
+    // .sass('resources/sass/style.scss', 'public/css')
     .sass('resources/sass/page/photoeditor.scss', 'public/css/page')
+    .sass('resources/sass/page/tour360.scss', 'public/css/page')
+    .sass('resources/sass/page/photo-index.scss', 'public/css/page')
     .sourceMaps();

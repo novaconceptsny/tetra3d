@@ -74,7 +74,7 @@
                             target="_self"
                             id="save-and-return"
                         />
-                       <button class="btn btn-outline-secondary btn-sm white-bg-button" data-bs-toggle="popover"
+                       <button class="btn btn-outline-secondary btn-sm white-bg-button" id="download-btn" data-bs-toggle="popover"
                                          data-bs-trigger="hover focus"
                                          data-bs-placement="bottom"
                                          data-bs-content="Download">
@@ -149,6 +149,15 @@
             popoverTriggerList.forEach(function (popoverTriggerEl) {
                 new bootstrap.Popover(popoverTriggerEl);
             });
+        });
+
+        document.getElementById('download-btn').addEventListener('click', function () {
+            const canvas = document.getElementById("{{ $canvas['canvasId'] }}");
+            const image = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = 'artwork.png';
+            link.click();
         });
 
     </script>

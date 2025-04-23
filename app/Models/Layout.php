@@ -32,6 +32,11 @@ class Layout extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function photos()
+    {
+        return $this->hasMany(Photo::class);
+    }
+
     public function surfaceStates()
     {
         return $this->hasMany(SurfaceState::class);

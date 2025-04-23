@@ -21,7 +21,7 @@ class PhotoController extends Controller
         $surfaces = Surface::where('company_id', $project->company_id)
             ->whereIn('tour_id', $project->tours->pluck('id'))
             ->get();
-        
+
         $artworkCollections = ArtworkCollection::forCompany($project->company_id)
             ->withCount('artworks')
             ->get();
@@ -49,12 +49,13 @@ class PhotoController extends Controller
     public function duplicatePhotos(Request $request, Project $project)
     {
         try {
+
             return DB::transaction(function () use ($request, $project) {
                 // Check if project has no layouts and create default layout
                 if ($project->layouts->isEmpty()) {
                     // Get the first tour's ID from the project
                     $firstTour = $project->tours->first();
-                    
+
                     if (!$firstTour) {
                         return response()->json([
                             'success' => false,
@@ -67,26 +68,39 @@ class PhotoController extends Controller
                         'tour_id' => $firstTour->id,
                         'user_id' => auth()->id()
                     ]);
-                } else {
+                }if ($request->layout_id) {
+                    $layout_id = $request->layout_id;
+                    $layout_click = $project->layouts()->where('id', $layout_id)->with('photos')->first();
+                    $count_layout = count($layout_click->photos);
+                    if ($count_layout < 4){
+                        $layout = $layout_click;
+                    }else{
+                        $layout = $project->layouts()->create([
+                            'name' => 'Layout_'.$count_layout,
+                            'tour_id' => $firstTour->id,
+                            'user_id' => auth()->id()
+                        ]);
+                    }
+                }else{
                     $layout = $project->layouts->first();
                 }
 
                 // First, delete all existing photos for this project
                 Photo::where('project_id', $project->id)->delete();
-                
+
                 $savedPhotos = [];
-                
+
                 if ($request->hasFile('images')) {
                     foreach($request->file('images') as $index => $image) {
                         // Generate unique filename
                         $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-                        
+
                         // Store the file in the storage/app/public/media/photos directory
                         $path = $image->storeAs('media/photos', $filename, 'public');
-                        
+
                         // Parse corners JSON string into array
                         $cornersData = json_decode($request->corners[$index], true) ?? [];
-                        
+
                         // Create data array with image dimensions and corners
                         $data = [
                             'img_width' => (string)$request->widths[$index],
@@ -106,7 +120,7 @@ class PhotoController extends Controller
                             'background_url' => '/storage/' . $path,
                             'data' => $data,
                         ]);
-                        
+
                         $photo->save();
                         $savedPhotos[] = [
                             'id' => $photo->id,
@@ -132,4 +146,14 @@ class PhotoController extends Controller
         }
     }
 
+
+    public function destroy($id)
+    {
+        Photo::destroy($id);
+
+        return [
+            'status' => true,
+            'message' => 'Delete Success!'
+        ];
+    }
 }

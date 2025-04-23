@@ -92,7 +92,7 @@ class SurfaceStateController extends Controller
 
 
         foreach ($surface->states as $surfaceState) {
- 
+
             $assignedArtworks = $surfaceState?->artworks->map(function ($artwork) {
                 $artwork->image_url .= "?uuid=" . str()->uuid();
                 return $artwork;
@@ -140,7 +140,7 @@ class SurfaceStateController extends Controller
         $layout->touch();
 
         $initial_artworks = json_decode($request->assigned_artwork, true);
-        
+
         $assigned_artworks = array();
 
         $boundingBoxWidth = $surface->data["bounding_box_width"];
@@ -345,6 +345,16 @@ class SurfaceStateController extends Controller
             'x' => $v1['y'] * $v2['z'] - $v1['z'] * $v2['y'],
             'y' => $v1['z'] * $v2['x'] - $v1['x'] * $v2['z'],
             'z' => $v1['x'] * $v2['y'] - $v1['y'] * $v2['x'],
+        ];
+    }
+
+    public function destroySurface($id)
+    {
+        Surface::destroy($id);
+
+        return [
+            'status' => true,
+            'message' => 'Delete Success!'
         ];
     }
 

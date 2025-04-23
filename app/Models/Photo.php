@@ -26,9 +26,14 @@ class Photo extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function layout()
+    {
+        return $this->belongsTo(Layout::class);
+    }
+
     /**
      * Get the URL for the photo
-     * 
+     *
      * @return string
      */
     public function getUrl()
