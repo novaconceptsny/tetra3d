@@ -813,6 +813,14 @@
         // Apply the rotation
         planeMesh.setRotationFromQuaternion(quaternion);
 
+        // Convert quaternion to Euler angles
+        const euler = new THREE.Euler();
+        euler.setFromQuaternion(quaternion);
+
+        // Calculate the correct ry angle for krpano
+        // This converts the rotation to match krpano's coordinate system
+        const ry = 180- Math.atan2(normal.x, normal.z) * (180 / Math.PI);
+
         planeMesh.userData.surface_id = surface_id;
         planeMesh.userData.layout_id = layout_id;
         planeMesh.userData.spot_id = spot_id;
@@ -820,15 +828,11 @@
         surface_meshes.push(planeMesh);
         scene.add(planeMesh);
 
-        // Convert quaternion to Euler angles for the assign_object_properties function
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(quaternion);
-
         assign_object_properties(planeMesh, "artwork", {
             ath: spherical_position.phi,
             atv: spherical_position.theta,
             depth: spherical_position.r,
-            ry: euler.y * 180 / Math.PI,
+            ry: ry,
             scale: 30,
         });
     }
