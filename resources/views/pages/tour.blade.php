@@ -825,27 +825,13 @@
         const euler = new THREE.Euler();
         euler.setFromQuaternion(quaternion);
 
-        if(surface_id === "536"){
-            assign_object_properties(planeMesh, "artwork", {
-                ath: spherical_position.phi,
-                atv: spherical_position.theta,
-                depth: spherical_position.r,
-                rx: 0,
-                ry: 180,
-                rz: 0,
-                scale: 30,
-            });
-        }else{
-            assign_object_properties(planeMesh, "artwork", {
-                ath: spherical_position.phi,
-                atv: spherical_position.theta,
-                depth: spherical_position.r,
-                rx: (euler.x - Math.PI) * 180 / Math.PI,
-                ry: euler.y * 180 / Math.PI,
-                rz: (euler.z - Math.PI) * 180 / Math.PI,
-                scale: 30,
-            });
-        }     
+        assign_object_properties(planeMesh, "artwork", {
+            ath: spherical_position.phi,
+            atv: spherical_position.theta,
+            depth: spherical_position.r,
+            ry: euler.y * 180 / Math.PI,
+            scale: 30,
+        });
     }
 
     function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, normal_x, normal_y, normal_z) {
