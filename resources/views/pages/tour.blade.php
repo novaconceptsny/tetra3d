@@ -829,7 +829,9 @@
             ath: spherical_position.phi,
             atv: spherical_position.theta,
             depth: spherical_position.r,
+            rx: (euler.x - Math.PI) * 180 / Math.PI,
             ry: euler.y * 180 / Math.PI,
+            rz: (euler.z - Math.PI) * 180 / Math.PI,
             scale: 30,
         });
     }
