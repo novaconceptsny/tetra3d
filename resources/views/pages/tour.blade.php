@@ -269,6 +269,7 @@
     var sculpture_data = @json($sculptureData);
     var artworks_data = @json($artworkData);
     var surface_data = @json($surfaceData);
+    console.log(surface_data, "surface_data");
     var spot_id = "{{ $spot->id }}";
 
     var spot_position = @json($spotPosition);
