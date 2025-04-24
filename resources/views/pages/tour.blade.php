@@ -797,7 +797,7 @@
         // Create normal vector and calculate rotation
         const normal = new THREE.Vector3(normal_x, normal_y, normal_z).normalize();
         // Default plane normal (facing forward)
-        const defaultNormal = new THREE.Vector3(0, 0, 1);
+        const defaultNormal = new THREE.Vector3(0.001, 0, 1);
 
         // Calculate rotation axis and angle
         const rotationAxis = new THREE.Vector3();
