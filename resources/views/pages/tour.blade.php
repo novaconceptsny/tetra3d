@@ -269,7 +269,6 @@
     var sculpture_data = @json($sculptureData);
     var artworks_data = @json($artworkData);
     var surface_data = @json($surfaceData);
-    console.log(surface_data, "surface_data");
     var spot_id = "{{ $spot->id }}";
 
     var spot_position = @json($spotPosition);
@@ -791,8 +790,7 @@
         var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
         const geometry = new THREE.PlaneGeometry(width, height);
         geometry.translate(-width / 2, height / 2, 0);
-        // const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0.5, visible: false, side: THREE.DoubleSide });
-        const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 1, visible: true, side: THREE.DoubleSide });
+        const material = new THREE.MeshBasicMaterial({ color: 0xFFC0CB, transparent: true, opacity: 0.5, visible: false, side: THREE.DoubleSide });
         const planeMesh = new THREE.Mesh(geometry, material);
         planeMesh.position.set(position_x, position_y, position_z);
 
