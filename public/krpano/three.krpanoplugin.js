@@ -339,7 +339,9 @@ function krpanoplugin() {
 
 	function do_object_hittest(mx, my) {
 		// Check if current URL contains "/shared-tours/"
-		if (window.location.pathname.includes("/shared-tours/")) {
+		console.log(window.location.pathname, "window.location.pathname")
+		if (window.location.pathname.includes("shared-tours")) {
+			console.log("shared-tours")
 			return null;
 		}
 
