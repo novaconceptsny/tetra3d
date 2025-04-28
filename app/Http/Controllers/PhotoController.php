@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArtworkCollection;
+use App\Models\Layout;
 use App\Models\Project;
 use App\Models\Photo;
 use App\Models\Surface;
@@ -16,6 +17,21 @@ class PhotoController extends Controller
             ->with(['company', 'tours', 'artworkCollections', 'layouts'])
             ->withCount('contributors')
             ->first();
+        $firstTour = $project->tours->first();
+        $latestLayout = $project->layouts()->latest()->first();
+
+        if (!$latestLayout || $latestLayout->photos()->count() >= 4) {
+             $project->layouts()->create([
+                'name' => 'Layout_'.($project->layouts()->count() + 1),
+                'tour_id' => $firstTour->id,
+                'user_id' => auth()->id()
+            ]);
+
+            $project = Project::relevant()
+                ->with(['company', 'tours', 'artworkCollections', 'layouts'])
+                ->withCount('contributors')
+                ->first();
+        }
 
         // Get surfaces based on company_id and tour_ids
         $surfaces = Surface::where('company_id', $project->company_id)
@@ -52,9 +68,7 @@ class PhotoController extends Controller
             return DB::transaction(function () use ($request, $project) {
                 $firstTour = $project->tours->first();
                 $countLayoutProject = count($project->layouts);
-                // Check if project has no layouts and create default layout
                 if ($project->layouts->isEmpty()) {
-                    // Get the first tour's ID from the project
                     if (!$firstTour) {
                         return response()->json([
                             'success' => false,
@@ -67,26 +81,61 @@ class PhotoController extends Controller
                         'tour_id' => $firstTour->id,
                         'user_id' => auth()->id()
                     ]);
-                } elseif (!empty($request->input('layout_id'))) {
-                    $layout_id = $request->layout_id;
+                }else{
+                    $layout_id = $request->input('layout_id');
                     $layout_click = $project->layouts()->where('id', $layout_id)->with('photos')->first();
-                    $count_layout = count($layout_click->photos);
-                    if ($count_layout < 4){
+
+                    if ($layout_click->photos()->count() < 4){
                         $layout = $layout_click;
                     }else{
-                        $layout = $project->layouts()->create([
-                            'name' => 'Layout_'.$countLayoutProject,
-                            'tour_id' => $firstTour->id,
-                            'user_id' => auth()->id()
-                        ]);
+                        $latestLayout = $project->layouts()->latest()->first();
+
+                        if (!$latestLayout || $latestLayout->photos()->count() > 4) {
+                            $layout = $project->layouts()->create([
+                                'name' => 'Layout_'.($project->layouts()->count() + 1),
+                                'tour_id' => $firstTour->id,
+                                'user_id' => auth()->id()
+                            ]);
+                        }else{
+                            $layout = $latestLayout;
+                        }
                     }
-                }else{
-                    $layout = $project->layouts()->create([
-                        'name' => 'Layout_'.$countLayoutProject,
-                        'tour_id' => $firstTour->id,
-                        'user_id' => auth()->id()
-                    ]);
                 }
+
+                // Check if project has no layouts and create default layout
+//                if ($project->layouts->isEmpty()) {
+//                    if (!$firstTour) {
+//                        return response()->json([
+//                            'success' => false,
+//                            'message' => 'No tours found for this project'
+//                        ], 422);
+//                    }
+//
+//                    $layout = $project->layouts()->create([
+//                        'name' => 'Layout_1',
+//                        'tour_id' => $firstTour->id,
+//                        'user_id' => auth()->id()
+//                    ]);
+//                } elseif ($request->input('layout_id') !== 'null' && !empty($request->input('layout_id'))) {
+//                    $layout_id = $request->layout_id;
+//                    $layout_click = $project->layouts()->where('id', $layout_id)->with('photos')->first();
+//                    $count_layout = count($layout_click->photos);
+//                    if ($count_layout < 4){
+//                        $layout = $layout_click;
+//                    }else{
+//                        $layout = $project->layouts()->create([
+//                            'name' => 'Layout_'.$countLayoutProject,
+//                            'tour_id' => $firstTour->id,
+//                            'user_id' => auth()->id()
+//                        ]);
+//                    }
+//                }else{
+//                    $layout = $project->layouts()->create([
+//                        'name' => 'Layout_'.$countLayoutProject,
+//                        'tour_id' => $firstTour->id,
+//                        'user_id' => auth()->id()
+//                    ]);
+//                }
 
                 // First, delete all existing photos for this project
 //                Photo::where('project_id', $project->id)->delete();
@@ -133,6 +182,15 @@ class PhotoController extends Controller
                     }
                 }
 
+                $latestLayoutAfter = $project->layouts()->latest()->first();
+                if (!$latestLayoutAfter || $latestLayoutAfter->photos()->count() == 4) {
+                    $project->layouts()->create([
+                        'name' => 'Layout_'.($project->layouts()->count() + 1),
+                        'tour_id' => $firstTour->id,
+                        'user_id' => auth()->id()
+                    ]);
+                }
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Photos duplicated successfully',
@@ -149,7 +207,11 @@ class PhotoController extends Controller
         }
     }
 
+    public function update($id)
+    {
 
+        return redirect()->back()->with('success', 'Photo updated');
+    }
     public function destroy($id)
     {
         Photo::destroy($id);

@@ -114,50 +114,33 @@
 
             <!-- Layout Sections -->
             @foreach($project->layouts as $layout)
-                @if(count($layout->photos))
-                    <div class="layout-section mt-5">
-                        <div class="title-box">{{ $layout->name }}</div>
-                        <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
-                            @foreach($photos->where('layout_id', $layout->id) as $photo)
-                                <div class="col-md-3 layout-item">
-                                    <div class="card shadow-sm bg-white image-item">
-                                        <div class="overflow-hidden img-home">
-                                            <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
-                                        </div>
-                                        <div class="card-body d-flex justify-content-between align-items-end">
-                                            <p class="card-text">
-                                                <span>{{ $photo->name }}</span><br>
-                                                <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
-                                            </p>
-                                            <button type="button"
-                                                    class="btn enter-link"
-                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
-                                                    data-photo-id="{{ $photo->id }}"
-                                                    data-layout-id="{{ $layout->id }}">
-                                                Enter
-                                            </button>
-                                        </div>
+                <div class="layout-section mt-5">
+                    <div class="title-box">{{ $layout->name }}</div>
+                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
+                        @foreach($layout->photos as $photo)
+                            <div class="col-md-3 layout-item">
+                                <div class="card shadow-sm bg-white image-item">
+                                    <div class="overflow-hidden img-home">
+                                        <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
                                     </div>
-                                </div>
-                            @endforeach
-                            @if(count($photos->where('layout_id', $layout->id)) < 4)
-                                <!-- Add Layout button at the end -->
-                                <div class="col-md-3 layout-item">
-                                    <div class="card bg-white card-layout">
-                                        <button class="add-image-btn">
-                                            <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                            <span class="add-image-text">Add Layout</span>
+                                    <div class="card-body d-flex justify-content-between align-items-end">
+                                        <p class="card-text">
+                                            <span>{{ $photo->name }}</span><br>
+                                            <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
+                                        </p>
+                                        <button type="button"
+                                                class="btn enter-link"
+                                                onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
+                                                data-photo-id="{{ $photo->id }}"
+                                                data-layout-id="{{ $layout->id }}">
+                                            Enter
                                         </button>
                                     </div>
                                 </div>
-                            @endif
-                        </div>
-                    </div>
-                @else
-                    <div class="layout-section mt-5">
-                        <div class="title-box">Layout_{{ count($project->layouts) }}</div>
-                        <div class="row g-3" id="layoutNewContainer" data-layout-id="">
-                            <!-- Add Layout button at the end -->
+                            </div>
+                        @endforeach
+                        @if($layout->photos()->count() < 4)
+                        <!-- Add Layout button at the end -->
                             <div class="col-md-3 layout-item">
                                 <div class="card bg-white card-layout">
                                     <button class="add-image-btn">
@@ -166,9 +149,9 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
-                @endif
+                </div>
             @endforeach
 
             <!-- If no layouts exist, show a message or default layouts -->
@@ -300,12 +283,28 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <form action="" method="post" id="updateImage">
+                            @csrf
                         <div class="row mb-3">
                             <div class="col-md-8">
-                                <input type="text" class="form-control" id="titleImage" placeholder="Image title (editable)">
+                                <select name="surfaceId" id="surfaceId" class="form-select">
+                                         <option  data-width=100"
+                                                data-height="100">
+                                            Default
+                                        </option>
+                                    @foreach($surfaces as $surface)
+                                        <option value="{{ $surface->id }}"
+                                                data-width="{{ $surface->data['img_width'] ?? '' }}"
+                                                data-height="{{ $surface->data['img_height'] ?? '' }}">
+                                            {{ $surface->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+{{--                                <input type="text" class="form-control" id="titleImage" placeholder="Image title (editable)">--}}
+                                    <img src="" alt="" class="modal-image d-none">
                             </div>
                             <div class="col-md-4 text-end">
-                                <button type="button" id="saveLayout" class="btn btn-light">Save</button>
+                                <button type="submit" id="saveLayout" class="btn btn-light">Save</button>
                             </div>
                         </div>
 
@@ -313,7 +312,7 @@
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-text">Width</span>
-                                    <input type="number" class="form-control" id="rectWidth" value="100">
+                                    <input type="number" class="form-control" id="rectWidth" value="">
                                     <span class="input-group-text">
                                         <select class="form-select" id="widthUnit" onchange="convertUnits('width')" >
                                           <option selected value="cm">cm</option>
@@ -325,7 +324,7 @@
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-text">Height</span>
-                                    <input type="number" class="form-control" id="rectHeight" value="100">
+                                    <input type="number" class="form-control" id="rectHeight" value="">
                                     <span class="input-group-text">
                                         <select class="form-select" id="heightUnit" onchange="convertUnits('height')">
                                           <option selected value="cm">cm</option>
@@ -339,6 +338,7 @@
                         <div class="text-center position-relative">
                             <canvas id="imageCanvas" class="img-fluid"></canvas>
                         </div>
+                         </form>
                     </div>
                 </div>
             </div>
@@ -384,6 +384,12 @@
                     <div class="modal-body">
                         <!-- Danh sách collections -->
                         <div class="collection-list">
+                            <div class="collection-item">
+                                <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
+                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                    <span class="add-collection-text">Add Collection</span>
+                                </button>
+                            </div>
                             @foreach($artworkCollections as $artworkCollection)
                                 @if($project->artworkCollections->contains($artworkCollection->id))
                                     <div class="collection-item">
@@ -392,9 +398,6 @@
                                 @endif
                             @endforeach
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn update-btn">Update</button>
                     </div>
                 </div>
             </div>
@@ -448,7 +451,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn update-btn">Update</button>
+
                     </div>
                 </div>
             </div>
@@ -497,6 +500,18 @@
     const projectId = $('#project-id').val();
     let photosData = [];
     let selectedImages = [];
+
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+    const widthInput = document.getElementById('rectWidth');
+    const heightInput = document.getElementById('rectHeight');
+    let corners = [];
+    let backgroundImage = null;
+    let currentImageElement = null; // Store reference to current image element
+
+    // Set fixed canvas dimensions
+    const CANVAS_WIDTH = 800;
+    const CANVAS_HEIGHT = 600;
 
     // Initialize photosData with existing photos
     const existing_photos = @json($photos);
@@ -732,6 +747,7 @@
             itemToDelete = null;
             const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
             modal.hide();
+            location.reload();
         } else {
             console.error('No item to delete. itemToDelete is not defined.');
         }
@@ -840,7 +856,14 @@
         const title = button.getAttribute('data-title');
         const image = button.getAttribute('data-image');
         const photoId = button.getAttribute('data-photo-id');
-
+        const actionTemplate = "{{ route('photo.update', ['id' => ':id']) }}";
+        const action = actionTemplate.replace(':id', photoId);
+        const form = document.getElementById('updateImage');
+        if (form) {
+            form.setAttribute('action', action);
+        } else {
+            console.error('Form updateimage không tồn tại.');
+        }
         this.setAttribute('data-photo-id', photoId);
 
         const modalTitle = this.querySelector('#imageModalLabel');
@@ -853,8 +876,29 @@
         currentIndexImage = Array.from(document.querySelectorAll('.layout-item')).indexOf(imageItem);
         const modalImage = this.querySelector('.modal-image');
         modalImage.src = image;
+
+        const surfaceSelect = document.getElementById('surfaceId');
+        const selectedOption = surfaceSelect.options[surfaceSelect.selectedIndex];
+        const width = selectedOption.getAttribute('data-width');
+        const height = selectedOption.getAttribute('data-height');
+
+        if (width && height) {
+            document.getElementById('rectWidth').value = width;
+            document.getElementById('rectHeight').value = height;
+        }
     });
 
+    document.getElementById('surfaceId').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const width = selectedOption.getAttribute('data-width');
+        const height = selectedOption.getAttribute('data-height');
+
+        if (width && height) {
+            document.getElementById('rectWidth').value = width;
+            document.getElementById('rectHeight').value = height;
+        }
+
+    });
 
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -937,18 +981,7 @@
             photosContainer2.appendChild(colDiv);
         });
 
-        const canvas = document.getElementById('imageCanvas');
-        const ctx = canvas.getContext('2d');
-        const widthInput = document.getElementById('rectWidth');
-        const heightInput = document.getElementById('rectHeight');
-        let corners = [];
-        let backgroundImage = null;
-        let currentImageElement = null; // Store reference to current image element
 
-
-        // Set fixed canvas dimensions
-        const CANVAS_WIDTH = 800;
-        const CANVAS_HEIGHT = 600;
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
 
@@ -1338,76 +1371,7 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        let layoutHTML = '';
-                        const layoutId = data.layout.id;
-
-                        // If this was a new layout, we need to create the layout section first
-                        if (data.hasNewLayout) {
-                            // Create new layout section if it doesn't exist
-                            const layoutsContainer = document.querySelector('.main-content');
-                            const noLayoutsMessage = document.querySelector('.layout-section');
-
-                            if (noLayoutsMessage) {
-                                noLayoutsMessage.remove(); // Remove "No layouts available" message
-                            }
-
-                            // Create new layout section
-                            const newLayoutSection = document.createElement('div');
-                            newLayoutSection.className = 'layout-section';
-                            newLayoutSection.innerHTML = `
-                                <div style="font-size: 24px; font-weight: bold;">${data.layout.name}</div>
-                                <div class="row g-3" id="layout1Container" data-layout-id="${layoutId}">
-                                </div>
-                            `;
-                            layoutsContainer.appendChild(newLayoutSection);
-                        }
-
-                        // Generate HTML for photos
-                        data.photos.forEach(photo => {
-                            const now = new Date();
-                            layoutHTML += `
-                                <div class="col-md-3 layout-item">
-                                    <div class="card shadow-sm bg-white image-item">
-                                        <div class="overflow-hidden img-home">
-                                            <img src="${photo.url}" class="card-img-top img-fluid" alt="${photo.name}">
-                                        </div>
-                                        <div class="card-body d-flex justify-content-between align-items-end">
-                                            <p class="card-text">
-                                                <span>${photo.name}</span><br>
-                                                <small>Created: ${now.toLocaleDateString()}</small>
-                                            </p>
-                                            <button type="button"
-                                                    class="btn enter-link"
-                                                    onclick="navigateToPhoto(${photo.id}, ${layoutId})"
-                                                    data-photo-id="${photo.id}"
-                                                    data-layout-id="${layoutId}">
-                                                Enter
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-
-                        // Add the "Add Layout" button to the end
-                        layoutHTML += `
-                            <div class="col-md-3 layout-item">
-                                <div class="card bg-white card-layout">
-                                    <button class="add-image-btn">
-                                        <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                        <span class="add-image-text">Add Layout</span>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-
-                        // Find the layout container and update its content
-                        const layoutSection = document.getElementById('layout1Container');
-                        if (layoutSection) {
-                            layoutSection.innerHTML = layoutHTML;
-                        } else {
-                            console.error('Layout section not found');
-                        }
+                        location.reload();
                     }
                 })
                 .catch(error => {

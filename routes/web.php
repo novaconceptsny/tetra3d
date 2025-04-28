@@ -58,6 +58,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/photo', 'PhotoController@index')->name('photo.index');
     Route::post('photo/destroy/{id}', 'PhotoController@destroy')->name('photo.destroy');
+    Route::post('/photo/edit/{id}', 'PhotoController@update')->name('photo.update');
 
     Route::post('/projects/{project}/collections', [PhotoController::class, 'updateCollections'])->name('projects.collections.update');
 

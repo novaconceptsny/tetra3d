@@ -84,6 +84,9 @@ body {
     text-decoration: none;
     display: flex;
     justify-content: space-between;
+    &:hover{
+        color: #203DCE;
+    }
 }
 .add-btn {
     width: 100%;
@@ -172,7 +175,7 @@ body {
     .card-text {
         small {
             color: $color_3;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: normal;
         }
     }
@@ -350,15 +353,11 @@ body {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: $background-color_8;
     border-radius: 50%;
     margin-bottom: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: $background-color_8;
     border-radius: 50%;
     margin-bottom: 5px;
     display: flex;
@@ -366,7 +365,8 @@ body {
     justify-content: center;
     width: 30px;
     height: 30px;
-    background-color: $background-color_10;
+    opacity: 0.5;
+    background-color: #203DCE;
     border-radius: 50%;
     margin-right: 10px;
     i {

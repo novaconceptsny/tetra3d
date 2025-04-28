@@ -134,15 +134,15 @@
 
         }
 
-        function setGridLayout() {
-            const cardCols = document.querySelectorAll('.card-row .card-col');
-            cardCols.forEach(col => {
-                col.classList.remove('col-12');
-                col.classList.add('col-md-6');
-                col.classList.add('fix-height');
-            });
-
-        }
+        // function setGridLayout() {
+        //     const cardCols = document.querySelectorAll('.card-row .card-col');
+        //     cardCols.forEach(col => {
+        //         col.classList.remove('col-12');
+        //         col.classList.add('col-md-6');
+        //         col.classList.add('fix-height');
+        //     });
+        //
+        // }
 
         document.addEventListener("DOMContentLoaded", function () {
             const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));

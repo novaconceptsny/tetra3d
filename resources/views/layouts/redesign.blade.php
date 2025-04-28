@@ -34,7 +34,7 @@
 
     @include('include.common.header')
 
-    <main id="site__body" style="margin-top: 52px">
+    <main id="site__body" style="margin-top: 49px">
         @yield('content')
         @yield('modellist')
         <livewire:modals.base-modal />
