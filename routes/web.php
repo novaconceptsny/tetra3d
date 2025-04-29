@@ -58,6 +58,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/photo', 'PhotoController@index')->name('photo.index');
     Route::post('photo/destroy/{id}', 'PhotoController@destroy')->name('photo.destroy');
+    Route::post('/photo/store', [PhotoController::class, 'store'])->name('photo.store');
     Route::post('/photo/edit/{id}', 'PhotoController@update')->name('photo.update');
 
     Route::post('/projects/{project}/collections', [PhotoController::class, 'updateCollections'])->name('projects.collections.update');
@@ -106,3 +107,5 @@ Route::group([
     Route::patch('/tours/{tour}/toggle-model', 'TourController@toggleModel')
         ->name('backend.tours.toggle-model');
 });
+
+

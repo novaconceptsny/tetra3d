@@ -569,37 +569,40 @@
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const img = new Image();
-                    const imageData = {
-                        id: generateUniqueId(),
-                        src: e.target.result,
-                        name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
-                        corners: calculateDefaultCorners(),
-                        width: img.width,
-                        height: img.height,
-                        boundingBoxTop: 0,
-                        boundingBoxLeft: 0,
-                        boundingBoxWidth: 0,
-                        boundingBoxHeight: 0
-                    };
-                    selectedImages.push(imageData);
+                    img.onload = function() {
+                        const imageData = {
+                            id: generateUniqueId(),
+                            src: e.target.result,
+                            name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
+                            corners: calculateDefaultCorners(),
+                            width: img.width,
+                            height: img.height,
+                            boundingBoxTop: 0,
+                            boundingBoxLeft: 0,
+                            boundingBoxWidth: 0,
+                            boundingBoxHeight: 0
+                        };
+                        selectedImages.push(imageData);
 
-                    const previewDiv = document.createElement('div');
-                    previewDiv.classList.add('image-preview');
-                    previewDiv.innerHTML = `
-                        <div class="preview-header">
-                            <input type="text"
-                                   class="form-control image-name-input"
-                                   value="${imageData.name}"
-                                   onchange="updateImageName(this, ${selectedImages.length - 1})">
-                            <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
-                                <i class="fas fa-times"></i>
+                        const previewDiv = document.createElement('div');
+                        previewDiv.classList.add('image-preview');
+                        previewDiv.innerHTML = `
+                            <div class="preview-header">
+                                <input type="text" 
+                                       class="form-control image-name-input" 
+                                       value="${imageData.name}"
+                                       onchange="updateImageName(this, ${selectedImages.length - 1})">
+                                <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
+                                    <i class="fas fa-times"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="preview-image">
-                            <img src="${imageData.src}" alt="${imageData.name}" class="img-fluid">
-                        </div>
-                    `;
-                    previewContainer.appendChild(previewDiv);
+                            <div class="preview-image">
+                                <img src="${imageData.src}" alt="${imageData.name}" class="img-fluid">
+                            </div>
+                        `;
+                        previewContainer.appendChild(previewDiv);
+                    };
+                    img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
@@ -616,84 +619,113 @@
     }
 
     function saveImages() {
-        const photosContainer = document.getElementById('photosContainer');
+        const formData = new FormData();
+        
+        // Add project_id to FormData
+        formData.append('project_id', document.getElementById('project-id').value);
+        
+        console.log(selectedImages);
+        // Add each image to FormData
+        selectedImages.forEach((imageData, index) => {
+            // Convert base64 to blob
+            const base64Data = imageData.src.split(',')[1];
+            const byteCharacters = atob(base64Data);
+            const byteArrays = [];
+            
+            for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+                const slice = byteCharacters.slice(offset, offset + 512);
+                const byteNumbers = new Array(slice.length);
+                
+                for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+                
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+            
+            const blob = new Blob(byteArrays, { type: 'image/jpeg' });
+            const file = new File([blob], imageData.name + '.jpg', { type: 'image/jpeg' });
+            
+            // Add file and metadata to FormData
+            formData.append(`images[${index}]`, file);
+            formData.append(`names[${index}]`, imageData.name);
+            formData.append(`widths[${index}]`, imageData.width || '0');
+            formData.append(`heights[${index}]`, imageData.height || '0');
+            formData.append(`boundingBoxTop[${index}]`, imageData.boundingBoxTop || '0');
+            formData.append(`boundingBoxLeft[${index}]`, imageData.boundingBoxLeft || '0');
+            formData.append(`boundingBoxWidth[${index}]`, imageData.boundingBoxWidth || '0');
+            formData.append(`boundingBoxHeight[${index}]`, imageData.boundingBoxHeight || '0');
+            formData.append(`corners[${index}]`, JSON.stringify(imageData.corners));
 
-        // Add each photo to the container
-        selectedImages.forEach(imageData => {
-            const colDiv = document.createElement('div');
-            colDiv.classList.add('col-md-3', 'photo-item', 'item-new');
-            colDiv.dataset.module = 'photo';
-            colDiv.dataset.id = `${imageData.id}`;
-
-            colDiv.innerHTML = `
-                <div class="card shadow-sm photo-card">
-                    <div class="overflow-hidden img-home">
-                        <img src="${imageData.src}" class="card-img-top img-fluid" alt="${imageData.name}">
-                    </div>
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <p class="card-text">${imageData.name}</p>
-                        <div class="dropdown">
-                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
-                                    data-title="${imageData.name}"
-                                    data-image="${imageData.src}"
-                                    data-photo-id="${imageData.id}">Surface Size</a></li>
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
-                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            `;
-            photosContainer.appendChild(colDiv);
         });
 
-        const photosContainer2 = document.getElementById('photosContainer2');
+        // Add CSRF token
+        const token = document.querySelector('meta[name="csrf-token"]').content;
 
-        // Add each photo to the container
-        selectedImages.forEach(imageData => {
-            const colDiv = document.createElement('div');
-            colDiv.classList.add('col-md-3', 'photo-item', 'item-new');
-            colDiv.dataset.module = 'photo';
-            colDiv.dataset.id = `${imageData.id}`;
-            colDiv.innerHTML = `
-                <div class="card shadow-sm photo-card">
-                    <div class="overflow-hidden img-home">
-                        <img src="${imageData.src}" class="card-img-top img-fluid" alt="${imageData.name}">
-                    </div>
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <p class="card-text">${imageData.name}</p>
-                        <div class="dropdown">
-                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
-                                    data-title="${imageData.name}"
-                                    data-image="${imageData.src}"
-                                    data-photo-id="${imageData.id}">Surface Size</a></li>
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
-                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                            </ul>
+        // Send the FormData to the server
+        fetch('/photo/store', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add each photo to the containers
+                selectedImages.forEach(imageData => {
+                    const colDiv = document.createElement('div');
+                    colDiv.classList.add('col-md-3', 'photo-item', 'item-new');
+                    colDiv.dataset.module = 'photo';
+                    colDiv.dataset.id = `${imageData.id}`;
+
+                    colDiv.innerHTML = `
+                        <div class="card shadow-sm photo-card">
+                            <div class="overflow-hidden img-home">
+                                <img src="${imageData.src}" class="card-img-top img-fluid" alt="${imageData.name}">
+                            </div>
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <p class="card-text">${imageData.name}</p>
+                                <div class="dropdown">
+                                    <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v ms-auto"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
+                                            data-title="${imageData.name}"
+                                            data-image="${imageData.src}"
+                                            data-photo-id="${imageData.id}">Surface Size</a></li>
+                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            `;
-            photosContainer2.appendChild(colDiv);
+                    `;
+                    document.getElementById('photosContainer').appendChild(colDiv);
+                    document.getElementById('photosContainer2').appendChild(colDiv.cloneNode(true));
+                });
+
+                photosData = [...photosData, ...selectedImages];
+                // Reset modal
+                selectedImages = [];
+                document.getElementById('imagePreviewContainer').innerHTML = '';
+                document.getElementById('imageInput').value = '';
+
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
+                modal.hide();
+            } else {
+                alert('Error saving images: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving images');
         });
-
-        photosData = [...photosData, ...selectedImages];
-        // Reset modal
-        selectedImages = [];
-        document.getElementById('imagePreviewContainer').innerHTML = '';
-        document.getElementById('imageInput').value = '';
-
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
-        modal.hide();
     }
 
     let itemToDelete = '';
