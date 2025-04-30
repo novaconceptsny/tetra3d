@@ -26,6 +26,18 @@ let saveAndReturnBtn = document.getElementById('save-and-return');
 // Add this variable at the top of your file
 let isAreaVisible = false;
 
+// Modify the variables at the top of the file
+let guides = {
+    horizontal: [],
+    vertical: []
+};
+let isDraggingGuide = false;
+let activeGuide = null;
+let guideStartPos = { x: 0, y: 0 };
+
+// Add this variable at the top of the file with other state variables
+let areGuidesVisible = true;
+
 function getId(item = "artwork") {
     return `${item}-${Math.random().toString(32).slice(-4)}`;
 }
@@ -140,7 +152,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
     const photoId = canvasData.photoId;
     const layoutId = canvasData.layoutId;
-    console.log(assignedArtworks,photoId,  "assignedArtworks")
+    console.log(assignedArtworks, photoId, "assignedArtworks")
     let artworkLoaded = assignedArtworks.length > 0;
     const ctx = imageCanvas.getContext('2d');
     const surface = canvasData.surface;
@@ -211,6 +223,22 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             imageCanvas.style.cursor = 'move';
             return;
         }
+
+        // Check if we're clicking near any guide
+        const clickedHorzGuide = guides.horizontal.find(guide =>
+            Math.abs(guide.y - y) < 10
+        );
+        const clickedVertGuide = guides.vertical.find(guide =>
+            Math.abs(guide.x - x) < 10
+        );
+
+        if (clickedHorzGuide || clickedVertGuide) {
+            isDraggingGuide = true;
+            activeGuide = clickedHorzGuide || clickedVertGuide;
+            guideStartPos = { x, y };
+            imageCanvas.style.cursor = clickedHorzGuide ? 'ns-resize' : 'ew-resize';
+            return;
+        }
     });
 
     // Modify the mousemove event handler
@@ -275,10 +303,28 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             return;
         }
 
+        if (isDraggingGuide && activeGuide) {
+            if (activeGuide.hasOwnProperty('y')) {
+                activeGuide.y = y;
+            } else {
+                activeGuide.x = x;
+            }
+            renderAllArtworks();
+            return;
+        }
 
-        // Change cursor style based on hover and drag state
-        if (isArtworkDragging) {
-            imageCanvas.style.cursor = 'move';
+        // Update cursor based on guide proximity
+        const nearHorzGuide = guides.horizontal.find(guide =>
+            Math.abs(guide.y - y) < 10
+        );
+        const nearVertGuide = guides.vertical.find(guide =>
+            Math.abs(guide.x - x) < 10
+        );
+
+        if (nearHorzGuide) {
+            imageCanvas.style.cursor = 'ns-resize';
+        } else if (nearVertGuide) {
+            imageCanvas.style.cursor = 'ew-resize';
         } else {
             imageCanvas.style.cursor = 'default';
         }
@@ -287,16 +333,28 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
     // Update mouseup event handler
     imageCanvas.addEventListener('mouseup', function () {
+        // Handle artwork drag end
         if (lastDragOperation) {
             cancelAnimationFrame(lastDragOperation);
             lastDragOperation = null;
         }
 
-        isArtworkDragging = false;
-        if (warpedArtwork) {
-            updateTransformedArtwork(warpedArtwork);
-            warpedArtwork = null;
+        if (isArtworkDragging) {
+            isArtworkDragging = false;
+            if (warpedArtwork) {
+                updateTransformedArtwork(warpedArtwork);
+                warpedArtwork = null;
+            }
         }
+
+        // Handle guide drag end
+        if (isDraggingGuide) {
+            isDraggingGuide = false;
+            activeGuide = null;
+            renderAllArtworks(); // Ensure final position is rendered
+        }
+
+        // Reset cursor regardless of what was being dragged
         imageCanvas.style.cursor = 'default';
     });
 
@@ -386,6 +444,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
         ctx.drawImage(img, 0, 0, imageCanvas.width, imageCanvas.height);
         drawPolygon(ctx, srcPoints);
+        drawGuides(ctx);
 
         // Render each artwork
         assignedArtworks.forEach(artwork => {
@@ -606,14 +665,162 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             },
             body: JSON.stringify(payload)
         })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
+    // Add this function after drawGuides
+    function addHorizontalGuide() {
+        const newGuide = {
+            y: mainHeight / 2,
+            id: guides.horizontal.length,
+            type: 'horizontal'
+        };
+        guides.horizontal.push(newGuide);
+        renderAllArtworks(); // This will redraw everything including the new guide
+    }
+
+    // Add this function to handle vertical guides
+    function addVerticalGuide() {
+        const newGuide = {
+            x: mainWidth / 2,
+            id: guides.vertical.length,
+            type: 'vertical'
+        };
+        guides.vertical.push(newGuide);
+        renderAllArtworks();
+    }
+
+    // Update the drawGuides function to handle both types
+    function drawGuides(ctx) {
+        if (!areGuidesVisible) return;
+
+        // Draw horizontal guides
+        guides.horizontal.forEach(guide => {
+            ctx.beginPath();
+            ctx.moveTo(0, guide.y);
+            ctx.lineTo(mainWidth, guide.y);
+            ctx.strokeStyle = '#FF4444';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Draw measurements on both ends
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#FF4444';
+            ctx.textAlign = 'left';
+
+            const padding = 2;
+            const metrics = ctx.measureText('0 cm');
+            const textHeight = 14;
+
+            // Left label background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(
+                5 - padding,
+                guide.y - textHeight + padding,
+                metrics.width + (padding * 2),
+                textHeight + (padding * 2)
+            );
+
+            // Right label background
+            ctx.fillRect(
+                mainWidth - metrics.width - 5 - padding,
+                guide.y - textHeight + padding,
+                metrics.width + (padding * 2),
+                textHeight + (padding * 2)
+            );
+
+            // Draw text
+            ctx.fillStyle = '#FF4444';
+            ctx.fillText('0 cm', 5, guide.y);
+            ctx.textAlign = 'right';
+            ctx.fillText('0 cm', mainWidth - 5, guide.y);
         });
+
+        // Draw vertical guides
+        guides.vertical.forEach(guide => {
+            ctx.beginPath();
+            ctx.moveTo(guide.x, 0);
+            ctx.lineTo(guide.x, mainHeight);
+            ctx.strokeStyle = '#4444FF';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Draw measurements at top and bottom
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#4444FF';
+            ctx.textAlign = 'center';
+
+            const padding = 2;
+            const metrics = ctx.measureText('0 cm');
+            const textHeight = 14;
+
+            // Top label background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(
+                guide.x - (metrics.width / 2) - padding,
+                5,
+                metrics.width + (padding * 2),
+                textHeight + (padding * 2)
+            );
+
+            // Bottom label background
+            ctx.fillRect(
+                guide.x - (metrics.width / 2) - padding,
+                mainHeight - textHeight - 5 - padding,
+                metrics.width + (padding * 2),
+                textHeight + (padding * 2)
+            );
+
+            // Draw text
+            ctx.fillStyle = '#4444FF';
+            ctx.fillText('0 cm', guide.x, textHeight + 5);
+            ctx.fillText('0 cm', guide.x, mainHeight - 5);
+        });
+    }
+
+    // Update the addHorizontalGuide function
+    function addHorizontalGuide() {
+        const newGuide = {
+            y: mainHeight / 2,
+            id: guides.horizontal.length,
+            type: 'horizontal'
+        };
+        guides.horizontal.push(newGuide);
+        renderAllArtworks();
+    }
+
+    // Add the event listener for vertical guide button
+    document.getElementById('add-vert-guide').addEventListener('click', function () {
+        addVerticalGuide();
+    });
+
+    document.getElementById('add-horz-guide').addEventListener('click', function () {
+        addHorizontalGuide();
+    });
+
+    // Add this event listener with your other initialization code
+    document.getElementById('toggle-guides').addEventListener('click', function() {
+        const button = this;
+        areGuidesVisible = !areGuidesVisible;
+
+        // Update button text and icon
+        if (areGuidesVisible) {
+            button.innerHTML = '<i class="fal fa-eye"></i> <i class="fal fa-arrows-alt-v"></i>';
+            button.setAttribute('data-bs-content', 'Hide Guides');
+        } else {
+            button.innerHTML = '<i class="fal fa-eye-slash"></i> <i class="fal fa-arrows-alt-v"></i>';
+            button.setAttribute('data-bs-content', 'Show Guides');
+        }
+
+        // Redraw the canvas to reflect the change
+        renderAllArtworks();
     });
 
 });
