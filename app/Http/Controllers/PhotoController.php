@@ -252,7 +252,7 @@ class PhotoController extends Controller
                     'photo_id' => $photo['id'],
                     'project_id' => $request->project_id,
                     'layout_id' => $layout->id,
-                    'thumbnail_url' => $photo['src']
+                    'thumbnail_url' => $photo['background_url']
                 ];
             }
 
