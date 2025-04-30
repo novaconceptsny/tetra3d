@@ -12,6 +12,7 @@ class ArtworkPhotoState extends Model
     protected $fillable = [
         'artwork_id',
         'photo_state_id',
+        'surface_id',
         'pos'
     ];
 
