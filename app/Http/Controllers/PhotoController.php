@@ -47,6 +47,7 @@ class PhotoController extends Controller
                         $layoutPhotos[$layout->id] = [
                             'layout_id' => $layout->id,
                             'name' => $layout->name,
+                            'thumbnail_url' => $state->thumbnail_url,
                             'photos' => []
                         ];
                     }

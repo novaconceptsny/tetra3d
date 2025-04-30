@@ -125,7 +125,7 @@
                                 <div class="col-md-3 layout-item">
                                     <div class="card shadow-sm bg-white image-item">
                                         <div class="overflow-hidden img-home">
-                                            <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                            <img src="{{ $layout['thumbnail_url'] }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
                                         </div>
                                         <div class="card-body d-flex justify-content-between align-items-end">
                                             <p class="card-text">

@@ -24,7 +24,7 @@ let lastDragOperation = null;
 
 let saveAndReturnBtn = document.getElementById('save-and-return');
 // Add this variable at the top of your file
-let isAreaVisible = true;
+let isAreaVisible = false;
 
 function getId(item = "artwork") {
     return `${item}-${Math.random().toString(32).slice(-4)}`;
@@ -585,15 +585,19 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     }
 
     saveAndReturnBtn.addEventListener('click', function () {
+        // Get the canvas thumbnail as a base64 string
+
+        const thumbnail = imageCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is the quality (0-1)
+
         let payload = {
             "_token": document.querySelector('meta[name="csrf-token"]').content,
             "photoId": photoId,
             "assigned_artwork": assignedArtworks,
-            "layout_id": layoutId
+            "layout_id": layoutId,
+            "thumbnail": thumbnail
         };
         payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
 
-        // Replace fakeFormPost with fetch
         fetch(updateEndpoint, {
             method: 'POST',
             headers: {
@@ -609,7 +613,6 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         })
         .catch(error => {
             console.error('Error:', error);
-            // alert('Failed to save changes');
         });
     });
 

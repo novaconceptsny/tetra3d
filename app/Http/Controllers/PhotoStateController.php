@@ -7,6 +7,8 @@ use App\Models\Project;
 use App\Models\ArtworkPhotoState;
 use App\Models\PhotoState;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PhotoStateController extends Controller
 {
@@ -95,6 +97,31 @@ class PhotoStateController extends Controller
                          
             // Log the incoming data
             \Log::info('Assigned Artwork:', ['data' => $assignedArtworks]);
+
+            // Decode the base64 thumbnail
+            $thumbnailData = $request->input('thumbnail');
+            
+            if ($thumbnailData) {
+                // Remove the data:image/jpeg;base64, part
+                $thumbnailData = preg_replace('/^data:image\/\w+;base64,/', '', $thumbnailData);
+                $thumbnailData = base64_decode($thumbnailData);
+                
+                // Create directory path using photo_state_id with thumbnail folder
+                $dirPath = 'media/photo_states/' . $photoState->id . '/thumbnail';
+                
+                // Use thumbnail.jpg as filename
+                $filename = $dirPath . '/thumbnail.jpg';
+                
+                // Ensure the directory exists
+                Storage::disk('public')->makeDirectory($dirPath);
+                
+                // Store the thumbnail
+                Storage::disk('public')->put($filename, $thumbnailData);
+                
+                // Update your photo state model with the thumbnail path
+                $photoState->thumbnail_url = '/storage/' . $filename;
+                $photoState->save();
+            }
 
             // Begin transaction
             \DB::beginTransaction();
