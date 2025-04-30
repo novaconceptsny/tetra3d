@@ -19,21 +19,6 @@ class PhotoController extends Controller
             ->withCount('contributors')
             ->first();
         $firstTour    = $project->tours->first();
-        $latestLayout = $project->layouts()->latest()->first();
-
-        if (! $latestLayout) {
-            $project->layouts()->create([
-                'name'    => 'Layout_' . ($project->layouts()->count() + 1),
-                'tour_id' => $firstTour->id,
-                'user_id' => auth()->id(),
-            ]);
-
-            // Reload project to get the new layout
-            $project = Project::relevant()
-                ->with(['company', 'tours', 'artworkCollections', 'layouts'])
-                ->withCount('contributors')
-                ->first();
-        }
 
         // Get surfaces and artwork collections
         $surfaces = Surface::where('company_id', $project->company_id)
@@ -72,6 +57,7 @@ class PhotoController extends Controller
             $layoutPhotos = [];
         }
 
+ 
         return view('photo.index', compact(
             'artworkCollections',
             'project',
@@ -244,28 +230,21 @@ class PhotoController extends Controller
             $project = Project::findOrFail($request->project_id);
             $firstTour = $project->tours->first();
 
-            // Create new layout if needed
-            if ($project->layouts->isEmpty()) {
-                if (!$firstTour) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'No tours found for this project'
-                    ], 422);
-                }
-
-                $layout = $project->layouts()->create([
-                    'name' => 'Layout_1',
-                    'tour_id' => $firstTour->id,
-                    'user_id' => auth()->id()
-                ]);
-            } else {
-                $layout = $project->layouts()->latest()->first();
+            if (!$firstTour) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tours found for this project'
+                ], 422);
             }
 
-            // Delete existing photo state for this project if exists
-            PhotoState::where('project_id', $request->project_id)->delete();
+            // Create a new layout
+            $layout = $project->layouts()->create([
+                'name' => 'Layout_' . ($project->layouts()->count() + 1),
+                'tour_id' => $firstTour->id,
+                'user_id' => auth()->id()
+            ]);
 
-            // Create new photo states
+            // Create new photo states without deleting existing ones
             $photoStates = [];
             foreach ($request->photos as $photo) {
                 $photoStates[] = [

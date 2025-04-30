@@ -144,7 +144,7 @@
                                 </div>
                             @endif
                         @endforeach
-                        @if(count($layout['photos']) < 4)
+                        @if($loop->last)
                             <div class="col-md-3 layout-item">
                                 <div class="card bg-white card-layout">
                                     <button class="add-image-btn">
