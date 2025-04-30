@@ -676,49 +676,7 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Add each photo to the containers
-                selectedImages.forEach(imageData => {
-                    const colDiv = document.createElement('div');
-                    colDiv.classList.add('col-md-3', 'photo-item', 'item-new');
-                    colDiv.dataset.module = 'photo';
-                    colDiv.dataset.id = `${imageData.id}`;
-
-                    colDiv.innerHTML = `
-                        <div class="card shadow-sm photo-card">
-                            <div class="overflow-hidden img-home">
-                                <img src="${imageData.src}" class="card-img-top img-fluid" alt="${imageData.name}">
-                            </div>
-                            <div class="card-body d-flex justify-content-between align-items-center">
-                                <p class="card-text">${imageData.name}</p>
-                                <div class="dropdown">
-                                    <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v ms-auto"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
-                                            data-title="${imageData.name}"
-                                            data-image="${imageData.src}"
-                                            data-photo-id="${imageData.id}">Surface Size</a></li>
-                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
-                                        <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    document.getElementById('photosContainer').appendChild(colDiv);
-                    document.getElementById('photosContainer2').appendChild(colDiv.cloneNode(true));
-                });
-
-                photosData = [...photosData, ...selectedImages];
-                // Reset modal
-                selectedImages = [];
-                document.getElementById('imagePreviewContainer').innerHTML = '';
-                document.getElementById('imageInput').value = '';
-
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
-                modal.hide();
+                location.reload();
             } else {
                 alert('Error saving images: ' + data.message);
             }
