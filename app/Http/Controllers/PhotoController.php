@@ -47,11 +47,18 @@ class PhotoController extends Controller
                         $layoutPhotos[$layout->id] = [
                             'layout_id' => $layout->id,
                             'name' => $layout->name,
-                            'thumbnail_url' => $state->thumbnail_url,
+                            'thumbnail_urls' => [],
                             'photos' => []
                         ];
                     }
-                    $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
+                    // Add thumbnail URL to the array if it exists and isn't already included
+                    if ($state->thumbnail_url && !in_array($state->thumbnail_url, $layoutPhotos[$layout->id]['thumbnail_urls'])) {
+                        $layoutPhotos[$layout->id]['thumbnail_urls'][] = $state->thumbnail_url;
+                    }
+                    // Add photo ID if not already included
+                    if (!in_array($state->photo_id, $layoutPhotos[$layout->id]['photos'])) {
+                        $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
+                    }
                 }
             }
         } else {
@@ -252,7 +259,7 @@ class PhotoController extends Controller
                     'photo_id' => $photo['id'],
                     'project_id' => $request->project_id,
                     'layout_id' => $layout->id,
-                    'thumbnail_url' => $photo['background_url']
+                    'thumbnail_url' => $photo['src']
                 ];
             }
 

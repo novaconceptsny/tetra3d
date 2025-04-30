@@ -117,7 +117,7 @@
                 <div class="layout-section mt-5">
                     <div class="title-box">{{ $layout['name'] }}</div>
                     <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout['layout_id'] }}">
-                        @foreach($layout['photos'] as $photoId)
+                        @foreach($layout['photos'] as $index => $photoId)
                             @php
                                 $photo = $photos->firstWhere('id', $photoId);
                             @endphp
@@ -125,7 +125,9 @@
                                 <div class="col-md-3 layout-item">
                                     <div class="card shadow-sm bg-white image-item">
                                         <div class="overflow-hidden img-home">
-                                            <img src="{{ $layout['thumbnail_url'] }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                            @if(count($layout['thumbnail_urls']) > $index)
+                                                <img src="{{ $layout['thumbnail_urls'][$index] }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                            @endif
                                         </div>
                                         <div class="card-body d-flex justify-content-between align-items-end">
                                             <p class="card-text">
@@ -517,6 +519,8 @@
 
     // Initialize photosData with existing photos
     const existing_photos = @json($photos);
+    const layoutPhotos = @json($layoutPhotos);
+    console.log(layoutPhotos);
     if (existing_photos && existing_photos.length > 0) {
         existing_photos.forEach(photo => {
             photosData.push({
