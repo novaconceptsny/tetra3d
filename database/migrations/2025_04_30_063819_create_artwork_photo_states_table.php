@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('artwork_photo_states', function (Blueprint $table) {
             $table->id();
             $table->foreignId('artwork_id')->constrained()->onDelete('cascade');
-            $table->foreignId('photo_id')->constrained()->onDelete('cascade');
+            $table->foreignId('photo_state_id')->constrained()->onDelete('cascade');
             $table->json('pos');
             $table->timestamps();
         });

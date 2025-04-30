@@ -11,7 +11,7 @@ class ArtworkPhotoState extends Model
 
     protected $fillable = [
         'artwork_id',
-        'photo_id',
+        'photo_state_id',
         'pos'
     ];
 
@@ -24,9 +24,9 @@ class ArtworkPhotoState extends Model
         return $this->belongsTo(Artwork::class);
     }
 
-    public function photo()
+    public function photoState()
     {
-        return $this->belongsTo(Photo::class);
+        return $this->belongsTo(PhotoState::class);
     }
 
 }

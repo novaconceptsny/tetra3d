@@ -139,6 +139,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     const assignedArtworks = canvasData.assignedArtworks;
 
     const photoId = canvasData.photoId;
+    const layoutId = canvasData.layoutId;
     console.log(assignedArtworks,photoId,  "assignedArtworks")
     let artworkLoaded = assignedArtworks.length > 0;
     const ctx = imageCanvas.getContext('2d');
@@ -588,6 +589,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             "_token": document.querySelector('meta[name="csrf-token"]').content,
             "photoId": photoId,
             "assigned_artwork": assignedArtworks,
+            "layout_id": layoutId
         };
         payload.assigned_artwork = JSON.stringify(payload.assigned_artwork);
 
@@ -607,7 +609,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Failed to save changes');
+            // alert('Failed to save changes');
         });
     });
 

@@ -5,6 +5,7 @@ use App\Models\Layout;
 use App\Models\Photo;
 use App\Models\Project;
 use App\Models\ArtworkPhotoState;
+use App\Models\PhotoState;
 use Illuminate\Http\Request;
 
 class PhotoStateController extends Controller
@@ -17,18 +18,23 @@ class PhotoStateController extends Controller
                 throw new \Exception('Layout ID is required');
             }
 
-            $layout  = Layout::findOrFail($layoutId);
+            $layout = Layout::findOrFail($layoutId);
             $project = Project::findOrFail($layout->project_id);
 
-            // Fetch assigned artworks from artwork_photo_state table
-            $assignedArtworks = ArtworkPhotoState::where('photo_id', $photo->id)
-                ->with('artwork') // Make sure you have the relationship defined in the model
+            // Get the photo state
+            $photoState = PhotoState::where('layout_id', $layoutId)
+                ->where('photo_id', $photo->id)
+                ->firstOrFail();
+
+            // Fetch assigned artworks from artwork_photo_state table using photo_state_id
+            $assignedArtworks = ArtworkPhotoState::where('photo_state_id', $photoState->id)
+                ->with('artwork')
                 ->get()
                 ->map(function ($state) {
                     return [
                         'pos' => $state->pos,
                         'title' => $state->artwork->title,
-                        'imgUrl' => $state->artwork->image_url, // Adjust this field name based on your artwork model
+                        'imgUrl' => $state->artwork->image_url,
                         'artworkId' => (string) $state->artwork_id,
                     ];
                 })
@@ -73,45 +79,61 @@ class PhotoStateController extends Controller
     public function update(Request $request, Photo $photo)
     {
         try {
+            // Validate the request
+            $request->validate([
+                'layout_id' => 'required',
+                'assigned_artwork' => 'required|string'
+            ]);
+
             $assignedArtworks = json_decode($request->assigned_artwork, true);
-            
+            $layoutId = $request->layout_id;
+
+            // Get the photo state
+            $photoState = PhotoState::where('layout_id', $layoutId)
+                ->where('photo_id', $photo->id)
+                ->firstOrFail();
+                         
             // Log the incoming data
             \Log::info('Assigned Artwork:', ['data' => $assignedArtworks]);
 
             // Begin transaction
             \DB::beginTransaction();
 
-            // Clear existing states for this photo
-            ArtworkPhotoState::where('photo_id', $photo->id)->delete();
+            try {
+                // Clear existing states for this photo_state
+                ArtworkPhotoState::where('photo_state_id', $photoState->id)->delete();
 
-            // Store each artwork state
-            foreach ($assignedArtworks as $artwork) {
-                // Ensure pos is in the correct format
-                $position = [
-                    'x' => $artwork['pos']['x'],
-                    'y' => $artwork['pos']['y']
-                ];
+                // Store each artwork state
+                foreach ($assignedArtworks as $artwork) {
+                    // Ensure pos is in the correct format
+                    $position = [
+                        'x' => $artwork['pos']['x'],
+                        'y' => $artwork['pos']['y']
+                    ];
 
-                ArtworkPhotoState::create([
-                    'artwork_id' => $artwork['artworkId'],
-                    'photo_id' => $photo->id,
-                    'pos' => $position  // This will be stored as {"x": 48.905914306640625, "y": 239.74022674560547}
-                ]);
+                    ArtworkPhotoState::create([
+                        'artwork_id' => $artwork['artworkId'],
+                        'photo_state_id' => $photoState->id,
+                        'pos' => $position
+                    ]);
+                }
+
+                // Commit transaction
+                \DB::commit();
+                
+                return redirect()->route('photo.index')->with('success', 'Photo states updated successfully');
+
+            } catch (\Exception $e) {
+                \DB::rollBack();
+                throw $e;
             }
-
-            // Commit transaction
-            \DB::commit();
-            
-            // Log the stored data for verification
-            \Log::info('Stored position data:', ['last_position' => $position]);
-            
-            return redirect()->route('photo.index')->with('success', 'Photo states updated successfully');
         } catch (\Exception $e) {
-            // Rollback transaction on error
-            \DB::rollBack();
-            
             \Log::error('Error updating photo states: ' . $e->getMessage());
-            return redirect()->route('photo.index')->with('error', 'Failed to update photo states');
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update photo states: ' . $e->getMessage()
+            ], 500);
         }
     }
 

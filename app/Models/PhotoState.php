@@ -40,4 +40,9 @@ class PhotoState extends Model
     {
         return $this->belongsTo(Layout::class);
     }
+
+    public function artworkPhotoStates()
+    {
+        return $this->hasMany(ArtworkPhotoState::class);
+    }
 } 
