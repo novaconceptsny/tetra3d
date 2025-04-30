@@ -45,7 +45,7 @@ class PhotoController extends Controller
                 if ($layout) {
                     if (!isset($layoutPhotos[$layout->id])) {
                         $layoutPhotos[$layout->id] = [
-                            'id' => $layout->id,
+                            'layout_id' => $layout->id,
                             'name' => $layout->name,
                             'photos' => []
                         ];
@@ -57,7 +57,7 @@ class PhotoController extends Controller
             $layoutPhotos = [];
         }
 
- 
+
         return view('photo.index', compact(
             'artworkCollections',
             'project',

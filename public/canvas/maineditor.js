@@ -144,7 +144,6 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     const ctx = imageCanvas.getContext('2d');
     const surface = canvasData.surface;
     const updateEndpoint = canvasData.updateEndpoint;
-    console.log(updateEndpoint, "updateEndpoint")
     const surfaceData = surface.data;
     const photoScale = mainWidth / surfaceData.bounding_box_width;
 

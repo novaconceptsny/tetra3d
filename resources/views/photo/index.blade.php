@@ -116,7 +116,7 @@
             @foreach($layoutPhotos as $layout)
                 <div class="layout-section mt-5">
                     <div class="title-box">{{ $layout['name'] }}</div>
-                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout['id'] }}">
+                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout['layout_id'] }}">
                         @foreach($layout['photos'] as $photoId)
                             @php
                                 $photo = $photos->firstWhere('id', $photoId);
@@ -134,9 +134,9 @@
                                             </p>
                                             <button type="button"
                                                     class="btn enter-link"
-                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout['id'] }})"
+                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout['layout_id'] }})"
                                                     data-photo-id="{{ $photo->id }}"
-                                                    data-layout-id="{{ $layout['id'] }}">
+                                                    data-layout-id="{{ $layout['layout_id'] }}">
                                                 Enter
                                             </button>
                                         </div>
