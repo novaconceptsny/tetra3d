@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Photo extends Model
 {
@@ -11,7 +12,7 @@ class Photo extends Model
 
     protected $fillable = [
         'project_id',
-        'layout_id',
+        'surface_id',
         'name',
         'background_url',
         'data'
@@ -26,9 +27,12 @@ class Photo extends Model
         return $this->belongsTo(Project::class);
     }
 
-    public function layout()
+    /**
+     * Get the surface that owns the photo.
+     */
+    public function surface(): BelongsTo
     {
-        return $this->belongsTo(Layout::class);
+        return $this->belongsTo(Surface::class);
     }
 
     /**
@@ -39,5 +43,13 @@ class Photo extends Model
     public function getUrl()
     {
         return asset($this->background_url);
+    }
+
+    /**
+     * Get the states for the photo.
+     */
+    public function states()
+    {
+        return $this->hasMany(PhotoState::class);
     }
 }

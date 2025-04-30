@@ -5,8 +5,10 @@ use App\Models\ArtworkCollection;
 use App\Models\Photo;
 use App\Models\Project;
 use App\Models\Surface;
+use App\Models\PhotoState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PhotoController extends Controller
 {
@@ -19,20 +21,21 @@ class PhotoController extends Controller
         $firstTour    = $project->tours->first();
         $latestLayout = $project->layouts()->latest()->first();
 
-        if (! $latestLayout || $latestLayout->photos()->count() >= 4) {
+        if (! $latestLayout) {
             $project->layouts()->create([
                 'name'    => 'Layout_' . ($project->layouts()->count() + 1),
                 'tour_id' => $firstTour->id,
                 'user_id' => auth()->id(),
             ]);
 
+            // Reload project to get the new layout
             $project = Project::relevant()
                 ->with(['company', 'tours', 'artworkCollections', 'layouts'])
                 ->withCount('contributors')
                 ->first();
         }
 
-        // Get surfaces based on company_id and tour_ids
+        // Get surfaces and artwork collections
         $surfaces = Surface::where('company_id', $project->company_id)
             ->whereIn('tour_id', $project->tours->pluck('id'))
             ->get();
@@ -40,11 +43,42 @@ class PhotoController extends Controller
         $artworkCollections = ArtworkCollection::forCompany($project->company_id)
             ->withCount('artworks')
             ->get();
-        $photos = Photo::where('project_id', $project->id)
-            ->groupBy('name')
-            ->get();
 
-        return view('photo.index', compact('artworkCollections', 'project', 'photos', 'surfaces'));
+        // Check photo state and organize photos by layout
+        $photoState = PhotoState::where('project_id', $project->id)->first();
+        
+        $photos = Photo::where('project_id', $project->id)->get();
+        $layoutPhotos = [];
+        
+        if ($photoState) {
+            // Get all photo states for this project
+            $photoStates = PhotoState::where('project_id', $project->id)->get();
+            
+            // Group photos by layout
+            foreach ($photoStates as $state) {
+                $layout = $project->layouts()->find($state->layout_id);
+                if ($layout) {
+                    if (!isset($layoutPhotos[$layout->id])) {
+                        $layoutPhotos[$layout->id] = [
+                            'id' => $layout->id,
+                            'name' => $layout->name,
+                            'photos' => []
+                        ];
+                    }
+                    $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
+                }
+            }
+        } else {
+            $layoutPhotos = [];
+        }
+
+        return view('photo.index', compact(
+            'artworkCollections',
+            'project',
+            'photos',
+            'surfaces',
+            'layoutPhotos'
+        ));
     }
 
     public function updateCollections(Request $request, Project $project)
@@ -61,164 +95,74 @@ class PhotoController extends Controller
         return redirect()->back()->with('success', 'Collection added successfully');
     }
 
-    public function duplicatePhotos(Request $request, Project $project)
+    public function update(Request $request, $id)
     {
         try {
-            return DB::transaction(function () use ($request, $project) {
-                $firstTour          = $project->tours->first();
-                $countLayoutProject = count($project->layouts);
-                if ($project->layouts->isEmpty()) {
-                    if (! $firstTour) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'No tours found for this project',
-                        ], 422);
-                    }
+            // Find the photo or fail with 404
+            $photo = Photo::findOrFail($id);
+            
+            // Decode the data from the request
+            $data = json_decode($request->input('data'), true);
+            
+            // Update the photo
+            $photo->update([
+                'surface_id' => $request->input('surface_id'),
+                'data' => [
+                    'corners' => $data['corners'],
+                    'img_width' => $data['width'],
+                    'img_height' => $data['height'],
+                    'bounding_box_top' => $data['boundingBoxTop'],
+                    'bounding_box_left' => $data['boundingBoxLeft'],
+                    'bounding_box_width' => $data['boundingBoxWidth'],
+                    'bounding_box_height' => $data['boundingBoxHeight']
+                ]
+            ]);
 
-                    $layout = $project->layouts()->create([
-                        'name'    => 'Layout_1',
-                        'tour_id' => $firstTour->id,
-                        'user_id' => auth()->id(),
-                    ]);
-                } else {
-                    $layout_id    = $request->input('layout_id');
-                    $layout_click = $project->layouts()->where('id', $layout_id)->with('photos')->first();
+            return response()->json([
+                'success' => true,
+                'message' => 'Photo updated successfully',
+                'photo' => $photo
+            ]);
 
-                    if ($layout_click->photos()->count() < 4) {
-                        $layout = $layout_click;
-                    } else {
-                        $latestLayout = $project->layouts()->latest()->first();
-
-                        if (! $latestLayout || $latestLayout->photos()->count() > 4) {
-                            $layout = $project->layouts()->create([
-                                'name'    => 'Layout_' . ($project->layouts()->count() + 1),
-                                'tour_id' => $firstTour->id,
-                                'user_id' => auth()->id(),
-                            ]);
-                        } else {
-                            $layout = $latestLayout;
-                        }
-                    }
-                }
-
-                // Check if project has no layouts and create default layout
-//                if ($project->layouts->isEmpty()) {
-//                    if (!$firstTour) {
-//                        return response()->json([
-//                            'success' => false,
-//                            'message' => 'No tours found for this project'
-//                        ], 422);
-//                    }
-//
-//                    $layout = $project->layouts()->create([
-//                        'name' => 'Layout_1',
-//                        'tour_id' => $firstTour->id,
-//                        'user_id' => auth()->id()
-//                    ]);
-//                } elseif ($request->input('layout_id') !== 'null' && !empty($request->input('layout_id'))) {
-//                    $layout_id = $request->layout_id;
-//                    $layout_click = $project->layouts()->where('id', $layout_id)->with('photos')->first();
-//                    $count_layout = count($layout_click->photos);
-//                    if ($count_layout < 4){
-//                        $layout = $layout_click;
-//                    }else{
-//                        $layout = $project->layouts()->create([
-//                            'name' => 'Layout_'.$countLayoutProject,
-//                            'tour_id' => $firstTour->id,
-//                            'user_id' => auth()->id()
-//                        ]);
-//                    }
-//                }else{
-//                    $layout = $project->layouts()->create([
-//                        'name' => 'Layout_'.$countLayoutProject,
-//                        'tour_id' => $firstTour->id,
-//                        'user_id' => auth()->id()
-//                    ]);
-//                }
-
-                // First, delete all existing photos for this project
-//                Photo::where('project_id', $project->id)->delete();
-
-                $savedPhotos = [];
-
-                if ($request->hasFile('images')) {
-                    foreach ($request->file('images') as $index => $image) {
-                        // Generate unique filename
-                        $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-
-                        // Store the file in the storage/app/public/media/photos directory
-                        $path = $image->storeAs('media/photos', $filename, 'public');
-
-                        // Parse corners JSON string into array
-                        $cornersData = json_decode($request->corners[$index], true) ?? [];
-
-                        // Create data array with image dimensions and corners
-                        $data = [
-                            'img_width'           => (string) $request->widths[$index],
-                            'img_height'          => (string) $request->heights[$index],
-                            'bounding_box_top'    => (string) $request->boundingBoxTop[$index],
-                            'bounding_box_left'   => (string) $request->boundingBoxLeft[$index],
-                            'bounding_box_width'  => (string) $request->boundingBoxWidth[$index],
-                            'bounding_box_height' => (string) $request->boundingBoxHeight[$index],
-                            'corners'             => $cornersData, // Store parsed corners data
-                        ];
-
-                        // Create new photo record with layout_id
-                        $photo = new Photo([
-                            'project_id'     => $project->id,
-                            'layout_id'      => $layout->id, // Add layout_id here
-                            'name'           => $request->names[$index],
-                            'background_url' => '/storage/' . $path,
-                            'data'           => $data,
-                        ]);
-
-                        $photo->save();
-                        $savedPhotos[] = [
-                            'id'   => $photo->id,
-                            'name' => $photo->name,
-                            'url'  => asset($photo->background_url),
-                        ];
-                    }
-                }
-
-                $latestLayoutAfter = $project->layouts()->latest()->first();
-                if (! $latestLayoutAfter || $latestLayoutAfter->photos()->count() == 4) {
-                    $project->layouts()->create([
-                        'name'    => 'Layout_' . ($project->layouts()->count() + 1),
-                        'tour_id' => $firstTour->id,
-                        'user_id' => auth()->id(),
-                    ]);
-                }
-
-                return response()->json([
-                    'success'      => true,
-                    'message'      => 'Photos duplicated successfully',
-                    'photos'       => $savedPhotos,
-                    'layout'       => $layout,
-                    'hasNewLayout' => $project->layouts->isEmpty(),
-                ]);
-            });
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Photo not found'
+            ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to duplicate photos: ' . $e->getMessage(),
+                'message' => 'Failed to update photo: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    public function update($id)
-    {
-
-        return redirect()->back()->with('success', 'Photo updated');
-    }
     public function destroy($id)
     {
-        Photo::destroy($id);
+        try {
+            DB::beginTransaction();
+            
+            // Delete the photo state first
+            PhotoState::where('photo_id', $id)->delete();
+            
+            // Then delete the photo
+            Photo::destroy($id);
+            
+            DB::commit();
 
-        return [
-            'status'  => true,
-            'message' => 'Delete Success!',
-        ];
+            return [
+                'status' => true,
+                'message' => 'Delete Success!'
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'status' => false,
+                'message' => 'Delete Failed: ' . $e->getMessage()
+            ];
+        }
     }
 
     public function store(Request $request)
@@ -288,6 +232,65 @@ class PhotoController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function storePhotoState(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $project = Project::findOrFail($request->project_id);
+            $firstTour = $project->tours->first();
+
+            // Create new layout if needed
+            if ($project->layouts->isEmpty()) {
+                if (!$firstTour) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No tours found for this project'
+                    ], 422);
+                }
+
+                $layout = $project->layouts()->create([
+                    'name' => 'Layout_1',
+                    'tour_id' => $firstTour->id,
+                    'user_id' => auth()->id()
+                ]);
+            } else {
+                $layout = $project->layouts()->latest()->first();
+            }
+
+            // Delete existing photo state for this project if exists
+            PhotoState::where('project_id', $request->project_id)->delete();
+
+            // Create new photo states
+            $photoStates = [];
+            foreach ($request->photos as $photo) {
+                $photoStates[] = [
+                    'photo_id' => $photo['id'],
+                    'project_id' => $request->project_id,
+                    'layout_id' => $layout->id,
+                    'thumbnail_url' => $photo['src']
+                ];
+            }
+
+            PhotoState::insert($photoStates);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Photo state saved successfully',
+                'layout' => $layout
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save photo state: ' . $e->getMessage()
             ], 500);
         }
     }

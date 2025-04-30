@@ -56,14 +56,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
 
-    Route::get('/photo', 'PhotoController@index')->name('photo.index');
-    Route::post('photo/destroy/{id}', 'PhotoController@destroy')->name('photo.destroy');
-    Route::post('/photo/store', [PhotoController::class, 'store'])->name('photo.store');
-    Route::post('/photo/edit/{id}', 'PhotoController@update')->name('photo.update');
-
-    Route::post('/projects/{project}/collections', [PhotoController::class, 'updateCollections'])->name('projects.collections.update');
-
-    Route::post('/projects/{project}/photos/duplicate', [PhotoController::class, 'duplicatePhotos'])->name('projects.photos.duplicate');
+    Route::controller(PhotoController::class)->group(function () {
+        Route::get('/photo', 'index')->name('photo.index');
+        Route::post('photo/destroy/{id}', 'destroy')->name('photo.destroy');
+        Route::post('/photo/store', 'store')->name('photo.store');
+        Route::post('/photo/{photo}', 'update')->name('photo.update');
+        Route::post('/photo-state/store', 'storePhotoState')->name('photo.state.store');
+        Route::post('/projects/{project}/collections/update', 'updateCollections')->name('projects.collections.update');
+    });
 
     Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
 

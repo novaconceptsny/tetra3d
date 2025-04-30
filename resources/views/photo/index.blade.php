@@ -113,34 +113,38 @@
             </div>
 
             <!-- Layout Sections -->
-            @foreach($project->layouts as $layout)
+            @foreach($layoutPhotos as $layout)
                 <div class="layout-section mt-5">
-                    <div class="title-box">{{ $layout->name }}</div>
-                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout->id }}">
-                        @foreach($layout->photos as $photo)
-                            <div class="col-md-3 layout-item">
-                                <div class="card shadow-sm bg-white image-item">
-                                    <div class="overflow-hidden img-home">
-                                        <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
-                                    </div>
-                                    <div class="card-body d-flex justify-content-between align-items-end">
-                                        <p class="card-text">
-                                            <span>{{ $photo->name }}</span><br>
-                                            <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
-                                        </p>
-                                        <button type="button"
-                                                class="btn enter-link"
-                                                onclick="navigateToPhoto({{ $photo->id }}, {{ $layout->id }})"
-                                                data-photo-id="{{ $photo->id }}"
-                                                data-layout-id="{{ $layout->id }}">
-                                            Enter
-                                        </button>
+                    <div class="title-box">{{ $layout['name'] }}</div>
+                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout['id'] }}">
+                        @foreach($layout['photos'] as $photoId)
+                            @php
+                                $photo = $photos->firstWhere('id', $photoId);
+                            @endphp
+                            @if($photo)
+                                <div class="col-md-3 layout-item">
+                                    <div class="card shadow-sm bg-white image-item">
+                                        <div class="overflow-hidden img-home">
+                                            <img src="{{ $photo->background_url }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
+                                        </div>
+                                        <div class="card-body d-flex justify-content-between align-items-end">
+                                            <p class="card-text">
+                                                <span>{{ $photo->name }}</span><br>
+                                                <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
+                                            </p>
+                                            <button type="button"
+                                                    class="btn enter-link"
+                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout['id'] }})"
+                                                    data-photo-id="{{ $photo->id }}"
+                                                    data-layout-id="{{ $layout['id'] }}">
+                                                Enter
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         @endforeach
-                        @if($layout->photos()->count() < 4)
-                        <!-- Add Layout button at the end -->
+                        @if(count($layout['photos']) < 4)
                             <div class="col-md-3 layout-item">
                                 <div class="card bg-white card-layout">
                                     <button class="add-image-btn">
@@ -154,20 +158,18 @@
                 </div>
             @endforeach
 
-            <!-- If no layouts exist, show a message or default layouts -->
-            @if($project->layouts->isEmpty())
+            <!-- If no layouts exist -->
+            @if(empty($layoutPhotos))
                 <div class="layout-section">
                     <div class="title-box">No layouts available</div>
-                    <!-- Add your default content here -->
-
-                        <div class="col-md-3 layout-item">
-                            <div class="card bg-white card-layout">
-                                <button class="add-image-btn">
-                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                    <span class="add-image-text">Add Layout</span>
-                                </button>
-                            </div>
+                    <div class="col-md-3 layout-item">
+                        <div class="card bg-white card-layout">
+                            <button class="add-image-btn">
+                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                <span class="add-image-text">Add Layout</span>
+                            </button>
                         </div>
+                    </div>
                 </div>
             @endif
         </div>
@@ -283,7 +285,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="" method="post" id="updateImage">
+                        <form action="" method="post" id="updateImage" onsubmit="return false;">
                             @csrf
                         <div class="row mb-3">
                             <div class="col-md-8">
@@ -304,7 +306,7 @@
                                     <img src="" alt="" class="modal-image d-none">
                             </div>
                             <div class="col-md-4 text-end">
-                                <button type="submit" id="saveLayout" class="btn btn-light">Save</button>
+                                <button type="button" id="saveLayout" class="btn btn-light">Save</button>
                             </div>
                         </div>
 
@@ -588,8 +590,8 @@
                         previewDiv.classList.add('image-preview');
                         previewDiv.innerHTML = `
                             <div class="preview-header">
-                                <input type="text" 
-                                       class="form-control image-name-input" 
+                                <input type="text"
+                                       class="form-control image-name-input"
                                        value="${imageData.name}"
                                        onchange="updateImageName(this, ${selectedImages.length - 1})">
                                 <div class="remove-btn" onclick="removeImage(this, ${selectedImages.length - 1})">
@@ -620,33 +622,32 @@
 
     function saveImages() {
         const formData = new FormData();
-        
+
         // Add project_id to FormData
         formData.append('project_id', document.getElementById('project-id').value);
-        
-        console.log(selectedImages);
+
         // Add each image to FormData
         selectedImages.forEach((imageData, index) => {
             // Convert base64 to blob
             const base64Data = imageData.src.split(',')[1];
             const byteCharacters = atob(base64Data);
             const byteArrays = [];
-            
+
             for (let offset = 0; offset < byteCharacters.length; offset += 512) {
                 const slice = byteCharacters.slice(offset, offset + 512);
                 const byteNumbers = new Array(slice.length);
-                
+
                 for (let i = 0; i < slice.length; i++) {
                     byteNumbers[i] = slice.charCodeAt(i);
                 }
-                
+
                 const byteArray = new Uint8Array(byteNumbers);
                 byteArrays.push(byteArray);
             }
-            
+
             const blob = new Blob(byteArrays, { type: 'image/jpeg' });
             const file = new File([blob], imageData.name + '.jpg', { type: 'image/jpeg' });
-            
+
             // Add file and metadata to FormData
             formData.append(`images[${index}]`, file);
             formData.append(`names[${index}]`, imageData.name);
@@ -888,14 +889,7 @@
         const title = button.getAttribute('data-title');
         const image = button.getAttribute('data-image');
         const photoId = button.getAttribute('data-photo-id');
-        const actionTemplate = "{{ route('photo.update', ['id' => ':id']) }}";
-        const action = actionTemplate.replace(':id', photoId);
-        const form = document.getElementById('updateImage');
-        if (form) {
-            form.setAttribute('action', action);
-        } else {
-            console.error('Form updateimage không tồn tại.');
-        }
+
         this.setAttribute('data-photo-id', photoId);
 
         const modalTitle = this.querySelector('#imageModalLabel');
@@ -1069,7 +1063,6 @@
                 points = [...endPoints];
             }
 
-            console.log('points', points);
 
             ctx.beginPath();
             ctx.strokeStyle = 'red';
@@ -1253,163 +1246,148 @@
         });
 
         // Add save button handler
-        document.getElementById('saveLayout').addEventListener('click', function() {
-            if (!widthInput || !heightInput) {
-                console.error('Width or height input not found');
+        document.getElementById('saveLayout').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Get required elements
+            const widthInput = document.getElementById('rectWidth');
+            const heightInput = document.getElementById('rectHeight');
+            const surfaceSelect = document.getElementById('surfaceId');
+            const imageModal = document.getElementById('imageModal');
+
+            // Validate required elements exist
+            if (!widthInput || !heightInput || !surfaceSelect || !imageModal) {
+                console.error('Required form elements not found');
+                alert('Error: Required form elements not found');
                 return;
             }
 
-            const titleInput = document.getElementById('titleImage');
-            const newTitle = titleInput.value;
+            // Validate width and height values
+            if (!widthInput.value || !heightInput.value) {
+                console.error('Width or height values are required');
+                alert('Please enter both width and height values');
+                return;
+            }
 
-            // Update the surface data
-            const surfaceData = {
+            // Get the photo ID from the modal
+            const photoId = imageModal.getAttribute('data-photo-id');
+            if (!photoId) {
+                console.error('Photo ID not found');
+                alert('Error: Photo ID not found');
+                return;
+            }
+
+            // Get surface ID
+            const surfaceId = surfaceSelect.value;
+
+            // Prepare the photo data
+            const photoData = {
+                corners: corners || [],
+                boundingBoxTop: backgroundImage ? parseFloat(fitImageToCanvas(backgroundImage).y) : 0,
+                boundingBoxLeft: backgroundImage ? parseFloat(fitImageToCanvas(backgroundImage).x) : 0,
+                boundingBoxWidth: backgroundImage ? parseFloat(fitImageToCanvas(backgroundImage).width) : 0,
+                boundingBoxHeight: backgroundImage ? parseFloat(fitImageToCanvas(backgroundImage).height) : 0,
                 width: parseInt(widthInput.value) || 100,
-                height: parseInt(heightInput.value) || 100,
-                rect: { ...rect },
-                title: newTitle
+                height: parseInt(heightInput.value) || 100
             };
 
-            console.log('Saving surface data:', surfaceData);
+            // Create form data
+            const formData = new FormData();
+            formData.append('data', JSON.stringify(photoData));
+            formData.append('surface_id', surfaceId);
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
 
-            // Update the image title in the card if we have a reference to it
-            if (currentImageElement) {
-                // Store corners data in the photo element's dataset
-                currentImageElement.dataset.corners = JSON.stringify(corners);
+            // Show loading state
+            const saveButton = document.getElementById('saveLayout');
+            const originalText = saveButton.textContent;
+            saveButton.textContent = 'Saving...';
+            saveButton.disabled = true;
 
-                // Update the card title
-                const cardTitle = currentImageElement.querySelector('.card-text');
-                if (cardTitle) cardTitle.textContent = newTitle;
+            // Send AJAX request
+            fetch(`/photo/${photoId}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update the UI if needed
+                    if (currentImageElement) {
+                        currentImageElement.dataset.corners = JSON.stringify(corners);
+                    }
 
-                // Update the Surface Size link data-title attribute
-                const surfaceSizeLink = currentImageElement.querySelector('[data-bs-target="#imageModal"]');
-                if (surfaceSizeLink) surfaceSizeLink.setAttribute('data-title', newTitle);
-            }
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(imageModal);
+                    if (modal) {
+                        modal.hide();
+                    }
 
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(imageModal);
-            if (modal) {
-                modal.hide();
-            }
+                    // Optional: Show success message
+                } else {
+                    throw new Error(data.message || 'Failed to update photo');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating photo:', error);
+                alert('Error saving changes: ' + error.message);
+            })
+            .finally(() => {
+                // Reset button state
+                saveButton.textContent = originalText;
+                saveButton.disabled = false;
+            });
         });
 
-        // Function to handle image duplication
-        function handleDuplication(e) {
-            const photoContainer = document.getElementById('photosContainer');
-            if (!photoContainer) {
-                console.error('Photo container not found');
+
+        function handleAddPhotoState(e) {
+            e.preventDefault();
+
+            // Get project ID from hidden input
+            const projectId = document.getElementById('project-id').value;
+
+            // Validate if we have photos data
+            if (!photosData || photosData.length === 0) {
+                alert('No photos available to save state');
                 return;
             }
 
-            const photos = photoContainer.querySelectorAll('.item-new:not(:first-child)');
-            console.log('Found photos:', photos.length);
+            // Create request data
+            const requestData = {
+                project_id: projectId,
+                photos: photosData
+            };
 
-            // Create FormData to handle file uploads
-            const formData = new FormData();
+            // Get CSRF token
+            const token = document.querySelector('meta[name="csrf-token"]').content;
 
-            // Prepare photos data and handle image uploads
-            const layoutIdClick = e.target.closest('.layout-section .row').dataset.layoutId;
-            formData.append(`layout_id`, layoutIdClick || null);
-            // const gallery = e.target.closest('.layout-section');
-            // const photos = gallery.querySelectorAll('.image-item');
-
-            if (!photos.length) {
-                alert('No images to duplicate');
-                return;
-            }
-
-
-
-            const processPhotos = Array.from(photos).map((photo, index) => {
-                const img = photo.querySelector('img');
-                // const titleElement = photo.querySelector('.card-text span');
-                const titleElement = photo.querySelector('.card-text');
-
-                if (!img || !titleElement) {
-                    console.error('Missing required elements in photo:', photo);
-                    return null;
+            // Send request to save photo state
+            fetch('/photo-state/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to show updated layout
+                    location.reload();
+                } else {
+                    throw new Error(data.message || 'Failed to save photo state');
                 }
-
-                const title = titleElement.textContent.trim();
-                const imgSrc = img.getAttribute('src');
-                if (!imgSrc || !title) {
-                    console.error('Missing image source or title');
-                    return null;
-                }
-
-                // Get natural dimensions of the image
-                const naturalWidth = img.naturalWidth;
-                const naturalHeight = img.naturalHeight;
-
-                // Get corners data from the photo's dataset
-                const cornersData = photosData[index].corners;
-
-                return fetch(imgSrc)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        formData.append(`images[]`, blob, `${title}.jpg`);
-                        formData.append(`names[]`, title);
-                        formData.append(`widths[]`, naturalWidth);
-                        formData.append(`heights[]`, naturalHeight);
-                        formData.append(`boundingBoxTop[]`, photosData[index].boundingBoxTop);
-                        formData.append(`boundingBoxLeft[]`, photosData[index].boundingBoxLeft);
-                        formData.append(`boundingBoxWidth[]`, photosData[index].boundingBoxWidth);
-                        formData.append(`boundingBoxHeight[]`, photosData[index].boundingBoxHeight);
-                        formData.append(`corners[]`, JSON.stringify(cornersData));
-                        // Add layout_id if it exists in the current layout container
-                        const layoutContainer = document.querySelector('.layout-section .row');
-                        if (layoutContainer) {
-                            const layoutId = layoutContainer.dataset.layoutId;
-                            formData.append(`layout_ids[]`, layoutId || '');
-                        }
-                        return {
-                            name: title,
-                            index: index
-                        };
-                    });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving photo state: ' + error.message);
             });
-
-            // Wait for all image processing to complete
-            Promise.all(processPhotos)
-                .then(photoData => {
-                    // Filter out any null values from failed processing
-                    photoData = photoData.filter(data => data !== null);
-
-                    if (photoData.length === 0) {
-                        throw new Error('No valid photos to process');
-                    }
-
-                    // Add this check before making the fetch request
-                    const token = document.querySelector('meta[name="csrf-token"]');
-                    if (!token) {
-                        throw new Error('CSRF token not found');
-                    }
-
-                    // Send the FormData to the server
-                    return fetch(`/projects/${projectId}/photos/duplicate`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': token.content,
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: formData
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to duplicate photos: ' + error.message);
-                });
         }
 
         // Add click handler for duplicate images button
@@ -1419,7 +1397,7 @@
         document.addEventListener('click', function(e) {
             if (e.target.closest('.add-image-btn') && e.target.closest('.card-layout')) {
                 e.preventDefault();
-                handleDuplication(e);
+                handleAddPhotoState(e);
             }
         });
 
