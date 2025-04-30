@@ -60,7 +60,8 @@
 
                     </div>
                     <div class="list-icon-action gap-2">
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" data-bs-toggle="popover"
+                        <button class="btn btn-outline-secondary btn-sm white-bg-button" 
+                                data-bs-toggle="popover"
                                 data-bs-trigger="hover focus"
                                 data-bs-placement="bottom"
                                 data-bs-content="Return">
@@ -160,6 +161,9 @@
             link.click();
         });
 
+        document.querySelector('[data-bs-content="Return"]').addEventListener('click', function() {
+            window.location.href = "{{ route('photo.index') }}";
+        });
     </script>
 
     <!-- OpenCV.js -->
