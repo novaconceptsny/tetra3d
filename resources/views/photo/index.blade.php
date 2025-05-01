@@ -272,7 +272,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="saveSurface" class="btn btn-light w-100" data-bs-dismiss="modal">Save</button>
+                        <button type="button" id="addSurfaces" class="btn btn-light w-100" data-bs-dismiss="modal">Update</button>
                     </div>
                 </div>
             </div>
@@ -783,45 +783,56 @@
     });
 
     // Xử lý khi nhấn nút Save
-    document.getElementById('saveSurface').addEventListener('click', function () {
+    document.getElementById('addSurfaces').addEventListener('click', function () {
         const surfaceName = document.getElementById('surfaceName').value;
         const surfaceWidth = document.getElementById('surfaceWidth').value;
         const surfaceHeight = document.getElementById('surfaceHeight').value;
+        const projectId = document.getElementById('project-id').value;
 
         if (surfaceName && surfaceWidth && surfaceHeight) {
-            if (currentIndex === null) {
-                // Thêm mới surface
-                const surfaceList = document.querySelector('.surfaces-section .list-group');
-                const newSurface = document.createElement('li');
-                newSurface.className = 'list-group-item d-flex justify-content-between align-items-center card surface-item';
-                newSurface.setAttribute('data-name', surfaceName);
-                newSurface.setAttribute('data-width', surfaceWidth);
-                newSurface.setAttribute('data-height', surfaceHeight);
-                newSurface.innerHTML = `
-                        <span class="surface-name">${surfaceName}</span>
-                        <div class="dropdown position-absolute top-0 end-0">
-                            <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
-                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                            </ul>
-                        </div>
-                    `;
-                surfaceList.appendChild(newSurface);
-            } else {
-                // Sửa surface
+            const formData = new FormData();
+            formData.append('name', surfaceName);
+            formData.append('width', surfaceWidth);
+            formData.append('height', surfaceHeight);
+            formData.append('project_id', projectId);
+            
+            if (currentIndex !== null) {
+                // Edit mode - add surface ID
                 const surfaceItem = document.querySelectorAll('.list-group-item')[currentIndex];
-                surfaceItem.setAttribute('data-name', surfaceName);
-                surfaceItem.setAttribute('data-width', surfaceWidth);
-                surfaceItem.setAttribute('data-height', surfaceHeight);
-                surfaceItem.querySelector('span').textContent = surfaceName;
+                const surfaceId = surfaceItem.getAttribute('data-id');
+                formData.append('surface_id', surfaceId);
             }
 
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(surfaceModal);
-            modal.hide();
+            // Get CSRF token
+            const token = document.querySelector('meta[name="csrf-token"]').content;
+
+            // Send AJAX request
+            fetch('/photo/surface/store', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(surfaceModal);
+                    modal.hide();
+                    
+                    // Refresh the page to show updated surfaces
+                   location.reload();
+                } else {
+                    throw new Error(data.message || 'Failed to save surface');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving surface: ' + error.message);
+            });
+
         } else {
             alert('Please fill in all information!');
         }

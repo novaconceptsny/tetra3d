@@ -281,4 +281,59 @@ class PhotoController extends Controller
             ], 500);
         }
     }
+
+    public function storeSurface(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'width' => 'required|numeric',
+                'height' => 'required|numeric',
+                'project_id' => 'required|exists:projects,id',
+                'surface_id' => 'nullable|exists:surfaces,id'
+            ]);
+
+            // Get project directly without relationships since we only need company_id
+            $project = Project::findOrFail($validated['project_id']);
+            $firstTour = $project->tours()->first();
+
+            if (!$firstTour) {
+                throw new \Exception('No tour found for this project');
+            }
+
+            if ($request->has('surface_id')) {
+                // Update existing surface
+                $surface = Surface::findOrFail($request->surface_id);
+                $surface->name = $validated['name'];
+                $surface->data = array_merge($surface->data ?? [], [
+                    'img_width' => $validated['width'],
+                    'img_height' => $validated['height']
+                ]);
+                $surface->save();
+            } else {
+                // Create new surface with explicit company_id and tour_id
+                $surface = Surface::create([
+                    'name' => $validated['name'],
+                    'company_id' => $project->company_id,
+                    'tour_id' => $firstTour->id,  // Use first tour's ID
+                    'data' => [
+                        'img_width' => $validated['width'],
+                        'img_height' => $validated['height']
+                    ]
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Surface saved successfully',
+                'surface' => $surface
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving surface: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
