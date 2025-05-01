@@ -58,10 +58,10 @@ function calculatePolygonBounds(points) {
 }
 
 // Helper functions for better organization
-function calculateScaledPoints(corners, boundingBoxLeft, boundingBoxTop, photoScale) {
+function calculateScaledPoints(corners, boundingBoxLeft, boundingBoxTop, photoScaleX, photoScaleY) {
     return corners.map(point => ({
-        x: (point.x - boundingBoxLeft) * photoScale,
-        y: (point.y - boundingBoxTop) * photoScale
+        x: (point.x - boundingBoxLeft) * photoScaleX,
+        y: (point.y - boundingBoxTop) * photoScaleY
     }));
 }
 
@@ -158,7 +158,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     const surface = canvasData.surface;
     const updateEndpoint = canvasData.updateEndpoint;
     const surfaceData = surface.data;
-    const photoScale = mainWidth / surfaceData.bounding_box_width;
+    const photoScaleX = mainWidth / surfaceData.bounding_box_width;
+    const photoScaleY = mainHeight / surfaceData.bounding_box_height;
 
     const img = new Image();
     img.src = surface.background_url;
@@ -173,7 +174,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             surfaceData.corners,
             surfaceData.bounding_box_left,
             surfaceData.bounding_box_top,
-            photoScale
+            photoScaleX,
+            photoScaleY
         );
 
         drawPolygon(ctx, srcPoints);
