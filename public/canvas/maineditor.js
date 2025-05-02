@@ -38,6 +38,22 @@ let guideStartPos = { x: 0, y: 0 };
 // Add this variable at the top of the file with other state variables
 let areGuidesVisible = true;
 
+// Add this at the top of the file
+let cvReady = false;
+
+// Add this function to wait for OpenCV
+function waitForOpenCV() {
+    return new Promise((resolve) => {
+        if (typeof cv !== 'undefined' && cv.imread) {
+            cvReady = true;
+            resolve();
+        } else {
+            // Check again in 30ms
+            setTimeout(() => waitForOpenCV().then(resolve), 30);
+        }
+    });
+}
+
 function getId(item = "artwork") {
     return `${item}-${Math.random().toString(32).slice(-4)}`;
 }
@@ -165,7 +181,10 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     img.src = surface.background_url;
 
 
-    img.onload = () => {
+    img.onload = async () => {
+        // Wait for OpenCV to be ready before proceeding
+        await waitForOpenCV();
+        
         imageCanvas.width = mainWidth;
         imageCanvas.height = mainHeight;
         ctx.drawImage(img, 0, 0, mainWidth, mainHeight);
@@ -396,48 +415,62 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
 
     function calculatePerspectiveTransform() {
-        // Get real wall dimensions in meters
-        const realWidth = calculatePolygonBounds(srcPoints).width;
-        const realHeight = calculatePolygonBounds(srcPoints).height;
+        if (!cvReady) {
+            console.warn('OpenCV not ready yet');
+            return;
+        }
 
-        // Add padding to dimensions to help with edge artifacts
-        const paddingFactor = 1.02; // 2% padding
-        const paddedWidth = Math.ceil(realWidth * paddingFactor);
-        const paddedHeight = Math.ceil(realHeight * paddingFactor);
+        try {
+            // Get real wall dimensions in meters
+            const realWidth = calculatePolygonBounds(srcPoints).width;
+            const realHeight = calculatePolygonBounds(srcPoints).height;
 
-        // Clean up any existing matrices
-        if (dstMat) dstMat.delete();
-        if (Minv) Minv.delete();
-        if (M) M.delete();
+            // Add padding to dimensions to help with edge artifacts
+            const paddingFactor = 1.02; // 2% padding
+            const paddedWidth = Math.ceil(realWidth * paddingFactor);
+            const paddedHeight = Math.ceil(realHeight * paddingFactor);
 
-        // Create new matrices
-        let srcMat = cv.imread(imageCanvas);
-        dstMat = new cv.Mat();
-        let dsize = new cv.Size(paddedWidth, paddedHeight);
+            // Clean up any existing matrices
+            if (dstMat) dstMat.delete();
+            if (Minv) Minv.delete();
+            if (M) M.delete();
 
-        // Add padding to source points to reduce edge artifacts
-        const padding = 2; // 2 pixels padding
-        let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
-            srcPoints[0].x - padding, srcPoints[0].y - padding,
-            srcPoints[1].x + padding, srcPoints[1].y - padding,
-            srcPoints[2].x + padding, srcPoints[2].y + padding,
-            srcPoints[3].x - padding, srcPoints[3].y + padding
-        ]);
+            // Create new matrices
+            let srcMat = cv.imread(imageCanvas);
+            dstMat = new cv.Mat();
+            let dsize = new cv.Size(paddedWidth, paddedHeight);
 
-        let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
-            0, 0,
-            paddedWidth, 0,
-            paddedWidth, paddedHeight,
-            0, paddedHeight
-        ]);
+            // Add padding to source points to reduce edge artifacts
+            const padding = 2; // 2 pixels padding
+            let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                srcPoints[0].x - padding, srcPoints[0].y - padding,
+                srcPoints[1].x + padding, srcPoints[1].y - padding,
+                srcPoints[2].x + padding, srcPoints[2].y + padding,
+                srcPoints[3].x - padding, srcPoints[3].y + padding
+            ]);
 
-        // Store matrices globally
-        M = cv.getPerspectiveTransform(srcTri, dstTri);
-        Minv = cv.getPerspectiveTransform(dstTri, srcTri);
-        // Free memory
-        srcMat.delete();
-        srcTri.delete();
-        dstTri.delete();
+            let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                0, 0,
+                paddedWidth, 0,
+                paddedWidth, paddedHeight,
+                0, paddedHeight
+            ]);
+
+            // Store matrices globally
+            M = cv.getPerspectiveTransform(srcTri, dstTri);
+            Minv = cv.getPerspectiveTransform(dstTri, srcTri);
+            
+            // Free memory
+            srcMat.delete();
+            srcTri.delete();
+            dstTri.delete();
+        } catch (error) {
+            console.error('Error in calculatePerspectiveTransform:', error);
+            // Clean up any partially created matrices
+            if (dstMat) dstMat.delete();
+            if (Minv) Minv.delete();
+            if (M) M.delete();
+        }
     }
 
     function renderAllArtworks() {
