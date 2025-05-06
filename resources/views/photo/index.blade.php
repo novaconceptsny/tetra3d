@@ -394,7 +394,7 @@
                             <span>+ Image</span>
                             <div class="overlay"></div>
                         </div>
-                        <button type="button" class="btn btn-save">Update</button>
+                        <button type="button" class="btn btn-save btn-success text-white">Update</button>
                     </div>
                 </div>
             </div>
@@ -1554,8 +1554,18 @@
             const overlay = document.createElement('div');
             overlay.className = 'overlay';
             overlay.textContent = 'Click to replace image';
+            overlay.style.opacity = '0'; // Start with overlay hidden
             imageUploadBox.appendChild(overlay);
             imageUploadBox.appendChild(document.querySelector('#imageInput').cloneNode(true));
+
+            // Add hover event listeners
+            imageUploadBox.addEventListener('mouseenter', () => {
+                overlay.style.opacity = '1';
+            });
+            
+            imageUploadBox.addEventListener('mouseleave', () => {
+                overlay.style.opacity = '0';
+            });
         }
     });
 

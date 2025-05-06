@@ -841,7 +841,7 @@ body {
   color: white;
   font-size: 14px;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
 }
 #projectModal .image-upload-box:hover .overlay {
   opacity: 1;
@@ -882,4 +882,18 @@ body {
   .header .navbar-collapse {
     display: none !important;
   }
+}
+
+.overlay {
+  transition: opacity 0.3s ease;
+}
+
+.btn-save {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #218838;
+  color: white;
 }
