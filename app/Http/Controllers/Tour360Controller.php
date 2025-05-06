@@ -59,8 +59,8 @@ class Tour360Controller extends Controller
                 }
 
                 // Store new image
-                $path = $request->file('image')->store('tour360/backgrounds', 'public');
-                $project->background_url = $path;
+                $path = $request->file('image')->store('project-images', 'public');
+                $project->background_url = '/storage/' . $path;
             }
 
             $project->save();

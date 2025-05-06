@@ -47,7 +47,8 @@
                                             <button type="button" 
                                                     class="btn enter-link" 
                                                     data-mode="edit" 
-                                                    data-project-name="{{ $project->name }}" 
+                                                    data-project-name="{{ $project->name }}"
+                                                    data-project-id="{{ $project->id }}" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#projectModal">
                                                 Enter
@@ -113,13 +114,16 @@
         const imageUploadBox = document.getElementById('imageUploadBox');
         const imageInput = document.getElementById('imageInput');
         const imageName = document.getElementById('imageName');
+        let mode = '';
+        let projectId = '';
 
         // Xử lý khi modal được mở
         projectModal.addEventListener('show.bs.modal', (event) => {
-            const button = event.relatedTarget; // Nút đã kích hoạt modal
-            const mode = button.getAttribute('data-mode'); // Lấy mode (create hoặc edit)
+            const button = event.relatedTarget; // Button that triggered the modal
+            mode = button.getAttribute('data-mode'); // Get mode (create or edit)
+            projectId = button.getAttribute('data-project-id'); // Add this line
 
-            // Cập nhật tiêu đề và giá trị mặc định dựa trên mode
+            // Update title and default values based on mode
             if (mode === 'create') {
                 modalTitle.textContent = 'Add new project';
                 projectNameInput.value = '';
@@ -161,14 +165,15 @@
             }
         });
 
-        // Add new save button click handler
+        // Replace the save button click handler with this updated version
         document.querySelector('.btn-save').addEventListener('click', async function() {
             const formData = new FormData();
             formData.append('title', projectNameInput.value);
             formData.append('image', imageInput.files[0]);
-            
+
             try {
-                const response = await fetch('/tour360/store', {
+                let url = mode === 'create' ? '/tour360/store' : `/tour360/update/${projectId}`;
+                const response = await fetch(url, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -183,7 +188,7 @@
                     const modal = bootstrap.Modal.getInstance(projectModal);
                     modal.hide();
                     
-                    // Refresh the page to show new project
+                    // Refresh the page to show updated project
                     window.location.reload();
                 }
             } catch (error) {

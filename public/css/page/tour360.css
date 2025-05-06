@@ -155,3 +155,24 @@ body {
 #projectModal .image-input {
   display: none;
 }
+
+/* Add these styles for the project cards */
+.layout-item .card {
+    width: 100%;
+    height: 300px; /* Adjust this value based on your needs */
+}
+
+.layout-item .card .img-home {
+    height: 200px; /* Adjust for image container height */
+    overflow: hidden;
+}
+
+.layout-item .card .img-home img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This ensures images cover the area without distortion */
+}
+
+.layout-item .card .card-body {
+    height: 100px; /* Remaining height for the card body */
+}

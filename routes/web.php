@@ -55,11 +55,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('photos/{photo}', 'update')->name('photos.update');
     });
 
-    Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
+    Route::controller(Tour360Controller::class)->group(function () {
+        Route::get('/tour-360', 'index')->name('tour-360.index');
+        Route::post('/tour360/store', 'store')->name('tour360.store');
+        Route::post('/tour360/update/{id}', 'update')->name('tour360.update');
+    });
 
-    Route::post('/tour360/store', [Tour360Controller::class, 'store'])->name('tour360.store');
-    Route::put('/tour360/{id}/update', [Tour360Controller::class, 'update'])->name('tour360.update');   
-    
     Route::controller(PhotoController::class)->group(function () {
         Route::get('/photo', 'index')->name('photo.index');
         Route::post('photo/destroy/{id}', 'destroy')->name('photo.destroy');
