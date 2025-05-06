@@ -377,6 +377,29 @@
             </div>
         </div>
 
+
+        <div class="modal fade" id="editPhotoModal" tabindex="-1" aria-labelledby=" editPhotoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editPhotoModalLabel">Edit Photo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="photoName" placeholder="Name" value= data-title>
+                        </div>
+                        <div class="image-upload-box mb-3" id="imageUploadBox">
+                            <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
+                            <span>+ Image</span>
+                            <div class="overlay"></div>
+                        </div>
+                        <button type="button" class="btn btn-save">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Collections -->
         <div class="modal fade" id="collectionsModal" tabindex="-1" aria-labelledby="collectionsModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -795,7 +818,7 @@
             formData.append('width', surfaceWidth);
             formData.append('height', surfaceHeight);
             formData.append('project_id', projectId);
-            
+
             if (currentIndex !== null) {
                 // Edit mode - add surface ID
                 const surfaceItem = document.querySelectorAll('.list-group-item')[currentIndex];
@@ -821,7 +844,7 @@
                     // Close modal
                     const modal = bootstrap.Modal.getInstance(surfaceModal);
                     modal.hide();
-                    
+
                     // Refresh the page to show updated surfaces
                    location.reload();
                 } else {
@@ -931,7 +954,10 @@
                                     data-title="${photo.name}"
                                     data-image="${photo.src}"
                                     data-photo-id="${photo.id}">Surface Size</a></li>
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                <li><a class="dropdown-item edit-photo" href="#"  data-bs-toggle="modal" data-bs-target="#editPhotoModal"
+                                    data-title="${photo.name}"
+                                    data-image="${photo.src}"
+                                    data-photo-id="${photo.id}">Edit</a></li>
                                 <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                             </ul>
                         </div>
@@ -970,7 +996,10 @@
                                     data-title="${photo.name}"
                                     data-image="${photo.src}"
                                     data-photo-id="${photo.id}">Surface Size</a></li>
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addCollectionModal">Edit</a></li>
+                                <li><a class="dropdown-item edit-photo" href="#"  data-bs-toggle="modal" data-bs-target="#editPhotoModal"
+                                    data-title="${photo.name}"
+                                    data-image="${photo.src}"
+                                    data-photo-id="${photo.id}">Edit</a></li>
                                 <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                             </ul>
                         </div>
@@ -1497,6 +1526,95 @@
     document.getElementById('rectHeight').addEventListener('input', function() {
         updateValues('height');
     });
+
+    // Add this code to handle edit photo modal
+    const editPhotoModal = document.getElementById('editPhotoModal');
+    editPhotoModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const title = button.getAttribute('data-title');
+        const image = button.getAttribute('data-image');
+        const photoId = button.getAttribute('data-photo-id');
+
+        // Set the photo name in the input field
+        const photoNameInput = this.querySelector('#photoName');
+        if (photoNameInput) {
+            photoNameInput.value = title;
+        }
+
+        // Store the photo ID on the modal for use when saving
+        this.setAttribute('data-photo-id', photoId);
+
+        // If you want to show the current image preview
+        const imageUploadBox = this.querySelector('#imageUploadBox');
+        if (imageUploadBox && image) {
+            const img = document.createElement('img');
+            img.src = image;
+            imageUploadBox.innerHTML = '';
+            imageUploadBox.appendChild(img);
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            overlay.textContent = 'Click to replace image';
+            imageUploadBox.appendChild(overlay);
+            imageUploadBox.appendChild(document.querySelector('#imageInput').cloneNode(true));
+        }
+    });
+
+      // Add this code to handle edit photo modal
+      document.querySelector('#editPhotoModal .btn-save').addEventListener('click', function() {
+        const modal = document.getElementById('editPhotoModal');
+        const photoId = modal.getAttribute('data-photo-id');
+        const photoName = modal.querySelector('#photoName').value;
+        const imageInput = modal.querySelector('#imageInput');
+
+        const formData = new FormData();
+        formData.append('name', photoName);
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+        if (imageInput.files.length > 0) {
+            formData.append('image', imageInput.files[0]);
+        }
+
+        // Show loading state
+        const saveButton = this;
+        const originalText = saveButton.textContent;
+        saveButton.textContent = 'Updating...';
+        saveButton.disabled = true;
+
+        fetch(`/photo/${photoId}/edit`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the UI
+                const photoCard = document.querySelector(`.photo-item[data-id="${photoId}"]`);
+                if (photoCard) {
+                    photoCard.querySelector('.card-text').textContent = photoName;
+                    if (data.photo.background_url) {
+                        photoCard.querySelector('img').src = data.photo.background_url;
+                    }
+                }
+
+                // Close modal
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                modalInstance.hide();
+
+            } else {
+                throw new Error(data.message || 'Failed to update photo');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error updating photo: ' + error.message);
+        })
+        .finally(() => {
+            // Reset button state
+            saveButton.textContent = originalText;
+            saveButton.disabled = false;
+        });
+    });
+    // Add this code to handle edit photo modal
 </script>
 
 {{--<script src="{{ mix('js/modules/photo/index.js') }}"></script>--}}

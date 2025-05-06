@@ -9,6 +9,7 @@ use App\Models\PhotoState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
@@ -333,6 +334,65 @@ class PhotoController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error saving surface: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            // Find the photo
+            $photo = Photo::findOrFail($id);
+            
+            // Validate the request
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'image' => 'nullable|image|mimes:jpeg,png|max:2048'
+            ]);
+
+            // Update the photo name
+            $photo->name = $request->name;
+
+            // Handle image upload if provided
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                
+                // Generate unique filename
+                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                // Store the new image
+                $path = $image->storeAs('media/photos', $filename, 'public');
+                
+                // Delete old image if exists
+                if ($photo->background_url) {
+                    $oldPath = str_replace('/storage/', '', $photo->background_url);
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
+                }
+                
+                // Update photo with new image path
+                $photo->background_url = '/storage/' . $path;
+            }
+
+            // Save the changes
+            $photo->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Photo updated successfully',
+                'photo' => $photo
+            ]);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Photo not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update photo: ' . $e->getMessage()
             ], 500);
         }
     }

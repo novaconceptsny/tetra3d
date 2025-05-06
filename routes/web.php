@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/photo-state/store', 'storePhotoState')->name('photo.state.store');
         Route::post('/projects/{project}/collections/update', 'updateCollections')->name('projects.collections.update');
         Route::post('/photo/surface/store', 'storeSurface')->name('photo.surface.store');
+        Route::post('/photo/{id}/edit', 'edit')->name('photo.edit');
     });
 
     Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
