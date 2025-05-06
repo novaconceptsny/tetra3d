@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('artwork_id')->constrained()->onDelete('cascade');
             $table->foreignId('photo_state_id')->constrained()->onDelete('cascade');
             $table->foreignId('surface_id')->constrained()->onDelete('cascade');
+            $table->foreignId('layout_id')->constrained()->onDelete('cascade');
             $table->json('pos');
             $table->timestamps();
         });

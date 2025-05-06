@@ -13,6 +13,7 @@ class ArtworkPhotoState extends Model
         'artwork_id',
         'photo_state_id',
         'surface_id',
+        'layout_id',
         'pos'
     ];
 
@@ -28,6 +29,11 @@ class ArtworkPhotoState extends Model
     public function photoState()
     {
         return $this->belongsTo(PhotoState::class);
+    }
+
+    public function layout()
+    {
+        return $this->belongsTo(Layout::class);
     }
 
 }

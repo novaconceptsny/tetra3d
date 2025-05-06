@@ -25,6 +25,7 @@ class PhotoStateController extends Controller
 
             // Fetch assigned artworks from artwork_photo_state table using photo_state_id
             $assignedArtworks = ArtworkPhotoState::where('surface_id', $photo->surface_id)
+                ->where('layout_id', $layoutId)
                 ->with('artwork')
                 ->get()
                 ->map(function ($state) {
@@ -137,6 +138,7 @@ class PhotoStateController extends Controller
                         'artwork_id' => $artwork['artworkId'],
                         'photo_state_id' => $photoState->id,
                         'surface_id' => $photo->surface_id,
+                        'layout_id' => $layoutId,
                         'pos' => $position
                     ]);
                 }
