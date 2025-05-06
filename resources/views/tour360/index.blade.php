@@ -32,33 +32,41 @@
                 </div>
                 <div class="layout-section">
                     <div class="row">
-                        <!-- Project cards will go here -->
-                        <div class="row" >
-                            <div class="col-md-3 layout-item">
-                                <div class="card border-0 shadow-sm bg-white">
-                                    <div class="rounded img-home p-2">
-                                        <img src="" class="card-img-top img-fluid" alt="">
-                                    </div>
-                                    <div class="card-body d-flex justify-content-between align-items-end">
-                                        <p class="card-text">
-                                            <span>Living Room</span><br>
-                                            <small>Created: June 11th, 2024</small>
-                                        </p>
-                                        <button type="button" class="btn enter-link" data-mode="edit" data-project-name="Living Room" data-bs-toggle="modal" data-bs-target="#projectModal">
-                                            Enter
-                                        </button>
+                        @if($projects->count() > 0)
+                            @foreach($projects as $project)
+                                <div class="col-md-3 layout-item">
+                                    <div class="card border-0 shadow-sm bg-white">
+                                        <div class="rounded img-home p-2">
+                                            <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
+                                        </div>
+                                        <div class="card-body d-flex justify-content-between align-items-end">
+                                            <p class="card-text">
+                                                <span>{{ $project->name }}</span><br>
+                                                <small>Created: {{ $project->created_at->format('F jS, Y') }}</small>
+                                            </p>
+                                            <button type="button" 
+                                                    class="btn enter-link" 
+                                                    data-mode="edit" 
+                                                    data-project-name="{{ $project->name }}" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#projectModal">
+                                                Enter
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+                            @endforeach
+                        @else
+                            <div class="col-12">
+                                <p class="text-center">No projects found.</p>
                             </div>
-
-                            <!-- Add more project cards as needed -->
-                            <div class="col-md-3 layout-item">
-                                <div class="card bg-white card-layout">
-                                    <button class="add-image-btn create-new-box" data-mode="create" data-bs-toggle="modal" data-bs-target="#projectModal">
-                                        <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                        <span class="add-image-text">Create New Project</span>
-                                    </button>
-                                </div>
+                        @endif
+                        <div class="col-md-3 layout-item">
+                            <div class="card bg-white card-layout">
+                                <button class="add-image-btn create-new-box" data-mode="create" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                    <span class="add-image-text">Create New Project</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -150,6 +158,37 @@
                     imageName.textContent = file.name;
                 };
                 reader.readAsDataURL(file);
+            }
+        });
+
+        // Add new save button click handler
+        document.querySelector('.btn-save').addEventListener('click', async function() {
+            const formData = new FormData();
+            formData.append('title', projectNameInput.value);
+            formData.append('image', imageInput.files[0]);
+            
+            try {
+                const response = await fetch('/tour360/store', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(projectModal);
+                    modal.hide();
+                    
+                    // Refresh the page to show new project
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while saving the project');
             }
         });
     </script>

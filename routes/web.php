@@ -5,6 +5,7 @@ use App\Http\Controllers\SurfaceStateController;
 use App\Http\Controllers\PhotoStateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\Tour360Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
 
+    Route::post('/tour360/store', [Tour360Controller::class, 'store'])->name('tour360.store');
+    Route::put('/tour360/{id}/update', [Tour360Controller::class, 'update'])->name('tour360.update');   
+    
     Route::controller(PhotoController::class)->group(function () {
         Route::get('/photo', 'index')->name('photo.index');
         Route::post('photo/destroy/{id}', 'destroy')->name('photo.destroy');
@@ -109,5 +113,9 @@ Route::group([
     Route::patch('/tours/{tour}/toggle-model', 'TourController@toggleModel')
         ->name('backend.tours.toggle-model');
 });
+
+
+
+
 
 
