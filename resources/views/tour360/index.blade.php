@@ -7,15 +7,26 @@
             <div class="favourites-section">
                 <h5 class="mb-4">Favourites</h5>
                 <div class="favourite-items">
-                    <!-- Favourite items will go here -->
                     <div class="row">
-                        <div class="col-md-3">
-                            <div class="bg-light rounded p-3">
-                                <h4><i class="fa fa-star"></i> Living Room</h4>
-                                <span>One Canal Park</span>
-                                <p class="text-end mb-0"><button class="btn enter-link">Enter</button></p>
+                        @if($favorites->count() > 0)
+                            @foreach($favorites as $favorite)
+                                <div class="col-md-3">
+                                    <div class="bg-light rounded p-3">
+                                        <h4><i class="fa fa-star"></i> {{ $favorite->photo->name }}</h4>
+                                        <span>{{ $favorite->photo->project->name }}</span>
+                                        <p class="text-end mb-0">
+                                            <button class="btn enter-link" onclick="navigateToPhoto({{ $favorite->photo->id }}, {{ $favorite->layout_id }})">
+                                                Enter
+                                            </button>
+                                        </p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="col-12">
+                                <p class="text-center">No favorites found.</p>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -117,6 +128,9 @@
         let mode = '';
         let projectId = '';
 
+        function navigateToPhoto(photoId, layoutId) {
+            window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
+        }
         // Xử lý khi modal được mở
         projectModal.addEventListener('show.bs.modal', (event) => {
             const button = event.relatedTarget; // Button that triggered the modal

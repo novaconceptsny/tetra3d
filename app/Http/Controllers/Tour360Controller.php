@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curate2dProject;
+use App\Models\PhotoState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,8 +13,13 @@ class Tour360Controller extends Controller
     {
         // Get all projects from the database
         $projects = Curate2dProject::orderBy('created_at', 'desc')->get();
+        
+        // Get favorite photo states
+        $favorites = PhotoState::where('is_favorite', true)
+            ->with('photo.project') // Assuming you have these relationships set up
+            ->get();
 
-        return view('tour360.index', compact('projects'));
+        return view('tour360.index', compact('projects', 'favorites'));
     }
 
     public function store(Request $request)
