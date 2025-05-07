@@ -49,7 +49,8 @@ class PhotoController extends Controller
                             'layout_id' => $layout->id,
                             'name' => $layout->name,
                             'thumbnail_urls' => [],
-                            'photos' => []
+                            'photos' => [],
+                            'is_favorites' => []
                         ];
                     }
                     // Add thumbnail URL to the array if it exists and isn't already included
@@ -60,12 +61,13 @@ class PhotoController extends Controller
                     if (!in_array($state->photo_id, $layoutPhotos[$layout->id]['photos'])) {
                         $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
                     }
+
+                    $layoutPhotos[$layout->id]['is_favorites'][] = $state->is_favorite;
                 }
             }
         } else {
             $layoutPhotos = [];
         }
-
 
         return view('photo.index', compact(
             'artworkCollections',
@@ -396,4 +398,29 @@ class PhotoController extends Controller
             ], 500);
         }
     }
+
+    public function toggleFavorite(Request $request, $id)
+    {
+        try {
+            // Find the photo state based on photo_id and layout_id
+            $photoState = PhotoState::where('photo_id', $id)
+                ->where('layout_id', $request->layout_id)
+                ->firstOrFail();
+
+            // Toggle the is_favorite status
+            $photoState->is_favorite = !$photoState->is_favorite;
+            $photoState->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Favorite status updated successfully',
+                'is_favorite' => $photoState->is_favorite
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating favorite status: ' . $e->getMessage()
+            ], 500);
+        }
+    }   
 }

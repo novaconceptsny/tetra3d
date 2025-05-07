@@ -15,6 +15,7 @@ class PhotoState extends Model
         'project_id',
         'layout_id',
         'thumbnail_url',
+        'is_favorite',
     ];
 
     /**

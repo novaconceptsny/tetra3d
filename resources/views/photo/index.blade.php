@@ -135,6 +135,13 @@
                                                 <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
                                             </p>
                                             <button type="button"
+                                                    class="btn btn-link favorite-btn {{ $layout['is_favorites'][$index] ? 'active' : '' }}"
+                                                    data-photo-id="{{ $photo->id }}"
+                                                    data-layout-id="{{ $layout['layout_id'] }}"
+                                                    onclick="toggleFavorite(this)">
+                                                <i class="fas fa-star"></i>
+                                            </button>
+                                            <button type="button"
                                                     class="btn enter-link"
                                                     onclick="navigateToPhoto({{ $photo->id }}, {{ $layout['layout_id'] }})"
                                                     data-photo-id="{{ $photo->id }}"
@@ -1562,7 +1569,7 @@
             imageUploadBox.addEventListener('mouseenter', () => {
                 overlay.style.opacity = '1';
             });
-            
+
             imageUploadBox.addEventListener('mouseleave', () => {
                 overlay.style.opacity = '0';
             });
@@ -1625,6 +1632,40 @@
         });
     });
     // Add this code to handle edit photo modal
+    function toggleFavorite(button) {
+        const photoId = button.getAttribute('data-photo-id');
+        const layoutId = button.getAttribute('data-layout-id');
+        const isFavorite = button.classList.contains('active');
+
+        // Get CSRF token
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+        // Send request to toggle favorite status
+        fetch(`/photo/${photoId}/toggle-favorite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                is_favorite: !isFavorite,
+                layout_id: layoutId,
+                photoId: photoId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Toggle active class
+                button.classList.toggle('active');
+            } else {
+                console.error('Error toggling favorite:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
 </script>
 
 {{--<script src="{{ mix('js/modules/photo/index.js') }}"></script>--}}

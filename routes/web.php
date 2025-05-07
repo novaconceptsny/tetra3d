@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/projects/{project}/collections/update', 'updateCollections')->name('projects.collections.update');
         Route::post('/photo/surface/store', 'storeSurface')->name('photo.surface.store');
         Route::post('/photo/{id}/edit', 'edit')->name('photo.edit');
+        Route::post('/photo/{id}/toggle-favorite', 'toggleFavorite')->name('photo.toggle-favorite');
     });
 
     Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
