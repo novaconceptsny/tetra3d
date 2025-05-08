@@ -2,7 +2,94 @@
 
 @section('content')
 
+    <div id="project-list">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="favourites-section">
+                        <h5 class="mb-4">Favourites</h5>
+                        <div class="favourite-items">
+                            <div class="row">
+                                @if($favorites->count() > 0)
+                                    @foreach($favorites as $favorite)
+                                        <div class="col-md-3">
+                                            <div class="bg-light rounded p-3">
+                                                <h4><i class="fa fa-star"></i> {{ $favorite->photo->name }}</h4>
+                                                <span>{{ $favorite->photo->project->name }}</span>
+                                                <p class="text-end mb-0">
+                                                    <button class="btn enter-link" onclick="navigateToPhoto({{ $favorite->photo->id }}, {{ $favorite->layout_id }})">
+                                                        Enter
+                                                    </button>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="col-12">
+                                        <p class="text-center">No favorites found.</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="projects-section">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>Tishman Speyer</h5>
+                            <div class="sort-dropdown">
+                                <select class="form-select">
+                                    <option>Recently added</option>
+                                    <!-- Add other sort options -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layout-section">
+                            <div class="row">
+                                @if($projects->count() > 0)
+                                    @foreach($projects as $c_project)
+                                        <div class="col-md-3 layout-item">
+                                            <div class="card border-0 shadow-sm bg-white">
+                                                <div class="rounded img-home p-2">
+                                                    <img src="{{ $c_project->background_url }}" class="card-img-top img-fluid" alt="{{ $c_project->title }}">
+                                                </div>
+                                                <div class="card-body d-flex justify-content-between align-items-end">
+                                                    <p class="card-text">
+                                                        <span>{{ $c_project->name }}</span><br>
+                                                        <small>Created: {{ $c_project->created_at->format('F jS, Y') }}</small>
+                                                    </p>
+                                                    <button type="button"
+                                                            class="btn enter-link"
+                                                            id="enterProjectBtn"
+                                                            onclick="enterProject({{ $c_project->id }})"
+                                                    >
+                                                        Enter
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="col-12">
+                                        <p class="text-center">No projects found.</p>
+                                    </div>
+                                @endif
+                                <div class="col-md-3 layout-item">
+                                    <div class="card bg-white card-layout">
+                                        <button class="add-image-btn create-new-box" data-mode="create" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                            <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                            <span class="add-image-text">Create New Project</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="project-content">
         <header class="header bg-white">
             <div class="header-logo border-top">
                 <div class="container">
@@ -156,7 +243,7 @@
                         @if($loop->last)
                             <div class="col-md-3 layout-item">
                                 <div class="card bg-white card-layout">
-                                    <button class="add-image-btn">
+                                    <button class="add-image-btn" id="addLayoutBtn" onclick="handleAddPhotoState()">
                                         <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                         <span class="add-image-text">Add Layout</span>
                                     </button>
@@ -173,7 +260,7 @@
                     <div class="title-box">No layouts available</div>
                     <div class="col-md-3 layout-item">
                         <div class="card bg-white card-layout">
-                            <button class="add-image-btn">
+                            <button class="add-image-btn" id="addLayoutBtn" onclick="handleAddPhotoState()">
                                 <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                 <span class="add-image-text">Add Layout</span>
                             </button>
@@ -182,6 +269,7 @@
                 </div>
             @endif
         </div>
+    </div>
 
         <!-- Modal for Add Collection -->
         <div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel"
@@ -252,7 +340,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteButton" onclick="handleDelete()">Delete</button>
                     </div>
                 </div>
             </div>
@@ -279,7 +367,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="addSurfaces" class="btn btn-light w-100" data-bs-dismiss="modal">Update</button>
+                        <button type="button" id="addSurfaces" class="btn btn-light w-100" data-bs-dismiss="modal" onclick="handleAddSurfaces()">Update</button>
                     </div>
                 </div>
             </div>
@@ -501,19 +589,16 @@
                     </div>
                     <div class="modal-body">
                         <p>Add a project name and upload a JPEG or PNG image file for the project thumbnail. Max 2048 pixels on the long edge of the image.</p>
-                        <form action="{{ route('project.update', ['id' => $project->id ]) }}" method="post">
-                            @csrf
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="projectNameInput" name="name" placeholder="Name" value="{{ $project->name }}">
-                            </div>
-                            <div class="image-upload-box mb-3" id="imageUploadBox">
-                                <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
-                                <span>+ Image</span>
-                                <div class="overlay">Click to replace image</div>
-                            </div>
-                            <div class="image-name" id="imageName"></div>
-                            <button type="submit" class="btn btn-save">Save</button>
-                        </form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="projectNameInput" placeholder="Name">
+                        </div>
+                        <div class="image-upload-box mb-3" id="imageUploadBox">
+                            <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
+                            <span>+ Image</span>
+                            <div class="overlay">Click to replace image</div>
+                        </div>
+                        <div class="image-name" id="imageName"></div>
+                        <button type="button" class="btn btn-save">Save</button>
                     </div>
                 </div>
             </div>
@@ -528,10 +613,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
           rel="stylesheet">
+    <link href="{{ mix('css/page/tour360.css') }}" rel="stylesheet">
 @endsection
+
 @push('scripts')
 <script>
-    const projectId = $('#project-id').val();
+
     let photosData = [];
     let selectedImages = [];
 
@@ -761,7 +848,8 @@
         });
     }
 
-    document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+    function handleDelete() {
+        console.log("handleDelete");
         if (itemToDelete) {
             const id = itemToDelete.getAttribute('data-id');
             const module = itemToDelete.getAttribute('data-module');
@@ -776,7 +864,7 @@
         } else {
             console.error('No item to delete. itemToDelete is not defined.');
         }
-    });
+    }
 
     const surfaceModal = document.getElementById('surfaceModal');
     let currentIndex = null; // Lưu chỉ số của surface đang chỉnh sửa
@@ -812,8 +900,8 @@
         }
     });
 
-    // Xử lý khi nhấn nút Save
-    document.getElementById('addSurfaces').addEventListener('click', function () {
+    function handleAddSurfaces() {
+        console.log("handleAddSurfaces");
         const surfaceName = document.getElementById('surfaceName').value;
         const surfaceWidth = document.getElementById('surfaceWidth').value;
         const surfaceHeight = document.getElementById('surfaceHeight').value;
@@ -827,6 +915,7 @@
             formData.append('project_id', projectId);
 
             if (currentIndex !== null) {
+                console.log("currentIndex", currentIndex);
                 // Edit mode - add surface ID
                 const surfaceItem = document.querySelectorAll('.list-group-item')[currentIndex];
                 const surfaceId = surfaceItem.getAttribute('data-id');
@@ -866,7 +955,7 @@
         } else {
             alert('Please fill in all information!');
         }
-    });
+    }
 
     // document.getElementById('toggleButton').addEventListener('click', function() {
     //     const photosSection = document.querySelector('.photos-section');
@@ -1353,62 +1442,11 @@
         });
 
 
-        function handleAddPhotoState(e) {
-            e.preventDefault();
 
-            // Get project ID from hidden input
-            const projectId = document.getElementById('project-id').value;
-
-            // Validate if we have photos data
-            if (!photosData || photosData.length === 0) {
-                alert('No photos available to save state');
-                return;
-            }
-
-            // Create request data
-            const requestData = {
-                project_id: projectId,
-                photos: photosData
-            };
-
-            // Get CSRF token
-            const token = document.querySelector('meta[name="csrf-token"]').content;
-
-            // Send request to save photo state
-            fetch('/photo-state/store', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Reload the page to show updated layout
-                    location.reload();
-                } else {
-                    throw new Error(data.message || 'Failed to save photo state');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error saving photo state: ' + error.message);
-            });
-        }
 
         // Add click handler for duplicate images button
         // document.getElementById('duplicateImages').addEventListener('click', handleDuplication);
 
-        // Add click handler for all "Add Layout" buttons
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.add-image-btn') && e.target.closest('.card-layout')) {
-                e.preventDefault();
-                handleAddPhotoState(e);
-            }
-        });
 
 
     });
@@ -1430,12 +1468,19 @@
     const imageInput = document.getElementById('imageInput');
     const imageName = document.getElementById('imageName');
 
+    let mode = '';
+    let projectId = '';
+
+    function navigateToPhoto(photoId, layoutId) {
+        window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
+    }
     // Xử lý khi modal được mở
     projectModal.addEventListener('show.bs.modal', (event) => {
-        const button = event.relatedTarget; // Nút đã kích hoạt modal
-        const mode = button.getAttribute('data-mode'); // Lấy mode (create hoặc edit)
+        const button = event.relatedTarget; // Button that triggered the modal
+        mode = button.getAttribute('data-mode'); // Get mode (create or edit)
+        projectId = button.getAttribute('data-project-id'); // Add this line
 
-        // Cập nhật tiêu đề và giá trị mặc định dựa trên mode
+        // Update title and default values based on mode
         if (mode === 'create') {
             modalTitle.textContent = 'Add new project';
             projectNameInput.value = '';
@@ -1452,6 +1497,7 @@
         }
     });
 
+    // Xử lý upload ảnh
     imageUploadBox.addEventListener('click', () => {
         imageInput.click();
     });
@@ -1666,6 +1712,56 @@
             console.error('Error:', error);
         });
     }
+
+    function enterProject(projectId) {
+        console.log(projectId, "projectId");
+    }
+
+    function handleAddPhotoState(e) {
+
+        // Get project ID from hidden input
+        const projectId = document.getElementById('project-id').value;
+
+        // Validate if we have photos data
+        if (!photosData || photosData.length === 0) {
+            alert('No photos available to save state');
+            return;
+        }
+
+        // Create request data
+        const requestData = {
+            project_id: projectId,
+            photos: photosData
+        };
+
+        // Get CSRF token
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Send request to save photo state
+        fetch('/photo-state/store', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload the page to show updated layout
+                location.reload();
+            } else {
+                throw new Error(data.message || 'Failed to save photo state');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving photo state: ' + error.message);
+        });
+    }
+
 </script>
 
 {{--<script src="{{ mix('js/modules/photo/index.js') }}"></script>--}}

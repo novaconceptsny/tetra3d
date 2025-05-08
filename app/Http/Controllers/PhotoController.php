@@ -13,19 +13,21 @@ use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
-    public function index(Project $project)
+    public function index()
     {
-        $project = Project::relevant()
-            ->with(['company', 'tours', 'artworkCollections', 'layouts'])
-            ->withCount('contributors')
-            ->first();
-        $firstTour    = $project->tours->first();
-
-        // Get surfaces and artwork collections
-        $surfaces = Surface::where('company_id', $project->company_id)
-            ->whereIn('tour_id', $project->tours->pluck('id'))
+        $projects = Project::where('is_curate_2d', true)->get();
+        // Get favorite photo states
+        $favorites = PhotoState::where('is_favorite', true)
+            ->with('photo.project')
             ->get();
 
+        $project = $projects->first();
+
+        // Get all surfaces for the company's tours
+        $surfaces = Surface::whereIn('company_id', $projects->pluck('company_id'))
+            ->whereIn('tour_id', $projects->pluck('tour_id'))
+            ->get();
+  
         $artworkCollections = ArtworkCollection::forCompany($project->company_id)
             ->withCount('artworks')
             ->get();
@@ -33,7 +35,7 @@ class PhotoController extends Controller
         // Check photo state and organize photos by layout
         $photoState = PhotoState::where('project_id', $project->id)->first();
         
-        $photos = Photo::where('project_id', $project->id)->get();
+        $photos = Photo::where('project_id', $project->id)->get(); 
         $layoutPhotos = [];
         
         if ($photoState) {
@@ -69,7 +71,10 @@ class PhotoController extends Controller
             $layoutPhotos = [];
         }
 
+
         return view('photo.index', compact(
+            'projects', 
+            'favorites',
             'artworkCollections',
             'project',
             'photos',
@@ -298,11 +303,6 @@ class PhotoController extends Controller
 
             // Get project directly without relationships since we only need company_id
             $project = Project::findOrFail($validated['project_id']);
-            $firstTour = $project->tours()->first();
-
-            if (!$firstTour) {
-                throw new \Exception('No tour found for this project');
-            }
 
             if ($request->has('surface_id')) {
                 // Update existing surface
@@ -317,8 +317,9 @@ class PhotoController extends Controller
                 // Create new surface with explicit company_id and tour_id
                 $surface = Surface::create([
                     'name' => $validated['name'],
+                    'display_name' => $validated['name'],
                     'company_id' => $project->company_id,
-                    'tour_id' => $firstTour->id,  // Use first tour's ID
+                    'tour_id' => $project->tour_id,  // Use first tour's ID
                     'data' => [
                         'img_width' => $validated['width'],
                         'img_height' => $validated['height']
