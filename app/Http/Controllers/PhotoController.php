@@ -244,19 +244,11 @@ class PhotoController extends Controller
             DB::beginTransaction();
 
             $project = Project::findOrFail($request->project_id);
-            $firstTour = $project->tours->first();
-
-            if (!$firstTour) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No tours found for this project'
-                ], 422);
-            }
 
             // Create a new layout
             $layout = $project->layouts()->create([
                 'name' => 'Layout_' . ($project->layouts()->count() + 1),
-                'tour_id' => $firstTour->id,
+                'tour_id' => $project->tour_id,
                 'user_id' => auth()->id()
             ]);
 

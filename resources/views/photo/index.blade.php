@@ -95,16 +95,15 @@
                 <div class="container">
                     <div class="row align-items-center py-3">
                         <div class="col">
-                            <div class="project-name">{{ $project->name }}</div>
+                            <div class="project-name" id="project-name"></div>
                         </div>
                         <div class="col text-end">
-                            <button class="btn btn-primary" data-mode="edit" data-project-name="{{ $project->name }}" data-project-id="{{ $project->id }}" data-bs-toggle="modal" data-bs-target="#projectModal"><i class="fas fa-pen"></i> Edit project</button>
+                            <button class="btn btn-primary" data-mode="edit"  data-bs-toggle="modal" data-bs-target="#projectModal"><i class="fas fa-pen"></i> Edit project</button>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
-        <input type="hidden" value="{{ $project->id }}" name="project-id" id="project-id">
         <!-- Main Content -->
         <div class="container main-content my-5">
             <div class="row">
@@ -112,32 +111,13 @@
                 <div class="col-md-6 col-xl-2 order-md-1 mb-3">
                     <div class="sidebar bg-white rounded overflow-hidden">
                         <div class="title-box" >Collections <a href="#" class="enter-link fw-normal" data-bs-toggle="modal" data-bs-target="#collectionsModal">Enter</a></div>
-                        <ul class="list-group">
+                        <ul class="list-group" id="collectionsContainer">
                             <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
                                 <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
                                     <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                     <span class="add-collection-text">Add Collection</span>
                                 </button>
                             </li>
-                            @foreach($artworkCollections as $artworkCollection)
-                                @if($project->artworkCollections->contains($artworkCollection->id))
-                                    <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="{{ $artworkCollection->id }}">
-                                        <i class="fas fa-image collection-icon"></i>
-                                        <div class="collection-info">
-                                            <span class="collection-name">{{ $artworkCollection->name }}</span>
-                                            <span class="collection-items">{{ $artworkCollection->artworks_count }} items</span>
-                                        </div>
-                                        <div class="dropdown position-absolute top-0 end-0">
-                                            <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v ms-auto"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                @endif
-                            @endforeach
                         </ul>
                     </div>
                 </div>
@@ -168,32 +148,13 @@
                     <div class="surfaces-section bg-white rounded overflow-hidden">
                         <div class="title-box">Surfaces <button class="btn enter-link" id="toggleButtonSurfaces" data-bs-toggle="modal" data-bs-target="#surfaceModalShow">Enter</button></div>
 
-                        <ul class="list-group">
+                        <ul class="list-group" id="surfacesContainer">
                             <li class="list-group-item d-flex justify-content-center align-items-center card surface-item">
                                 <button class="add-image-btn" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="add">
                                     <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                     <span class="add-image-text">Add Surface</span>
                                 </button>
                             </li>
-                            @foreach($surfaces as $surface)
-                                <li class="list-group-item d-flex justify-content-center align-items-center card surface-item"
-                                    data-name="{{ $surface->name }}"
-                                    data-id="{{ $surface->id }}"
-                                    data-module="surfaces"
-                                    data-width="{{ $surface->data['img_width'] ?? '' }}"
-                                    data-height="{{ $surface->data['img_height'] ?? '' }}">
-                                    <span class="surface-name">{{ $surface->name }}</span>
-                                    <div class="dropdown position-absolute top-0 end-0">
-                                        <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v ms-auto"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
-                                            <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            @endforeach
                         </ul>
                     </div>
                 </div>
@@ -505,20 +466,13 @@
                     </div>
                     <div class="modal-body">
                         <!-- Danh sách collections -->
-                        <div class="collection-list">
+                        <div class="collection-list" id="collectionsContainer2">
                             <div class="collection-item">
                                 <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
                                     <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                     <span class="add-collection-text">Add Collection</span>
                                 </button>
                             </div>
-                            @foreach($artworkCollections as $artworkCollection)
-                                @if($project->artworkCollections->contains($artworkCollection->id))
-                                    <div class="collection-item">
-                                        <span>{{ $artworkCollection->name }}</span>
-                                    </div>
-                                @endif
-                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -537,7 +491,7 @@
 
                         <!-- Danh sách surfaces -->
                         <div class="surface-list">
-                            <div class="row list-unstyled">
+                            <div class="row list-unstyled" id="surfacesContainer2">
                                 <div class="col-md-4">
                                     <button class="add-surface-btn mb-3" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="add">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -547,7 +501,7 @@
                                         Add Surface
                                     </button>
                                 </div>
-                                @foreach($surfaces as $surface)
+                                <!-- @foreach($surfaces as $surface)
                                     <div class="col-md-4 ">
                                         <div class="list-group-item d-flex justify-content-center align-items-center card surface-item mb-3"
                                              data-name="{{ $surface->name }}"
@@ -567,7 +521,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
+                                @endforeach -->
                             </div>
 
                         </div>
@@ -620,7 +574,14 @@
 <script>
 
     let photosData = [];
+    let surfacesData = [];
+    let collectionsData = [];
+    let photoStateData = [];
     let selectedImages = [];
+
+    let projectName = "123";
+    let projectId = 0;
+
 
     const canvas = document.getElementById('imageCanvas');
     const ctx = canvas.getContext('2d');
@@ -635,11 +596,14 @@
     const CANVAS_HEIGHT = 600;
 
     // Initialize photosData with existing photos
-    const existing_photos = @json($photos);
+    const currentPhotos = @json($photos);
     const layoutPhotos = @json($layoutPhotos);
-    console.log(layoutPhotos);
-    if (existing_photos && existing_photos.length > 0) {
-        existing_photos.forEach(photo => {
+    const currentSurfaces = @json($surfaces);
+    const currentCollections = @json($artworkCollections);
+
+
+    if (currentPhotos && currentPhotos.length > 0) {
+        currentPhotos.forEach(photo => {
             photosData.push({
                 id: String(photo.id),
                 src: photo.background_url,
@@ -651,6 +615,26 @@
                 boundingBoxLeft: photo.data['bounding_box_left'],
                 boundingBoxWidth : photo.data['bounding_box_width'],
                 boundingBoxHeight : photo.data['bounding_box_height'],
+            });
+        });
+    }
+
+    if (currentSurfaces && currentSurfaces.length > 0) {
+        currentSurfaces.forEach(surface => {
+            surfacesData.push({
+                id: String(surface.id),
+                name: surface.name,
+                data: surface.data,
+            });
+        });
+    }
+
+    if (currentCollections && currentCollections.length > 0) {
+        currentCollections.forEach(artworkCollection => {
+            collectionsData.push({
+                id: String(artworkCollection.id),
+                name: artworkCollection.name,
+                artworks_count: artworkCollection.artworks_count
             });
         });
     }
@@ -745,7 +729,7 @@
         const formData = new FormData();
 
         // Add project_id to FormData
-        formData.append('project_id', document.getElementById('project-id').value);
+        formData.append('project_id', projectId);
 
         // Add each image to FormData
         selectedImages.forEach((imageData, index) => {
@@ -905,7 +889,6 @@
         const surfaceName = document.getElementById('surfaceName').value;
         const surfaceWidth = document.getElementById('surfaceWidth').value;
         const surfaceHeight = document.getElementById('surfaceHeight').value;
-        const projectId = document.getElementById('project-id').value;
 
         if (surfaceName && surfaceWidth && surfaceHeight) {
             const formData = new FormData();
@@ -1020,6 +1003,9 @@
 
 
     document.addEventListener('DOMContentLoaded', () => {
+
+        document.getElementById('project-name').textContent = projectName;
+
         // Display existing photos
         const photosContainer = document.getElementById('photosContainer');
 
@@ -1064,6 +1050,10 @@
         });
 
         const photosContainer2 = document.getElementById('photosContainer2');
+        const collectionsContainer = document.getElementById('collectionsContainer');
+        const collectionsContainer2 = document.getElementById('collectionsContainer2');
+        const surfacesContainer2 = document.getElementById('surfacesContainer2');
+        const surfacesContainer = document.getElementById('surfacesContainer');
 
         // First, clear any existing content except the "Add Image" button
         const addImageCard2 = photosContainer2.querySelector('.photo-item');
@@ -1104,6 +1094,97 @@
             `;
             photosContainer2.appendChild(colDiv);
         });
+
+
+        collectionsData.forEach(collection => {
+            const colDiv = document.createElement('div');
+            colDiv.dataset.module = 'collection';
+            colDiv.dataset.id = `${collection.id}`;
+            colDiv.innerHTML = `
+                <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="{{ $artworkCollection->id }}">
+                    <i class="fas fa-image collection-icon"></i>
+                    <div class="collection-info">
+                        <span class="collection-name">${collection.name}</span>
+                        <span class="collection-items">${collection.artworks_count} items</span>
+                    </div>
+                    <div class="dropdown position-absolute top-0 end-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v ms-auto"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                        </ul>
+                    </div>
+                </li>
+            `;
+           collectionsContainer.appendChild(colDiv);
+
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('col-md-3', 'photo-item');
+            itemDiv.dataset.module = 'photo';
+            itemDiv.dataset.id = `${collection.id}`;
+            itemDiv.innerHTML = `
+                <div class="collection-item">
+                    <span>${collection.name}</span>
+                </div>
+
+            `;
+           collectionsContainer2.appendChild(itemDiv);
+        });
+
+
+        surfacesData.forEach(surface => {
+            const colDiv = document.createElement('div');
+            colDiv.dataset.module = 'surface';
+            colDiv.dataset.id = `${surface.id}`;
+            colDiv.innerHTML = `
+                <li class="list-group-item d-flex justify-content-center align-items-center card surface-item"
+                    data-name="{{ $surface->name }}"
+                    data-id="{{ $surface->id }}"
+                    data-module="surfaces"
+                    data-width="{{ $surface->data['img_width'] ?? '' }}"
+                    data-height="{{ $surface->data['img_height'] ?? '' }}">
+                    <span class="surface-name">{{ $surface->name }}</span>
+                    <div class="dropdown position-absolute top-0 end-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v ms-auto"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
+                            <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                        </ul>
+                    </div>
+                </li>
+            `;
+            surfacesContainer.appendChild(colDiv);
+
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('col-md-4');
+            itemDiv.dataset.module = 'surface';
+            itemDiv.dataset.id = `${surface.id}`;
+            itemDiv.innerHTML = `
+
+                <div class="list-group-item d-flex justify-content-center align-items-center card surface-item mb-3"
+                    data-name="{{ $surface->name }}"
+                    data-id="{{ $surface->id }}"
+                    data-module="surfaces"
+                    data-width="{{ $surface->data['img_width'] ?? '' }}"
+                    data-height="{{ $surface->data['img_height'] ?? '' }}">
+                    <span class="surface-name">{{ $surface->name }}</span>
+                    <div class="dropdown position-absolute top-0 end-0">
+                        <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v ms-auto"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item edit-item" href="#" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="edit">Edit</a></li>
+                            <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            `;
+            surfacesContainer2.appendChild(itemDiv);
+        })
 
 
         canvas.width = CANVAS_WIDTH;
@@ -1469,7 +1550,6 @@
     const imageName = document.getElementById('imageName');
 
     let mode = '';
-    let projectId = '';
 
     function navigateToPhoto(photoId, layoutId) {
         window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
@@ -1478,7 +1558,6 @@
     projectModal.addEventListener('show.bs.modal', (event) => {
         const button = event.relatedTarget; // Button that triggered the modal
         mode = button.getAttribute('data-mode'); // Get mode (create or edit)
-        projectId = button.getAttribute('data-project-id'); // Add this line
 
         // Update title and default values based on mode
         if (mode === 'create') {
@@ -1489,7 +1568,6 @@
             imageName.textContent = '';
         } else if (mode === 'edit') {
             modalTitle.textContent = 'Edit project';
-            const projectName = button.getAttribute('data-project-name');
             projectNameInput.value = projectName;
             imageUploadBox.innerHTML = '<span>+ Image</span><div class="overlay">Click to replace image</div>';
             imageUploadBox.appendChild(imageInput);
