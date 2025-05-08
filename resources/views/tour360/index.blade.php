@@ -62,7 +62,7 @@
                                                     data-project-id="{{ $project->id }}" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#projectModal">
-                                                Edit
+                                                Enter
                                             </button>
                                         </div>
                                     </div>

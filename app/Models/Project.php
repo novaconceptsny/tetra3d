@@ -16,6 +16,10 @@ class Project extends Model implements HasMedia
     use HasCompany, InteractsWithMedia;
 
     protected $guarded = ['id'];
+    protected $fillable = [
+        'is_curate_2d',
+        'background_url',
+    ];
 
     public static function boot()
     {
