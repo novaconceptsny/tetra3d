@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    <div id="project-content">
+    <div id="project-content" style="display: none;">
         <header class="header bg-white">
             <div class="header-logo border-top">
                 <div class="container">
@@ -105,7 +105,7 @@
             </div>
         </header>
         <!-- Main Content -->
-        <div class="container main-content my-5">
+        <div class="container main-content my-5" id="projectContainer">
             <div class="row">
                 <!-- Sidebar: Collections -->
                 <div class="col-md-6 col-xl-2 order-md-1 mb-3">
@@ -161,74 +161,8 @@
             </div>
 
             <!-- Layout Sections -->
-            @foreach($layoutPhotos as $layout)
-                <div class="layout-section mt-5">
-                    <div class="title-box">{{ $layout['name'] }}</div>
-                    <div class="row g-3" id="layout{{ $loop->iteration }}Container" data-layout-id="{{ $layout['layout_id'] }}">
-                        @foreach($layout['photos'] as $index => $photoId)
-                            @php
-                                $photo = $photos->firstWhere('id', $photoId);
-                            @endphp
-                            @if($photo)
-                                <div class="col-md-3 layout-item">
-                                    <div class="card shadow-sm bg-white image-item">
-                                        <div class="overflow-hidden img-home">
-                                            @if(count($layout['thumbnail_urls']) > $index)
-                                                <img src="{{ $layout['thumbnail_urls'][$index] }}" class="card-img-top img-fluid" alt="{{ $photo->name }}">
-                                            @endif
-                                        </div>
-                                        <div class="card-body d-flex justify-content-between align-items-end">
-                                            <p class="card-text">
-                                                <span>{{ $photo->name }}</span><br>
-                                                <small>Created: {{ $photo->created_at->format('Y-m-d') }}</small>
-                                            </p>
-                                            <button type="button"
-                                                    class="btn btn-link favorite-btn {{ $layout['is_favorites'][$index] ? 'active' : '' }}"
-                                                    data-photo-id="{{ $photo->id }}"
-                                                    data-layout-id="{{ $layout['layout_id'] }}"
-                                                    onclick="toggleFavorite(this)">
-                                                <i class="fas fa-star"></i>
-                                            </button>
-                                            <button type="button"
-                                                    class="btn enter-link"
-                                                    onclick="navigateToPhoto({{ $photo->id }}, {{ $layout['layout_id'] }})"
-                                                    data-photo-id="{{ $photo->id }}"
-                                                    data-layout-id="{{ $layout['layout_id'] }}">
-                                                Enter
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
-                        @if($loop->last)
-                            <div class="col-md-3 layout-item">
-                                <div class="card bg-white card-layout">
-                                    <button class="add-image-btn" id="addLayoutBtn" onclick="handleAddPhotoState()">
-                                        <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                        <span class="add-image-text">Add Layout</span>
-                                    </button>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @endforeach
+            <div id="layoutSections"></div>
 
-            <!-- If no layouts exist -->
-            @if(empty($layoutPhotos))
-                <div class="layout-section">
-                    <div class="title-box">No layouts available</div>
-                    <div class="col-md-3 layout-item">
-                        <div class="card bg-white card-layout">
-                            <button class="add-image-btn" id="addLayoutBtn" onclick="handleAddPhotoState()">
-                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                <span class="add-image-text">Add Layout</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 
@@ -552,7 +486,7 @@
                             <div class="overlay">Click to replace image</div>
                         </div>
                         <div class="image-name" id="imageName"></div>
-                        <button type="button" class="btn btn-save">Save</button>
+                        <button type="button" class="btn btn-save" id="saveProject" onclick="saveProject()">Save</button>
                     </div>
                 </div>
             </div>
@@ -579,7 +513,7 @@
     let photoStateData = [];
     let selectedImages = [];
 
-    let projectName = "123";
+    let projectName = "";
     let projectId = 0;
 
 
@@ -602,42 +536,80 @@
     const currentCollections = @json($artworkCollections);
 
 
-    if (currentPhotos && currentPhotos.length > 0) {
-        currentPhotos.forEach(photo => {
-            photosData.push({
-                id: String(photo.id),
-                src: photo.background_url,
-                name: photo.name,
-                corners: photo.data['corners'] || calculateDefaultCorners(),
-                width: photo.data['img_width'],
-                height: photo.data['img_height'],
-                boundingBoxTop: photo.data['bounding_box_top'],
-                boundingBoxLeft: photo.data['bounding_box_left'],
-                boundingBoxWidth : photo.data['bounding_box_width'],
-                boundingBoxHeight : photo.data['bounding_box_height'],
+    function getPhotosData(data) {
+        const result = [];
+
+        if (data && data.length > 0) {
+            data.forEach(photo => {
+                result.push({
+                    id: String(photo.id),
+                    background_url: photo.background_url,
+                    name: photo.name,
+                    corners: photo.data['corners'] || calculateDefaultCorners(),
+                    width: photo.data['img_width'],
+                    height: photo.data['img_height'],
+                    boundingBoxTop: photo.data['bounding_box_top'],
+                    boundingBoxLeft: photo.data['bounding_box_left'],
+                    boundingBoxWidth : photo.data['bounding_box_width'],
+                    boundingBoxHeight : photo.data['bounding_box_height'],
+                });
             });
-        });
+        }
+
+        return result;
+    }
+    
+    function getPhotoStateData(layoutData) {
+        const result = [];
+        if (layoutData && Object.keys(layoutData).length > 0) {
+            Object.keys(layoutData).forEach(layoutId => {
+                const layout = layoutData[layoutId];
+                result.push({
+                    id: String(layout.layout_id),
+                    name: layout.name,
+                    layout_id: layout.layout_id,
+                    thumbnail_urls: layout.thumbnail_urls,
+                    photos: layout.photos,
+                is_favorites: layout.is_favorites
+                });
+            });
+        }
+        return result;
     }
 
-    if (currentSurfaces && currentSurfaces.length > 0) {
-        currentSurfaces.forEach(surface => {
-            surfacesData.push({
-                id: String(surface.id),
-                name: surface.name,
-                data: surface.data,
+    function getSurfacesData(data) {
+        const result = [];
+        if (data && data.length > 0) {
+            data.forEach(surface => {
+                result.push({
+                    id: String(surface.id),
+                    name: surface.name,
+                    data: surface.data,
+                });
             });
-        });
+        }
+        return result;
     }
 
-    if (currentCollections && currentCollections.length > 0) {
-        currentCollections.forEach(artworkCollection => {
-            collectionsData.push({
-                id: String(artworkCollection.id),
-                name: artworkCollection.name,
-                artworks_count: artworkCollection.artworks_count
+    function getCollectionsData(data) {
+        const result = [];
+        if (data && data.length > 0) {
+            data.forEach(artworkCollection => {
+                result.push({
+                    id: String(artworkCollection.id),
+                    name: artworkCollection.name,
+                    artworks_count: artworkCollection.artworks_count
+                });
             });
-        });
+        }
+        return result;
     }
+
+
+    photoStateData = getPhotoStateData(layoutPhotos);
+    photosData = getPhotosData(currentPhotos);
+    surfacesData = getSurfacesData(currentSurfaces);
+    collectionsData = getCollectionsData(currentCollections);
 
     function navigateToPhoto(photoId, layoutId) {
         window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
@@ -729,6 +701,7 @@
         const formData = new FormData();
 
         // Add project_id to FormData
+        console.log("projectId", projectId);
         formData.append('project_id', projectId);
 
         // Add each image to FormData
@@ -1002,10 +975,7 @@
     });
 
 
-    document.addEventListener('DOMContentLoaded', () => {
-
-        document.getElementById('project-name').textContent = projectName;
-
+    function renderPhotos(photosData) {
         // Display existing photos
         const photosContainer = document.getElementById('photosContainer');
 
@@ -1023,7 +993,7 @@
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
-                        <img src="${photo.src}" class="card-img-top img-fluid" alt="${photo.name}">
+                        <img src="${photo.background_url}" class="card-img-top img-fluid" alt="${photo.name}">
                     </div>
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <p class="card-text">${photo.name}</p>
@@ -1034,11 +1004,11 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
                                     data-title="${photo.name}"
-                                    data-image="${photo.src}"
+                                    data-image="${photo.background_url}"
                                     data-photo-id="${photo.id}">Surface Size</a></li>
                                 <li><a class="dropdown-item edit-photo" href="#"  data-bs-toggle="modal" data-bs-target="#editPhotoModal"
                                     data-title="${photo.name}"
-                                    data-image="${photo.src}"
+                                    data-image="${photo.background_url}"
                                     data-photo-id="${photo.id}">Edit</a></li>
                                 <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                             </ul>
@@ -1049,12 +1019,8 @@
             photosContainer.appendChild(colDiv);
         });
 
-        const photosContainer2 = document.getElementById('photosContainer2');
-        const collectionsContainer = document.getElementById('collectionsContainer');
-        const collectionsContainer2 = document.getElementById('collectionsContainer2');
-        const surfacesContainer2 = document.getElementById('surfacesContainer2');
-        const surfacesContainer = document.getElementById('surfacesContainer');
 
+        const photosContainer2 = document.getElementById('photosContainer2');
         // First, clear any existing content except the "Add Image" button
         const addImageCard2 = photosContainer2.querySelector('.photo-item');
         photosContainer2.innerHTML = '';
@@ -1069,7 +1035,7 @@
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
-                        <img src="${photo.src}" class="card-img-top img-fluid" alt="${photo.name}">
+                        <img src="${photo.background_url}" class="card-img-top img-fluid" alt="${photo.name}">
                     </div>
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <p class="card-text">${photo.name}</p>
@@ -1080,11 +1046,11 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#imageModal"
                                     data-title="${photo.name}"
-                                    data-image="${photo.src}"
+                                    data-image="${photo.background_url}"
                                     data-photo-id="${photo.id}">Surface Size</a></li>
                                 <li><a class="dropdown-item edit-photo" href="#"  data-bs-toggle="modal" data-bs-target="#editPhotoModal"
                                     data-title="${photo.name}"
-                                    data-image="${photo.src}"
+                                    data-image="${photo.background_url}"
                                     data-photo-id="${photo.id}">Edit</a></li>
                                 <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                             </ul>
@@ -1094,7 +1060,11 @@
             `;
             photosContainer2.appendChild(colDiv);
         });
+    }
 
+    function renderCollections(collectionsData) {
+        const collectionsContainer = document.getElementById('collectionsContainer');
+        const collectionsContainer2 = document.getElementById('collectionsContainer2');
 
         collectionsData.forEach(collection => {
             const colDiv = document.createElement('div');
@@ -1132,6 +1102,11 @@
            collectionsContainer2.appendChild(itemDiv);
         });
 
+    }
+
+    function renderSurfaces(surfacesData) {
+        const surfacesContainer2 = document.getElementById('surfacesContainer2');
+        const surfacesContainer = document.getElementById('surfacesContainer');
 
         surfacesData.forEach(surface => {
             const colDiv = document.createElement('div');
@@ -1185,7 +1160,96 @@
             `;
             surfacesContainer2.appendChild(itemDiv);
         })
+    }
 
+    function renderLayouts(photoStateData) {
+
+        const projectContainer = document.getElementById('projectContainer');
+
+
+        if (photoStateData && photoStateData.length > 0) {
+            photoStateData.forEach(layout => {
+                const colDiv = document.createElement('div');
+                colDiv.dataset.module = 'photo';
+                colDiv.dataset.id = `${layout.id}`;
+                colDiv.innerHTML = `
+                    <div class="layout-section mt-5">
+                        <div class="title-box">${layout.name}</div>
+                        <div class="row g-3" id="layout${layout.layout_id}Container" data-layout-id="${layout.layout_id}">
+                            ${layout.photos.map((photoId, index) => {
+                                const photo = photosData.find(p => p.id === String(photoId));
+                                if (!photo) return '';
+
+                                return `
+                                    <div class="col-md-3 layout-item">
+                                        <div class="card shadow-sm bg-white image-item">
+                                            <div class="overflow-hidden img-home">
+                                                ${layout.thumbnail_urls && layout.thumbnail_urls[index] ?
+                                                    `<img src="${layout.thumbnail_urls[index]}" class="card-img-top img-fluid" alt="${photo.name}">`
+                                                    : ''}
+                                            </div>
+                                            <div class="card-body d-flex justify-content-between align-items-end">
+                                                <p class="card-text">
+                                                    <span>${photo.name}</span><br>
+                                                    <small>Created: ${new Date(photo.created_at).toLocaleDateString()}</small>
+                                                </p>
+                                                <button type="button"
+                                                        class="btn btn-link favorite-btn ${layout.is_favorites && layout.is_favorites[index] ? 'active' : ''}"
+                                                        data-photo-id="${photo.id}"
+                                                        data-layout-id="${layout.layout_id}"
+                                                        onclick="toggleFavorite(this)">
+                                                    <i class="fas fa-star"></i>
+                                                </button>
+                                                <button type="button"
+                                                        class="btn enter-link"
+                                                        onclick="navigateToPhoto(${photo.id}, ${layout.layout_id})"
+                                                        data-photo-id="${photo.id}"
+                                                        data-layout-id="${layout.layout_id}">
+                                                    Enter
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                            ${layout === photoStateData[photoStateData.length - 1] ? `
+                                <div class="col-md-3 layout-item">
+                                    <div class="card bg-white card-layout">
+                                        <button class="add-image-btn" id="addLayoutBtn" onclick="handleAddPhotoState()">
+                                            <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                            <span class="add-image-text">Add Layout</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                projectContainer.appendChild(colDiv);
+            });
+        } else {
+            const colDiv = document.createElement('div');
+            colDiv.innerHTML = `
+                <div class="layout-section">
+                    <div class="title-box">No layouts available</div>
+                    <div class="col-md-3 layout-item">
+                        <div class="card bg-white card-layout">
+                            <button class="add-image-btn" id="addLayoutBtn" onclick="handleAddPhotoState()">
+                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                <span class="add-image-text">Add Layout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            projectContainer.appendChild(colDiv);
+        }
+
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        document.getElementById('project-name').textContent = projectName;
 
         canvas.width = CANVAS_WIDTH;
         canvas.height = CANVAS_HEIGHT;
@@ -1300,10 +1364,9 @@
             currentImageElement = button.closest('.photo-card');
 
             const image = button.getAttribute('data-image');
-
+            
 
             const photoId = button.getAttribute('data-photo-id');
-
             corners = photosData.find(p => p.id === photoId).corners;
 
             if (!image) {
@@ -1791,15 +1854,44 @@
         });
     }
 
-    function enterProject(projectId) {
-        console.log(projectId, "projectId");
+    function enterProject(id) {
+        // Hide project list and show project content
+        document.getElementById('project-list').style.display = 'none';
+        document.getElementById('project-content').style.display = 'block';
+
+        // Fetch project data and update the content
+        fetch(`/photo/projects/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update project name
+                    document.getElementById('project-name').textContent = data.name;
+                    projectName = data.name;
+                    projectId = data.id;
+                    photosData = getPhotosData(data.photos);
+                    surfacesData = getSurfacesData(data.surfaces);
+                    collectionsData = getCollectionsData(data.artworkCollections);
+                    photoStateData = getPhotoStateData(data.layoutPhotos);
+                    console.log(data, "55555555555555555");
+                    renderPhotos(photosData);
+                    renderCollections(collectionsData);
+                    renderSurfaces(surfacesData);
+                    renderLayouts(photoStateData);
+
+
+                } else {
+                    throw new Error(data.message || 'Failed to load project data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading project data: ' + error.message);
+            });
     }
 
     function handleAddPhotoState(e) {
 
-        // Get project ID from hidden input
-        const projectId = document.getElementById('project-id').value;
-
+        const id = projectId;
         // Validate if we have photos data
         if (!photosData || photosData.length === 0) {
             alert('No photos available to save state');
@@ -1808,7 +1900,7 @@
 
         // Create request data
         const requestData = {
-            project_id: projectId,
+            project_id: id,
             photos: photosData
         };
 
@@ -1837,6 +1929,58 @@
         .catch(error => {
             console.error('Error:', error);
             alert('Error saving photo state: ' + error.message);
+        });
+    }
+
+    function saveProject() {
+        const projectName = document.getElementById('projectNameInput').value;
+        const imageInput = document.getElementById('imageInput');
+        const file = imageInput.files[0];
+
+        if (!projectName) {
+            alert('Please enter a project name');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('name', projectName);
+        if (file) {
+            formData.append('image', file);
+        }
+
+        // Get CSRF token
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Send AJAX request
+        fetch('/photo/store-project', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('projectModal'));
+                modal.hide();
+
+                // Refresh the page to show new project
+                location.reload();
+            } else {
+                throw new Error(data.message || 'Failed to save project');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving project: ' + error.message);
         });
     }
 
