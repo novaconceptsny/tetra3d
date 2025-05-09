@@ -381,8 +381,8 @@
                         <div class="mb-3">
                             <input type="text" class="form-control" id="photoName" placeholder="Name" value= data-title>
                         </div>
-                        <div class="image-upload-box mb-3" id="imageUploadBox">
-                            <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
+                        <div class="image-upload-box mb-3" id="photoUploadBox" onclick="handlePhotoUpload()">
+                            <input type="file" class="image-input" id="photoInput" accept="image/jpeg, image/png">
                             <span>+ Image</span>
                             <div class="overlay"></div>
                         </div>
@@ -428,7 +428,7 @@
                         <!-- Danh sách surfaces -->
                         <div class="surface-list">
                             <div class="row list-unstyled" id="surfacesContainer2">
-                                <div class="col-md-4">
+                                <div class="col-md-4 surface-item">
                                     <button class="add-surface-btn mb-3" data-bs-toggle="modal" data-bs-target="#surfaceModal" data-action="add">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <circle cx="12" cy="12" r="12" fill="#28a745"/>
@@ -699,6 +699,7 @@
     }
 
     function saveImages() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addImageModal'));
         const formData = new FormData();
 
         // Add project_id to FormData
@@ -755,7 +756,10 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                location.reload();
+                modal.hide();
+                selectedImages = [];
+                photosData = getPhotosData(data.updatedPhotos);
+                renderPhotos(photosData);
             } else {
                 alert('Error saving images: ' + data.message);
             }
@@ -807,7 +811,7 @@
     }
 
     function handleDelete() {
-        console.log("handleDelete");
+
         if (itemToDelete) {
             const id = itemToDelete.getAttribute('data-id');
             const module = itemToDelete.getAttribute('data-module');
@@ -895,9 +899,9 @@
                     // Close modal
                     const modal = bootstrap.Modal.getInstance(surfaceModal);
                     modal.hide();
+                    surfacesData = getSurfacesData(data.updatedSurfaces);
+                    renderSurfaces(surfacesData);
 
-                    // Refresh the page to show updated surfaces
-                   location.reload();
                 } else {
                     throw new Error(data.message || 'Failed to save surface');
                 }
@@ -1065,6 +1069,9 @@
         const collectionsContainer = document.getElementById('collectionsContainer');
         const collectionsContainer2 = document.getElementById('collectionsContainer2');
 
+        // collectionsContainer.innerHTML = '';
+        // collectionsContainer2.innerHTML = '';
+
         collectionsData.forEach(collection => {
             const colDiv = document.createElement('div');
             colDiv.dataset.module = 'collection';
@@ -1106,6 +1113,14 @@
     function renderSurfaces(surfacesData) {
         const surfacesContainer2 = document.getElementById('surfacesContainer2');
         const surfacesContainer = document.getElementById('surfacesContainer');
+
+        const addImageCard = surfacesContainer.querySelector('.surface-item');
+        surfacesContainer.innerHTML = '';
+        surfacesContainer.appendChild(addImageCard);
+
+        const addImageCard2 = surfacesContainer2.querySelector('.surface-item');
+        surfacesContainer2.innerHTML = '';
+        surfacesContainer2.appendChild(addImageCard2);
 
         surfacesData.forEach(surface => {
             const colDiv = document.createElement('div');
@@ -1608,8 +1623,12 @@
     const modalTitle = document.getElementById('projectModalLabel');
     const projectNameInput = document.getElementById('projectNameInput');
     const imageUploadBox = document.getElementById('imageUploadBox');
+    const photoUploadBox = document.getElementById('photoUploadBox');
+
     const imageInput = document.getElementById('imageInput');
+    const photoInput = document.getElementById('photoInput');
     const imageName = document.getElementById('imageName');
+    const photoName = document.getElementById('photoName');
 
     let mode = '';
 
@@ -1656,6 +1675,33 @@
                 imageUploadBox.appendChild(overlay);
                 imageUploadBox.appendChild(imageInput);
                 imageName.textContent = file.name;
+
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function handlePhotoUpload() {
+        photoInput.click();
+    }
+
+    photoInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                photoUploadBox.innerHTML = '';
+                console.log(img, "photoUploadBox");
+                photoUploadBox.appendChild(img);
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.textContent = 'Click to replace image';
+                photoUploadBox.appendChild(overlay);
+                photoUploadBox.appendChild(photoInput);
+                photoName.textContent = file.name;
+
             };
             reader.readAsDataURL(file);
         }
@@ -1736,26 +1782,24 @@
         // Store the photo ID on the modal for use when saving
         this.setAttribute('data-photo-id', photoId);
 
-        // If you want to show the current image preview
-        const imageUploadBox = this.querySelector('#imageUploadBox');
-        if (imageUploadBox && image) {
+
+        if (photoUploadBox && image) {
             const img = document.createElement('img');
             img.src = image;
-            imageUploadBox.innerHTML = '';
-            imageUploadBox.appendChild(img);
+            photoUploadBox.innerHTML = '';
+            photoUploadBox.appendChild(img);
             const overlay = document.createElement('div');
             overlay.className = 'overlay';
             overlay.textContent = 'Click to replace image';
             overlay.style.opacity = '0'; // Start with overlay hidden
-            imageUploadBox.appendChild(overlay);
-            imageUploadBox.appendChild(document.querySelector('#imageInput').cloneNode(true));
+            photoUploadBox.appendChild(overlay);
 
             // Add hover event listeners
-            imageUploadBox.addEventListener('mouseenter', () => {
+            photoUploadBox.addEventListener('mouseenter', () => {
                 overlay.style.opacity = '1';
             });
 
-            imageUploadBox.addEventListener('mouseleave', () => {
+            photoUploadBox.addEventListener('mouseleave', () => {
                 overlay.style.opacity = '0';
             });
         }
@@ -1766,14 +1810,13 @@
         const modal = document.getElementById('editPhotoModal');
         const photoId = modal.getAttribute('data-photo-id');
         const photoName = modal.querySelector('#photoName').value;
-        const imageInput = modal.querySelector('#imageInput');
 
         const formData = new FormData();
         formData.append('name', photoName);
         formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
 
-        if (imageInput.files.length > 0) {
-            formData.append('image', imageInput.files[0]);
+        if (photoInput.files.length > 0) {
+            formData.append('image', photoInput.files[0]);
         }
 
         // Show loading state

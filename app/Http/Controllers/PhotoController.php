@@ -25,7 +25,10 @@ class PhotoController extends Controller
 
         // Get all surfaces for the company's tours
         $surfaces           = [];
-        $artworkCollections = [];
+
+        $artworkCollections = ArtworkCollection::forCompany($project->company_id)
+            ->withCount('artworks')
+            ->get();
 
         $photos       = [];
         $layoutPhotos = [];
@@ -139,7 +142,6 @@ class PhotoController extends Controller
 
             $cornersData = [];
 
-            $savedPhotos = [];
 
             foreach ($images as $index => $image) {
                 // Get corners data for this image
@@ -175,17 +177,13 @@ class PhotoController extends Controller
 
                 $photo->save();
 
-                $savedPhotos[] = [
-                    'id'   => $photo->id,
-                    'name' => $photo->name,
-                    'url'  => asset($photo->background_url),
-                ];
+                $updatedPhotos = Photo::where('project_id', $request->input('project_id'))->get();
             }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Images saved successfully',
-                'photos'  => $savedPhotos,
+                'updatedPhotos' => $updatedPhotos,
             ]);
 
         } catch (\Exception $e) {
@@ -277,10 +275,14 @@ class PhotoController extends Controller
                 ]);
             }
 
+            $updatedSurfaces = Surface::where('company_id', $project->company_id)
+            ->where('tour_id', $project->tour_id)
+            ->get();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Surface saved successfully',
-                'surface' => $surface,
+                'updatedSurfaces' => $updatedSurfaces,
             ]);
 
         } catch (\Exception $e) {
