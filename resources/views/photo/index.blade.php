@@ -161,7 +161,9 @@
             </div>
 
             <!-- Layout Sections -->
-            <div id="layoutSections"></div>
+            <div id="layoutSections">
+
+            </div>
 
         </div>
     </div>
@@ -1188,8 +1190,8 @@
 
     function renderLayouts(photoStateData) {
 
-        const projectContainer = document.getElementById('projectContainer');
-
+        const layoutSections = document.getElementById('layoutSections');
+        layoutSections.innerHTML = '';
 
         if (photoStateData && photoStateData.length > 0) {
             photoStateData.forEach(layout => {
@@ -1249,7 +1251,7 @@
                         </div>
                     </div>
                 `;
-                projectContainer.appendChild(colDiv);
+                layoutSections.appendChild(colDiv);
             });
         } else {
             const colDiv = document.createElement('div');
@@ -1266,7 +1268,7 @@
                     </div>
                 </div>
             `;
-            projectContainer.appendChild(colDiv);
+            layoutSections.appendChild(colDiv);
         }
 
     }
@@ -1972,7 +1974,8 @@
         .then(data => {
             if (data.success) {
                 // Reload the page to show updated layout
-                location.reload();
+                photoStateData = getPhotoStateData(data.layoutPhotos);
+                renderLayouts(photoStateData);
             } else {
                 throw new Error(data.message || 'Failed to save photo state');
             }

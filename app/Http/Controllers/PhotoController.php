@@ -222,12 +222,14 @@ class PhotoController extends Controller
 
             PhotoState::insert($photoStates);
 
+            $layoutPhotos = $this->getLayoutPhotos($project);
+
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Photo state saved successfully',
-                'layout'  => $layout,
+                'layoutPhotos' => $layoutPhotos,
             ]);
 
         } catch (\Exception $e) {
@@ -392,44 +394,8 @@ class PhotoController extends Controller
                 ->withCount('artworks')
                 ->get();
 
-            // Check photo state and organize photos by layout
-            $photoState = PhotoState::where('project_id', $project->id)->first();
-
-            $photos       = Photo::where('project_id', $project->id)->get();
-            $layoutPhotos = [];
-
-            if ($photoState) {
-                // Get all photo states for this project
-                $photoStates = PhotoState::where('project_id', $project->id)->get();
-
-                // Group photos by layout
-                foreach ($photoStates as $state) {
-                    $layout = $project->layouts()->find($state->layout_id);
-                    if ($layout) {
-                        if (! isset($layoutPhotos[$layout->id])) {
-                            $layoutPhotos[$layout->id] = [
-                                'layout_id'      => $layout->id,
-                                'name'           => $layout->name,
-                                'thumbnail_urls' => [],
-                                'photos'         => [],
-                                'is_favorites'   => [],
-                            ];
-                        }
-                        // Add thumbnail URL to the array if it exists and isn't already included
-                        if ($state->thumbnail_url && ! in_array($state->thumbnail_url, $layoutPhotos[$layout->id]['thumbnail_urls'])) {
-                            $layoutPhotos[$layout->id]['thumbnail_urls'][] = $state->thumbnail_url;
-                        }
-                        // Add photo ID if not already included
-                        if (! in_array($state->photo_id, $layoutPhotos[$layout->id]['photos'])) {
-                            $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
-                        }
-
-                        $layoutPhotos[$layout->id]['is_favorites'][] = $state->is_favorite;
-                    }
-                }
-            } else {
-                $layoutPhotos = [];
-            }
+            $photos = Photo::where('project_id', $project->id)->get();
+            $layoutPhotos = $this->getLayoutPhotos($project);
 
             return response()->json([
                 'success'            => true,
@@ -439,7 +405,6 @@ class PhotoController extends Controller
                 'artworkCollections' => $artworkCollections,
                 'layoutPhotos'       => $layoutPhotos,
                 'photos'             => $photos,
-                // Add any other project data you need
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -447,6 +412,51 @@ class PhotoController extends Controller
                 'message' => 'Project not found',
             ], 404);
         }
+    }
+
+    /**
+     * Get layout photos for a project
+     *
+     * @param Project $project
+     * @return array
+     */
+    private function getLayoutPhotos(Project $project): array
+    {
+        $photoState = PhotoState::where('project_id', $project->id)->first();
+        
+        if (!$photoState) {
+            return [];
+        }
+
+        $layoutPhotos = [];
+        $photoStates = PhotoState::where('project_id', $project->id)->get();
+
+        foreach ($photoStates as $state) {
+            $layout = $project->layouts()->find($state->layout_id);
+            if ($layout) {
+                if (!isset($layoutPhotos[$layout->id])) {
+                    $layoutPhotos[$layout->id] = [
+                        'layout_id'      => $layout->id,
+                        'name'           => $layout->name,
+                        'thumbnail_urls' => [],
+                        'photos'         => [],
+                        'is_favorites'   => [],
+                    ];
+                }
+                
+                if ($state->thumbnail_url && !in_array($state->thumbnail_url, $layoutPhotos[$layout->id]['thumbnail_urls'])) {
+                    $layoutPhotos[$layout->id]['thumbnail_urls'][] = $state->thumbnail_url;
+                }
+                
+                if (!in_array($state->photo_id, $layoutPhotos[$layout->id]['photos'])) {
+                    $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
+                }
+
+                $layoutPhotos[$layout->id]['is_favorites'][] = $state->is_favorite;
+            }
+        }
+
+        return $layoutPhotos;
     }
 
     public function storeProject(Request $request)
