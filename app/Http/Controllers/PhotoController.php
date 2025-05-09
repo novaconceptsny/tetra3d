@@ -26,9 +26,10 @@ class PhotoController extends Controller
         // Get all surfaces for the company's tours
         $surfaces           = [];
 
-        $artworkCollections = ArtworkCollection::forCompany($project->company_id)
+        $artworkCollections = $project ? ArtworkCollection::forCompany($project->company_id)
             ->withCount('artworks')
-            ->get();
+            ->get() : [];
+            
 
         $photos       = [];
         $layoutPhotos = [];
