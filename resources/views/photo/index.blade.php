@@ -539,6 +539,12 @@
     const currentSurfaces = @json($surfaces);
     const currentCollections = @json($artworkCollections);
 
+    // if project_id is in the url, set projectId to the project_id using new urlsearchparams
+    if (window.location.search.includes('project_id=')) {
+        projectId = new URLSearchParams(window.location.search).get('project_id');
+        enterProject(projectId);
+    }
+
 
     function getPhotosData(data) {
         const result = [];
@@ -1921,6 +1927,8 @@
         document.getElementById('project-list').style.display = 'none';
         document.getElementById('project-content').style.display = 'block';
 
+        // change current url to have param proejct id = id
+        window.history.pushState({}, '', window.location.pathname + '?project_id=' + id);
         // Fetch project data and update the content
         fetch(`/photo/projects/${id}`)
             .then(response => response.json())

@@ -64,7 +64,8 @@
                                 data-bs-toggle="popover"
                                 data-bs-trigger="hover focus"
                                 data-bs-placement="bottom"
-                                data-bs-content="Return">
+                                data-bs-content="Return"
+                                onclick="window.history.back()">
                             <i class="fal fa-rotate-left"></i>
                         </button>
                         <x-menu-item
@@ -161,9 +162,6 @@
             link.click();
         });
 
-        document.querySelector('[data-bs-content="Return"]').addEventListener('click', function() {
-            window.location.href = "{{ route('photo.index') }}";
-        });
     </script>
 
     <!-- OpenCV.js -->
