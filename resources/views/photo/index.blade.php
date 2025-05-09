@@ -284,7 +284,7 @@
                         <div class="row mb-3">
                             <div class="col-md-8">
                                 <select name="surfaceId" id="surfaceId" class="form-select">
-                                         <option  data-width=100"
+                                         <option id="surfaceDefault"  data-width=100"
                                                 data-height="100">
                                             Default
                                         </option>
@@ -1113,6 +1113,7 @@
     function renderSurfaces(surfacesData) {
         const surfacesContainer2 = document.getElementById('surfacesContainer2');
         const surfacesContainer = document.getElementById('surfacesContainer');
+        const surfaceSelect = document.getElementById('surfaceId');
 
         const addImageCard = surfacesContainer.querySelector('.surface-item');
         surfacesContainer.innerHTML = '';
@@ -1121,6 +1122,8 @@
         const addImageCard2 = surfacesContainer2.querySelector('.surface-item');
         surfacesContainer2.innerHTML = '';
         surfacesContainer2.appendChild(addImageCard2);
+
+        surfaceSelect.innerHTML ="";
 
         surfacesData.forEach(surface => {
             const colDiv = document.createElement('div');
@@ -1173,6 +1176,13 @@
 
             `;
             surfacesContainer2.appendChild(itemDiv);
+
+            const surfaceItem = document.createElement('option');
+            surfaceItem.value = surface.id;
+            surfaceItem.setAttribute('data-width', surface.data['img_width'] ?? '');
+            surfaceItem.setAttribute('data-height', surface.data['img_height'] ?? '');
+            surfaceItem.textContent = surface.name;
+            surfaceSelect.appendChild(surfaceItem);
         })
     }
 
