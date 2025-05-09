@@ -17,6 +17,9 @@ class Project extends Model implements HasMedia
 
     protected $guarded = ['id'];
     protected $fillable = [
+        'name',
+        'company_id',
+        'tour_id',
         'is_curate_2d',
         'background_url',
     ];

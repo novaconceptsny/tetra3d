@@ -167,31 +167,33 @@
     </div>
 
         <!-- Modal for Add Collection -->
-        <div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addCollectionModalLabel">Collections</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        @if(isset($project))
+            <div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addCollectionModalLabel">Collections</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('projects.collections.update', $project->id) }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <select name="collection_id" class="form-control" required>
+                                    <option value="">Select Collection</option>
+                                    @foreach($artworkCollections as $artworkCollection)
+                                        <option value="{{ $artworkCollection->id }}">{{ $artworkCollection->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
                     </div>
-                    <form action="{{ route('projects.collections.update', $project->id) }}" method="POST">
-                        @csrf
-                        <div class="modal-body">
-                            <select name="collection_id" class="form-control" required>
-                                <option value="">Select Collection</option>
-                                @foreach($artworkCollections as $artworkCollection)
-                                    <option value="{{ $artworkCollection->id }}">{{ $artworkCollection->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Update</button>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
+        @endif
 
         <!-- Modal for Add Image -->
         <div class="modal fade" id="addImageModal" tabindex="2" aria-labelledby="addImageModalLabel" aria-hidden="true">
@@ -480,7 +482,7 @@
                         <div class="mb-3">
                             <input type="text" class="form-control" id="projectNameInput" placeholder="Name">
                         </div>
-                        <div class="image-upload-box mb-3" id="imageUploadBox">
+                        <div class="image-upload-box mb-3" id="imageUploadBox" onclick="handleImageUpload()">
                             <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
                             <span>+ Image</span>
                             <div class="overlay">Click to replace image</div>
@@ -604,7 +606,6 @@
         }
         return result;
     }
-
 
     photoStateData = getPhotoStateData(layoutPhotos);
     photosData = getPhotosData(currentPhotos);
@@ -858,7 +859,6 @@
     });
 
     function handleAddSurfaces() {
-        console.log("handleAddSurfaces");
         const surfaceName = document.getElementById('surfaceName').value;
         const surfaceWidth = document.getElementById('surfaceWidth').value;
         const surfaceHeight = document.getElementById('surfaceHeight').value;
@@ -871,7 +871,6 @@
             formData.append('project_id', projectId);
 
             if (currentIndex !== null) {
-                console.log("currentIndex", currentIndex);
                 // Edit mode - add surface ID
                 const surfaceItem = document.querySelectorAll('.list-group-item')[currentIndex];
                 const surfaceId = surfaceItem.getAttribute('data-id');
@@ -1071,7 +1070,7 @@
             colDiv.dataset.module = 'collection';
             colDiv.dataset.id = `${collection.id}`;
             colDiv.innerHTML = `
-                <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="{{ $artworkCollection->id }}">
+                <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="${collection.id}">
                     <i class="fas fa-image collection-icon"></i>
                     <div class="collection-info">
                         <span class="collection-name">${collection.name}</span>
@@ -1114,12 +1113,12 @@
             colDiv.dataset.id = `${surface.id}`;
             colDiv.innerHTML = `
                 <li class="list-group-item d-flex justify-content-center align-items-center card surface-item"
-                    data-name="{{ $surface->name }}"
-                    data-id="{{ $surface->id }}"
+                    data-name="${surface.name}"
+                    data-id="${surface.id}"
                     data-module="surfaces"
-                    data-width="{{ $surface->data['img_width'] ?? '' }}"
-                    data-height="{{ $surface->data['img_height'] ?? '' }}">
-                    <span class="surface-name">{{ $surface->name }}</span>
+                    data-width="${surface.data['img_width'] ?? ''}"
+                    data-height="${surface.data['img_height'] ?? ''}">
+                    <span class="surface-name">${surface.name}</span>
                     <div class="dropdown position-absolute top-0 end-0">
                         <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-ellipsis-v ms-auto"></i>
@@ -1140,12 +1139,12 @@
             itemDiv.innerHTML = `
 
                 <div class="list-group-item d-flex justify-content-center align-items-center card surface-item mb-3"
-                    data-name="{{ $surface->name }}"
-                    data-id="{{ $surface->id }}"
+                    data-name="${surface.name}"
+                    data-id="${surface.id}"
                     data-module="surfaces"
-                    data-width="{{ $surface->data['img_width'] ?? '' }}"
-                    data-height="{{ $surface->data['img_height'] ?? '' }}">
-                    <span class="surface-name">{{ $surface->name }}</span>
+                    data-width="${surface.data['img_width'] ?? ''}"
+                    data-height="${surface.data['img_height'] ?? ''}">
+                    <span class="surface-name">${surface.name}</span>
                     <div class="dropdown position-absolute top-0 end-0">
                         <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-ellipsis-v ms-auto"></i>
@@ -1638,10 +1637,9 @@
         }
     });
 
-    // Xử lý upload ảnh
-    imageUploadBox.addEventListener('click', () => {
+    function handleImageUpload() {
         imageInput.click();
-    });
+    }
 
     imageInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -1942,17 +1940,28 @@
             return;
         }
 
+        if(!file) {
+            alert('Please upload a project image');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('name', projectName);
         if (file) {
             formData.append('image', file);
         }
 
+        if(mode === 'edit') {
+            formData.append('project_id', projectId);
+        }
+
         // Get CSRF token
         const token = document.querySelector('meta[name="csrf-token"]').content;
 
         // Send AJAX request
-        fetch('/photo/store-project', {
+        // fetch('/photos/store-project', {
+        const url = mode === 'create' ? '/photos-store-project' : '/photos-update-project';
+        fetch(url, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': token,

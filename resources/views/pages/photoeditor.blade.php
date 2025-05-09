@@ -31,7 +31,7 @@
                 <div class="d-inline-flex justify-content-between tabs-container mb-1 pe-2">
 
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide"  data-bs-toggle="popover"
+                        <!-- <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide"  data-bs-toggle="popover"
                                 data-bs-trigger="hover focus"
                                 data-bs-placement="bottom"
                                 data-bs-content="Add Horizontal Guide">
@@ -49,7 +49,7 @@
                                 data-bs-content="Hide Guides">
                             <i class="fal fa-eye"></i>
                             <i class="fal fa-arrows-alt-v"></i>
-                        </button>
+                        </button> -->
                         <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-area" data-hidden="false" data-bs-toggle="popover"
                                 data-bs-trigger="hover focus"
                                 data-bs-placement="bottom"
@@ -81,12 +81,12 @@
                                          data-bs-content="Download">
                             <i class="fal fa-download"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" data-bs-toggle="popover"
+                        <!-- <button class="btn btn-outline-secondary btn-sm white-bg-button" data-bs-toggle="popover"
                                          data-bs-trigger="hover focus"
                                          data-bs-placement="bottom"
                                          data-bs-content="Share">
                             <i class="fal fa-share-nodes"></i>
-                        </button>
+                        </button> -->
                     </div>
                 </div>
 

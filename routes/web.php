@@ -72,8 +72,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/photo/{id}/edit', 'edit')->name('photo.edit');
         Route::post('/photo/{id}/toggle-favorite', action: 'toggleFavorite')->name('photo.toggle-favorite');
         Route::get('/photo/projects/{id}', 'getProject')->name('photo.projects.get');
-        Route::post('/photo/update/{id}', 'updateProject')->name('photo.update');
-        Route::post('/photo/store-project', 'storeProject')->name('photo.store-project');   
+        Route::post('/photos-store-project', 'storeProject')->name('photo.store-project');   
+        Route::post('/photos-update-project', 'updateProject')->name('photo.update-project');   
     });
 
     Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');

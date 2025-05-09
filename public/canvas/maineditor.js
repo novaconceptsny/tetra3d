@@ -831,32 +831,32 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         renderAllArtworks();
     }
 
-    // Add the event listener for vertical guide button
-    document.getElementById('add-vert-guide').addEventListener('click', function () {
-        addVerticalGuide();
-    });
+    // // Add the event listener for vertical guide button
+    // document.getElementById('add-vert-guide').addEventListener('click', function () {
+    //     addVerticalGuide();
+    // });
 
-    document.getElementById('add-horz-guide').addEventListener('click', function () {
-        addHorizontalGuide();
-    });
+    // document.getElementById('add-horz-guide').addEventListener('click', function () {
+    //     addHorizontalGuide();
+    // });
 
-    // Add this event listener with your other initialization code
-    document.getElementById('toggle-guides').addEventListener('click', function() {
-        const button = this;
-        areGuidesVisible = !areGuidesVisible;
+    // // Add this event listener with your other initialization code
+    // document.getElementById('toggle-guides').addEventListener('click', function() {
+    //     const button = this;
+    //     areGuidesVisible = !areGuidesVisible;
 
-        // Update button text and icon
-        if (areGuidesVisible) {
-            button.innerHTML = '<i class="fal fa-eye"></i> <i class="fal fa-arrows-alt-v"></i>';
-            button.setAttribute('data-bs-content', 'Hide Guides');
-        } else {
-            button.innerHTML = '<i class="fal fa-eye-slash"></i> <i class="fal fa-arrows-alt-v"></i>';
-            button.setAttribute('data-bs-content', 'Show Guides');
-        }
+    //     // Update button text and icon
+    //     if (areGuidesVisible) {
+    //         button.innerHTML = '<i class="fal fa-eye"></i> <i class="fal fa-arrows-alt-v"></i>';
+    //         button.setAttribute('data-bs-content', 'Hide Guides');
+    //     } else {
+    //         button.innerHTML = '<i class="fal fa-eye-slash"></i> <i class="fal fa-arrows-alt-v"></i>';
+    //         button.setAttribute('data-bs-content', 'Show Guides');
+    //     }
 
-        // Redraw the canvas to reflect the change
-        renderAllArtworks();
-    });
+    //     // Redraw the canvas to reflect the change
+    //     renderAllArtworks();
+    // });
 
 });
 

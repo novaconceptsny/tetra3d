@@ -24,52 +24,11 @@ class PhotoController extends Controller
         $project = $projects->first();
 
         // Get all surfaces for the company's tours
-        $surfaces = Surface::whereIn('company_id', $projects->pluck('company_id'))
-            ->whereIn('tour_id', $projects->pluck('tour_id'))
-            ->get();
+        $surfaces           = [];
+        $artworkCollections = [];
 
-        $artworkCollections = ArtworkCollection::forCompany($project->company_id)
-            ->withCount('artworks')
-            ->get();
-
-        // Check photo state and organize photos by layout
-        $photoState = PhotoState::where('project_id', $project->id)->first();
-
-        $photos       = Photo::where('project_id', $project->id)->get();
+        $photos       = [];
         $layoutPhotos = [];
-
-        if ($photoState) {
-            // Get all photo states for this project
-            $photoStates = PhotoState::where('project_id', $project->id)->get();
-
-            // Group photos by layout
-            foreach ($photoStates as $state) {
-                $layout = $project->layouts()->find($state->layout_id);
-                if ($layout) {
-                    if (! isset($layoutPhotos[$layout->id])) {
-                        $layoutPhotos[$layout->id] = [
-                            'layout_id'      => $layout->id,
-                            'name'           => $layout->name,
-                            'thumbnail_urls' => [],
-                            'photos'         => [],
-                            'is_favorites'   => [],
-                        ];
-                    }
-                    // Add thumbnail URL to the array if it exists and isn't already included
-                    if ($state->thumbnail_url && ! in_array($state->thumbnail_url, $layoutPhotos[$layout->id]['thumbnail_urls'])) {
-                        $layoutPhotos[$layout->id]['thumbnail_urls'][] = $state->thumbnail_url;
-                    }
-                    // Add photo ID if not already included
-                    if (! in_array($state->photo_id, $layoutPhotos[$layout->id]['photos'])) {
-                        $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
-                    }
-
-                    $layoutPhotos[$layout->id]['is_favorites'][] = $state->is_favorite;
-                }
-            }
-        } else {
-            $layoutPhotos = [];
-        }
 
         return view('photo.index', compact(
             'projects',
@@ -418,7 +377,7 @@ class PhotoController extends Controller
 
     public function getProject($id)
     {
-        try { 
+        try {
             $project = Project::findOrFail($id);
 
             // Get surfaces for the specific project's company and tour
@@ -470,10 +429,10 @@ class PhotoController extends Controller
             }
 
             return response()->json([
-                'success' => true,
-                'id'      => $project->id,
-                'name'    => $project->name,
-                'surfaces' => $surfaces,
+                'success'            => true,
+                'id'                 => $project->id,
+                'name'               => $project->name,
+                'surfaces'           => $surfaces,
                 'artworkCollections' => $artworkCollections,
                 'layoutPhotos'       => $layoutPhotos,
                 'photos'             => $photos,
@@ -492,36 +451,64 @@ class PhotoController extends Controller
         try {
             // Validate the request
             $request->validate([
-                'name' => 'required|string|max:255',
-                'image' => 'nullable|image|mimes:jpeg,png|max:2048'
+                'name'  => 'required|string|max:255',
+                'image' => 'nullable|image|mimes:jpeg,png|max:2048',
             ]);
+
+            $image = $request->file('image');
+            $path  = $image->store('media/project-thumbnails', 'public');
 
             // Create the project
             $project = Project::create([
-                'company_id' => "1", // You might want to get this from auth or config
-                'tour_id' => "0",
-                'name' => $request->name,
-                'is_curate_2d' => true,
+                'company_id'     => auth()->user()->company_id ?? 1, // Get company_id from authenticated user or default to 1
+                'tour_id'        => 0,
+                'name'           => $request->input('name'), // Use input() method to get the name
+                'is_curate_2d'   => true,
+                'background_url' => '/storage/' . $path,
             ]);
-
-            // Handle image upload if present
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $path = $image->store('project-thumbnails', 'public');
-                $project->background_url = $path;
-                $project->save();
-            }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Project created successfully',
-                'project' => $project
+                'project' => $project,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error creating project: ' . $e->getMessage(),
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
+
+    public function updateProject(Request $request)
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'name'       => 'required|string|max:255',
+                'image'      => 'nullable|image|mimes:jpeg,png|max:2048',
+                'project_id' => 'required|exists:projects,id',
+            ]);
+
+            $image = $request->file('image');
+            $path  = $image->store('media/project-thumbnails', 'public');
+
+            $project                 = Project::findOrFail($request->project_id);
+            $project->name           = $request->input('name');
+            $project->background_url = '/storage/' . $path;
+            $project->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project updated successfully',
+                'project' => $project,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
