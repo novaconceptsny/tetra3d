@@ -818,13 +818,22 @@
             const id = itemToDelete.getAttribute('data-id');
             const module = itemToDelete.getAttribute('data-module');
 
-            deleteItem(id, module);
+            if (module === 'photo') {
+                photosData = photosData.filter(item => item.id !== id);
+                renderPhotos(photosData);
+            }else if (module === 'surface') {
+                surfacesData = surfacesData.filter(item => item.id !== id);
+                renderSurfaces(surfacesData);
+            }else if (module === 'collection') {
+                collectionsData = collectionsData.filter(item => item.id !== id);
+                renderCollections(collectionsData);
+            }
 
+            deleteItem(id, module);
             itemToDelete.remove();
             itemToDelete = null;
             const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
             modal.hide();
-            location.reload();
         } else {
             console.error('No item to delete. itemToDelete is not defined.');
         }
