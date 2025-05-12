@@ -23,6 +23,7 @@ let lastMousePos = { x: 0, y: 0 };
 let lastDragOperation = null;
 
 let saveAndReturnBtn = document.getElementById('save-and-return');
+const removeBtn =  document.getElementById('remove-artwork')
 // Add this variable at the top of your file
 let isAreaVisible = false;
 
@@ -40,6 +41,9 @@ let areGuidesVisible = true;
 
 // Add this at the top of the file
 let cvReady = false;
+
+// Add this variable at the top of your file to track the selected artwork
+let selectedArtwork = null;
 
 // Add this function to wait for OpenCV
 function waitForOpenCV() {
@@ -225,6 +229,13 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             warpedArtwork = clickedArtwork;
             warpedArtworkPosition = clickedArtwork.pos;
 
+            // Set the selected artwork
+            selectedArtwork = clickedArtwork;
+
+            // Update the Alpine state
+            removeBtn.style.display = "block";
+           
+
             // Calculate offset between click point and artwork top-left corner
             let clickPoint = cv.matFromArray(1, 1, cv.CV_32FC2, [x, y]);
             let transformedClick = new cv.Mat();
@@ -243,6 +254,10 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             lastMousePos = { x, y };
             imageCanvas.style.cursor = 'move';
             return;
+        } else {
+            // If not clicking on any artwork, deselect
+            selectedArtwork = null;
+            removeBtn.style.display = "none";
         }
 
         // Check if we're clicking near any guide
@@ -857,6 +872,19 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     //     // Redraw the canvas to reflect the change
     //     renderAllArtworks();
     // });
+
+    // Add this event listener for the remove button (make sure you have a button with id 'remove-artwork')
+    removeBtn.addEventListener('click', function () {
+        if (selectedArtwork) {
+            // Remove the selected artwork from assignedArtworks
+            const idx = assignedArtworks.findIndex(a => a.id === selectedArtwork.id);
+            if (idx !== -1) {
+                assignedArtworks.splice(idx, 1);
+                selectedArtwork = null;
+                renderAllArtworks();
+            }
+        }
+    });
 
 });
 

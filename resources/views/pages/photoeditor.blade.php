@@ -26,7 +26,7 @@
 
             @php($canvasId = $surface ? $surface->id : 'new')
             <div class="col-9 main-col position-relative"
-                x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId") }">
+                x-data="{ changedCanvases: 0, activeCanvas: @js("artwork_canvas_$canvasId"), selectedArtworkExists: false }">
 
                 <div class="d-inline-flex justify-content-between tabs-container mb-1 pe-2">
 
@@ -56,6 +56,12 @@
                                 data-bs-content="Hide Area">
                             <i class="fal fa-eye"></i>
                             <i class="fal fa-square"></i>
+                        </button>
+                        <button id="remove-artwork" 
+                            class="btn btn-outline-secondary btn-sm white-bg-button"
+                            x-show="selectedArtworkExists"
+                            style="display: none;">
+                            <i class="fal fa-trash-alt"></i>
                         </button>
 
                     </div>
