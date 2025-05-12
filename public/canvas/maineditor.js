@@ -693,7 +693,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         })
     }
 
-    saveAndReturnBtn.addEventListener('click', function () {
+    saveAndReturnBtn.addEventListener('click', function (event) {
+        event.preventDefault();
         // Get the canvas thumbnail as a base64 string
 
         const thumbnail = imageCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is the quality (0-1)
@@ -716,9 +717,11 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             body: JSON.stringify(payload)
         })
             .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                }
+                // if (response.redirected) {
+                //     window.location.href = response.url;
+                // }
+                console.log(response, "pppppppppp 1");
+                window.history.back();
             })
             .catch(error => {
                 console.error('Error:', error);

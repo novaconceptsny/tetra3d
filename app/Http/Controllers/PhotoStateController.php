@@ -146,8 +146,14 @@ class PhotoStateController extends Controller
                 // Commit transaction
                 \DB::commit();
                 
-                return redirect()->route('photo.index')->with('success', 'Photo states updated successfully');
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Photo states updated successfully',
+                ]);
 
+             //   return redirect()->route('photo.index')->with('success', 'Photo states updated successfully');
+
+                
             } catch (\Exception $e) {
                 \DB::rollBack();
                 throw $e;
