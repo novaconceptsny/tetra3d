@@ -15,6 +15,7 @@ class Photo extends Model
         'surface_id',
         'name',
         'background_url',
+        'thumbnail_url',
         'data'
     ];
 

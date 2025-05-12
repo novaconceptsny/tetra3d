@@ -550,6 +550,7 @@
                 result.push({
                     id: String(photo.id),
                     background_url: photo.background_url,
+                    thumbnail_url: photo.thumbnail_url,
                     name: photo.name,
                     corners: photo.data['corners'] || calculateDefaultCorners(),
                     width: photo.data['img_width'],
@@ -1060,7 +1061,7 @@
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
-                        <img src="${photo.background_url}" class="card-img-top img-fluid" alt="${photo.name}">
+                        <img src="${photo.thumbnail_url}" class="card-img-top img-fluid" alt="${photo.name}">
                     </div>
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <p class="card-text">${photo.name}</p>
@@ -1102,7 +1103,7 @@
             colDiv.innerHTML = `
                 <div class="card shadow-sm photo-card">
                     <div class="overflow-hidden img-home">
-                        <img src="${photo.background_url}" class="card-img-top img-fluid" alt="${photo.name}">
+                        <img src="${photo.thumbnail_url}" class="card-img-top img-fluid" alt="${photo.name}">
                     </div>
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <p class="card-text">${photo.name}</p>
@@ -1649,6 +1650,7 @@
 
             // Create form data
             const formData = new FormData();
+            formData.append('project_id', projectId);
             formData.append('data', JSON.stringify(photoData));
             formData.append('surface_id', surfaceId);
             formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
@@ -1675,6 +1677,10 @@
             })
             .then(data => {
                 if (data.success) {
+
+                    photosData = getPhotosData(data.updatedPhotos);
+                    renderPhotos(photosData);
+                    location.reload();
                     // Update the UI if needed
                     if (currentImageElement) {
                         currentImageElement.dataset.corners = JSON.stringify(corners);

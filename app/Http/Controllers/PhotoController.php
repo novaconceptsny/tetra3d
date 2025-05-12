@@ -110,7 +110,7 @@ class PhotoController extends Controller
             // Update the photo
             $photo->update([
                 'surface_id' => $request->input('surface_id'),
-                'background_url' => '/storage/' . $filename,
+                'thumbnail_url' => '/storage/' . $filename,
                 'data'       => [
                     'corners'             => $data['corners'],
                     'img_width'           => $data['width'],
@@ -122,10 +122,11 @@ class PhotoController extends Controller
                 ],
             ]);
 
+            $updatedPhotos = Photo::where('project_id', $request->input('project_id'))->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Photo updated successfully',
-                'photo'   => $photo,
+                'updatedPhotos'   => $updatedPhotos,
             ]);
 
         } catch (ModelNotFoundException $e) {
@@ -224,6 +225,7 @@ class PhotoController extends Controller
                 $photo = new Photo([
                     'name'           => $names[$index],
                     'background_url' => '/storage/' . $path,
+                    'thumbnail_url' => '/storage/' . $path,
                     'data'           => $data,
                     'project_id'     => $request->input('project_id'), // Make sure to pass project_id from frontend
                 ]);
