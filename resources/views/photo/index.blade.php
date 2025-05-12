@@ -559,6 +559,9 @@
                     boundingBoxLeft: photo.data['bounding_box_left'],
                     boundingBoxWidth : photo.data['bounding_box_width'],
                     boundingBoxHeight : photo.data['bounding_box_height'],
+                    created_at: photo.created_at,
+                    updated_at: photo.updated_at,
+                    surface_id: photo.surface_id,
                 });
             });
         }
@@ -1028,6 +1031,16 @@
             document.getElementById('rectWidth').value = width;
             document.getElementById('rectHeight').value = height;
         }
+
+        const photo = photosData.find(p => p.id === photoId);
+        if(photo.surface_id){   
+            surfaceSelect.value = photo.surface_id; // <-- set the value here
+        }else{
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select Surface';
+            surfaceSelect.appendChild(defaultOption);
+        }
     });
 
     document.getElementById('surfaceId').addEventListener('change', function() {
@@ -1206,6 +1219,10 @@
         surfacesContainer2.appendChild(addImageCard2);
 
         surfaceSelect.innerHTML ="";
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select Surface';
+        surfaceSelect.appendChild(defaultOption);
 
         surfacesData.forEach(surface => {
             const colDiv = document.createElement('div');
@@ -1266,6 +1283,7 @@
             surfaceItem.textContent = surface.name;
             surfaceSelect.appendChild(surfaceItem);
         })
+        
     }
 
     function renderLayouts(photoStateData) {
@@ -1680,7 +1698,6 @@
 
                     photosData = getPhotosData(data.updatedPhotos);
                     renderPhotos(photosData);
-                    location.reload();
                     // Update the UI if needed
                     if (currentImageElement) {
                         currentImageElement.dataset.corners = JSON.stringify(corners);
