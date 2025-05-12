@@ -180,11 +180,8 @@
                         </div>
 
                         <div class="modal-body">
-                            <select name="collection_id" class="form-control" required>
+                            <select name="collection_id" class="form-control" id="allCollections" required>
                                 <option value="">Select Collection</option>
-                                @foreach($allCollections as $collection)
-                                    <option value="{{ $collection->id }}">{{ $collection->name }}</option>
-                                @endforeach
                             </select>
                         </div>
                         <div class="modal-footer">
@@ -512,6 +509,7 @@
     let photosData = [];
     let surfacesData = [];
     let collectionsData = [];
+    let allCollections = [];
     let photoStateData = [];
     let selectedImages = [];
 
@@ -1129,6 +1127,18 @@
             `;
             photosContainer2.appendChild(colDiv);
         });
+    }
+
+    function renderAllCollections(allCollections) {
+        const allCollectionsSelect = document.getElementById('allCollections');
+
+        allCollections.forEach(collection => {
+            const option = document.createElement('option');
+            option.value = collection.id;
+            option.textContent = collection.name;
+            allCollectionsSelect.appendChild(option);
+        });
+        
     }
 
     function renderCollections(collectionsData) {
@@ -1995,13 +2005,14 @@
                     photosData = getPhotosData(data.photos);
                     surfacesData = getSurfacesData(data.surfaces);
                     collectionsData = getCollectionsData(data.artworkCollections);
-                    console.log(collectionsData, "55555555555555555");
+                    allCollections = getCollectionsData(data.allCollections);
+                    console.log(allCollections, "55555555555555555");
                     photoStateData = getPhotoStateData(data.layoutPhotos);
                     renderPhotos(photosData);
                     renderCollections(collectionsData);
                     renderSurfaces(surfacesData);
                     renderLayouts(photoStateData);
-
+                    renderAllCollections(allCollections);
 
                 } else {
                     throw new Error(data.message || 'Failed to load project data');
