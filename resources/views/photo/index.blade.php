@@ -1416,12 +1416,17 @@
             ctx.strokeStyle = 'red';
             ctx.moveTo(points[0].x, points[0].y);
             for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i].x, points[i].y);
+                ctx.lineTo(points[i].x, points[i].y);
             }
             ctx.closePath();
+
+            // Fill the polygon with green color (with some transparency for better visibility)
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.2)'; // 0.2 = 20% opacity
+            ctx.fill();
+
             ctx.stroke();
 
-           // Draw corner dots with labels
+            // Draw corner dots with labels
             const dotRadius = 8;
             ctx.fillStyle = '#00ff00';
 
@@ -1627,6 +1632,10 @@
             // Get surface ID
             const surfaceId = surfaceSelect.value;
 
+            // Get the PNG data URL from the canvas
+            const canvas = document.getElementById('imageCanvas');
+            const thumbnailDataUrl = canvas.toDataURL('image/png');
+
             // Prepare the photo data
             const photoData = {
                 corners: corners || [],
@@ -1643,6 +1652,9 @@
             formData.append('data', JSON.stringify(photoData));
             formData.append('surface_id', surfaceId);
             formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+            // Add the thumbnail image as a data URL
+            formData.append('thumbnail', thumbnailDataUrl);
 
             // Show loading state
             const saveButton = document.getElementById('saveLayout');

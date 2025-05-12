@@ -90,10 +90,27 @@ class PhotoController extends Controller
 
             // Decode the data from the request
             $data = json_decode($request->input('data'), true);
+            $thumbnailData         = $request->input('thumbnail');
+
+            $thumbnailData = preg_replace('/^data:image\/\w+;base64,/', '', $thumbnailData);
+            $thumbnailData = base64_decode($thumbnailData);
+            
+            // Create directory path using photo_state_id with thumbnail folder
+            $dirPath = 'media/photos/' . $photo->id;
+            
+            // Use thumbnail.jpg as filename
+            $filename = $dirPath . '/thumbnail.jpg';
+            
+            // Ensure the directory exists
+            Storage::disk('public')->makeDirectory($dirPath);
+            
+            // Store the thumbnail
+            Storage::disk('public')->put($filename, $thumbnailData);
 
             // Update the photo
             $photo->update([
                 'surface_id' => $request->input('surface_id'),
+                'background_url' => '/storage/' . $filename,
                 'data'       => [
                     'corners'             => $data['corners'],
                     'img_width'           => $data['width'],
