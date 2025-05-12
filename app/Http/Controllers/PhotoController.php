@@ -510,7 +510,7 @@ class PhotoController extends Controller
 
             // Create the project
             $project = Project::create([
-                'company_id'     => auth()->user()->company_id ?? 1, // Get company_id from authenticated user or default to 1
+                'company_id'     => auth()->user()->company_id ?? 3, // Get company_id from authenticated user or default to 1
                 'tour_id'        => 0,
                 'name'           => $request->input('name'), // Use input() method to get the name
                 'is_curate_2d'   => true,
