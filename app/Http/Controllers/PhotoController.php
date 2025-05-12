@@ -2,10 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArtworkCollection;
+use App\Models\Curate2dSurface;
 use App\Models\Photo;
 use App\Models\PhotoState;
 use App\Models\Project;
-use App\Models\Surface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +24,11 @@ class PhotoController extends Controller
         $project = $projects->first();
 
         // Get all surfaces for the company's tours
-        $surfaces           = [];
+        $surfaces = [];
 
-        $artworkCollections = $project ? ArtworkCollection::forCompany($project->company_id)
+        $allCollections = $project ? ArtworkCollection::forCompany($project->company_id)
             ->withCount('artworks')
             ->get() : [];
-            
 
         $photos       = [];
         $layoutPhotos = [];
@@ -37,7 +36,7 @@ class PhotoController extends Controller
         return view('photo.index', compact(
             'projects',
             'favorites',
-            'artworkCollections',
+            'allCollections',
             'project',
             'photos',
             'surfaces',
@@ -47,16 +46,40 @@ class PhotoController extends Controller
 
     public function updateCollections(Request $request, Project $project)
     {
-        // Validate the request
-        $request->validate([
-            'collection_id' => 'required|exists:artwork_collections,id',
-        ]);
+        try {
+            // Validate the request
+            $request->validate([
+                'collection_name' => 'required|string',
+                'project_id' => 'required|exists:projects,id',
+            ]);
 
-        // Attach the collection to the project
-        // This will add the collection if it doesn't exist in the relationship
-        $project->artworkCollections()->attach($request->collection_id);
+            $project = Project::findOrFail($request->project_id);
 
-        return redirect()->back()->with('success', 'Collection added successfully');
+            // Find the collection by name and company
+            $collection = ArtworkCollection::where('name', $request->collection_name)
+                ->where('company_id', $project->company_id)
+                ->firstOrFail();
+
+            // Attach the collection to the project only if not already attached
+            if (! $project->artworkCollections->contains($collection->id)) {
+                $project->artworkCollections()->attach($collection->id);
+            }
+
+            $updatedCollections = $project
+                ? $project->artworkCollections()->withCount('artworks')->get()
+                : [];
+
+            return response()->json([
+                'success'       => true,
+                'message'       => 'Collection added successfully',
+                'updatedCollections' => $updatedCollections,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function update(Request $request, $id)
@@ -101,16 +124,29 @@ class PhotoController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($module, $id)
     {
         try {
             DB::beginTransaction();
 
-            // Delete the photo state first
-            PhotoState::where('photo_id', $id)->delete();
+            if ($module === 'artworks') {
+                // Find the artwork collection
+                $artworkCollection = ArtworkCollection::findOrFail($id);
 
-            // Then delete the photo
-            Photo::destroy($id);
+                // Find the project (you may need to pass project_id as a request param or infer it)
+                $projectId = request()->input('project_id');
+                $project   = Project::findOrFail($projectId);
+
+                // Detach the artwork collection from the project
+                $project->artworkCollections()->detach($artworkCollection->id);
+
+            } elseif ($module === 'photo') {
+                // Delete the photo state first
+                PhotoState::where('photo_id', $id)->delete();
+
+                // Then delete the photo
+                Photo::destroy($id);
+            }
 
             DB::commit();
 
@@ -142,7 +178,6 @@ class PhotoController extends Controller
             $boundingBoxHeight = $request->input('boundingBoxHeight');
 
             $cornersData = [];
-
 
             foreach ($images as $index => $image) {
                 // Get corners data for this image
@@ -182,8 +217,8 @@ class PhotoController extends Controller
             }
 
             return response()->json([
-                'success' => true,
-                'message' => 'Images saved successfully',
+                'success'       => true,
+                'message'       => 'Images saved successfully',
                 'updatedPhotos' => $updatedPhotos,
             ]);
 
@@ -227,8 +262,8 @@ class PhotoController extends Controller
             DB::commit();
 
             return response()->json([
-                'success' => true,
-                'message' => 'Photo state saved successfully',
+                'success'      => true,
+                'message'      => 'Photo state saved successfully',
                 'layoutPhotos' => $layoutPhotos,
             ]);
 
@@ -249,7 +284,7 @@ class PhotoController extends Controller
                 'width'      => 'required|numeric',
                 'height'     => 'required|numeric',
                 'project_id' => 'required|exists:projects,id',
-                'surface_id' => 'nullable|exists:surfaces,id',
+                'surface_id' => 'nullable|exists:curate2d_surface,id',
             ]);
 
             // Get project directly without relationships since we only need company_id
@@ -257,7 +292,7 @@ class PhotoController extends Controller
 
             if ($request->has('surface_id')) {
                 // Update existing surface
-                $surface       = Surface::findOrFail($request->surface_id);
+                $surface       = Curate2dSurface::findOrFail($request->surface_id);
                 $surface->name = $validated['name'];
                 $surface->data = array_merge($surface->data ?? [], [
                     'img_width'  => $validated['width'],
@@ -266,11 +301,10 @@ class PhotoController extends Controller
                 $surface->save();
             } else {
                 // Create new surface with explicit company_id and tour_id
-                $surface = Surface::create([
+                $surface = Curate2dSurface::create([
                     'name'         => $validated['name'],
                     'display_name' => $validated['name'],
-                    'company_id'   => $project->company_id,
-                    'tour_id'      => $project->tour_id, // Use first tour's ID
+                    'project_id'   => $validated['project_id'],
                     'data'         => [
                         'img_width'  => $validated['width'],
                         'img_height' => $validated['height'],
@@ -278,13 +312,11 @@ class PhotoController extends Controller
                 ]);
             }
 
-            $updatedSurfaces = Surface::where('company_id', $project->company_id)
-            ->where('tour_id', $project->tour_id)
-            ->get();
+            $updatedSurfaces = Curate2dSurface::where('project_id', $validated['project_id'])->get();
 
             return response()->json([
-                'success' => true,
-                'message' => 'Surface saved successfully',
+                'success'         => true,
+                'message'         => 'Surface saved successfully',
                 'updatedSurfaces' => $updatedSurfaces,
             ]);
 
@@ -386,15 +418,19 @@ class PhotoController extends Controller
             $project = Project::findOrFail($id);
 
             // Get surfaces for the specific project's company and tour
-            $surfaces = Surface::where('company_id', $project->company_id)
-                ->where('tour_id', $project->tour_id)
-                ->get();
+            $surfaces = $project
+            ? Curate2dSurface::where('project_id', $project->id)->get()
+            : [];
 
-            $artworkCollections = ArtworkCollection::forCompany($project->company_id)
+            $artworkCollections = $project
+            ? $project->artworkCollections()->withCount('artworks')->get()
+            : [];
+
+            $allCollections = $project ? ArtworkCollection::forCompany($project->company_id)
                 ->withCount('artworks')
-                ->get();
+                ->get() : [];
 
-            $photos = Photo::where('project_id', $project->id)->get();
+            $photos       = Photo::where('project_id', $project->id)->get();
             $layoutPhotos = $this->getLayoutPhotos($project);
 
             return response()->json([
@@ -403,6 +439,7 @@ class PhotoController extends Controller
                 'name'               => $project->name,
                 'surfaces'           => $surfaces,
                 'artworkCollections' => $artworkCollections,
+                'allCollections'     => $allCollections,
                 'layoutPhotos'       => $layoutPhotos,
                 'photos'             => $photos,
             ]);
@@ -423,18 +460,18 @@ class PhotoController extends Controller
     private function getLayoutPhotos(Project $project): array
     {
         $photoState = PhotoState::where('project_id', $project->id)->first();
-        
-        if (!$photoState) {
+
+        if (! $photoState) {
             return [];
         }
 
         $layoutPhotos = [];
-        $photoStates = PhotoState::where('project_id', $project->id)->get();
+        $photoStates  = PhotoState::where('project_id', $project->id)->get();
 
         foreach ($photoStates as $state) {
             $layout = $project->layouts()->find($state->layout_id);
             if ($layout) {
-                if (!isset($layoutPhotos[$layout->id])) {
+                if (! isset($layoutPhotos[$layout->id])) {
                     $layoutPhotos[$layout->id] = [
                         'layout_id'      => $layout->id,
                         'name'           => $layout->name,
@@ -443,12 +480,12 @@ class PhotoController extends Controller
                         'is_favorites'   => [],
                     ];
                 }
-                
-                if ($state->thumbnail_url && !in_array($state->thumbnail_url, $layoutPhotos[$layout->id]['thumbnail_urls'])) {
+
+                if ($state->thumbnail_url && ! in_array($state->thumbnail_url, $layoutPhotos[$layout->id]['thumbnail_urls'])) {
                     $layoutPhotos[$layout->id]['thumbnail_urls'][] = $state->thumbnail_url;
                 }
-                
-                if (!in_array($state->photo_id, $layoutPhotos[$layout->id]['photos'])) {
+
+                if (! in_array($state->photo_id, $layoutPhotos[$layout->id]['photos'])) {
                     $layoutPhotos[$layout->id]['photos'][] = $state->photo_id;
                 }
 

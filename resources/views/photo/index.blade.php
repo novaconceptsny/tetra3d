@@ -112,7 +112,7 @@
                     <div class="sidebar bg-white rounded overflow-hidden">
                         <div class="title-box" >Collections <a href="#" class="enter-link fw-normal" data-bs-toggle="modal" data-bs-target="#collectionsModal">Enter</a></div>
                         <ul class="list-group" id="collectionsContainer">
-                            <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2">
+                            <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" id="addCollectionBtn">
                                 <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
                                     <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                     <span class="add-collection-text">Add Collection</span>
@@ -178,20 +178,18 @@
                             <h5 class="modal-title" id="addCollectionModalLabel">Collections</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="{{ route('projects.collections.update', $project->id) }}" method="POST">
-                            @csrf
-                            <div class="modal-body">
-                                <select name="collection_id" class="form-control" required>
-                                    <option value="">Select Collection</option>
-                                    @foreach($artworkCollections as $artworkCollection)
-                                        <option value="{{ $artworkCollection->id }}">{{ $artworkCollection->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Update</button>
-                            </div>
-                        </form>
+
+                        <div class="modal-body">
+                            <select name="collection_id" class="form-control" required>
+                                <option value="">Select Collection</option>
+                                @foreach($allCollections as $collection)
+                                    <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" onclick="handleAddCollection()">Update</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -405,7 +403,7 @@
                     <div class="modal-body">
                         <!-- Danh sách collections -->
                         <div class="collection-list" id="collectionsContainer2">
-                            <div class="collection-item">
+                            <div class="collection-item" id="addCollectionBtn2">
                                 <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
                                     <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                     <span class="add-collection-text">Add Collection</span>
@@ -537,7 +535,7 @@
     const currentPhotos = @json($photos);
     const layoutPhotos = @json($layoutPhotos);
     const currentSurfaces = @json($surfaces);
-    const currentCollections = @json($artworkCollections);
+    const currentCollections = [];
 
     // if project_id is in the url, set projectId to the project_id using new urlsearchparams
     if (window.location.search.includes('project_id=')) {
@@ -802,13 +800,14 @@
     function deleteItem(id, module){
         const formData = new FormData();
         formData.append('id', id);
+        formData.append('project_id', projectId);
         const token = document.querySelector('meta[name="csrf-token"]');
         if (!token) {
             throw new Error('CSRF token not found');
         }
 
         // Send the FormData to the server
-        return fetch('/'+module+'/destroy/'+id, {
+        return fetch('/photo/'+module+'/destroy/'+id, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': token.content,
@@ -878,6 +877,56 @@
             currentIndex = Array.from(document.querySelectorAll('.list-group-item')).indexOf(surfaceItem);
         }
     });
+
+    function handleAddCollection() {
+
+        // Get the selected collection ID
+        const select = document.querySelector('select[name="collection_id"]');
+        const collectionId = select.value;
+        const collectionName = select.options[select.selectedIndex].text;
+
+        if (!collectionId) {
+            alert('Please select a collection.');
+            return;
+        }
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('collection_name', collectionName);
+        formData.append('project_id', projectId);
+
+        // Get CSRF token
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Send AJAX request
+        fetch('/photo/collections/update', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Optionally update the UI, close modal, etc.
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addCollectionModal'));
+                modal.hide();
+                // Update the collections list in the UI
+                if (data.updatedCollections) {
+                    collectionsData = getCollectionsData(data.updatedCollections);
+                    renderCollections(collectionsData);
+                }
+            } else {
+                alert('Error: ' + (data.message || 'Could not add collection.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding collection.');
+        });
+    }
 
     function handleAddSurfaces() {
         const surfaceName = document.getElementById('surfaceName').value;
@@ -1086,8 +1135,13 @@
         const collectionsContainer = document.getElementById('collectionsContainer');
         const collectionsContainer2 = document.getElementById('collectionsContainer2');
 
-        // collectionsContainer.innerHTML = '';
-        // collectionsContainer2.innerHTML = '';
+        const addCollectionBtn = collectionsContainer.querySelector('#addCollectionBtn');
+        collectionsContainer.innerHTML = '';
+        collectionsContainer.appendChild(addCollectionBtn);;
+
+        const addCollectionBtn2 = collectionsContainer2.querySelector('#addCollectionBtn2');
+        collectionsContainer2.innerHTML = '';
+        collectionsContainer2.appendChild(addCollectionBtn2);;
 
         collectionsData.forEach(collection => {
             const colDiv = document.createElement('div');
@@ -1117,7 +1171,7 @@
             itemDiv.dataset.module = 'photo';
             itemDiv.dataset.id = `${collection.id}`;
             itemDiv.innerHTML = `
-                <div class="collection-item">
+                <div class="collection-item w-100">
                     <span>${collection.name}</span>
                 </div>
 
@@ -1941,8 +1995,8 @@
                     photosData = getPhotosData(data.photos);
                     surfacesData = getSurfacesData(data.surfaces);
                     collectionsData = getCollectionsData(data.artworkCollections);
+                    console.log(collectionsData, "55555555555555555");
                     photoStateData = getPhotoStateData(data.layoutPhotos);
-                    console.log(data, "55555555555555555");
                     renderPhotos(photosData);
                     renderCollections(collectionsData);
                     renderSurfaces(surfacesData);

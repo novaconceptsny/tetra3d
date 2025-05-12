@@ -63,11 +63,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::controller(PhotoController::class)->group(function () {
         Route::get('/photo', 'index')->name('photo.index');
-        Route::post('photo/destroy/{id}', 'destroy')->name('photo.destroy');
+        Route::post('/photo/{module}/destroy/{id}', 'destroy')->name('photo.destroy');
         Route::post('/photo/store', 'store')->name('photo.store');
         Route::post('/photo/{photo}', 'update')->name('photo.update');
         Route::post('/photo-state/store', 'storePhotoState')->name('photo.state.store');
-        Route::post('/projects/{project}/collections/update', 'updateCollections')->name('projects.collections.update');
+        Route::post('/photo/collections/update', 'updateCollections')->name('photo.collections.update');
         Route::post('/photo/surface/store', 'storeSurface')->name('photo.surface.store');
         Route::post('/photo/{id}/edit', 'edit')->name('photo.edit');
         Route::post('/photo/{id}/toggle-favorite', action: 'toggleFavorite')->name('photo.toggle-favorite');
