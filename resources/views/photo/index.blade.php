@@ -1315,7 +1315,7 @@
                                             <div class="card-body d-flex justify-content-between align-items-end">
                                                 <p class="card-text">
                                                     <span>${photo.name}</span><br>
-                                                    <small>Created: ${new Date(photo.created_at).toLocaleDateString()}</small>
+                                                    <small>Created: ${new Date(photo.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</small>
                                                 </p>
                                                 <button type="button"
                                                         class="btn btn-link favorite-btn ${layout.is_favorites && layout.is_favorites[index] ? 'active' : ''}"
