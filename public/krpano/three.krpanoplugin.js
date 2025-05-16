@@ -510,7 +510,6 @@ function krpanoplugin() {
 			if (canMove && isDown) {
 
 				var plane_point = do_object_point(ms.x, ms.y);
-				console.log(direction, "dddddddddddddd")
 				update_position(selectedObj, plane_point, plane_point_temp, direction);
 				update_position(selectedObj.userData.model, plane_point, plane_point_temp, direction);
 				update_position(gizmoObj, plane_point, plane_point_temp, direction);
@@ -649,7 +648,7 @@ function krpanoplugin() {
 	function update_position(hitobj, position, temp, direction) {
 		if (position) {
 			if (direction == 'x') hitobj.position.set(hitobj.position.x + position.x - temp.x, hitobj.position.y, hitobj.position.z);
-			if (direction == 'y') hitobj.position.set(hitobj.position.x, hitobj.position.y + position.y - temp.y, hitobj.position.z);
+			if (direction == 'y') hitobj.position.set(hitobj.position.x, hitobj.position.y - (position.y - temp.y), hitobj.position.z);
 			if (direction == 'z') hitobj.position.set(hitobj.position.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
 			if (direction == 'xz') hitobj.position.set(hitobj.position.x + position.x - temp.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
 		}
