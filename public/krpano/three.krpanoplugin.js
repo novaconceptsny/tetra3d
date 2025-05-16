@@ -366,7 +366,7 @@ function krpanoplugin() {
 				point = intersects[i].point;
 			}
 
-			if (obj.name == 'gizmoPlane' || obj.name == 'arrow_x' || obj.name == 'arrow_z' || obj.name == 'direct_x' || obj.name == 'direct_z') {
+			if (obj.name == 'gizmoPlane' || obj.name == 'arrow_x' || obj.name == 'arrow_z' || obj.name == 'direct_x' || obj.name == 'direct_z' || obj.name == 'arrow_y' || obj.name == 'direct_y') {
 				gizmo = obj;
 				point = intersects[i].point;
 			}
@@ -510,7 +510,7 @@ function krpanoplugin() {
 			if (canMove && isDown) {
 
 				var plane_point = do_object_point(ms.x, ms.y);
-
+				console.log(direction, "dddddddddddddd")
 				update_position(selectedObj, plane_point, plane_point_temp, direction);
 				update_position(selectedObj.userData.model, plane_point, plane_point_temp, direction);
 				update_position(gizmoObj, plane_point, plane_point_temp, direction);
