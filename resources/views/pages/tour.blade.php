@@ -262,7 +262,7 @@
     var toggle_space_model = false;
     var sculpture_change_list = [];
     var surface_meshes = [];
-    var tourScale = 30;
+    var tourScale = 30.05;
     var offsetScale = 30;
     var sculptureScale = 30;
 
