@@ -262,7 +262,9 @@
     var toggle_space_model = false;
     var sculpture_change_list = [];
     var surface_meshes = [];
-    var tourScale = 30.02;
+    var tourScale = 30;
+    var offsetScale = 30;
+    var sculptureScale = 30;
 
     var layout_id = '{{ $layout_id }}';
     var shared_tour_id = '{{ $shared_tour_id }}';
@@ -336,9 +338,9 @@
                 alert("No 3D space model");
             } else {
 
-                offset_x = spot_position.x * tourScale;
-                offset_y = spot_position.y * tourScale;
-                offset_z = spot_position.z * tourScale;
+                offset_x = spot_position.x * offsetScale;
+                offset_y = spot_position.y * offsetScale;
+                offset_z = spot_position.z * offsetScale;
 
                 var loader = new THREE.GLTFLoader();
                 var dracoLoader = new THREE.DRACOLoader();
@@ -387,9 +389,9 @@
                             surface_data[i].surface_id,
                             surface_data[i].width,
                             surface_data[i].height,
-                            surface_data[i].start_pos['x'] * tourScale - spot_position.x * tourScale,
-                            -surface_data[i].start_pos['y'] * tourScale + spot_position.y * tourScale,
-                            -surface_data[i].start_pos['z'] * tourScale + spot_position.z * tourScale,
+                            surface_data[i].start_pos['x'] * offsetScale - spot_position.x * offsetScale,
+                            -surface_data[i].start_pos['y'] * offsetScale + spot_position.y * offsetScale,
+                            -surface_data[i].start_pos['z'] * offsetScale + spot_position.z * offsetScale,
                             surface_data[i].normal['x'],
                             surface_data[i].normal['y'],
                             surface_data[i].normal['z']
@@ -402,9 +404,9 @@
 
                             load_model(sculpture_data[i].sculpture_id,
                                 sculpture_data[i].model_id,
-                                sculpture_data[i].position_x - spot_position.x * tourScale,
-                                sculpture_data[i].position_y - spot_position.y * tourScale,
-                                sculpture_data[i].position_z + spot_position.z * tourScale,
+                                sculpture_data[i].position_x - spot_position.x * offsetScale,
+                                sculpture_data[i].position_y - spot_position.y * offsetScale,
+                                sculpture_data[i].position_z + spot_position.z * offsetScale,
                                 sculpture_data[i].rotation_x,
                                 sculpture_data[i].rotation_y,
                                 sculpture_data[i].rotation_z
@@ -421,9 +423,9 @@
                             artworks_data[i].surfacestateId,
                             artworks_data[i].imageWidth,
                             artworks_data[i].imageHeight,
-                            artworks_data[i].position_x * tourScale - spot_position.x * tourScale,
-                            -artworks_data[i].position_y * tourScale + spot_position.y * tourScale,
-                            -artworks_data[i].position_z * tourScale + spot_position.z * tourScale,
+                            artworks_data[i].position_x * offsetSc - spot_position.x * offsetSc,
+                            -artworks_data[i].position_y * offsetSc + spot_position.y * offsetSc,
+                            -artworks_data[i].position_z * offsetSc + spot_position.z * offsetSc,
                             artworks_data[i].normal['x'],
                             artworks_data[i].normal['y'],
                             artworks_data[i].normal['z']
@@ -648,7 +650,7 @@
         loader.setDRACOLoader(dracoLoader);
 
         var add_model_position = findAddModelPosition();
-        var spherical_position = cartesianToSpherical(-add_model_position.x * tourScale, offset_y, -add_model_position.z * tourScale);
+        var spherical_position = cartesianToSpherical(-add_model_position.x * offsetScale, offset_y, -add_model_position.z * offsetScale);
 
         loader.load(temp_model_url, function (gltf) {
             temp = gltf.scene;
@@ -707,7 +709,7 @@
         var temp_url = sculptureUrls[imageId].interaction;
 
         var add_model_position = findAddModelPosition();
-        var spherical_position = cartesianToSpherical(-add_model_position.x * 30, offset_y, -add_model_position.z * 30);
+        var spherical_position = cartesianToSpherical(-add_model_position.x * offsetScale, offset_y, -add_model_position.z * offsetScale);
 
         loader.load(sculpture_url, async function (gltf) {
             model = gltf.scene;
@@ -733,7 +735,7 @@
                 atv: spherical_position.theta,
                 depth: spherical_position.r,
                 rz: -180,
-                scale: tourScale
+                scale: sculptureScale
             });
         });
     }
@@ -781,7 +783,7 @@
                 rx: rotation_x * 180 / Math.PI,
                 ry: rotation_y * 180 / Math.PI,
                 rz: rotation_z * 180 / Math.PI,
-                scale: tourScale,
+                scale: sculptureScale,
             });
         });
     }
