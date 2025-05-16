@@ -423,9 +423,9 @@
                             artworks_data[i].surfacestateId,
                             artworks_data[i].imageWidth,
                             artworks_data[i].imageHeight,
-                            artworks_data[i].position_x * offsetSc - spot_position.x * offsetSc,
-                            -artworks_data[i].position_y * offsetSc + spot_position.y * offsetSc,
-                            -artworks_data[i].position_z * offsetSc + spot_position.z * offsetSc,
+                            artworks_data[i].position_x * offsetScale - spot_position.x * offsetScale,
+                            -artworks_data[i].position_y * offsetScale + spot_position.y * offsetScale,
+                            -artworks_data[i].position_z * offsetScale + spot_position.z * offsetScale,
                             artworks_data[i].normal['x'],
                             artworks_data[i].normal['y'],
                             artworks_data[i].normal['z']
@@ -634,7 +634,7 @@
                 rx: rotation_x * 180 / Math.PI,
                 ry: rotation_y * 180 / Math.PI,
                 rz: rotation_z * 180 / Math.PI,
-                scale: tourScale,
+                scale: sculptureScale,
                 onup: function (obj) { createLabel(obj) }
             });
 
