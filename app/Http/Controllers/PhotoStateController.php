@@ -23,9 +23,14 @@ class PhotoStateController extends Controller
             $layout = Layout::findOrFail($layoutId);
             $project = Project::findOrFail($layout->project_id);
 
+            $selectedPhotoState = PhotoState::where('layout_id', $layoutId)
+                ->where('photo_id', $photo->id)
+                ->firstOrFail();
+
             // Fetch assigned artworks from artwork_photo_state table using photo_state_id
             $assignedArtworks = ArtworkPhotoState::where('surface_id', $photo->surface_id)
                 ->where('layout_id', $layoutId)
+                ->where('photo_state_id', $selectedPhotoState->id)
                 ->with('artwork')
                 ->get()
                 ->map(function ($state) {
@@ -89,9 +94,14 @@ class PhotoStateController extends Controller
             $layoutId = $request->layout_id;
 
             // Get the photo state
-            $photoState = PhotoState::where('layout_id', $layoutId)
+            $selectedPhotoState = PhotoState::where('layout_id', $layoutId)
                 ->where('photo_id', $photo->id)
                 ->firstOrFail();
+
+            $photoStateArray = PhotoState::where('layout_id', $layoutId)
+                ->get()
+                ->toArray();
+
                          
             // Log the incoming data
             \Log::info('Assigned Artwork:', ['data' => $assignedArtworks]);
@@ -105,7 +115,7 @@ class PhotoStateController extends Controller
                 $thumbnailData = base64_decode($thumbnailData);
                 
                 // Create directory path using photo_state_id with thumbnail folder
-                $dirPath = 'media/photo_states/' . $photoState->id . '/thumbnail';
+                $dirPath = 'media/photo_states/' . $selectedPhotoState->id . '/thumbnail';
                 
                 // Use thumbnail.jpg as filename
                 $filename = $dirPath . '/thumbnail.jpg';
@@ -117,8 +127,8 @@ class PhotoStateController extends Controller
                 Storage::disk('public')->put($filename, $thumbnailData);
                 
                 // Update your photo state model with the thumbnail path
-                $photoState->thumbnail_url = '/storage/' . $filename;
-                $photoState->save();
+                $selectedPhotoState->thumbnail_url = '/storage/' . $filename;
+                $selectedPhotoState->save();
             }
 
             // Begin transaction
@@ -126,9 +136,7 @@ class PhotoStateController extends Controller
 
             try {
                 // Clear existing states for this photo_state
-                ArtworkPhotoState::where('layout_id', $layoutId)
-                    ->where('surface_id', $photo->surface_id)
-                    ->delete();
+                ArtworkPhotoState::where('photo_state_id', $selectedPhotoState->id)->delete();
 
                 // Store each artwork state
                 foreach ($assignedArtworks as $artwork) {
@@ -140,11 +148,28 @@ class PhotoStateController extends Controller
 
                     ArtworkPhotoState::create([
                         'artwork_id' => $artwork['artworkId'],
-                        'photo_state_id' => $photoState->id,
+                        'photo_state_id' => $selectedPhotoState->id,
                         'surface_id' => $photo->surface_id,
                         'layout_id' => $layoutId,
                         'pos' => $position
                     ]);
+                    
+                    foreach ($photoStateArray as $state) {
+                        if ($state['id'] != $selectedPhotoState->id) {
+                            $isExisted = ArtworkPhotoState::where('photo_state_id', $state['id'])
+                                ->where('artwork_id', $artwork['artworkId'])
+                                ->exists();
+                            if (!$isExisted) {
+                                ArtworkPhotoState::create([
+                                    'artwork_id' => $artwork['artworkId'],
+                                    'photo_state_id' => $state['id'],
+                                   'surface_id' => $photo->surface_id,
+                                    'layout_id' => $layoutId,
+                                    'pos' => $position
+                                ]);
+                            }
+                        }
+                    }
                 }
 
                 // Commit transaction
