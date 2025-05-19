@@ -126,7 +126,9 @@ class PhotoStateController extends Controller
 
             try {
                 // Clear existing states for this photo_state
-                ArtworkPhotoState::where('photo_state_id', $photoState->id)->delete();
+                ArtworkPhotoState::where('layout_id', $layoutId)
+                    ->where('surface_id', $photo->surface_id)
+                    ->delete();
 
                 // Store each artwork state
                 foreach ($assignedArtworks as $artwork) {
