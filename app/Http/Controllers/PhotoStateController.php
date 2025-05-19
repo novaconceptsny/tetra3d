@@ -58,6 +58,7 @@ class PhotoStateController extends Controller
                 ]),
                 'assignedArtworks' => $assignedArtworks,
                 'userId'           => auth()->id(),
+                'projectId'        => $project->id,
                 'photoId'          => $photo->id,
                 'layoutId'         => $layout->id,
                 'updateEndpoint'   => route('photos.update', [$photo]),

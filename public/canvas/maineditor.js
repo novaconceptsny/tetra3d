@@ -172,6 +172,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
     const photoId = canvasData.photoId;
     const layoutId = canvasData.layoutId;
+    const projectId = canvasData.projectId;
     console.log(assignedArtworks, photoId, "assignedArtworks")
     let artworkLoaded = assignedArtworks.length > 0;
     const ctx = imageCanvas.getContext('2d');
@@ -720,8 +721,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
                 // if (response.redirected) {
                 //     window.location.href = response.url;
                 // }
-                console.log(response, "pppppppppp 1");
-                window.history.back();
+                window.location.href = `/photo?project_id=${projectId}`;
             })
             .catch(error => {
                 console.error('Error:', error);
