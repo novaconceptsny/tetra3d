@@ -22,14 +22,19 @@ class PhotoStateController extends Controller
 
             $layout = Layout::findOrFail($layoutId);
             $project = Project::findOrFail($layout->project_id);
+            $photoState = PhotoState::where('layout_id', $layoutId)
+                ->where('photo_id', $photo->id)
+                ->firstOrFail();
 
             // Fetch assigned artworks from artwork_photo_state table using photo_state_id
             $assignedArtworks = ArtworkPhotoState::where('surface_id', $photo->surface_id)
                 ->where('layout_id', $layoutId)
+                ->where('photo_state_id', $photoState->id)
                 ->with('artwork')
                 ->get()
                 ->map(function ($state) {
                     return [
+                        'id' => $state->id,
                         'pos' => $state->pos,
                         'title' => $state->artwork->title,
                         'imgUrl' => $state->artwork->image_url,
