@@ -24,7 +24,7 @@ class PhotoStateController extends Controller
             $project = Project::findOrFail($layout->project_id);
 
             // Fetch assigned artworks from artwork_photo_state table using photo_state_id
-            $assignedArtworks = ArtworkPhotoState::where('surface_id', $photo->surface_id)
+            $assignedArtworks = ArtworkPhotoState::where('curate2d_surface_id', $photo->surface_id)
                 ->where('layout_id', $layoutId)
                 ->with('artwork')
                 ->get()
@@ -32,6 +32,7 @@ class PhotoStateController extends Controller
                     return [
                         'id' => $state->id,
                         'pos' => $state->pos,
+                        'scale' => $state->scale,
                         'title' => $state->artwork->title,
                         'imgUrl' => $state->artwork->image_url,
                         'artworkId' => (string) $state->artwork_id,
@@ -124,42 +125,39 @@ class PhotoStateController extends Controller
             }
 
 
-            try {
-                // Clear existing states for this photo_state
-                ArtworkPhotoState::where('layout_id', $layoutId)
-                    ->where('surface_id', $photo->surface_id)
-                    ->delete();
+            // Clear existing states for this photo_state
+            ArtworkPhotoState::where('layout_id', $layoutId)
+                ->where('curate2d_surface_id', $photo->surface_id)
+                ->delete();
 
-                // Store each artwork state
-                foreach ($assignedArtworks as $artwork) {
-                    // Ensure pos is in the correct format
-                    $position = [
-                        'x' => $artwork['pos']['x'],
-                        'y' => $artwork['pos']['y']
-                    ];
-
-                    ArtworkPhotoState::create([
-                        'artwork_id' => $artwork['artworkId'],
-                        'photo_state_id' => $photoState->id,
-                        'surface_id' => $photo->surface_id,
-                        'layout_id' => $layoutId,
-                        'pos' => $position
-                    ]);
-                }
+            // Store each artwork state
+            foreach ($assignedArtworks as $artwork) {
+                // Ensure pos is in the correct format
+                $position = [
+                    'x' => $artwork['pos']['x'],
+                    'y' => $artwork['pos']['y']
+                ];
 
                 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Photo states updated successfully',
+                $scale =  $artwork['scale'];
+
+                ArtworkPhotoState::create([
+                    'artwork_id' => $artwork['artworkId'],
+                    'photo_state_id' => $photoState->id,
+                    'curate2d_surface_id' => $photo->surface_id,
+                    'layout_id' => $layoutId,
+                    'pos' => $position,
+                    'scale' => $scale
                 ]);
-
-             //   return redirect()->route('photo.index')->with('success', 'Photo states updated successfully');
-
-                
-            } catch (\Exception $e) {
-                \DB::rollBack();
-                throw $e;
             }
+
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Photo states updated successfully',
+                'assignedArtworks' => $assignedArtworks
+            ]);
+
         } catch (\Exception $e) {
             \Log::error('Error updating photo states: ' . $e->getMessage());
             

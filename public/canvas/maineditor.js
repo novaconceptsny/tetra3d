@@ -22,7 +22,7 @@ let lastMousePos = { x: 0, y: 0 };
 let lastDragOperation = null;
 
 let saveAndReturnBtn = document.getElementById('save-and-return');
-const removeBtn =  document.getElementById('remove-artwork')
+const removeBtn = document.getElementById('remove-artwork')
 // Add this variable at the top of your file
 let isAreaVisible = false;
 
@@ -190,7 +190,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     img.onload = async () => {
         // Wait for OpenCV to be ready before proceeding
         await waitForOpenCV();
-        
+
         imageCanvas.width = mainWidth;
         imageCanvas.height = mainHeight;
         ctx.drawImage(img, 0, 0, mainWidth, mainHeight);
@@ -226,7 +226,6 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
         // Check if we're clicking on a warped artwork
         const clickedArtwork = isPointInWarpedArtwork(x, y, assignedArtworks);
         if (clickedArtwork) {
-            console.log("clicked on warped artwork:", clickedArtwork.id);
             isArtworkDragging = true;
             warpedArtwork = clickedArtwork;
             warpedArtworkPosition = clickedArtwork.pos;
@@ -236,7 +235,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
             // Update the Alpine state
             removeBtn.style.display = "block";
-           
+
 
             // Calculate offset between click point and artwork top-left corner
             let clickPoint = cv.matFromArray(1, 1, cv.CV_32FC2, [x, y]);
@@ -476,7 +475,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             // Store matrices globally
             M = cv.getPerspectiveTransform(srcTri, dstTri);
             Minv = cv.getPerspectiveTransform(dstTri, srcTri);
-            
+
             // Free memory
             srcMat.delete();
             srcTri.delete();
@@ -530,8 +529,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             artworkImg.onload = function () {
 
                 // Set canvas size to scaled dimensions
-                artworkCanvas.width = artworkImg.width /scale;
-                artworkCanvas.height = artworkImg.height /scale;
+                artworkCanvas.width = artworkImg.width / scale;
+                artworkCanvas.height = artworkImg.height / scale;
 
                 // Clear and draw scaled image
                 artworkCtx.clearRect(0, 0, artworkCanvas.width, artworkCanvas.height);
@@ -697,6 +696,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
         const thumbnail = imageCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is the quality (0-1)
 
+        console.log(assignedArtworks, "ppppppppppppppp")
         let payload = {
             "_token": document.querySelector('meta[name="csrf-token"]').content,
             "photoId": photoId,
@@ -718,7 +718,9 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
                 // if (response.redirected) {
                 //     window.location.href = response.url;
                 // }
-                window.location.href = `/photo?project_id=${projectId}`;
+                if (response.ok) {
+                    window.location.href = `/photo?project_id=${projectId}`;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);

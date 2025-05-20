@@ -306,24 +306,14 @@
                                 <div class="input-group">
                                     <span class="input-group-text">Width</span>
                                     <input type="number" class="form-control" id="rectWidth" value="">
-                                    <span class="input-group-text">
-                                        <select class="form-select" id="widthUnit" onchange="convertUnits('width')" >
-                                          <option selected value="cm">cm</option>
-                                          <option value="inch">inch</option>
-                                        </select>
-                                    </span>
+                                    <span class="input-group-text">inch</span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-text">Height</span>
                                     <input type="number" class="form-control" id="rectHeight" value="">
-                                    <span class="input-group-text">
-                                        <select class="form-select" id="heightUnit" onchange="convertUnits('height')">
-                                          <option selected value="cm">cm</option>
-                                          <option value="inch">inch</option>
-                                        </select>
-                                    </span>
+                                    <span class="input-group-text">inch</span>
                                 </div>
                             </div>
                         </div>
@@ -1814,53 +1804,19 @@
         }
     });
 
-    function convertUnits(source) {
-        const widthInput = document.getElementById('rectWidth');
-        const heightInput = document.getElementById('rectHeight');
-        const widthUnitSelect = document.getElementById('widthUnit');
-        const heightUnitSelect = document.getElementById('heightUnit');
-
-        let widthValue = parseFloat(widthInput.value);
-        let heightValue = parseFloat(heightInput.value);
-
-        if (isNaN(widthValue) || isNaN(heightValue)) return;
-
-        let newUnit;
-        if (source === 'width') {
-            newUnit = widthUnitSelect.value;
-            heightUnitSelect.value = newUnit;
-        } else {
-            newUnit = heightUnitSelect.value;
-            widthUnitSelect.value = newUnit;
-        }
-        if (newUnit === 'inch') {
-            widthInput.value = (widthValue / 2.54).toFixed(2);
-            heightInput.value = (heightValue / 2.54).toFixed(2);
-        } else {
-            widthInput.value = (widthValue * 2.54).toFixed(2);
-            heightInput.value = (heightValue * 2.54).toFixed(2);
-        }
-    }
-
     function updateValues(source) {
         const widthInput = document.getElementById('rectWidth');
         const heightInput = document.getElementById('rectHeight');
-        const currentUnit = document.getElementById('widthUnit').value;
 
         let widthValue = parseFloat(widthInput.value);
         let heightValue = parseFloat(heightInput.value);
 
         if (isNaN(widthValue) || isNaN(heightValue)) return;
 
-        let widthInCm = currentUnit === 'inch' ? widthValue * 2.54 : widthValue;
-        let heightInCm = currentUnit === 'inch' ? heightValue * 2.54 : heightValue;
-
         if (source === 'width') {
-            widthInCm = currentUnit === 'inch' ? widthValue * 2.54 : widthValue;
-            heightInput.value = currentUnit === 'inch' ? (heightInCm / 2.54).toFixed(2) : heightInCm.toFixed(2);
+            widthInput.value =  widthValue.toFixed(2);
         } else {
-            heightInCm = currentUnit === 'inch' ? heightValue * 2.54 : heightValue;
-            widthInput.value = currentUnit === 'inch' ? (widthInCm / 2.54).toFixed(2) : widthInCm.toFixed(2);
+            heightInput.value =  heightValue.toFixed(2);
         }
     }
 

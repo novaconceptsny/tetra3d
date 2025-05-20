@@ -74,14 +74,17 @@
                                 onclick="window.history.back()">
                             <i class="fal fa-rotate-left"></i>
                         </button>
-                        <x-menu-item
-                            :text="null"
-                            class="view-360 white-bg-button"
-                            :img="null"
-                            :icon="'fal fa-save'"
-                            target="_self"
-                            id="save-and-return"
-                        />
+                        <button 
+                            class="view-360 white-bg-button btn btn-outline-secondary btn-sm" 
+                            id="save-and-return" 
+                            type="button"
+                            data-bs-toggle="popover"
+                            data-bs-trigger="hover focus"
+                            data-bs-placement="bottom"
+                            data-bs-content="Save and Return"
+                        >
+                            <i class="fal fa-save"></i>
+                        </button>
                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="download-btn" data-bs-toggle="popover"
                                          data-bs-trigger="hover focus"
                                          data-bs-placement="bottom"

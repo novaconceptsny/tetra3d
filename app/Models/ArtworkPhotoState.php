@@ -12,9 +12,10 @@ class ArtworkPhotoState extends Model
     protected $fillable = [
         'artwork_id',
         'photo_state_id',
-        'surface_id',
+        'curate2d_surface_id',
         'layout_id',
-        'pos'
+        'pos',
+        'scale'
     ];
 
     protected $casts = [

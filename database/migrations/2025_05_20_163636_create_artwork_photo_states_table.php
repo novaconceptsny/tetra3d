@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations.artwork_photo_state
      */
     public function up(): void
     {
@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('artwork_id')->constrained()->onDelete('cascade');
             $table->foreignId('photo_state_id')->constrained()->onDelete('cascade');
-            $table->foreignId('surface_id')->constrained()->onDelete('cascade');
+            $table->foreignId('curate2d_surface_id')->constrained()->onDelete('cascade');
             $table->foreignId('layout_id')->constrained()->onDelete('cascade');
             $table->json('pos');
+            $table->float('scale');
             $table->timestamps();
         });
     }
