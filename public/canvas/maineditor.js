@@ -1,7 +1,6 @@
 const mainContent = document.querySelector('.main_content');
 const mainHeight = mainContent.offsetHeight;
 const mainWidth = mainContent.offsetWidth;
-const MAX_ARTWORK_DIMENSION = 200;
 
 let srcPoints = [];
 
@@ -508,7 +507,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
     function updateTransformedArtwork(imgData) {
 
-        const { id, pos, imgUrl } = imgData;
+        const { id, pos, imgUrl, scale } = imgData;
 
         try {
             // Create temporary matrices for the transformation
@@ -529,19 +528,15 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
             artworkImg.src = imgUrl;
 
             artworkImg.onload = function () {
-                // Calculate scale to fit within MAX_ARTWORK_DIMENSION while maintaining aspect ratio
-                const scaleW = MAX_ARTWORK_DIMENSION / artworkImg.width;
-                const scaleH = MAX_ARTWORK_DIMENSION / artworkImg.height;
-                let artworkScale = Math.min(scaleW, scaleH, 1.0); // Don't scale up, only down
 
                 // Set canvas size to scaled dimensions
-                artworkCanvas.width = artworkImg.width * artworkScale;
-                artworkCanvas.height = artworkImg.height * artworkScale;
+                artworkCanvas.width = artworkImg.width /scale;
+                artworkCanvas.height = artworkImg.height /scale;
 
                 // Clear and draw scaled image
                 artworkCtx.clearRect(0, 0, artworkCanvas.width, artworkCanvas.height);
                 artworkCtx.save();
-                artworkCtx.scale(artworkScale, artworkScale);
+                // artworkCtx.scale(artworkScale, artworkScale);
                 artworkCtx.drawImage(artworkImg, 0, 0);
                 artworkCtx.restore();
 
