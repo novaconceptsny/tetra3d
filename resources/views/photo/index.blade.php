@@ -568,7 +568,7 @@
 
         return result;
     }
-    
+
     function getPhotoStateData(layoutData) {
         const result = [];
         if (layoutData && Object.keys(layoutData).length > 0) {
@@ -998,64 +998,6 @@
     //     photosSection.classList.toggle('expanded');
     // });
 
-    const surfaceModalImage = document.getElementById('imageModal');
-    let currentIndexImage = null;
-
-    surfaceModalImage.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        if (!button) return;
-
-        const title = button.getAttribute('data-title');
-        const image = button.getAttribute('data-image');
-        const photoId = button.getAttribute('data-photo-id');
-
-        this.setAttribute('data-photo-id', photoId);
-
-        const modalTitle = this.querySelector('#imageModalLabel');
-        const titleImage = this.querySelector('#titleImage');
-        if (modalTitle) modalTitle.textContent = title;
-        if (titleImage) titleImage.value = title;
-
-        const imageItem = button.closest('.layout-item');
-
-        currentIndexImage = Array.from(document.querySelectorAll('.layout-item')).indexOf(imageItem);
-        const modalImage = this.querySelector('.modal-image');
-        modalImage.src = image;
-
-        const surfaceSelect = document.getElementById('surfaceId');
-        const selectedOption = surfaceSelect.options[surfaceSelect.selectedIndex];
-        const width = selectedOption.getAttribute('data-width');
-        const height = selectedOption.getAttribute('data-height');
-
-        if (width && height) {
-            document.getElementById('rectWidth').value = width;
-            document.getElementById('rectHeight').value = height;
-        }
-
-        const photo = photosData.find(p => p.id === photoId);
-        if(photo.surface_id){   
-            surfaceSelect.value = photo.surface_id; // <-- set the value here
-        }else{
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Select Surface';
-            surfaceSelect.appendChild(defaultOption);
-        }
-    });
-
-    document.getElementById('surfaceId').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const width = selectedOption.getAttribute('data-width');
-        const height = selectedOption.getAttribute('data-height');
-
-        if (width && height) {
-            document.getElementById('rectWidth').value = width;
-            document.getElementById('rectHeight').value = height;
-        }
-
-    });
-
-
     function renderPhotos(photosData) {
         // Display existing photos
         const photosContainer = document.getElementById('photosContainer');
@@ -1152,7 +1094,7 @@
             option.textContent = collection.name;
             allCollectionsSelect.appendChild(option);
         });
-        
+
     }
 
     function renderCollections(collectionsData) {
@@ -1467,82 +1409,22 @@
             });
 
             // Calculate width and height based on corner positions
-            const width = Math.sqrt(
-                Math.pow(points[1].x - points[0].x, 2) +
-                Math.pow(points[1].y - points[0].y, 2)
-            );
+            // const width = Math.sqrt(
+            //     Math.pow(points[1].x - points[0].x, 2) +
+            //     Math.pow(points[1].y - points[0].y, 2)
+            // );
 
-            const height = Math.sqrt(
-                Math.pow(points[3].x - points[0].x, 2) +
-                Math.pow(points[3].y - points[0].y, 2)
-            );
+            // const height = Math.sqrt(
+            //     Math.pow(points[3].x - points[0].x, 2) +
+            //     Math.pow(points[3].y - points[0].y, 2)
+            // );
 
             // Update input fields with rounded values
-            widthInput.value = Math.round(width);
-            heightInput.value = Math.round(height);
+            // widthInput.value = Math.round(width);
+            // heightInput.value = Math.round(height);
             corners = points;
         }
 
-        // Handle modal open
-        const imageModal = document.getElementById('imageModal');
-        imageModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            if (!button) return;
-
-            // Store reference to the card that contains the image
-            currentImageElement = button.closest('.photo-card');
-
-            const image = button.getAttribute('data-image');
-            
-
-            const photoId = button.getAttribute('data-photo-id');
-            corners = photosData.find(p => p.id === photoId).corners;
-
-            if (!image) {
-                console.error('No image data found');
-                return;
-            }
-
-            // Create new image object
-            backgroundImage = new Image();
-            backgroundImage.onerror = function() {
-                console.error('Failed to load image');
-            };
-
-
-            backgroundImage.onload = function() {
-                // Initialize rectangle in center of canvas
-                rect = {
-                    x: (CANVAS_WIDTH - 100) / 2,
-                    y: (CANVAS_HEIGHT - 100) / 2,
-                    width: 100,
-                    height: 100
-                };
-                drawCanvas(corners);
-            };
-
-            try {
-                backgroundImage.src = image;
-                const fitDimensions = fitImageToCanvas(backgroundImage);
-                photosData.map(photo => {
-                    if(photo.id === photoId){
-                        photo.boundingBoxTop = fitDimensions.y;
-                        photo.boundingBoxLeft = fitDimensions.x;
-                        photo.boundingBoxWidth = fitDimensions.width;
-                        photo.boundingBoxHeight = fitDimensions.height;
-                    }
-                });
-            } catch (error) {
-                console.error('Error setting image source:', error);
-            }
-
-            // Update modal title and input
-            const title = button.getAttribute('data-title') || 'Untitled';
-            const modalTitle = imageModal.querySelector('#imageModalLabel');
-            const titleInput = imageModal.querySelector('#titleImage');
-            if (modalTitle) modalTitle.textContent = title;
-            if (titleInput) titleInput.value = title;
-        });
 
         let isDragging = false;
         let selectedCorner = null;
@@ -1562,6 +1444,105 @@
             const distance = Math.sqrt((mouseX - cornerX) ** 2 + (mouseY - cornerY) ** 2);
             return distance <= dotRadius * 2; // Increased hit area for better touch
         }
+
+
+
+        const surfaceModalImage = document.getElementById('imageModal');
+        let currentIndexImage = null;
+
+        surfaceModalImage.addEventListener('show.bs.modal', function (event) {
+
+            const button = event.relatedTarget;
+            if (!button) return;
+
+            const title = button.getAttribute('data-title');
+            const image = button.getAttribute('data-image');
+            const photoId = button.getAttribute('data-photo-id');
+
+            this.setAttribute('data-photo-id', photoId);
+
+            const modalTitle = this.querySelector('#imageModalLabel');
+            const titleImage = this.querySelector('#titleImage');
+            if (modalTitle) modalTitle.textContent = title;
+            if (titleImage) titleImage.value = title;
+
+            const imageItem = button.closest('.layout-item');
+
+            currentIndexImage = Array.from(document.querySelectorAll('.layout-item')).indexOf(imageItem);
+            const modalImage = this.querySelector('.modal-image');
+            modalImage.src = image;
+
+            const surfaceSelect = document.getElementById('surfaceId');
+
+            const photo = photosData.find(p => p.id === photoId);
+            if(photo.surface_id){
+                surfaceSelect.value = photo.surface_id; // <-- set the value here
+                const selectedOption = document.querySelector(`option[value="${photo.surface_id}"]`);
+                document.getElementById('rectWidth').value = selectedOption.getAttribute('data-width');
+                document.getElementById('rectHeight').value = selectedOption.getAttribute('data-height');
+            }else{
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Select Surface';
+                surfaceSelect.appendChild(defaultOption);
+            }
+
+                // Store reference to the card that contains the image
+                currentImageElement = button.closest('.photo-card');
+
+
+                corners = photosData.find(p => p.id === photoId).corners;
+
+                if (!image) {
+                    console.error('No image data found');
+                    return;
+                }
+
+                // Create new image object
+                backgroundImage = new Image();
+                backgroundImage.onerror = function() {
+                    console.error('Failed to load image');
+                };
+
+
+                backgroundImage.onload = function() {
+                    // Initialize rectangle in center of canvas
+                    rect = {
+                        x: (CANVAS_WIDTH - 100) / 2,
+                        y: (CANVAS_HEIGHT - 100) / 2,
+                        width: 100,
+                        height: 100
+                    };
+                    drawCanvas(corners);
+                };
+
+                try {
+                    backgroundImage.src = image;
+                    const fitDimensions = fitImageToCanvas(backgroundImage);
+                    photosData.map(photo => {
+                        if(photo.id === photoId){
+                            photo.boundingBoxTop = fitDimensions.y;
+                            photo.boundingBoxLeft = fitDimensions.x;
+                            photo.boundingBoxWidth = fitDimensions.width;
+                            photo.boundingBoxHeight = fitDimensions.height;
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error setting image source:', error);
+                }
+        });
+
+        document.getElementById('surfaceId').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const width = selectedOption.getAttribute('data-width');
+            const height = selectedOption.getAttribute('data-height');
+
+            if (width && height) {
+                document.getElementById('rectWidth').value = width;
+                document.getElementById('rectHeight').value = height;
+            }
+
+        });
 
         // Mouse event handlers
         canvas.addEventListener('mousedown', (e) => {
@@ -2041,7 +2022,7 @@
                     surfacesData = getSurfacesData(data.surfaces);
                     collectionsData = getCollectionsData(data.artworkCollections);
                     allCollections = getCollectionsData(data.allCollections);
-                    console.log(allCollections, "55555555555555555");
+
                     photoStateData = getPhotoStateData(data.layoutPhotos);
                     renderPhotos(photosData);
                     renderCollections(collectionsData);
