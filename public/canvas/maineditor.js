@@ -179,6 +179,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
     const surface = canvasData.surface;
     const updateEndpoint = canvasData.updateEndpoint;
     const surfaceData = surface.data;
+    const surfaceWidth = surfaceData.img_width;
+    const surfaceHeight = surfaceData.img_height;
     const photoScaleX = mainWidth / surfaceData.bounding_box_width;
     const photoScaleY = mainHeight / surfaceData.bounding_box_height;
 
@@ -438,8 +440,8 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
 
         try {
             // Get real wall dimensions in meters
-            const realWidth = calculatePolygonBounds(srcPoints).width;
-            const realHeight = calculatePolygonBounds(srcPoints).height;
+            const realWidth = surfaceWidth;
+            const realHeight = surfaceHeight;
 
             // Add padding to dimensions to help with edge artifacts
             const paddingFactor = 1.02; // 2% padding
