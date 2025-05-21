@@ -138,25 +138,20 @@ function krpanoplugin() {
 				timeout = setTimeout(later, wait);
 			};
 		}
-
 		// Handle window resize with debouncing
 		const handleResize = debounce(() => {
 			const gl = krpano.webGL.context;
 			const sw = gl.drawingBufferWidth;
 			const sh = gl.drawingBufferHeight;
-
 			// Update renderer size
 			renderer.setSize(sw, sh);
-
 			// Update camera projection
 			krpano_projection_matrix(sw, sh, krpano_panoview.z, 0, krpano_panoview.yf);
 			update_camera_matrix(camera);
 			update_camera_matrix(stereocamera);
-
 			// Force a new render
 			render_frame();
 		}, 250); // Wait 250ms after last resize event
-
 		window.addEventListener('resize', handleResize);
 
 		// build the ThreeJS scene (start adding custom code there)
@@ -343,6 +338,10 @@ function krpanoplugin() {
 	}
 
 	function do_object_hittest(mx, my) {
+		// Check if current URL contains "/shared-tours/"
+		if (window.location.pathname.includes("shared-tours")) {
+			return null;
+		}
 
 		const pointer = new THREE.Vector2();
 		pointer.x = (mx / krpano.area.pixelwidth) * 2.0 - 1.0;
@@ -367,7 +366,7 @@ function krpanoplugin() {
 				point = intersects[i].point;
 			}
 
-			if (obj.name == 'gizmoPlane' || obj.name == 'arrow_x' || obj.name == 'arrow_z' || obj.name == 'direct_x' || obj.name == 'direct_z') {
+			if (obj.name == 'gizmoPlane' || obj.name == 'arrow_x' || obj.name == 'arrow_z' || obj.name == 'direct_x' || obj.name == 'direct_z' || obj.name == 'arrow_y' || obj.name == 'direct_y') {
 				gizmo = obj;
 				point = intersects[i].point;
 			}
@@ -483,6 +482,7 @@ function krpanoplugin() {
 					plane_point_temp = point;
 					canMove = true;
 					if (gizmo.name == 'arrow_x' || gizmo.name == 'direct_x') direction = 'x';
+					if (gizmo.name == 'arrow_y' || gizmo.name == 'direct_y') direction = 'y';
 					if (gizmo.name == 'arrow_z' || gizmo.name == 'direct_z') direction = 'z';
 					if (gizmo.name == 'gizmoPlane') direction = 'xz';
 				} else {
@@ -510,7 +510,6 @@ function krpanoplugin() {
 			if (canMove && isDown) {
 
 				var plane_point = do_object_point(ms.x, ms.y);
-
 				update_position(selectedObj, plane_point, plane_point_temp, direction);
 				update_position(selectedObj.userData.model, plane_point, plane_point_temp, direction);
 				update_position(gizmoObj, plane_point, plane_point_temp, direction);
@@ -571,32 +570,42 @@ function krpanoplugin() {
 		var gizmoPlaneGeometry = new THREE.PlaneGeometry(15, 15);
 
 		var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8 }));
+		var arrow_y = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: false, opacity: 0.8 }));
 		var arrow_z = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
 		var direct_x = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8 }));
+		var direct_y = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: false, opacity: 0.8 }));
 		var direct_z = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
 		var gizmoPlane = new THREE.Mesh(gizmoPlaneGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, transparent: false, opacity: 0.8 }));
 
 		arrow_x.position.set(30, 0, 0);
+		arrow_y.position.set(0, -30, 0);
 		arrow_z.position.set(0, 0, 30);
 		direct_x.position.set(15, 0, 0);
+		direct_y.position.set(0, -15, 0); // Y direct position
 		direct_z.position.set(0, 0, 15);
 		gizmoPlane.position.set(7.5, 0, 7.5);
 
 		arrow_x.name = 'arrow_x';
+		arrow_y.name = 'arrow_y';
 		arrow_z.name = 'arrow_z';
 		direct_x.name = 'direct_x';
+		direct_y.name = 'direct_y';
 		direct_z.name = 'direct_z';
 		gizmoPlane.name = 'gizmoPlane';
 
 		arrow_x.rotation.z = - Math.PI / 2;
+		arrow_y.rotation.x = -Math.PI; // Y arrow rotation
 		arrow_z.rotation.x = Math.PI / 2;
 		direct_x.rotation.z = Math.PI / 2;
+	    direct_y.rotation.z = 0; // Y direct rotation
 		direct_z.rotation.x = Math.PI / 2;
 		gizmoPlane.rotation.x = Math.PI / 2;
 
 		gizmo.add(arrow_x);
+		gizmo.add(arrow_y);
 		gizmo.add(arrow_z);
 		gizmo.add(direct_x);
+		gizmo.add(direct_y);
 		gizmo.add(direct_z);
 		gizmo.add(gizmoPlane);
 
@@ -639,6 +648,7 @@ function krpanoplugin() {
 	function update_position(hitobj, position, temp, direction) {
 		if (position) {
 			if (direction == 'x') hitobj.position.set(hitobj.position.x + position.x - temp.x, hitobj.position.y, hitobj.position.z);
+			if (direction == 'y') hitobj.position.set(hitobj.position.x, hitobj.position.y - (position.y - temp.y), hitobj.position.z);
 			if (direction == 'z') hitobj.position.set(hitobj.position.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
 			if (direction == 'xz') hitobj.position.set(hitobj.position.x + position.x - temp.x, hitobj.position.y, hitobj.position.z + position.z - temp.z);
 		}

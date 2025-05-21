@@ -250,6 +250,7 @@ class CanvasManager {
             imgUrl = `${window.location.origin}${new URL(imgUrl).pathname}`;
         }
 
+        console.log(imgUrl, "imgurl")
         return { title, imgUrl, artworkId, scale };
     }
 
