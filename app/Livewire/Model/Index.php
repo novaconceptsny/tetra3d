@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Livewire\Model;
 
-use App\Models\Tour;
 use App\Models\SpotsPosition;
 use App\Models\SurfaceInfo;
+use App\Models\Tour;
 use App\Models\TourModel;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\Renderless;
-use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibraryPro\Livewire\Concerns\WithMedia;
 use WireElements\Pro\Concerns\InteractsWithConfirmationModal;
 
@@ -26,9 +25,9 @@ class Index extends Component
     public $surfaceModel = null;
     public $surfaceModelPath = null;
     public $tourModelPath = null;
-    public $spots = array();
-    public $spotsPosition = array();
-    public $surfaceArray = array();
+    public $spots = [];
+    public $spotsPosition = [];
+    public $surfaceArray = [];
     public $mapImage = [];
     protected $listeners = ['delete'];
     protected $rules = [
@@ -58,18 +57,18 @@ class Index extends Component
     {
         $models = TourModel::where('tour_id', $this->tour->id)->get();
         if ($models->isEmpty()) {
-            $this->tourModel = 'Empty';
+            $this->tourModel    = 'Empty';
             $this->surfaceModel = 'Empty';
         } else {
-            $this->tourModel = $models[0]->name;
-            $this->surfaceModel = $models[0]->surface;
-            $this->tourModelPath = Storage::url('3dmodel/' . $this->tourModel);
+            $this->tourModel        = $models[0]->name;
+            $this->surfaceModel     = $models[0]->surface;
+            $this->tourModelPath    = Storage::url('3dmodel/' . $this->tourModel);
             $this->surfaceModelPath = Storage::url('3dmodel/surface/' . $this->surfaceModel);
         }
     }
     public function setSpots()
     {
-        $temp_spots = SpotsPosition::where('tour_id', $this->tour->id)->get();
+        $temp_spots       = SpotsPosition::where('tour_id', $this->tour->id)->get();
         $tour_spots_count = count($this->tour->spots);
 
         // Check if temp_spots count matches the count of tour spots
@@ -79,7 +78,7 @@ class Index extends Component
 
             // Delete spots that no longer exist in tour
             foreach ($temp_spot_ids as $temp_spot_id) {
-                if (!in_array($temp_spot_id, $tour_spot_ids)) {
+                if (! in_array($temp_spot_id, $tour_spot_ids)) {
                     SpotsPosition::where('tour_id', $this->tour->id)
                         ->where('spot_id', $temp_spot_id)
                         ->delete();
@@ -88,13 +87,13 @@ class Index extends Component
 
             // Create new spots that exist in tour but not in positions
             foreach ($tour_spot_ids as $tour_spot_id) {
-                if (!in_array($tour_spot_id, $temp_spot_ids)) {
+                if (! in_array($tour_spot_id, $temp_spot_ids)) {
                     $data = [
                         "tour_id" => $this->tour->id,
                         "spot_id" => $tour_spot_id,
-                        "x" => 0.0,
-                        "y" => 0.0,
-                        "z" => 0.0,
+                        "x"       => 0.0,
+                        "y"       => 0.0,
+                        "z"       => 0.0,
                     ];
                     SpotsPosition::create($data);
                 }
@@ -116,10 +115,9 @@ class Index extends Component
         $this->spotsPosition = $spotsPosition;
     }
 
-
     public function setSurfaces()
     {
-        $temp_surfaces = SurfaceInfo::where('tour_id', $this->tour->id)->get();
+        $temp_surfaces       = SurfaceInfo::where('tour_id', $this->tour->id)->get();
         $tour_surfaces_count = count($this->tour->surfaces);
 
         // Check if temp_surfaces count matches the count of tour surfaces
@@ -127,21 +125,21 @@ class Index extends Component
             $tour_surface_ids = $this->tour->surfaces->pluck('id')->toArray();
             $temp_surface_ids = $temp_surfaces->pluck('surface_id')->toArray();
             foreach ($temp_surface_ids as $temp_surface_id) {
-                if (!in_array($temp_surface_id, $tour_surface_ids)) {
+                if (! in_array($temp_surface_id, $tour_surface_ids)) {
                     SurfaceInfo::where('tour_id', $this->tour->id)
                         ->where('surface_id', $temp_surface_id)
                         ->delete();
                 }
             }
             foreach ($tour_surface_ids as $tour_surface_id) {
-                if (!in_array($tour_surface_id, $temp_surface_ids)) {
+                if (! in_array($tour_surface_id, $temp_surface_ids)) {
                     $data = [
-                        "tour_id" => $this->tour->id,
-                        "surface_id" => $tour_surface_id,
+                        "tour_id"      => $this->tour->id,
+                        "surface_id"   => $tour_surface_id,
                         "normalvector" => ["x" => 0.0, "y" => 0.0, "z" => 0.0],
-                        "start_pos" => ["x" => 0.0, "y" => 0.0, "z" => 0.0],
-                        "width" => 1,
-                        "height" => 1,
+                        "start_pos"    => ["x" => 0.0, "y" => 0.0, "z" => 0.0],
+                        "width"        => 1,
+                        "height"       => 1,
                     ];
                     SurfaceInfo::create($data);
                 }
@@ -153,10 +151,10 @@ class Index extends Component
 
         foreach ($temp_surfaces as $surface) {
             $surfaceArray[$surface->surface_id] = [
-                'width' => $surface->width ?? 0,
-                'height' => $surface->height ?? 0,
+                'width'        => $surface->width ?? 0,
+                'height'       => $surface->height ?? 0,
                 'normalvector' => $surface->normalvector ?? ["x" => 0.0, "y" => 0.0, "z" => 0.0],
-                'start_pos' => $surface->start_pos ?? ["x" => 0.0, "y" => 0.0, "z" => 0.0],
+                'start_pos'    => $surface->start_pos ?? ["x" => 0.0, "y" => 0.0, "z" => 0.0],
             ];
         }
 
@@ -186,14 +184,14 @@ class Index extends Component
         } else {
             foreach ($temp_surfaces as $surface) {
                 $surface->normalvector = $this->surfaceArray[$surface->surface_id]['normalvector'];
-                $surface->start_pos = $this->surfaceArray[$surface->surface_id]['start_pos'];
-                $surface->width = $this->surfaceArray[$surface->surface_id]['width'];
-                $surface->height = $this->surfaceArray[$surface->surface_id]['height'];
+                $surface->start_pos    = $this->surfaceArray[$surface->surface_id]['start_pos'];
+                $surface->width        = $this->surfaceArray[$surface->surface_id]['width'];
+                $surface->height       = $this->surfaceArray[$surface->surface_id]['height'];
                 $surface->save();
             }
         }
 
-        $name = null;
+        $name    = null;
         $surface = null;
 
         if (gettype($this->tourModel) !== 'string') {
@@ -216,12 +214,14 @@ class Index extends Component
 
         $models = TourModel::where('tour_id', $this->tour->id)->get();
         if ($models->isEmpty()) {
-            $data = array('tour_id' => $this->tour->id, 'name' => $name, 'surface' => $surface);
+            $data = ['tour_id' => $this->tour->id, 'name' => $name, 'surface' => $surface];
             TourModel::create($data);
         } else {
-            $models[0]->name = $name;
+            $models[0]->name    = $name;
             $models[0]->surface = $surface;
             $models[0]->save();
         }
+
+        $this->dispatch('flashNotification', message: 'Model updated');
     }
 }

@@ -179,53 +179,18 @@ class SurfaceStateController extends Controller
                 $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft) / $boundingBoxWidth * $planeWidth;
                 $yDistance = ($artwork['topPosition'] - $boundingBoxTop) / $boundingBoxHeight * $planeHeight;
 
-                if ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == -1) {
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] - $xDistance,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] - $offset,
-                    ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => 0,
-                        'z' => 0,
-                    ];
+                $targetRotation = [
+                    'x' => 0,
+                    'y' => 0,
+                    'z' => 0,
+                ];
 
-                } elseif ($normal['x'] == 0 && $normal['y'] == 0 && $normal['z'] == 1) {
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] + $xDistance,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] + $offset
-                    ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => pi(),
-                        'z' => 0,
-                    ];
-                } elseif ($normal['x'] == 1 && $normal['y'] == 0 && $normal['z'] == 0) {
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] + $offset,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] - $xDistance
-                    ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => pi() / 2,
-                        'z' => 0,
-                    ];
-                } else {
-                    // Default case if no known normal is matched
-                    $targetPosition = [
-                        'x' => $topLeftCorner['x'] - $offset,
-                        'y' => $topLeftCorner['y'] - $yDistance,
-                        'z' => $topLeftCorner['z'] + $xDistance
-                    ];
-                    $targetRotation = [
-                        'x' => 0,
-                        'y' => -pi() / 2,
-                        'z' => 0,
-                    ];
-                }
+                // Calculate the target position using vector math
+                $targetPosition = [
+                    'x' => $topLeftCorner['x'] + ($normal['x'] * $offset) + ($normal['z'] * $xDistance),
+                    'y' => $topLeftCorner['y'] - $yDistance, // y is always subtracted as it's the vertical offset
+                    'z' => $topLeftCorner['z'] + ($normal['z'] * $offset) - ($normal['x'] * $xDistance)
+                ];
 
                 $assigned_artworks[] = array(
                     'artwork_id' => $artwork['artworkId'],

@@ -1,4 +1,4 @@
-@extends('layouts.redesign')
+\@extends('layouts.redesign')
 
 @php
     $layout_id = request('layout_id');
@@ -21,8 +21,6 @@
     // only admins can see tracker
     $tracker = user()?->can('perform-admin-actions') ? $tracker : 0;
     $userName = user()?->name;
-
-    $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
 @endphp
 
 @section('page_actions')
@@ -43,11 +41,10 @@
             <button onclick="toggleLayout()" class="toggle-layout">Space Model</button>
         </div>
     @endif
-    <!-- @if (!isset($tourModel))
+    @if (!isset($tourModel))
         <x-menu-item text="List View" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))" />
-    @endif -->
-    <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self" />
+    @endif
     <x-menu-item :visible="$layout && !$tour_is_shared" target="_self"
         onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
         text="Share" icon="fal fa-share-nodes" />
@@ -265,9 +262,9 @@
     var toggle_space_model = false;
     var sculpture_change_list = [];
     var surface_meshes = [];
-    var tourScale = 1000;
-    var offsetScale = 1000;
-    var sculptureScale = 1000;
+    var tourScale = 500;
+    var offsetScale = 500;
+    var sculptureScale = 500;
 
     var layout_id = '{{ $layout_id }}';
     var shared_tour_id = '{{ $shared_tour_id }}';
@@ -929,7 +926,7 @@
         theta = theta * 180 / Math.PI;
         phi = phi * 180 / Math.PI;
 
-        return { r: r, theta: theta, phi: phi };
+nano resources/views/pages/tour.blade.php        return { r: r, theta: theta, phi: phi };
     }
 
 
