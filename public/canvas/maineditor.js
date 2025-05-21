@@ -535,7 +535,7 @@ Object.entries(canvases).forEach(([surfaceStateId, canvasData]) => {
                 // Clear and draw scaled image
                 artworkCtx.clearRect(0, 0, artworkCanvas.width, artworkCanvas.height);
                 artworkCtx.save();
-                // artworkCtx.scale(artworkScale, artworkScale);
+                artworkCtx.scale(1 / scale, 1 / scale);
                 artworkCtx.drawImage(artworkImg, 0, 0);
                 artworkCtx.restore();
 
