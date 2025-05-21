@@ -262,9 +262,9 @@
     var toggle_space_model = false;
     var sculpture_change_list = [];
     var surface_meshes = [];
-    var tourScale = 30.05;
-    var offsetScale = 30;
-    var sculptureScale = 30;
+    var tourScale = 1000;
+    var offsetScale = 1000;
+    var sculptureScale = 1000;
 
     var layout_id = '{{ $layout_id }}';
     var shared_tour_id = '{{ $shared_tour_id }}';
