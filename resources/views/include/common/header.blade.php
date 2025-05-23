@@ -48,9 +48,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Activity') }}</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Tutorial') }}</a>
-                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link" href="{{ route('resource.index') }}">{{ __('Resource') }}</a>
+                        </li> -->
                     </ul>
                 @endif
 

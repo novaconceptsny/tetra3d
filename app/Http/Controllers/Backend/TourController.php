@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Tour;
 use App\Models\TourModel;
+use App\Models\Company;
 use Arr;
 use Illuminate\Http\Request;
 
@@ -27,6 +28,7 @@ class TourController extends Controller
     {
         $data = array();
         $data['route'] = route('backend.tours.store');
+        $data['companies'] = Company::all();
 
         return view('backend.tour.form', $data);
     }
@@ -35,9 +37,11 @@ class TourController extends Controller
     {
         $request->validate(ValidationRules::storeTour());
 
-        $tour = Tour::create($request->only([
-            'name' , 'company_id'
-        ]));
+        $data = $request->only(['name', 'company_id']);
+        $data['name'] = is_array($data['name']) ? $data['name'][0] : $data['name'];
+        $data['company_id'] = is_array($data['company_id']) ? $data['company_id'][0] : $data['company_id'];
+
+        $tour = Tour::create($data);
 
         $tour->addFromMediaLibraryRequest($request->thumbnail)
             ->toMediaCollection('thumbnail');
@@ -60,6 +64,7 @@ class TourController extends Controller
         $data['route'] = route('backend.tours.update', $tour);
         $data['method'] = 'put';
         $data['tour'] = $tour;
+        $data['companies'] = Company::all();
 
         return view('backend.tour.form', $data);
     }

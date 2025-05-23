@@ -48,6 +48,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
 
     Route::get('/photo', 'PhotoController@index')->name('photo.index');
+    Route::get('/resource', 'ResourceController@index')->name('resource.index');
+
 
 });
 

@@ -46,7 +46,16 @@
                     </x-slot>
                     <x-backend::tab.content id="tour_form" :active="true">
                         <div class="row g-3">
-                            <x-backend::inputs.company :value="$tour?->company_id"/>
+                            <x-backend::inputs.select2 name="company_id" label="Company" :multiple="true">
+                                @foreach($companies as $company)
+                                    <x-backend::inputs.select-option
+                                        :value="$company->id"
+                                        :text="$company->name"
+                                        :selected="[$tour?->company_id]"
+                                    />
+                                @endforeach
+                            </x-backend::inputs.select2>
+                            
                             <x-backend::inputs.text name="name" value="{{ $tour?->name }}"/>
                             <div class="col-12">
                                 <h5>{{ __('Thumbnail') }}</h5>
