@@ -121,7 +121,6 @@
         <h5>Add to Company</h5>
         <div id="modalGalleryName" style="margin-bottom:16px; color:#888;"></div>
         <!-- Your form or content here -->
-        <label>Company Name:</label>
         <x-backend::inputs.select2 id="companySelect" name="company_id" label="Company" :multiple="true">
             @foreach($companies as $company)
                 <x-backend::inputs.select-option
@@ -157,7 +156,10 @@ function closeAddCompanyModal() {
 function handleAddCompany() {   
     var select = document.getElementById('companySelect');
     var selected = Array.from(select.selectedOptions).map(option => option.value);
+    
     console.log(selected); // Use the selected values as needed
+
+    closeAddCompanyModal();
 }
 </script>
 @endsection
