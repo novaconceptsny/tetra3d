@@ -115,23 +115,36 @@
 </div>
 
 <!-- Add Company Modal -->
-<div id="addCompanyModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:9999; align-items:center; justify-content:center;">
-    <div style="background:#fff; border-radius:12px; padding:32px; min-width:320px; position:relative;">
+<div id="addCompanyModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:10; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:32px; min-width:640px; position:relative;">
         <button onclick="closeAddCompanyModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
         <h5>Add to Company</h5>
         <div id="modalGalleryName" style="margin-bottom:16px; color:#888;"></div>
         <!-- Your form or content here -->
-        <form>
-            <label>Company Name:</label>
-            <select id="multiple-select" multiple>
-                @foreach($companies as $company)
-                    <option value="{{ $company->id }}">{{ $company->name }}</option>
-                @endforeach
-            </select>
-            <button type="submit" style="background:#007bff; color:#fff; border:none; padding:8px 16px; border-radius:4px;">Add</button>
-        </form>
+        <label>Company Name:</label>
+        <x-backend::inputs.select2 id="companySelect" name="company_id" label="Company" :multiple="true">
+            @foreach($companies as $company)
+                <x-backend::inputs.select-option
+                    :value="$company->id"
+                    :text="$company->name"
+                />
+            @endforeach
+        </x-backend::inputs.select2>
+        <div style="text-align: right; margin-top:16px;">
+            <button
+                id="addCompanyButton"
+                onclick="handleAddCompany()"
+                type="submit"
+                style="background:#007bff; color:#fff; border:none; padding:8px 16px; border-radius:4px;">
+                Add
+            </button>
+        </div>
     </div>
 </div>
+
+<link href="{{ asset('backend/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
+<script src="{{ asset('backend/assets/js/vendor.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/app.min.js') }}"></script>
 
 <script>
 function openAddCompanyModal(galleryName) {
@@ -140,6 +153,11 @@ function openAddCompanyModal(galleryName) {
 }
 function closeAddCompanyModal() {
     document.getElementById('addCompanyModal').style.display = 'none';
+}
+function handleAddCompany() {   
+    var select = document.getElementById('companySelect');
+    var selected = Array.from(select.selectedOptions).map(option => option.value);
+    console.log(selected); // Use the selected values as needed
 }
 </script>
 @endsection
