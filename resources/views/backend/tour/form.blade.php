@@ -51,7 +51,7 @@
                                     <x-backend::inputs.select-option
                                         :value="$company->id"
                                         :text="$company->name"
-                                        :selected="$tour?->company_id"
+                                        :selected="$tour?->allCompanies()->pluck('id')->contains($company->id)"
                                         :multiple="true"
                                     />
                                 @endforeach

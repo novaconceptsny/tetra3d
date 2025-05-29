@@ -65,6 +65,33 @@ class Tour extends Model implements HasMedia
         return $this->belongsToMany(Project::class);
     }
 
+    public function mainCompany()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class, 'company_tour');
+    }
+
+    /**
+     * Get all companies for this tour, with the main company first.
+     */
+    public function allCompanies()
+    {
+        $main = $this->mainCompany;
+        $others = $this->companies()->where('company_id', '!=', $this->company_id)->get();
+
+        $companies = collect();
+        if ($main) {
+            $companies->push($main);
+        }
+        $companies = $companies->merge($others);
+
+        return $companies;
+    }
+
     public function map()
     {
         return $this->hasOne(Map::class);

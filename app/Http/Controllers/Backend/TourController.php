@@ -37,15 +37,22 @@ class TourController extends Controller
     {
         $request->validate(ValidationRules::storeTour());
 
-        $data = $request->only(['name', 'company_id']);
+        $company_ids = (array) $request->input('company_id', []);
+        $main_company_id = array_shift($company_ids); // first is main
+
+        $data = $request->only(['name']);
         $data['name'] = is_array($data['name']) ? $data['name'][0] : $data['name'];
-        $data['company_id'] = is_array($data['company_id']) ? $data['company_id'][0] : $data['company_id'];
+        $data['company_id'] = $main_company_id;
 
         $tour = Tour::create($data);
 
+        // Sync additional companies to pivot table
+        if (!empty($company_ids)) {
+            $tour->companies()->sync($company_ids);
+        }
+
         $tour->addFromMediaLibraryRequest($request->thumbnail)
             ->toMediaCollection('thumbnail');
-
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour created successfully');
@@ -73,7 +80,10 @@ class TourController extends Controller
     {
         $request->validate(ValidationRules::updateTour());
 
-        $company_has_changed = $tour->company_id != $request->company_id;
+        $company_ids = (array) $request->input('company_id', []);
+        $main_company_id = array_shift($company_ids); // first is main
+
+        $company_has_changed = $tour->company_id != $main_company_id;
 
         if ($company_has_changed && $tour->projects->count()) {
             return redirect()->back()
@@ -81,9 +91,13 @@ class TourController extends Controller
                 ->with('remove_projects_alert', true);
         }
 
-        $tour->update($request->only([
-            'name' , 'company_id'
-        ]));
+        $tour->update([
+            'name' => is_array($request->name) ? $request->name[0] : $request->name,
+            'company_id' => $main_company_id,
+        ]);
+
+        // Sync additional companies to pivot table
+        $tour->companies()->sync($company_ids);
 
         if ($company_has_changed){
             $tour->reflectCompanyChanges();
@@ -94,7 +108,6 @@ class TourController extends Controller
 
         return redirect()->route('backend.tours.index')
             ->with('success', 'Tour updated successfully');
-
     }
 
     public function destroy(Tour $tour)
