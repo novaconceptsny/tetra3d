@@ -51,7 +51,8 @@
                                     <x-backend::inputs.select-option
                                         :value="$company->id"
                                         :text="$company->name"
-                                        :selected="[$tour?->company_id]"
+                                        :selected="$tour?->company_id"
+                                        :multiple="true"
                                     />
                                 @endforeach
                             </x-backend::inputs.select2>
