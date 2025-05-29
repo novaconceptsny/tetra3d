@@ -49,7 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/photo', 'PhotoController@index')->name('photo.index');
     Route::get('/resource', 'ResourceController@index')->name('resource.index');
-
+    Route::post('/resource/assign-tour-to-companies', 'ResourceController@assignTourToCompanies')->name('resource.assignTourToCompanies');
 
 });
 
@@ -91,3 +91,5 @@ Route::group([
     Route::patch('/tours/{tour}/toggle-model', 'TourController@toggleModel')
         ->name('backend.tours.toggle-model');
 });
+
+

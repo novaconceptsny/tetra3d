@@ -51,59 +51,36 @@
     <div style="margin-bottom: 40px;">
         <h4 style="margin-bottom: 20px;">Template galleries</h4>
         <div style="display: flex; gap: 24px;">
-            <div style="position: relative;">
-                <img src="{{ asset('images/gallery_1.png') }}" style="width:350px; border-radius:12px;">
-                <!-- Plus Button -->
-                <button
-                    onclick="openAddCompanyModal('Gallery 12')"
-                    title="Add to company"
-                    style="
-                        position: absolute;
-                        top: 12px;
-                        right: 12px;
-                        width: 36px;
-                        height: 36px;
-                        border-radius: 50%;
-                        border: none;
-                        background: #fff;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 24px;
-                        cursor: pointer;
-                        z-index: 2;
-                    ">
-                    +
-                </button>
-                <div style="text-align:center; margin-top:8px;">Gallery 12</div>
-            </div>
-            <div style="position: relative;">
-                <img src="{{ asset('images/gallery_2.png') }}" style="width:350px; border-radius:12px;">
-                <button
-                    onclick="openAddCompanyModal('Gallery 10')"
-                    title="Add to company"
-                    style="
-                        position: absolute;
-                        top: 12px;
-                        right: 12px;
-                        width: 36px;
-                        height: 36px;
-                        border-radius: 50%;
-                        border: none;
-                        background: #fff;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 24px;
-                        cursor: pointer;
-                        z-index: 2;
-                    ">
-                    +
-                </button>
-                <div style="text-align:center; margin-top:8px;">Gallery 10</div>
-            </div>
+            @foreach([$templateTours[0], $templateTours[1]] as $i => $gallery)
+                <div style="position: relative;">
+                    <img src="{{ asset('images/gallery_' . ($i+1) . '.png') }}" style="width:350px; border-radius:12px;">
+                    <!-- Plus Button -->
+                    <button
+                        onclick="handleGalleryButtonClick('{{ $gallery->name }}', {{ $gallery->id }}, {{ $gallery->isOwn ? 'true' : 'false' }})"
+                        title="Add to company"
+                        data-tour-id="{{ $gallery->id }}"
+                        style="
+                            position: absolute;
+                            top: 12px;
+                            right: 12px;
+                            width: 36px;
+                            height: 36px;
+                            border-radius: 50%;
+                            border: none;
+                            background: #fff;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 24px;
+                            cursor: pointer;
+                            z-index: 2;
+                        ">
+                        {{ $gallery->isOwn ? '✓' : '+' }}
+                    </button>
+                    <div style="text-align:center; margin-top:8px;">{{ $gallery->name }}</div>
+                </div>
+            @endforeach
         </div>
     </div>
 
@@ -120,6 +97,7 @@
         <button onclick="closeAddCompanyModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
         <h5>Add to Company</h5>
         <div id="modalGalleryName" style="margin-bottom:16px; color:#888;"></div>
+        <input type="hidden" id="modalTourId" value="">
         <!-- Your form or content here -->
         <x-backend::inputs.select2 id="companySelect" name="company_id" label="Company" :multiple="true">
             @foreach($companies as $company)
@@ -141,25 +119,92 @@
     </div>
 </div>
 
+<!-- Remove Gallery Modal -->
+<div id="removeGalleryModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:20; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:32px; min-width:400px; position:relative; text-align:center;">
+        <h4>Are you sure you want to remove this gallery?</h4>
+        <div id="removeGalleryName" style="font-weight:bold; margin: 12px 0;"></div>
+        <div style="color:#d97706; margin-bottom:16px;">
+            <span style="font-size:24px; vertical-align:middle;">&#9888;</span>
+            If this template has been used in any projects or layouts, all linked information will be permanently removed.
+        </div>
+        <div style="display:flex; justify-content:center; gap:24px;">
+            <button id="removeGalleryButton" style="background:#d32f2f; color:#fff; border:none; padding:8px 32px; border-radius:4px;">Remove</button>
+            <button onclick="closeRemoveGalleryModal()" style="background:#304ffe; color:#fff; border:none; padding:8px 32px; border-radius:4px;">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <link href="{{ asset('backend/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
 <script src="{{ asset('backend/assets/js/vendor.min.js') }}"></script>
 <script src="{{ asset('backend/assets/js/app.min.js') }}"></script>
 
 <script>
-function openAddCompanyModal(galleryName) {
+
+var companies = @json($companies);
+var templateTours = @json($templateTours);
+
+console.log(templateTours);
+
+function openAddCompanyModal(galleryName, tourId) {
     document.getElementById('addCompanyModal').style.display = 'flex';
     document.getElementById('modalGalleryName').innerText = galleryName;
+    document.getElementById('modalTourId').value = tourId;
 }
 function closeAddCompanyModal() {
     document.getElementById('addCompanyModal').style.display = 'none';
 }
 function handleAddCompany() {   
     var select = document.getElementById('companySelect');
-    var selected = Array.from(select.selectedOptions).map(option => option.value);
-    
-    console.log(selected); // Use the selected values as needed
+    var selectedCompanyNames = Array.from(select.selectedOptions).map(option => option.text);
+    var tourId = document.getElementById('modalTourId').value;
 
-    closeAddCompanyModal();
+
+    // Send to backend via AJAX
+    fetch("{{ route('resource.assignTourToCompanies') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({
+            company_names: selectedCompanyNames,
+            tour_id: tourId
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            console.log(response);
+           closeAddCompanyModal();
+        } else {
+            console.error('Error:', response.error);
+        }
+    });
+}
+
+function handleGalleryButtonClick(galleryName, tourId, isOwn) {
+    if (isOwn) {
+        openRemoveGalleryModal(galleryName, tourId);
+    } else {
+        openAddCompanyModal(galleryName, tourId);
+    }
+}
+
+function openRemoveGalleryModal(galleryName, tourId) {
+    document.getElementById('removeGalleryModal').style.display = 'flex';
+    document.getElementById('removeGalleryName').innerText = galleryName;
+    // Store tourId for removal action if needed
+    document.getElementById('removeGalleryButton').onclick = function() {
+        // Call your remove function here, e.g.:
+        // removeGallery(tourId);
+        alert('Remove gallery with ID: ' + tourId); // Replace with real logic
+        closeRemoveGalleryModal();
+    };
+}
+
+function closeRemoveGalleryModal() {
+    document.getElementById('removeGalleryModal').style.display = 'none';
 }
 </script>
 @endsection
