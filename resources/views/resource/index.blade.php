@@ -51,7 +51,7 @@
     <div style="margin-bottom: 40px;">
         <h4 style="margin-bottom: 20px;">Template galleries</h4>
         <div style="display: flex; gap: 24px;">
-            @foreach([$templateTours[0], $templateTours[1]] as $i => $gallery)
+            @foreach($templateTours as $i => $gallery)
                 <div style="position: relative;">
                     <img src="{{ asset('images/gallery_' . ($i+1) . '.png') }}" style="width:350px; border-radius:12px;">
                     <!-- Plus Button -->

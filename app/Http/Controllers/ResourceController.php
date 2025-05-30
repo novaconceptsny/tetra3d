@@ -20,7 +20,7 @@ class ResourceController extends Controller
             $companies = Company::where('id', $user->company_id)->get();
         }
 
-        $templateTours = Tour::all();
+        $templateTours = Tour::where('name', 'like', '%Template Gallery%')->get();
 
         // Add isOwn property for each templateTour
         foreach ($templateTours as $gallery) {
