@@ -24,6 +24,7 @@
     <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('vendor/wire-elements-pro/css/bootstrap-overlay-component.css') }}">
 
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
     @yield('styles')
     @livewireStyles
 </head>
@@ -60,7 +61,6 @@
     </main>
 
     <!-- bootstrap script links -->
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
         integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
         crossorigin="anonymous"></script>

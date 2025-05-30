@@ -108,6 +108,7 @@
                 <x-backend::inputs.select-option
                     :value="$company->id"
                     :text="$company->name"
+                    :multiple="true"
                 />
             @endforeach
         </x-backend::inputs.select2>
@@ -154,6 +155,12 @@ function openAddCompanyModal(galleryName, tourId) {
     document.getElementById('addCompanyModal').style.display = 'flex';
     document.getElementById('modalGalleryName').innerText = galleryName;
     document.getElementById('modalTourId').value = tourId;
+
+    // Find the gallery object
+    const select = $("#companySelect").select2();
+    var gallery = templateTours.find(function(g) { return g.id == tourId; });
+    select.val(gallery.assigned_company_ids).trigger('change');
+
 }
 function closeAddCompanyModal() {
     document.getElementById('addCompanyModal').style.display = 'none';

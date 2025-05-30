@@ -20,13 +20,14 @@ class ResourceController extends Controller
             $companies = Company::where('id', $user->company_id)->get();
         }
 
-        $templateTours = Tour::where('name', 'like', '%Template Gallery%')->get();
+        $templateTours = Tour::withoutGlobalScope('forCurrentCompany')->where('name', 'like', '%Template Gallery%')->get();
 
         // Add isOwn property for each templateTour
         foreach ($templateTours as $gallery) {
             $gallery->isOwn = CompanyTour::where('tour_id', $gallery->id)
                 ->where('company_id', $user->company_id)
                 ->exists();
+            $gallery->assigned_company_ids = CompanyTour::where('tour_id', $gallery->id)->pluck('company_id')->toArray();
         }
 
         // Optionally, you can remove the old $galleryIsBelongToCompany if not needed
