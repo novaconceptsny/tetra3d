@@ -103,15 +103,15 @@
         <div id="modalGalleryName" style="margin-bottom:16px; color:#888;"></div>
         <input type="hidden" id="modalTourId" value="">
         <!-- Your form or content here -->
-        <x-backend::inputs.select2 id="companySelect" name="company_id" label="Company" :multiple="true">
+
+        <select id="companySelect"  name="states[]" multiple="multiple" style="width: 100%;">
             @foreach($companies as $company)
-                <x-backend::inputs.select-option
-                    :value="$company->id"
-                    :text="$company->name"
-                    :multiple="true"
-                />
+                <option style="padding: 8px 16px;" 
+                    value="{{ $company->id }}">{{ $company->name }}
+                </option>
             @endforeach
-        </x-backend::inputs.select2>
+        </select>
+
         <div style="text-align: right; margin-top:16px;">
             <button
                 id="addCompanyButton"
@@ -140,16 +140,30 @@
     </div>
 </div>
 
-<link href="{{ asset('backend/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
-<script src="{{ asset('backend/assets/js/vendor.min.js') }}"></script>
-<script src="{{ asset('backend/assets/js/app.min.js') }}"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+/* Custom Select2 tag style */
+.select2-selection__choice {
+    background: #8187f5 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    /* padding: 6px 14px !important;
+    margin: 4px 4px 0 0 !important; */
+    font-size: 16px !important;
+}
+.select2-selection__choice__remove {
+    color: #fff !important;
+    margin-right: 6px;
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
 
 var companies = @json($companies);
 var templateTours = @json($templateTours);
 
-console.log(templateTours);
 
 function openAddCompanyModal(galleryName, tourId) {
     document.getElementById('addCompanyModal').style.display = 'flex';
@@ -221,5 +235,10 @@ function closeRemoveGalleryModal() {
 function goToTour(tourId) {
     window.location.href = '/tours/' + tourId;
 }
+
+$(document).ready(function() {
+    $('#companySelect').select2();
+});
+
 </script>
 @endsection
