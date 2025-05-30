@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Tour;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\CompanyTour;
 
 class ProjectController extends Controller
 {
@@ -29,7 +30,20 @@ class ProjectController extends Controller
     {
         $data = array();
         $data['route'] = route('backend.projects.store');
-        $data['tours'] = Tour::all();
+
+        // Get all tours
+        $tours = Tour::all();
+
+        // Get extra tours from company_tour table (assuming a CompanyTour model exists)
+        $extraTourIds = CompanyTour::where('company_id', user()->company_id)->pluck('tour_id'); 
+        $extraTours = Tour::withoutGlobalScope('forCurrentCompany')->whereIn('id', $extraTourIds)->get();
+
+        // Merge and remove duplicates by 'id'
+        $allTours = $tours->merge($extraTours)->unique('id')->values();
+
+     //   dd($allTours);
+
+        $data['tours'] = $allTours;
         $data['users'] = User::forCurrentCompany()->get();
         $data['artworkCollections'] = ArtworkCollection::forCurrentCompany()->get();
 
@@ -64,7 +78,18 @@ class ProjectController extends Controller
     {
         $data = array();
         $data['route'] = route('backend.projects.update', $project);
-        $data['tours'] = Tour::forCompany($project->company_id)->get();
+
+        // Get tours for the company
+        $companyTours = Tour::forCompany($project->company_id)->get();
+
+        // Get extra tours from company_tour table (assuming a CompanyTour model exists)
+        $extraTourIds = CompanyTour::where('company_id', user()->company_id)->pluck('tour_id'); 
+        $extraTours = Tour::withoutGlobalScope('forCurrentCompany')->whereIn('id', $extraTourIds)->get();
+
+        // Merge and remove duplicates by 'id'
+        $allTours = $companyTours->merge($extraTours)->unique('id')->values();
+
+        $data['tours'] = $allTours;
         $data['users'] = User::forCompany($project->company_id)->get();
         $data['artworkCollections'] = ArtworkCollection::forCompany($project->company_id)->get();
         $data['project'] = $project;

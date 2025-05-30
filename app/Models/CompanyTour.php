@@ -13,11 +13,11 @@ class CompanyTour extends Model
     protected $table = 'company_tour';
     public function tour()
     {
-        return $this->belongsToMany(Tour::class);
+        return $this->belongsTo(Tour::class);
     }
 
-    public function company()   
+    public function companies()   
     {
-        return $this->belongsToMany(Company::class);
+        return $this->belongsTo(Company::class);
     }
 }
