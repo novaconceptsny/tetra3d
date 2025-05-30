@@ -53,7 +53,11 @@
         <div style="display: flex; gap: 24px;">
             @foreach($templateTours as $i => $gallery)
                 <div style="position: relative;">
-                    <img src="{{ asset('images/gallery_' . ($i+1) . '.png') }}" style="width:350px; border-radius:12px;">
+                    <img
+                        src="{{ asset('images/gallery_' . ($i+1) . '.png') }}"
+                        style="width:350px; border-radius:12px;"
+                        ondblclick="goToTour({{ $gallery->id }})"
+                    >
                     <!-- Plus Button -->
                     <button
                         onclick="handleGalleryButtonClick('{{ $gallery->name }}', {{ $gallery->id }}, {{ $gallery->isOwn ? 'true' : 'false' }})"
@@ -205,6 +209,10 @@ function openRemoveGalleryModal(galleryName, tourId) {
 
 function closeRemoveGalleryModal() {
     document.getElementById('removeGalleryModal').style.display = 'none';
+}
+
+function goToTour(tourId) {
+    window.location.href = '/tours/' + tourId;
 }
 </script>
 @endsection
