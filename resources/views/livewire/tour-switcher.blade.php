@@ -38,7 +38,7 @@
                                     <i class="fal fa-edit"></i>
                                 </a> -->
                             </td>
-                            <td>{{ $layout->tour->name }}</td>
+                            <td>{{ $layout->assignedTour()->name }}</td>
                             <td>
                                 <span>{{ $layout->user->name }}</span><br>
                             </td>

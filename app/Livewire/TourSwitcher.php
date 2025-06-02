@@ -26,7 +26,7 @@ class TourSwitcher extends SlideOver
     public function mount(Project $project)
     {
         $this->project = $project;
-        $this->selectedTour = $project->tours->first();
+        $this->selectedTour = $project->assignedTours()->first();
         $this->selectedTourId = $this->selectedTour?->id;
     }
 
@@ -37,7 +37,7 @@ class TourSwitcher extends SlideOver
 
     public function selectTour()
     {
-        $this->selectedTour = $this->project->tours->where('id', $this->selectedTourId)->first();
+        $this->selectedTour = $this->project->assignedTours()->where('id', $this->selectedTourId)->first();
     }
 
     public static function attributes(): array

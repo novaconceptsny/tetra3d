@@ -34,7 +34,7 @@ class LayoutForm extends Modal
     {
         $this->project = $project;
         $this->layout = $layout;
-        $this->tourImages = $this->project->tours
+        $this->tourImages = $this->project->assignedTours()
             ->mapWithKeys(fn ($tour) => [$tour->id => $tour->getFirstMediaUrl('thumbnail')])
             ->all();
 
@@ -53,8 +53,8 @@ class LayoutForm extends Modal
     public function render()
     {
         $data = array();
-        $data['toursArray'] = $this->project->tours->toKeyValuePair();
-        $data['tourImages'] = $this->project->tours
+        $data['toursArray'] = $this->project->assignedTours()->toKeyValuePair();
+        $data['tourImages'] = $this->project->assignedTours()
             ->mapWithKeys(fn ($tour) => [$tour->id => $tour->getFirstMediaUrl('thumbnail')])
             ->all();
 
@@ -68,7 +68,8 @@ class LayoutForm extends Modal
         if($this->layout->id){
             unset($this->layout->tour_id);
         }
-
+        
+        dd($this->layout);
         $this->layout->save();
 
         $this->close(andDispatch: [

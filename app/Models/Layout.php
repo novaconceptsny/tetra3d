@@ -22,6 +22,12 @@ class Layout extends Model
         return $this->belongsTo(Tour::class);
     }
 
+    public function assignedTour()
+    {
+        $assignedTour = Tour::withoutGlobalScope('forCurrentCompany')->where('id', $this->tour_id)->first();    
+        return $assignedTour;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
