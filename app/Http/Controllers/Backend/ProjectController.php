@@ -10,6 +10,7 @@ use App\Models\Tour;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\CompanyTour;
+use App\Models\Layout;
 
 class ProjectController extends Controller
 {
@@ -79,17 +80,7 @@ class ProjectController extends Controller
         $data = array();
         $data['route'] = route('backend.projects.update', $project);
 
-        // Get tours for the company
-        $companyTours = Tour::forCompany($project->company_id)->get();
-
-        // Get extra tours from company_tour table (assuming a CompanyTour model exists)
-        $extraTourIds = CompanyTour::where('company_id', user()->company_id)->pluck('tour_id'); 
-        $extraTours = Tour::withoutGlobalScope('forCurrentCompany')->whereIn('id', $extraTourIds)->get();
-
-        // Merge and remove duplicates by 'id'
-        $allTours = $companyTours->merge($extraTours)->unique('id')->values();
-
-        $data['tours'] = $allTours;
+        $data['tours'] = $project->allTours();
         $data['users'] = User::forCompany($project->company_id)->get();
         $data['artworkCollections'] = ArtworkCollection::forCompany($project->company_id)->get();
         $data['project'] = $project;
@@ -114,7 +105,17 @@ class ProjectController extends Controller
         $syncedUsers = $project->contributors()->sync($request->user_ids);
         $syncedCollections = $project->artworkCollections()->sync($request->artwork_collection_ids);
 
-        if (!empty($syncedTours['attached']) || !empty($syncedTours['detached'])){
+        
+        if (!empty($syncedTours['detached'])) {
+            
+            // Remove layouts for detached tours
+            Layout::where('project_id', $project->id)
+                  ->whereIn('tour_id', $syncedTours['detached'])
+                  ->delete();
+        }
+
+
+        if (!empty($syncedTours['attached']) || !empty($syncedTours['detached'])) {
             $project->addActivity('tours_updated');
         }
 

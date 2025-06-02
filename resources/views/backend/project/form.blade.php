@@ -30,7 +30,7 @@
                             :multiple="true"
                             :value="$tour->id"
                             :text="$tour->name"
-                            :selected="$project?->allTours()->pluck('id')->toArray()"
+                            :selected="$project?->assignedTours()->pluck('id')->toArray()"
                         />
                     @endforeach
                 </x-backend::inputs.select2>

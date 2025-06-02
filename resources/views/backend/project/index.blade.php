@@ -35,7 +35,7 @@
                             <td>{{ $project->name }}</td>
                             <td>{{ $project->company->name }}</td>
                             <td>
-                                @foreach($project->tours as $tour)
+                                @foreach($project->assignedTours() as $tour)
                                     <a href="{{ route('tours.show', [$tour, 'project_id' => $project->id]) }}" target="_blank">
                                         <span class="badge badge-info-lighten px-2 py-1">{{ $tour->name }}</span>
                                     </a>

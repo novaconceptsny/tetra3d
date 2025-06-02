@@ -10,6 +10,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use App\Models\CompanyTour;
+use App\Models\ProjectTour;
 
 class Project extends Model implements HasMedia
 {
@@ -52,16 +53,23 @@ class Project extends Model implements HasMedia
         // Get tours from the normal relationship
         $tours = $this->tours()->get();
 
-        // Get extra tour IDs from company_tour table using company_id
-        $extraTourIds = CompanyTour::where('company_id', $this->company_id)->pluck('tour_id');
+        // Get extra tours from company_tour table (assuming a CompanyTour model exists)
+        $extraTourIds = CompanyTour::where('company_id', $this->company_id)->pluck('tour_id'); 
+        $extraTours = Tour::withoutGlobalScope('forCurrentCompany')->whereIn('id', $extraTourIds)->get();
 
-        // Get the extra tours
-        $extraTours = Tour::whereIn('id', $extraTourIds)->get();
-
-        // Merge and remove duplicates (by id)
+        // Merge and remove duplicates by 'id'
         $allTours = $tours->merge($extraTours)->unique('id')->values();
 
         return $allTours;
+    }
+
+    public function assignedTours()
+    {
+        $tours = $this->tours()->get();
+        $extraTourIds = ProjectTour::where('project_id', $this->id)->pluck('tour_id');
+        $extraTours = Tour::withoutGlobalScope('forCurrentCompany')->whereIn('id', $extraTourIds)->get();
+
+        return $tours->merge($extraTours)->unique('id')->values();
     }
 
     public function users()

@@ -181,7 +181,9 @@ function closeAddCompanyModal() {
 }
 function handleAddCompany() {   
     var select = document.getElementById('companySelect');
-    var selectedCompanyNames = Array.from(select.selectedOptions).map(option => option.text);
+    var selectedCompanyNames = select.selectedOptions ? 
+        Array.from(select.selectedOptions).map(option => option.text) : 
+        [];
     var tourId = document.getElementById('modalTourId').value;
 
 
@@ -200,7 +202,8 @@ function handleAddCompany() {
     .then(response => response.json())
     .then(response => {
         if (response.success) {
-            console.log(response);
+            console.log(response.templateTours);
+            templateTours = response.templateTours;
            closeAddCompanyModal();
         } else {
             console.error('Error:', response.error);
