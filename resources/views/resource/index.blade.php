@@ -127,14 +127,15 @@
 <!-- Remove Gallery Modal -->
 <div id="removeGalleryModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:20; align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:12px; padding:32px; min-width:400px; position:relative; text-align:center;">
-        <h4>Are you sure you want to remove this gallery?</h4>
+        <h5>Are you sure you want to remove this gallery?</h5>
         <div id="removeGalleryName" style="font-weight:bold; margin: 12px 0;"></div>
+        <input type="hidden" id="modalTourId" value="">
         <div style="color:#d97706; margin-bottom:16px;">
             <span style="font-size:24px; vertical-align:middle;">&#9888;</span>
             If this template has been used in any projects or layouts, all linked information will be permanently removed.
         </div>
         <div style="display:flex; justify-content:center; gap:24px;">
-            <button id="removeGalleryButton" style="background:#d32f2f; color:#fff; border:none; padding:8px 32px; border-radius:4px;">Remove</button>
+            <button id="removeGalleryButton" style="background:#d32f2f; color:#fff; border:none; padding:8px 32px; border-radius:4px;" onclick="handleRemoveGallery()">Remove</button>
             <button onclick="closeRemoveGalleryModal()" style="background:#304ffe; color:#fff; border:none; padding:8px 32px; border-radius:4px;">Cancel</button>
         </div>
     </div>
@@ -157,19 +158,7 @@
     margin-right: 6px;
 }
 
-/* New styles for first item */
-.select2-selection__choice:first-child {
-    background: #C11C84 !important;
-}
-
-.select2-selection__choice:first-child .select2-selection__choice__remove {
-    display: none !important;
-}
-
-/* Hide close button on hover for first item */
-.select2-selection__choice:first-child:hover .select2-selection__choice__remove {
-    display: none !important;
-}
+/* Remove the static first-child styles since we'll apply them dynamically */
 </style>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
@@ -199,6 +188,39 @@ function openAddCompanyModal(galleryName, tourId) {
     
     select.val(gallery.assigned_company_ids).trigger('change');
 
+    // Add dynamic styling based on mainCompanyIds
+    const styleElement = document.createElement('style');
+    if (gallery.mainCompanyIds && gallery.mainCompanyIds.length > 0) {
+        styleElement.textContent = `
+            .select2-selection__choice:first-child {
+                background: #C11C84 !important;
+            }
+            .select2-selection__choice:first-child .select2-selection__choice__remove,
+            .select2-selection__choice:first-child:hover .select2-selection__choice__remove {
+                display: none !important;
+            }
+        `;
+    } else {
+        styleElement.textContent = `
+            .select2-selection__choice:first-child {
+                background: #8187f5 !important;
+            }
+            .select2-selection__choice:first-child .select2-selection__choice__remove {
+                display: block !important;
+            }
+        `;
+    }
+    
+    // Remove any previously added dynamic styles
+    const oldStyle = document.getElementById('dynamic-select2-style');
+    if (oldStyle) {
+        oldStyle.remove();
+    }
+    
+    // Add the new styles
+    styleElement.id = 'dynamic-select2-style';
+    document.head.appendChild(styleElement);
+
     // Ensure styles are applied after any changes
     select.on('change', function() {
         setTimeout(() => {
@@ -211,11 +233,13 @@ function openAddCompanyModal(galleryName, tourId) {
                     if (removeBtn) removeBtn.style.display = 'block';
                 });
                 
-                // Apply special styling to first choice
-                const firstChoice = choices[0];
-                firstChoice.style.background = '#C11C84';
-                const removeButton = firstChoice.querySelector('.select2-selection__choice__remove');
-                if (removeButton) removeButton.style.display = 'none';
+                if (gallery.mainCompanyIds && gallery.mainCompanyIds.length > 0) {
+                    // Apply special styling to first choice
+                    const firstChoice = choices[0];
+                    firstChoice.style.background = '#C11C84';
+                    const removeButton = firstChoice.querySelector('.select2-selection__choice__remove');
+                    if (removeButton) removeButton.style.display = 'none';
+                }
             }
         }, 0);
     });
@@ -268,17 +292,41 @@ function handleGalleryButtonClick(galleryName, tourId, isOwn) {
 function openRemoveGalleryModal(galleryName, tourId) {
     document.getElementById('removeGalleryModal').style.display = 'flex';
     document.getElementById('removeGalleryName').innerText = galleryName;
-    // Store tourId for removal action if needed
-    document.getElementById('removeGalleryButton').onclick = function() {
-        // Call your remove function here, e.g.:
-        // removeGallery(tourId);
-        alert('Remove gallery with ID: ' + tourId); // Replace with real logic
-        closeRemoveGalleryModal();
-    };
+    document.getElementById('modalTourId').value = tourId;
 }
 
 function closeRemoveGalleryModal() {
     document.getElementById('removeGalleryModal').style.display = 'none';
+}
+
+function handleRemoveGallery() {
+    var tourId = document.getElementById('modalTourId').value;
+    
+    // Send to backend via AJAX
+    fetch("{{ route('resource.removeGallery') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({
+            tour_id: tourId
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            // Update the templateTours array
+            templateTours = response.templateTours;
+            // Refresh the page or update the UI as needed
+            window.location.reload();
+        } else {
+            console.error('Error:', response.error);
+            alert('Failed to remove gallery: ' + response.error);
+        }
+    });
+    
+    closeRemoveGalleryModal();
 }
 
 function goToTour(tourId) {

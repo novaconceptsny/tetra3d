@@ -59,6 +59,8 @@ class ResourceController extends Controller
                 ->pluck('company_id')
                 ->toArray();
 
+            $gallery->mainCompanyIds = $mainCompanyIds;
+
             if (!empty($mainCompanyIds)) {
                 // Get the first main company ID
                 $firstMainCompanyId = $mainCompanyIds[0];
@@ -117,6 +119,34 @@ class ResourceController extends Controller
         } catch (\Exception $e) {
             \Log::error('assignTourToCompanies error: ' . $e->getMessage());
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function removeGallery(Request $request)
+    {
+        try {
+            $request->validate([
+                'tour_id' => 'required|exists:tours,id'
+            ]);
+
+            // Delete related records from company_tours table
+            CompanyTour::where('tour_id', $request->tour_id)->delete();
+
+            // Get updated template tours
+            $templateTours = $this->getTemplateTours();
+
+            return response()->json([
+                'success' => true,
+                'templateTours' => $templateTours,
+                'message' => 'Gallery removed successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('removeGallery error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
         }
     }
 }

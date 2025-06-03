@@ -3,6 +3,7 @@
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\SurfaceStateController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ResourceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +51,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/photo', 'PhotoController@index')->name('photo.index');
     Route::get('/resource', 'ResourceController@index')->name('resource.index');
     Route::post('/resource/assign-tour-to-companies', 'ResourceController@assignTourToCompanies')->name('resource.assignTourToCompanies');
-
+    Route::post('/resource/remove-gallery', 'ResourceController@removeGallery')->name('resource.removeGallery');
 });
 
 
