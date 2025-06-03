@@ -156,6 +156,20 @@
     color: #fff !important;
     margin-right: 6px;
 }
+
+/* New styles for first item */
+.select2-selection__choice:first-child {
+    background: #C11C84 !important;
+}
+
+.select2-selection__choice:first-child .select2-selection__choice__remove {
+    display: none !important;
+}
+
+/* Hide close button on hover for first item */
+.select2-selection__choice:first-child:hover .select2-selection__choice__remove {
+    display: none !important;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
@@ -163,18 +177,48 @@
 
 var companies = @json($companies);
 var templateTours = @json($templateTours);
-
+console.log(templateTours);
 
 function openAddCompanyModal(galleryName, tourId) {
     document.getElementById('addCompanyModal').style.display = 'flex';
     document.getElementById('modalGalleryName').innerText = galleryName;
     document.getElementById('modalTourId').value = tourId;
 
-    // Find the gallery object
     const select = $("#companySelect").select2();
     var gallery = templateTours.find(function(g) { return g.id == tourId; });
+    
+    // Move first assigned company to top
+    if (gallery.assigned_company_ids && gallery.assigned_company_ids.length > 0) {
+        const firstAssignedId = gallery.assigned_company_ids[0];
+        const $firstOption = select.find(`option[value="${firstAssignedId}"]`);
+        const $firstOptionClone = $firstOption.clone();
+        
+        $firstOption.remove();
+        select.prepend($firstOptionClone);
+    }
+    
     select.val(gallery.assigned_company_ids).trigger('change');
 
+    // Ensure styles are applied after any changes
+    select.on('change', function() {
+        setTimeout(() => {
+            const choices = document.querySelectorAll('.select2-selection__choice');
+            if (choices.length > 0) {
+                // Remove any existing custom styling
+                choices.forEach(choice => {
+                    choice.style.background = '#8187f5';
+                    const removeBtn = choice.querySelector('.select2-selection__choice__remove');
+                    if (removeBtn) removeBtn.style.display = 'block';
+                });
+                
+                // Apply special styling to first choice
+                const firstChoice = choices[0];
+                firstChoice.style.background = '#C11C84';
+                const removeButton = firstChoice.querySelector('.select2-selection__choice__remove');
+                if (removeButton) removeButton.style.display = 'none';
+            }
+        }, 0);
+    });
 }
 function closeAddCompanyModal() {
     document.getElementById('addCompanyModal').style.display = 'none';
@@ -185,6 +229,8 @@ function handleAddCompany() {
         Array.from(select.selectedOptions).map(option => option.text) : 
         [];
     var tourId = document.getElementById('modalTourId').value;
+
+    console.log(selectedCompanyNames);
 
 
     // Send to backend via AJAX

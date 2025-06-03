@@ -51,18 +51,36 @@ class ResourceController extends Controller
                     ->exists();
 
             // Get assigned companies from both CompanyTour and Tour tables
-            $companyTourIds = CompanyTour::where('tour_id', $gallery->id)
+            $sharedCompanyIds = CompanyTour::where('tour_id', $gallery->id)
                 ->pluck('company_id')
                 ->toArray();
             
-            $tourCompanyIds = Tour::where('id', $gallery->id)
+            $mainCompanyIds = Tour::where('id', $gallery->id)
                 ->pluck('company_id')
                 ->toArray();
 
-            // Merge and remove duplicates
-            $gallery->assigned_company_ids = array_unique(
-                array_merge($companyTourIds, $tourCompanyIds)
-            );
+            if (!empty($mainCompanyIds)) {
+                // Get the first main company ID
+                $firstMainCompanyId = $mainCompanyIds[0];
+                
+                // Remove the first main company ID from arrays to avoid duplicates
+                $mainCompanyIds = array_slice($mainCompanyIds, 1);
+                $sharedCompanyIds = array_diff($sharedCompanyIds, [$firstMainCompanyId]);
+                
+                // Merge arrays with the first main company ID at the beginning
+                $gallery->assigned_company_ids = array_unique(
+                    array_merge(
+                        [$firstMainCompanyId],
+                        $mainCompanyIds,
+                        $sharedCompanyIds
+                    )
+                );
+            } else {
+                // If no main company IDs, just merge as before
+                $gallery->assigned_company_ids = array_unique(
+                    array_merge($sharedCompanyIds, $mainCompanyIds)
+                );
+            }
         }
 
         return $templateTours;
