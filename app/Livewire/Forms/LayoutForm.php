@@ -69,7 +69,6 @@ class LayoutForm extends Modal
             unset($this->layout->tour_id);
         }
         
-        dd($this->layout);
         $this->layout->save();
 
         $this->close(andDispatch: [
