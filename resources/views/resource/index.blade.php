@@ -126,13 +126,14 @@
 
 <!-- Remove Gallery Modal -->
 <div id="removeGalleryModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:20; align-items:center; justify-content:center;">
-    <div style="background:#fff; border-radius:12px; padding:32px; min-width:400px; position:relative; text-align:center;">
+    <div style="background:#fff; border-radius:12px; padding:32px; min-width:400px; max-width:680px; position:relative; text-align:center;">
         <h5>Are you sure you want to remove this gallery?</h5>
         <div id="removeGalleryName" style="font-weight:bold; margin: 12px 0;"></div>
         <input type="hidden" id="modalTourId" value="">
         <div style="color:#d97706; margin-bottom:16px;">
             <span style="font-size:24px; vertical-align:middle;">&#9888;</span>
-            If this template has been used in any projects or layouts, all linked information will be permanently removed.
+            Any projects or layouts that use this template gallery will remain on your Projects page. 
+            If you'd like to remove them, you'll need to delete them separately.
         </div>
         <div style="display:flex; justify-content:center; gap:24px;">
             <button id="removeGalleryButton" style="background:#d32f2f; color:#fff; border:none; padding:8px 32px; border-radius:4px;" onclick="handleRemoveGallery()">Remove</button>
