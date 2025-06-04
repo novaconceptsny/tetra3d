@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artwork;
+use App\Models\ArtworkCollection;
 use Illuminate\Http\Request;
 
 class ArtworksController extends Controller
@@ -40,6 +41,16 @@ class ArtworksController extends Controller
 
     public function destroy(Artwork $artwork)
     {
-        //
+       //
+    }
+
+    public function destroyCollection($id)
+    {
+        ArtworkCollection::destroy($id);
+
+        return [
+            'status' => true,
+            'message' => 'Delete Success!'
+        ];
     }
 }

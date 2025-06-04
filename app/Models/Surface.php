@@ -20,6 +20,8 @@ class Surface extends Model implements HasMedia
         'name',
         'display_name',
         'data',
+        'company_id',
+        'tour_id',
         // ... other fillable fields ...
     ];
 

@@ -2,7 +2,7 @@
     'route' => '#',
     'img' => null,
     'icon' => null,
-    'text' => '',
+    'text' => null,
     'permission' => null,
     'permissionParams' => null,
     'visible' => true
@@ -20,8 +20,10 @@
         @if($icon)
             <i class="{{ $icon }}" style="font-size: 19px;"></i>
         @endif
+        @if($text)
         <span>
             {{ $text }}
         </span>
+        @endif
     </a>
 @endif

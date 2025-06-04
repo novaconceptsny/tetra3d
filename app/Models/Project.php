@@ -18,6 +18,13 @@ class Project extends Model implements HasMedia
     use HasCompany, InteractsWithMedia;
 
     protected $guarded = ['id'];
+    protected $fillable = [
+        'name',
+        'company_id',
+        'tour_id',
+        'is_curate_2d',
+        'background_url',
+    ];
 
     public static function boot()
     {

@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\SurfaceStateController;
+use App\Http\Controllers\PhotoStateController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\Tour360Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +29,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('tours/{tour}', 'TourController@show')->name('tours.show')->withoutMiddleware(['auth']);
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
+    Route::post('artworks/destroy/{id}', 'ArtworksController@destroyCollection')->name('artworks.destroyCollection');
     Route::get('inventory', 'InventoryController@index')->name('inventory.index');
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
     Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');
@@ -43,14 +47,41 @@ Route::group(['middleware' => 'auth'], function () {
         // surface state
         Route::get('surfaces/{state}/active', 'SurfaceStateController@active')->name('surfaces.active');
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
+        Route::post('surfaces/destroy/{id}', 'SurfaceStateController@destroySurface')->name('surfaces.destroy');
     });
 
-    Route::get('/tour-360', 'Tour360Controller@index')->name('tour-360.index');
+    Route::controller(PhotoStateController::class)->group(function () {
+        Route::get('photos/{photo}', 'show')->name('photos.show');
+        Route::post('photos/{photo}', 'update')->name('photos.update');
+    });
 
-    Route::get('/photo', 'PhotoController@index')->name('photo.index');
     Route::get('/resource', 'ResourceController@index')->name('resource.index');
     Route::post('/resource/assign-tour-to-companies', 'ResourceController@assignTourToCompanies')->name('resource.assignTourToCompanies');
     Route::post('/resource/remove-gallery', 'ResourceController@removeGallery')->name('resource.removeGallery');
+    
+    Route::controller(Tour360Controller::class)->group(function () {
+        Route::get('/tour-360', 'index')->name('tour-360.index');
+        Route::post('/tour360/store', 'store')->name('tour360.store');
+        Route::post('/tour360/update/{id}', 'update')->name('tour360.update');
+    });
+
+    Route::controller(PhotoController::class)->group(function () {
+        Route::get('/photo', 'index')->name('photo.index');
+        Route::post('/photo/{module}/destroy/{id}', 'destroy')->name('photo.destroy');
+        Route::post('/photo/store', 'store')->name('photo.store');
+        Route::post('/photo/{photo}', 'update')->name('photo.update');
+        Route::post('/photo-state/store', 'storePhotoState')->name('photo.state.store');
+        Route::post('/photo/collections/update', 'updateCollections')->name('photo.collections.update');
+        Route::post('/photo/surface/store', 'storeSurface')->name('photo.surface.store');
+        Route::post('/photo/{id}/edit', 'edit')->name('photo.edit');
+        Route::post('/photo/{id}/toggle-favorite', action: 'toggleFavorite')->name('photo.toggle-favorite');
+        Route::get('/photo/projects/{id}', 'getProject')->name('photo.projects.get');
+        Route::post('/photos-store-project', 'storeProject')->name('photo.store-project');   
+        Route::post('/photos-update-project', 'updateProject')->name('photo.update-project');   
+    });
+
+    Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
+
 });
 
 
@@ -91,5 +122,9 @@ Route::group([
     Route::patch('/tours/{tour}/toggle-model', 'TourController@toggleModel')
         ->name('backend.tours.toggle-model');
 });
+
+
+
+
 
 

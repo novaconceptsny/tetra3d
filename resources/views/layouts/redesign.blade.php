@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="_token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicons -->
     @include('backend.includes.partial.favicon')
     <title>{{ config('app.name') }}</title>
@@ -26,6 +27,7 @@
 
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     @yield('styles')
+    @stack('styles')
     @livewireStyles
 </head>
 
@@ -33,7 +35,7 @@
 
     @include('include.common.header')
 
-    <main id="site__body" style="margin-top: 52px">
+    <main id="site__body" style="margin-top: 49px">
         @yield('content')
         @yield('modellist')
         <livewire:modals.base-modal />

@@ -17,6 +17,7 @@ class CanvasManager {
         this.surface = data.surface;
         this.surfaceData = this.surface.data;
         this.latestState = data.latestState;
+        this.photoEditable = data.photoEditable || false;
 
         this.canvasApi = new CanvasApi({
             updateEndpoint: data.updateEndpoint,
@@ -49,8 +50,14 @@ class CanvasManager {
         this.boundingBox = null;
         this.imgWidth = this.surface.data.img_width;
         this.imgHeight = this.surface.data.img_height;
+        this.corners = this.surface.data.corners || [];
+        this.areaSrcPoints = [];
+        this.dstMat = null;
+        this.M = null;
         this.baseWidth = null;
         this.baseScale = null;
+
+        this.photoScale = 1;
 
         this.reverseScale = null;
         this.defaultScales = {};
@@ -64,6 +71,8 @@ class CanvasManager {
         this.return360Btn = $('#return_to_360');
         this.fileNameInput = $('#file_name');
         this.confirmationModal = $('#confirmation_modal');
+
+        this.areaPolygon = null;
 
         this.initialize()
     }
@@ -84,12 +93,21 @@ class CanvasManager {
             //shrink by width
             this.baseScale = mainWidth / this.imgWidth; //Here is the relative data when the screen is zoomed
             this.reverseScale = 1 / this.baseScale;
+
+            if (this.photoEditable) {
+                this.photoScale = mainWidth / this.surfaceData.bounding_box_width;
+            }
         } else {
             //The picture is narrower than the screen ratio
             //shrink by height
             this.baseScale = mainHeight / this.imgHeight; //Here is the relative data when the screen is zoomed
             this.reverseScale = 1 / this.baseScale;
+
+            if (this.photoEditable) {
+                this.photoScale = mainHeight / this.surfaceData.bounding_box_height;
+            }
         }
+
 
 
         this.boundingBox = new fabric.Rect({
@@ -135,11 +153,58 @@ class CanvasManager {
         // Call out all the artwork and display it on the page.
         this.renderArtworks();
 
-        this.registerArtworkSelectionEvent();
+        this.registerArtworkSelectionEvent(this.photoEditable);
         this.registerCanvasUpdateEvent();
 
         // Add guide-related initialization
         this.initializeGuides();
+
+        this.initializeArea(this.photoEditable, this.surfaceData);
+
+        // Add area toggle button event listener
+        document.getElementById('toggle-area')?.addEventListener('click', () => this.toggleArea());
+    }
+
+    initializeArea(photoEditable, surfaceData) {
+        const corners = surfaceData.corners;
+        const boundingBoxLeft = surfaceData.bounding_box_left;
+        const boundingBoxTop = surfaceData.bounding_box_top;
+
+        if (photoEditable && corners.length > 0) {
+            // Scale the corner points using baseScale
+            const scaledPoints = corners.map(point => ({
+                x: (point.x - boundingBoxLeft) * this.photoScale,
+                y: (point.y - boundingBoxTop) * this.photoScale
+            }));
+
+            // Create a flat array of points for the polygon
+            const points = [];
+            scaledPoints.forEach(point => {
+                points.push({ x: point.x, y: point.y });
+                this.areaSrcPoints.push({ x: point.x, y: point.y });
+            });
+
+            // Create a polygon using the points
+            this.areaPolygon = new fabric.Polygon(points, {
+                fill: 'rgba(0, 255, 0, 0.1)',
+                stroke: 'green',
+                strokeWidth: 2,
+                selectable: false,
+                evented: false,
+                objectCaching: false
+            });
+
+            // Add the polygon to the canvas
+            this.artworkCanvas.add(this.areaPolygon);
+            this.artworkCanvas.renderAll();
+
+            // Initialize the toggle button state
+            const button = document.getElementById('toggle-area');
+            if (button) {
+                button.setAttribute('data-hidden', 'false');
+                button.innerHTML = '<i class="fal fa-eye"></i> Hide Area';
+            }
+        }
     }
 
     registerCanvasUpdateEvent() {
@@ -165,17 +230,24 @@ class CanvasManager {
         this.addSavedVersionEvents();
     }
 
-    registerArtworkSelectionEvent() {
+    registerArtworkSelectionEvent(photoEditable) {
         $('#site__body').on('click', '.artwork-img', (el) => {
             if (!this.active) {
                 return false
             }
 
             let target = el.currentTarget;
-            let newSelection = this.newArtworkSelection(target);
-            this.placeSelectedImage(newSelection);
-            this.unsavedChanges = true;
-            this.toggleRemoveButton();
+
+            if (!photoEditable) {
+                let newSelection = this.newArtworkSelection(target);
+                this.placeSelectedImage(newSelection);
+                this.unsavedChanges = true;
+                this.toggleRemoveButton();
+            } else {
+                let imgData = this.getSelectionData(target);
+                this.addWarpedArtwork(imgData);
+            }
+
         })
     }
 
@@ -922,7 +994,7 @@ class CanvasManager {
 
         if (isHorizontal) {
             let y = Math.min(Math.max(line.top, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
-            
+
             line.set({
                 x1: 0,
                 y1: 0,
@@ -965,7 +1037,7 @@ class CanvasManager {
             });
         } else {
             let x = Math.min(Math.max(line.left, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
-            
+
             line.set({
                 x1: 0,
                 y1: 0,
@@ -1020,14 +1092,14 @@ class CanvasManager {
         if (this.isInactive()) return;
 
         const value = textbox.text || textbox.get('text');
-        
+
         if (!value) {
             console.warn('No text value found in textbox');
             return;
         }
 
         const pixels = this.feetInchesToPixels(value);
-        
+
         if (pixels === null) {
             console.warn('Invalid measurement format. Use format like "5\'6\"" or "5\'" or "6\""');
             this.updateGuide(guideLine);
@@ -1048,7 +1120,7 @@ class CanvasManager {
             } else {
                 newY = (boundingBoxTop + boundingBoxHeight) - pixels;
             }
-            
+
             newY = Math.min(Math.max(newY, boundingBoxTop), boundingBoxTop + boundingBoxHeight);
             guideLine.set({
                 top: newY,
@@ -1067,7 +1139,7 @@ class CanvasManager {
             } else {
                 newX = (boundingBoxLeft + boundingBoxWidth) - pixels;
             }
-            
+
             newX = Math.min(Math.max(newX, boundingBoxLeft), boundingBoxLeft + boundingBoxWidth);
             guideLine.set({
                 left: newX,
@@ -1082,7 +1154,7 @@ class CanvasManager {
         }
 
         this.updateGuide(guideLine);
-        
+
         // Ensure the guide remains selectable and draggable
         guideLine.setCoords();
         this.artworkCanvas.setActiveObject(guideLine);
@@ -1093,15 +1165,15 @@ class CanvasManager {
         // Accept input in format: "5'6"" or "5'" or "6""
         const regex = /^(?:(\d+)')?(?:(\d+)")?$/;
         const match = value.trim().match(regex);
-        
+
         if (!match) return null;
-        
+
         const feet = parseInt(match[1] || 0);
         const inches = parseInt(match[2] || 0);
-        
+
         const totalInches = (feet * 12) + inches;
         const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
-        
+
         return totalInches / inchesPerPixel;
     }
 
@@ -1117,6 +1189,178 @@ class CanvasManager {
         button.setAttribute('data-hidden', (isHidden).toString());
         button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Guides`;
 
+        this.artworkCanvas.renderAll();
+    }
+
+    addWarpedArtwork(imgData) {
+        const { imgUrl, artworkId } = imgData;
+        
+        // Clean up existing matrices
+        if (this.dstMat) this.dstMat.delete();
+        if (this.M) this.M.delete();
+
+        // Get the polygon area dimensions
+        const bounds = this.calculatePolygonBounds(this.areaSrcPoints);
+        const paddedWidth = bounds.width;
+        const paddedHeight = bounds.height;
+        
+        // Create source points from the wall area corners
+        let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, this.areaSrcPoints.flatMap(p => [p.x, p.y]));
+
+        // Create destination points as a rectangle
+        let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
+            0, 0,
+            paddedWidth, 0,
+            paddedWidth, paddedHeight,
+            0, paddedHeight
+        ]);
+
+        // Calculate transformation matrices
+        this.M = cv.getPerspectiveTransform(dstTri, srcTri);
+
+        // Store initial position for reference
+        this.initialWarpPosition = {
+            x: 0,
+            y: 0
+        };
+
+        // Clean up temporary matrices
+        srcTri.delete();
+        dstTri.delete();
+
+        // Load the image and apply transformation
+        fabric.Image.fromURL(imgUrl, (img) => {
+            this.updateTransformedArtwork(img, this.M, bounds, artworkId);
+        }, { crossOrigin: 'anonymous' });
+    }
+
+    updateTransformedArtwork(fabricImage, transformMatrix, bounds, artworkId) {
+        try {
+            if (!fabricImage || !transformMatrix) {
+                console.error('Missing required parameters');
+                return;
+            }
+
+            // Calculate scale to fit artwork within the wall area
+            const scale = Math.min(
+                bounds.width / fabricImage.width,
+                bounds.height / fabricImage.height
+            ) * 0.5;
+
+            // Create temporary canvas for the original image
+            const tempCanvas = document.createElement('canvas');
+            const scaledWidth = fabricImage.width * scale;
+            const scaledHeight = fabricImage.height * scale;
+            tempCanvas.width = scaledWidth;
+            tempCanvas.height = scaledHeight;
+            
+            // Draw the original image onto temp canvas
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(fabricImage.getElement(), 0, 0, scaledWidth, scaledHeight);
+
+            // Convert to OpenCV matrix
+            let srcMat = cv.imread(tempCanvas);
+            let dstMat = new cv.Mat();
+            
+            // Apply perspective transform
+            cv.warpPerspective(
+                srcMat,
+                dstMat,
+                transformMatrix,
+                new cv.Size(this.artworkCanvas.width, this.artworkCanvas.height),
+                cv.INTER_LINEAR,
+                cv.BORDER_TRANSPARENT,
+                new cv.Scalar()
+            );
+
+            // Convert result back to canvas
+            cv.imshow(tempCanvas, dstMat);
+
+            // Create new Fabric image from warped result
+            fabric.Image.fromURL(tempCanvas.toDataURL(), (warpedImage) => {
+                warpedImage.set({
+                    id: artworkId,
+                    left: this.initialWarpPosition.x,
+                    top: this.initialWarpPosition.y,
+                    selectable: false,
+                    hasControls: false,
+                    hasBorders: false,
+                    lockRotation: true,
+                    lockScalingX: true,
+                    lockScalingY: true,
+                    lockMovementX: true,
+                    lockMovementY: true,
+                    cornerStyle: 'circle',
+                    transparentCorners: false,
+                    cornerColor: 'rgba(102,153,255,0.5)',
+                    cornerSize: 8,
+                    padding: 5,
+                    originalMatrix: transformMatrix.clone(), // Store original transformation
+                    originalPosition: { ...this.initialWarpPosition }
+                });
+                
+                // Add movement constraints
+                warpedImage.on('moving', (evt) => {
+                    const obj = evt.target;
+                    // Keep the artwork within the polygon area
+                    const polygon = this.areaPolygon;
+                    if (polygon) {
+                        const points = polygon.points;
+                        const minX = Math.min(...points.map(p => p.x));
+                        const maxX = Math.max(...points.map(p => p.x));
+                        const minY = Math.min(...points.map(p => p.y));
+                        const maxY = Math.max(...points.map(p => p.y));
+
+                        obj.left = Math.min(Math.max(obj.left, minX), maxX - obj.width);
+                        obj.top = Math.min(Math.max(obj.top, minY), maxY - obj.height);
+                    }
+                });
+
+                // Add to main canvas
+                this.artworkCanvas.add(warpedImage);
+                this.artworkCanvas.setActiveObject(warpedImage);
+                this.artworkCanvas.renderAll();
+
+                // Clean up
+                tempCanvas.remove();
+            });
+
+            // Clean up OpenCV resources
+            srcMat.delete();
+            dstMat.delete();
+
+        } catch (error) {
+            console.error('Error in updateTransformedArtwork:', error);
+        }
+    }
+
+    // Helper function to calculate polygon bounds
+    calculatePolygonBounds(points) {
+        const xs = points.map(p => p.x);
+        const ys = points.map(p => p.y);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+        const minY = Math.min(...ys);
+        const maxY = Math.max(...ys);
+        return {
+            width: maxX - minX,
+            height: maxY - minY,
+            x: minX,
+            y: minY
+        };
+    }
+
+    toggleArea() {
+        if (!this.areaPolygon) return;
+        
+        const button = document.getElementById('toggle-area');
+        const isHidden = !(button.getAttribute('data-hidden') === 'true');
+        
+        this.areaPolygon.visible = !isHidden;
+        
+        button.setAttribute('data-hidden', isHidden.toString());
+        button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Area`;
+        
         this.artworkCanvas.renderAll();
     }
 }

@@ -6,10 +6,11 @@
 }
 
 header#header {
-  padding: 8px 50px;
+    padding: 0 50px;
   width: 100%;
   position: fixed;
   top: 0;
+    background: #fff;
   z-index: 5 !important;
   border-bottom: 1px solid #C6C6C6;
   nav.navbar-light {
@@ -116,27 +117,26 @@ header#header {
         height: 100% !important;
         .navbar-nav {
           &.link-nav{
-          position: absolute !important;
-          inset: 0 70px 0 120px !important;
-          justify-content: center !important;
+          //position: absolute !important;
+          //inset: 0 70px 0 120px !important;
+          //justify-content: center !important;
           }
           // display: flex !important;
           align-items: center !important;
-          gap: 117px;
+          gap: 35px;
           height: 100% !important;
           .nav-item {
             height: 100%;
             .nav-link {
               height: 100%;
-              padding: 0;
+              padding: 12px 0;
                 font-family: var(--main-font-family);
-                font-size: 22px;
+                font-size: 19px;
                 font-style: normal;
                 font-weight: var(--light-font);
                 line-height: normal;
-                letter-spacing: 2.2px;
+                letter-spacing: 2px;
               color: #9f9f9f;
-              text-transform: uppercase;
               position: relative;
               &.active {
                 color: $dark-color;
