@@ -3,7 +3,6 @@
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\SurfaceStateController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ResourceController;
 
 /*
 |--------------------------------------------------------------------------

@@ -41,8 +41,11 @@ class TourController extends Controller
         return view('pages.surfaces', $data);
     }
 
-    public function show(Tour $tour)
+    public function show($tour)
     {
+        // Get tour without company scope
+        $tour = Tour::withoutGlobalScope('company')->findOrFail($tour);
+
         // redirect if tour is shared
         if (request('shared_tour_id')) {
             return $this->redirectIfTourIsShared();
