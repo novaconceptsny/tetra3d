@@ -36,12 +36,14 @@
                             <a class="nav-link" aria-current="page"
                                href="{{ route('dashboard') }}">{{ __('Tour 3D') }}</a>
                         </li>
+                        @if(auth()->user()->name === 'Super Admin')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('tour-360.index') }}">{{ __('Tour 360') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('photo.index') }}">{{ __('Photo') }}</a>
                         </li>
+                        @endif
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('inventory.index') }}">{{ __('Inventory') }}</a>
                         </li>
