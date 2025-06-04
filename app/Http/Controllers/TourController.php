@@ -44,7 +44,7 @@ class TourController extends Controller
     public function show($tour)
     {
         // Get tour without company scope
-        $tour = Tour::withoutGlobalScope('company')->findOrFail($tour);
+        $tour = Tour::withoutGlobalScope('forCurrentCompany')->findOrFail($tour);
 
         // redirect if tour is shared
         if (request('shared_tour_id')) {
