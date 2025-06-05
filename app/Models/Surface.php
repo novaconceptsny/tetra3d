@@ -116,7 +116,7 @@ class Surface extends Model implements HasMedia
 
     public function tour()
     {
-        return $this->belongsTo(Tour::class);
+        return $this->belongsTo(Tour::withoutGlobalScope('forCurrentCompany')::class);
     }
 
     public function getStateThumbnail($state, $tour_is_shared = false, $has_model = 0)
