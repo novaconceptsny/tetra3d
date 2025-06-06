@@ -48,10 +48,10 @@
                             <a class="nav-link" href="{{ route('inventory.index') }}">{{ __('Inventory') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Activity') }}</a>
+                            <a class="nav-link" href="{{ route('resource.index') }}">{{ __('Resource') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('resource.index') }}">{{ __('Resource') }}</a>
+                            <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Activity') }}</a>
                         </li>
                     </ul>
                 @endif
