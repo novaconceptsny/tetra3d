@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <div class="row">
+    <div id="dashboard-section" class="row">
         <div class="col-12">
             <div class="favourites-section">
                 <h5 class="mb-4">Favourites</h5>
@@ -50,20 +50,41 @@
                                         <div class="rounded img-home p-2">
                                             <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                         </div>
-                                        <div class="card-body d-flex justify-content-between align-items-end">
-                                            <p class="card-text">
-                                                <span>{{ $project->name }}</span><br>
-                                                <small>Created: {{ $project->created_at->format('F jS, Y') }}</small>
-                                            </p>
-                                            <button type="button" 
-                                                    class="btn enter-link" 
-                                                    data-mode="edit" 
-                                                    data-project-name="{{ $project->name }}"
-                                                    data-project-id="{{ $project->id }}" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#projectModal">
-                                                Enter
-                                            </button>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <p class="card-text mb-0">
+                                                    <span>{{ $project->name }}</span><br>
+                                                    <small>Created: {{ $project->created_at->format('F jS, Y') }}</small>
+                                                </p>
+                                                <div class="d-flex flex-column justify-content-end mb-2 gap-1">
+                                                    <div class="action-icons">
+                                                        <button class="btn btn-link p-0 me-2" onclick="openEditProject({{ $project->id }})">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-link p-0" onclick="openDeleteProject({{ $project->id }})">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    <button type="button"
+                                                        class="btn enter-link"
+                                                        data-mode="edit"
+                                                        data-project-name="{{ $project->name }}"
+                                                        data-project-id="{{ $project->id }}"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#projectModal">
+                                                    Enter
+                                                </button>
+
+                                                </div>
+
+                                            </div>
+                                            <hr class="my-2">
+                                            <div class="project-stats">
+                                                <span class="me-3"><i class="fas fa-cube"></i> {{ $project->tours_count ?? 0 }} Tours</span>
+                                                <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
+                                                <span><i class="fas fa-folder"></i> {{ $project->collections_count ?? 0 }} Collections</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -75,7 +96,19 @@
                         @endif
                         <div class="col-md-3 layout-item">
                             <div class="card bg-white card-layout">
-                                <button class="add-image-btn create-new-box" data-mode="create" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                <!-- <button
+                                    class="add-image-btn create-new-box"
+                                    data-mode="create"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#projectModal"
+                                >
+                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                    <span class="add-image-text">Create New Project</span>
+                                </button> -->
+                                <button
+                                    class="add-image-btn create-new-box"
+                                    onclick="openCreateProject()"
+                                >
                                     <span class="icon-circle"><i class="fas fa-plus"></i></span>
                                     <span class="add-image-text">Create New Project</span>
                                 </button>
@@ -86,6 +119,74 @@
             </div>
         </div>
     </div>
+
+    <div class="create-project-section" id="createProjectSection" style="display: none;">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="modal-title">Add new project</h5>
+                <button type="button" class="btn-close close-create-section"></button>
+            </div>
+
+            <div class="mb-3">
+                <label for="inlineProjectNameInput" class="form-label">Name</label>
+                <input type="text" class="form-control" id="inlineProjectNameInput" placeholder="Name">
+            </div>
+
+            <div class="mb-3">
+                <label for="inlineTourSelect" class="form-label">Tour</label>
+                <div class="input-group">
+                    <select class="form-select" id="inlineTourSelect">
+                        <option selected disabled>Select Tour</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="inlineCollections" class="form-label">Collections</label>
+                <div class="input-group">
+                    <select class="form-select" id="inlineCollections">
+                        <option selected disabled>Select Collection</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="inlineContributors" class="form-label">Contributors</label>
+                <div class="input-group">
+                    <select class="form-select" id="inlineContributors">
+                        <option selected disabled>Select Contributor</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="inlineUnits" class="form-label">Units</label>
+                <select class="form-select" id="inlineUnits">
+                    <option selected disabled>Select measurement units</option>
+                    <option value="imperial">Imperial</option>
+                    <option value="metric">Metric</option>
+                </select>
+            </div>
+
+            <div class="mb-3 col-md-4">
+                <label class="form-label">Thumbnail</label>
+                <div class="image-upload-box mb-2" id="inlineImageUploadBox">
+                    <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
+                    <span>Click to add image</span>
+                    <div class="overlay">Click to replace image</div>
+                </div>
+                <div class="image-name" id="inlineImageName"></div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-primary mb-3" id="inlineSaveButton" style="width: 200px">Create</button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-primary" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px">Cancel</button>
+            </div>
+        </div>
+    </div>
+
 </div>
 <!-- Modal -->
 <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
@@ -115,6 +216,7 @@
 
 @section('styles')
     <link href="{{ mix('css/page/tour360.css') }}" rel="stylesheet">
+
 @endsection
 
 @section('scripts')
@@ -128,9 +230,105 @@
         let mode = '';
         let projectId = '';
 
+        // Add references to dashboard and create project sections
+        const dashboardSection = document.getElementById('dashboard-section');
+        const createProjectSection = document.getElementById('createProjectSection');
+
+        // New form elements
+        const inlineProjectNameInput = document.getElementById('inlineProjectNameInput');
+        const inlineTourSelect = document.getElementById('inlineTourSelect');
+        const inlineCollections = document.getElementById('inlineCollections');
+        const inlineContributors = document.getElementById('inlineContributors');
+        const inlineUnits = document.getElementById('inlineUnits');
+        const inlineImageUploadBox = document.getElementById('inlineImageUploadBox');
+        const inlineImageInput = document.getElementById('inlineImageInput');
+        const inlineImageName = document.getElementById('inlineImageName');
+        const inlineSaveButton = document.getElementById('inlineSaveButton');
+
+        function openCreateProject() {
+            dashboardSection.style.display = 'none';
+            createProjectSection.style.display = 'block';
+        }
+
+        function closeCreateProject() {
+            dashboardSection.style.display = 'block';
+            createProjectSection.style.display = 'none';
+        }
+
         function navigateToPhoto(photoId, layoutId) {
             window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
         }
+
+        // Handle inline image upload
+        inlineImageUploadBox.addEventListener('click', () => {
+            inlineImageInput.click();
+        });
+
+        inlineImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'img-preview';
+                    inlineImageUploadBox.innerHTML = '';
+                    inlineImageUploadBox.appendChild(img);
+                    const overlay = document.createElement('div');
+                    overlay.className = 'overlay';
+                    overlay.textContent = 'Click to replace image';
+                    inlineImageUploadBox.appendChild(overlay);
+                    inlineImageUploadBox.appendChild(inlineImageInput);
+                    inlineImageName.textContent = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle inline save button
+        inlineSaveButton.addEventListener('click', async function() {
+            const formData = new FormData();
+            formData.append('name', inlineProjectNameInput.value);
+            formData.append('tour', inlineTourSelect.value);
+            formData.append('collections', inlineCollections.value);
+            formData.append('contributors', inlineContributors.value);
+            formData.append('units', inlineUnits.value);
+            formData.append('image', inlineImageInput.files[0]);
+
+            try {
+                const response = await fetch('/tour360/store', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Reset form
+                    inlineProjectNameInput.value = '';
+                    inlineTourSelect.selectedIndex = 0;
+                    inlineCollections.value = '';
+                    inlineContributors.value = '';
+                    inlineUnits.selectedIndex = 0;
+                    inlineImageUploadBox.innerHTML = `
+                        <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
+                        <span>Click to add image</span>
+                        <div class="overlay">Click to replace image</div>
+                    `;
+                    inlineImageName.textContent = '';
+
+                    // Refresh the page to show updated project
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while saving the project');
+            }
+        });
+
         // Xử lý khi modal được mở
         projectModal.addEventListener('show.bs.modal', (event) => {
             const button = event.relatedTarget; // Button that triggered the modal
@@ -196,12 +394,12 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
                     // Close modal
                     const modal = bootstrap.Modal.getInstance(projectModal);
                     modal.hide();
-                    
+
                     // Refresh the page to show updated project
                     window.location.reload();
                 }

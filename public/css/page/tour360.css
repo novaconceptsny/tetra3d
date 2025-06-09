@@ -8,12 +8,19 @@ body {
   }
 }
 .enter-link {
-  float: right;
+  color: #0066FF;
+  padding: 6px 20px;
+  /* border-radius: 4px; */
   font-size: 14px;
-  color: #008577;
+  border: none;
   text-decoration: none;
-  display: flex;
-  justify-content: space-between;
+  transition: background-color 0.2s;
+  display: inline-block;
+}
+
+.enter-link:hover {
+  color: #0066FF;
+  text-decoration: none;
 }
 
 .favourites-section {
@@ -156,6 +163,11 @@ body {
   display: none;
 }
 
+.layout-item {
+  height: 350px;
+  width: 400px;
+}
+
 /* Add these styles for the project cards */
 .layout-item .card {
     width: 100%;
@@ -175,4 +187,104 @@ body {
 
 .layout-item .card .card-body {
     height: 100px; /* Remaining height for the card body */
+}
+
+.create-project-section {
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.create-project-section .card {
+  background-color: #F7F9FB;
+}
+
+.image-upload-box {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  background: #f8f9fa;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-upload-box:hover {
+  border-color: #0d6efd;
+}
+
+.image-upload-box .image-input {
+  display: none;
+}
+
+.image-upload-box img.img-preview {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.image-upload-box .overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.image-upload-box:hover .overlay {
+  display: flex;
+}
+
+.image-name {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.5rem;
+}
+
+.close-create-section {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.close-create-section:hover {
+  color: #000;
+}
+
+.action-icons .btn-link {
+    color: #6c757d;
+    transition: color 0.2s;
+}
+
+.action-icons .btn-link:hover {
+    color: #343a40;
+}
+
+.project-stats {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.project-stats i {
+    margin-right: 4px;
+}
+
+.project-stats span {
+    display: inline-flex;
+    align-items: center;
+}
+
+.card-body {
+    padding: 1rem;
 }
