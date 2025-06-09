@@ -15,7 +15,7 @@
                                         <h4><i class="fa fa-star"></i> {{ $favorite->photo->name }}</h4>
                                         <span>{{ $favorite->photo->project->name }}</span>
                                         <p class="text-end mb-0">
-                                            <button class="btn enter-link" onclick="navigateToPhoto({{ $favorite->photo->id }}, {{ $favorite->layout_id }})">
+                                            <button class="btn enter-link" >
                                                 Enter
                                             </button>
                                         </p>
@@ -135,8 +135,8 @@
             <div class="mb-3">
                 <label for="inlineTourSelect" class="form-label">Tour</label>
                 <div class="input-group">
-                    <select class="form-select" id="inlineTourSelect">
-                        <option selected disabled>Select Tour</option>
+                    <select id="inlineTourSelect"  name="states[]" multiple="multiple" style="width: 100%;">
+                        <!-- <option  style="padding: 8px 16px;" selected disabled>Select Tour</option> -->
                     </select>
                 </div>
             </div>
@@ -144,8 +144,8 @@
             <div class="mb-3">
                 <label for="inlineCollections" class="form-label">Collections</label>
                 <div class="input-group">
-                    <select class="form-select" id="inlineCollections">
-                        <option selected disabled>Select Collection</option>
+                    <select id="inlineCollections"  name="states[]" multiple="multiple" style="width: 100%;">
+                        <!-- <option selected disabled>Select Collection</option> -->
                     </select>
                 </div>
             </div>
@@ -153,8 +153,8 @@
             <div class="mb-3">
                 <label for="inlineContributors" class="form-label">Contributors</label>
                 <div class="input-group">
-                    <select class="form-select" id="inlineContributors">
-                        <option selected disabled>Select Contributor</option>
+                    <select id="inlineContributors"  name="states[]" multiple="multiple" style="width: 100%;">
+                        <!-- <option selected disabled>Select Contributor</option> -->
                     </select>
                 </div>
             </div>
@@ -179,7 +179,7 @@
             </div>
 
             <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-primary mb-3" id="inlineSaveButton" style="width: 200px">Create</button>
+                <button type="button" class="btn btn-primary mb-3" id="inlineSaveButton" style="width: 200px" onclick="handleCreateProject()">Create</button>
             </div>
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-primary" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px">Cancel</button>
@@ -212,14 +212,33 @@
         </div>
     </div>
 </div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
 @section('styles')
     <link href="{{ mix('css/page/tour360.css') }}" rel="stylesheet">
 
+    <style>
+        /* Custom Select2 tag style */
+        .select2-selection__choice {
+            background: #8187f5 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 6px !important;
+            font-size: 16px !important;
+        }
+        .select2-selection__choice__remove {
+            color: #fff !important;
+            margin-right: 6px;
+        }
+
+        /* Remove the static first-child styles since we'll apply them dynamically */
+    </style>
 @endsection
 
 @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         const projectModal = document.getElementById('projectModal');
         const modalTitle = document.getElementById('projectModalLabel');
@@ -245,9 +264,37 @@
         const inlineImageName = document.getElementById('inlineImageName');
         const inlineSaveButton = document.getElementById('inlineSaveButton');
 
-        function openCreateProject() {
-            dashboardSection.style.display = 'none';
-            createProjectSection.style.display = 'block';
+        async function openCreateProject() {
+            try {
+                // Fetch data from the create endpoint
+                const response = await fetch('/tour360/create');
+                const data = await response.json();
+
+                // Populate the tour select dropdown
+                // inlineTourSelect.innerHTML = '<option selected disabled>Select Tour</option>';
+                data.tours.forEach(tour => {
+                    inlineTourSelect.innerHTML += `<option value="${tour.id}">${tour.name}</option>`;
+                });
+
+                // Populate the contributors select dropdown
+                // inlineContributors.innerHTML = '<option selected disabled>Select Contributor</option>';
+                data.users.forEach(user => {
+                    inlineContributors.innerHTML += `<option value="${user.id}">${user.name}</option>`;
+                });
+
+                // Populate the collections select dropdown
+                // inlineCollections.innerHTML = '<option selected disabled>Select Collection</option>';
+                data.artworkCollections.forEach(collection => {
+                    inlineCollections.innerHTML += `<option value="${collection.id}">${collection.name}</option>`;
+                });
+
+                // Show the create project section
+                dashboardSection.style.display = 'none';
+                createProjectSection.style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching project data:', error);
+                alert('Failed to load project creation form. Please try again.');
+            }
         }
 
         function closeCreateProject() {
@@ -255,8 +302,61 @@
             createProjectSection.style.display = 'none';
         }
 
-        function navigateToPhoto(photoId, layoutId) {
-            window.location.href = `/photos/${photoId}?layout_id=${layoutId}`;
+        function handleCreateProject() {
+            // Create FormData object to handle file upload
+            const formData = new FormData();
+            
+            // Get all form values
+            const name = document.getElementById('inlineProjectNameInput').value;
+            const tours = $('#inlineTourSelect').val(); // Using jQuery for Select2
+            const collections = $('#inlineCollections').val();
+            const contributors = $('#inlineContributors').val();
+            const units = document.getElementById('inlineUnits').value;
+            const thumbnailFile = document.getElementById('inlineImageInput').files[0];
+
+            // Validate required fields
+            if (!name) {
+                alert('Please enter a project name');
+                return;
+            }
+
+            if (!thumbnailFile) {
+                alert('Please select a thumbnail image');
+                return;
+            }
+
+            // Append all data to FormData
+            formData.append('name', name);
+            formData.append('tour_ids', JSON.stringify(tours));
+            formData.append('artwork_collection_ids', JSON.stringify(collections));
+            formData.append('user_ids', JSON.stringify(contributors));
+            formData.append('units', units);
+            formData.append('thumbnail', thumbnailFile);
+
+            // Add CSRF token
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+            // Send request to server
+            fetch('/tour360/store', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Project created successfully!');
+                    window.location.reload(); // Refresh page to show new project
+                } else {
+                    alert(data.message || 'Failed to create project');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while creating the project');
+            });
         }
 
         // Handle inline image upload
@@ -329,84 +429,12 @@
             }
         });
 
-        // Xử lý khi modal được mở
-        projectModal.addEventListener('show.bs.modal', (event) => {
-            const button = event.relatedTarget; // Button that triggered the modal
-            mode = button.getAttribute('data-mode'); // Get mode (create or edit)
-            projectId = button.getAttribute('data-project-id'); // Add this line
-
-            // Update title and default values based on mode
-            if (mode === 'create') {
-                modalTitle.textContent = 'Add new project';
-                projectNameInput.value = '';
-                imageUploadBox.innerHTML = '<span>+ Image</span><div class="overlay">Click to replace image</div>';
-                imageUploadBox.appendChild(imageInput);
-                imageName.textContent = '';
-            } else if (mode === 'edit') {
-                modalTitle.textContent = 'Edit project';
-                const projectName = button.getAttribute('data-project-name');
-                projectNameInput.value = projectName;
-                imageUploadBox.innerHTML = '<span>+ Image</span><div class="overlay">Click to replace image</div>';
-                imageUploadBox.appendChild(imageInput);
-                imageName.textContent = '';
-            }
+     
+        $(document).ready(function() {
+            $('#inlineTourSelect').select2();
+            $('#inlineCollections').select2();
+            $('#inlineContributors').select2();
         });
 
-        // Xử lý upload ảnh
-        imageUploadBox.addEventListener('click', () => {
-            imageInput.click();
-        });
-
-        imageInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    imageUploadBox.innerHTML = '';
-                    imageUploadBox.appendChild(img);
-                    const overlay = document.createElement('div');
-                    overlay.className = 'overlay';
-                    overlay.textContent = 'Click to replace image';
-                    imageUploadBox.appendChild(overlay);
-                    imageUploadBox.appendChild(imageInput);
-                    imageName.textContent = file.name;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Replace the save button click handler with this updated version
-        document.querySelector('.btn-save').addEventListener('click', async function() {
-            const formData = new FormData();
-            formData.append('title', projectNameInput.value);
-            formData.append('image', imageInput.files[0]);
-
-            try {
-                let url = mode === 'create' ? '/tour360/store' : `/tour360/update/${projectId}`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Close modal
-                    const modal = bootstrap.Modal.getInstance(projectModal);
-                    modal.hide();
-
-                    // Refresh the page to show updated project
-                    window.location.reload();
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while saving the project');
-            }
-        });
     </script>
 @endsection
