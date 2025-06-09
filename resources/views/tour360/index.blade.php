@@ -46,7 +46,14 @@
                         @if($projects->count() > 0)
                             @foreach($projects as $project)
                                 <div class="col-md-3 layout-item">
-                                    <div class="card border-0 shadow-sm bg-white">
+                                    <div class="card border-0 shadow-sm bg-white"
+                                        data-project-id="{{ $project->id }}"
+                                        data-project-name="{{ $project->name }}"
+                                        data-project-units="{{ $project->units }}"
+                                        data-project-tours="{{ json_encode($project->tours->pluck('id')) }}"
+                                        data-project-collections="{{ json_encode($project->artworkCollections->pluck('id')) }}"
+                                        data-project-contributors="{{ json_encode($project->contributors->pluck('id')) }}"
+                                    >
                                         <div class="rounded img-home p-2">
                                             <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                         </div>
@@ -58,10 +65,10 @@
                                                 </p>
                                                 <div class="d-flex flex-column justify-content-end mb-2 gap-1">
                                                     <div class="action-icons">
-                                                        <button class="btn btn-link p-0 me-2" onclick="openEditProject({{ $project->id }})">
+                                                        <button class="btn btn-link p-0 me-2" onclick="handleEditProject({{ $project->id }})">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
-                                                        <button class="btn btn-link p-0" onclick="openDeleteProject({{ $project->id }})">
+                                                        <button class="btn btn-link p-0" onclick="handleDeleteProject({{ $project->id }})">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -72,7 +79,7 @@
                                                         data-project-name="{{ $project->name }}"
                                                         data-project-id="{{ $project->id }}"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#projectModal">
+                                                        >
                                                     Enter
                                                 </button>
 
@@ -356,6 +363,152 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred while creating the project');
+            });
+        }
+
+        function handleDeleteProject(id) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                fetch(`/tour360/destroy/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the project card from the DOM
+                        const projectCard = document.querySelector(`[data-project-id="${id}"]`).closest('.layout-item');
+                        projectCard.remove();
+                        alert('Project deleted successfully');
+                    } else {
+                        alert(data.message || 'Failed to delete project');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the project');
+                });
+            }
+        }
+
+        function handleEditProject(id) {
+            // First fetch the project data
+            fetch(`/tour360/create`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Get the project element
+                    const projectElement = document.querySelector(`[data-project-id="${id}"]`);
+                    const project = {
+                        id: id,
+                        name: projectElement.getAttribute('data-project-name'),
+                        units: projectElement.getAttribute('data-project-units') || 'imperial',
+                        tour_ids: projectElement.getAttribute('data-project-tours') ? JSON.parse(projectElement.getAttribute('data-project-tours')) : [],
+                        collection_ids: projectElement.getAttribute('data-project-collections') ? JSON.parse(projectElement.getAttribute('data-project-collections')) : [],
+                        contributor_ids: projectElement.getAttribute('data-project-contributors') ? JSON.parse(projectElement.getAttribute('data-project-contributors')) : []
+                    };
+
+                    // Show the create project section (we'll reuse it for editing)
+                    dashboardSection.style.display = 'none';
+                    createProjectSection.style.display = 'block';
+
+                    // Populate form with existing data
+                    document.getElementById('inlineProjectNameInput').value = project.name;
+                    document.getElementById('inlineUnits').value = project.units;
+
+                    // Populate dropdowns
+                    populateSelect('inlineTourSelect', data.tours);
+                    populateSelect('inlineCollections', data.artworkCollections);
+                    populateSelect('inlineContributors', data.users);
+                    // Set up Select2 dropdowns with existing values
+                    $('#inlineTourSelect').val(project.tour_ids).trigger('change');
+                    $('#inlineCollections').val(project.collection_ids).trigger('change');
+                    $('#inlineContributors').val(project.contributor_ids).trigger('change');
+
+                    // Update the save button to handle edit
+                    const saveButton = document.getElementById('inlineSaveButton');
+                    saveButton.textContent = 'Update';
+                    saveButton.onclick = () => handleUpdateProject(id);
+
+
+                } else {
+                    alert(data.message || 'Failed to load project data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while loading project data');
+            });
+        }
+
+        function handleUpdateProject(id) {
+            // Create FormData object to handle file upload
+            const formData = new FormData();
+            
+            // Get all form values
+            const name = document.getElementById('inlineProjectNameInput').value;
+            const tours = $('#inlineTourSelect').val();
+            const collections = $('#inlineCollections').val();
+            const contributors = $('#inlineContributors').val();
+            const units = document.getElementById('inlineUnits').value;
+            const thumbnailFile = document.getElementById('inlineImageInput').files[0];
+
+            // Validate required fields
+            if (!name) {
+                alert('Please enter a project name');
+                return;
+            }
+
+            // Append all data to FormData
+            formData.append('name', name);
+            formData.append('tour_ids', JSON.stringify(tours));
+            formData.append('artwork_collection_ids', JSON.stringify(collections));
+            formData.append('user_ids', JSON.stringify(contributors));
+            formData.append('units', units);
+            if (thumbnailFile) {
+                formData.append('thumbnail', thumbnailFile);
+            }
+
+            // Add CSRF token
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+            // Send request to server
+            fetch(`/tour360/update/${id}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Project updated successfully!');
+                    window.location.reload(); // Refresh page to show updated project
+                } else {
+                    alert(data.message || 'Failed to update project');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the project');
+            });
+        }
+
+        function populateSelect(selectId, options) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '';
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.id;
+                opt.textContent = option.name;
+                select.appendChild(opt);
             });
         }
 

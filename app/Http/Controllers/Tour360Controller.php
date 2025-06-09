@@ -105,8 +105,87 @@ class Tour360Controller extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
-   
+        try {
+            $project = Project::findOrFail($id);
+            
+            // Validate the request
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'tour_ids' => 'nullable|array',
+                'artwork_collection_ids' => 'nullable|array',
+                'user_ids' => 'nullable|array',
+                'units' => 'required|in:imperial,metric',
+                'thumbnail' => 'nullable|image|max:2048'
+            ]);
+
+            // Update basic project information
+            $project->name = $request->name;
+            $project->units = $request->units;
+
+            // Handle thumbnail update if provided
+            if ($request->hasFile('thumbnail')) {
+                // Delete old thumbnail if it exists
+                if ($project->background_url) {
+                    Storage::delete($project->background_url);
+                }
+                
+                // Store new thumbnail
+                $path = $request->file('thumbnail')->store('project_thumbnails', 'public');
+                $project->background_url = $path;
+            }
+
+            $project->save();
+
+            // Update relationships
+            if ($request->has('tour_ids')) {
+                $project->tours()->sync(json_decode($request->tour_ids));
+            }
+            
+            if ($request->has('artwork_collection_ids')) {
+                $project->artworkCollections()->sync(json_decode($request->artwork_collection_ids));
+            }
+            
+            if ($request->has('user_ids')) {
+                $project->contributors()->sync(json_decode($request->user_ids));
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project updated successfully',
+                'project' => $project
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update project: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $project = Project::findOrFail($id);
+            
+            // Delete the project's thumbnail if it exists
+            if ($project->background_url) {
+                Storage::delete($project->background_url);
+            }
+            
+            // Delete the project
+            $project->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete project: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

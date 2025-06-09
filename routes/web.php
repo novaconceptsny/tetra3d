@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/tour360/create', 'create')->name('tour360.create');
         Route::post('/tour360/store', 'store')->name('tour360.store');
         Route::post('/tour360/update/{id}', 'update')->name('tour360.update');
+        Route::post('/tour360/destroy/{id}', 'destroy')->name('tour360.destroy');   
     });
 
     Route::controller(PhotoController::class)->group(function () {
