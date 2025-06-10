@@ -235,6 +235,15 @@
             margin-right: 6px;
         }
 
+        /* Add spacing between project columns */
+        .layout-item {
+            margin-bottom: 50px;
+        }
+        
+        .layout-item .card {
+            height: 100%;
+        }
+
         /* Remove the static first-child styles since we'll apply them dynamically */
     </style>
 @endsection
