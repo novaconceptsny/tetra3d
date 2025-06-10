@@ -25,7 +25,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('login-as/{user}', [UserController::class, 'loginAs'])->name('login.as.user');
     Route::post('back-to-admin', [UserController::class, 'backToAdmin'])->name('back.to.admin');
 
-    Route::get('/', 'HomeController@index')->name('dashboard');
+    // Route::get('/', 'HomeController@index')->name('dashboard');
+    Route::redirect('/', '/tour-360')->name('dashboard');
     Route::get('tours/{tour}', 'TourController@show')->name('tours.show')->withoutMiddleware(['auth']);
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
