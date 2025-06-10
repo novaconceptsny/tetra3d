@@ -3,7 +3,7 @@
 <header id="header">
     <nav class="navbar navbar-expand-lg {{ $navbarLight ? 'navbar-light' : '' }}">
         <div class="nav-container">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">
+            <a class="navbar-brand" href="{{ route('tour-360.index') }}">
                 <img src="{{ asset('backend/images/logo/logo_dark.png') }}" alt="dash-logo"/>
 {{--                <svg width="38" height="41" viewBox="0 0 38 41" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">--}}
 {{--                    <rect width="38" height="41" fill="url(#pattern0)"/>--}}
@@ -32,10 +32,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 @if($navEnabled)
                     <ul class="navbar-nav mx-auto link-nav">
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" aria-current="page"
                                href="{{ route('dashboard') }}">{{ __('Tour 3D') }}</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('tour-360.index') }}">{{ __('Tour 360') }}</a>
                         </li>
