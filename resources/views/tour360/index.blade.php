@@ -73,24 +73,19 @@
                                                         </button>
                                                     </div>
 
-                                                    <button type="button"
-                                                        class="btn enter-link"
-                                                        data-mode="edit"
-                                                        data-project-name="{{ $project->name }}"
-                                                        data-project-id="{{ $project->id }}"
-                                                        data-bs-toggle="modal"
-                                                        >
-                                                    Enter
-                                                </button>
+                                                    <a href="javascript:void(0)"
+                                                        onclick="Livewire.dispatch('slide-over.open', {component: 'tour-switcher', arguments: {'project': {{$project->id}} }})"
+                                                        >Enter
+                                                    </a>
 
                                                 </div>
 
                                             </div>
                                             <hr class="my-2">
                                             <div class="project-stats">
-                                                <span class="me-3"><i class="fas fa-cube"></i> {{ $project->toursCount() ?? 0 }} Tours</span>
-                                                <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributorsCount() ?? 0 }} Contributors</span>
-                                                <span><i class="fas fa-folder"></i> {{ $project->collectionsCount() ?? 0 }} Collections</span>
+                                                <span class="me-3"><i class="fas fa-cube"></i> {{ $project->tours_count ?? 0 }} Tours</span>
+                                                <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
+                                                <span><i class="fas fa-folder"></i> {{ $project->artwork_collections_count?? 0 }} Collections</span>
                                             </div>
                                         </div>
                                     </div>

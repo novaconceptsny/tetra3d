@@ -18,10 +18,10 @@ class Tour360Controller extends Controller
 
         if ($user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
             // Get all projects from the database
-            $projects = Project::orderBy('created_at', 'desc')->get();
+            $projects = Project::orderBy('created_at', 'desc')->withCount(['tours', 'artworkCollections', 'contributors'])->get();   
         } else {
             // Not super admin: get only the user's company
-            $projects = Project::where('company_id', $user->company_id)->orderBy('created_at', 'desc')->get();
+            $projects = Project::where('company_id', $user->company_id)->orderBy('created_at', 'desc')->withCount(['tours', 'artworkCollections', 'contributors'])->get();
         }
 
         // Get favorite photo states

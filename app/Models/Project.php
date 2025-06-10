@@ -52,11 +52,6 @@ class Project extends Model implements HasMedia
         return $this->belongsToMany(Tour::class);
     }
 
-    public function toursCount()
-    {
-        return $this->tours()->count();
-    }
-
     /**
      * Get all tours including extra ones from company_tour table.
      */
@@ -89,10 +84,6 @@ class Project extends Model implements HasMedia
         return $this->belongsToMany(User::class);
     }
 
-    public function contributorsCount()
-    {
-        return $this->users()->count();
-    }
 
     public function contributors()
     {
@@ -104,10 +95,6 @@ class Project extends Model implements HasMedia
         return $this->belongsToMany(ArtworkCollection::class);
     }
 
-    public function collectionsCount()
-    {
-        return $this->artworkCollections()->count();
-    }
 
     public function surfaceStates()
     {
