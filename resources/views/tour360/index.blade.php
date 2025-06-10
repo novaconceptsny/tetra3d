@@ -88,9 +88,9 @@
                                             </div>
                                             <hr class="my-2">
                                             <div class="project-stats">
-                                                <span class="me-3"><i class="fas fa-cube"></i> {{ $project->tours_count ?? 0 }} Tours</span>
-                                                <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
-                                                <span><i class="fas fa-folder"></i> {{ $project->collections_count ?? 0 }} Collections</span>
+                                                <span class="me-3"><i class="fas fa-cube"></i> {{ $project->toursCount() ?? 0 }} Tours</span>
+                                                <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributorsCount() ?? 0 }} Contributors</span>
+                                                <span><i class="fas fa-folder"></i> {{ $project->collectionsCount() ?? 0 }} Collections</span>
                                             </div>
                                         </div>
                                     </div>
@@ -286,7 +286,7 @@
                 // Populate the contributors select dropdown
                 // inlineContributors.innerHTML = '<option selected disabled>Select Contributor</option>';
                 data.users.forEach(user => {
-                    inlineContributors.innerHTML += `<option value="${user.id}">${user.name}</option>`;
+                    inlineContributors.innerHTML += `<option value="${user.id}">${user.first_name} ${user.last_name}</option>`;
                 });
 
                 // Populate the collections select dropdown
@@ -420,7 +420,7 @@
                 document.getElementById('inlineUnits').value = data.project.units || 'imperial';
 
                 // Clear and populate dropdowns
-                console.log(data.project)
+                console.log(data)
                 if (data.tours) {
                     populateSelect('inlineTourSelect', data.tours);
                     // Set selected tours
@@ -443,7 +443,6 @@
                 }
 
                 // If there's an existing thumbnail, show it
-                console.log(data.project);
                 if (data.project.background_url) {
                     const img = document.createElement('img');
                     img.src = data.project.background_url;
@@ -455,6 +454,7 @@
                     overlay.textContent = 'Click to replace image';
                     inlineImageUploadBox.appendChild(overlay);
                     inlineImageUploadBox.appendChild(inlineImageInput);
+                    inlineImageInput.files[0] = data.project.background_url;
                 }
 
                 // Update the save button to handle edit
@@ -478,7 +478,7 @@
             const collections = $('#inlineCollections').val();
             const contributors = $('#inlineContributors').val();
             const units = document.getElementById('inlineUnits').value;
-            const thumbnailFile = document.getElementById('inlineImageInput').files[0];
+            const thumbnailFile =   inlineImageInput.files[0];
 
             // Validate required fields
             if (!name) {
@@ -492,6 +492,7 @@
             formData.append('artwork_collection_ids', JSON.stringify(collections));
             formData.append('user_ids', JSON.stringify(contributors));
             formData.append('units', units);
+            console.log(thumbnailFile)
             if (thumbnailFile) {
                 formData.append('thumbnail', thumbnailFile);
             }
@@ -528,7 +529,11 @@
             options.forEach(option => {
                 const opt = document.createElement('option');
                 opt.value = option.id;
-                opt.textContent = option.name;
+                if (selectId === 'inlineContributors') {
+                    opt.textContent = option.first_name + ' ' + option.last_name;
+                } else {
+                    opt.textContent = option.name;
+                }
                 select.appendChild(opt);
             });
         }
