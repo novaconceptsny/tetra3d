@@ -118,7 +118,7 @@ class Tour360Controller extends Controller
                 'user_ids'               => 'required|string',
                 'artwork_collection_ids' => 'required|string',
                 'units'                  => 'required|string|in:imperial,metric',
-                'thumbnail'              => 'required|image|mimes:jpeg,png|max:2048',
+                'thumbnail'              => 'nullable|image|mimes:jpeg,png|max:2048',
                 'company_id'             => 'required|exists:companies,id',
             ]);
 
@@ -171,7 +171,7 @@ class Tour360Controller extends Controller
                 'user_ids'               => 'required|string',
                 'artwork_collection_ids' => 'required|string',
                 'units'                  => 'required|string|in:imperial,metric',
-                'thumbnail'              => 'required|image|mimes:jpeg,png|max:2048',
+                'thumbnail'              => 'nullable|image|mimes:jpeg,png|max:2048',
             ]);
 
             // Update basic project information

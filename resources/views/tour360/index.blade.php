@@ -482,7 +482,7 @@
             const collections = $('#inlineCollections').val();
             const contributors = $('#inlineContributors').val();
             const units = document.getElementById('inlineUnits').value;
-            const thumbnailFile =   inlineImageInput.files[0];
+            const thumbnailFile = document.getElementById('inlineImageInput').files[0];
 
             // Validate required fields
             if (!name) {
