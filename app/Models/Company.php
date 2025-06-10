@@ -23,6 +23,10 @@ class Company extends Model
         return $this->hasOne(User::class)->role('company_admin');
     }
 
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 
     public function hasCollector()
     {

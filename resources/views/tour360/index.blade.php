@@ -32,92 +32,87 @@
             </div>
 
             <div class="projects-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5>Tishman Speyer</h5>
-                    <div class="sort-dropdown">
-                        <select class="form-select">
-                            <option>Recently added</option>
-                            <!-- Add other sort options -->
-                        </select>
-                    </div>
-                </div>
-                <div class="layout-section">
-                    <div class="row">
-                        @if($projects->count() > 0)
-                            @foreach($projects as $project)
-                                <div class="col-md-3 layout-item">
-                                    <div class="card border-0 shadow-sm bg-white"
-                                        data-project-id="{{ $project->id }}"
-                                        data-project-name="{{ $project->name }}"
-                                        data-project-units="{{ $project->units }}"
-                                        data-project-tours="{{ json_encode($project->tours->pluck('id')) }}"
-                                        data-project-collections="{{ json_encode($project->artworkCollections->pluck('id')) }}"
-                                        data-project-contributors="{{ json_encode($project->contributors->pluck('id')) }}"
-                                    >
-                                        <div class="rounded img-home p-2">
-                                            <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                                <p class="card-text mb-0">
-                                                    <span>{{ $project->name }}</span><br>
-                                                    <small>Created: {{ $project->created_at->format('F jS, Y') }}</small>
-                                                </p>
-                                                <div class="d-flex flex-column justify-content-end mb-2 gap-1">
-                                                    <div class="action-icons">
-                                                        <button class="btn btn-link p-0 me-2" onclick="handleEditProject({{ $project->id }})">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button class="btn btn-link p-0" onclick="handleDeleteProject({{ $project->id }})">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
+                @if($companies->count() > 0)
+                    @foreach($companies as $company)
+                        <div class="company-section mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5>{{ $company->name }}</h5>
+                                <div class="sort-dropdown">
+                                    <select class="form-select">
+                                        <option>Recently added</option>
+                                        <!-- Add other sort options -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layout-section">
+                                <div class="row">
+                                    @if($company->projects->count() > 0)
+                                        @foreach($company->projects as $project)
+                                            <div class="col-md-3 layout-item">
+                                                <div class="card border-0 shadow-sm bg-white"
+                                                    data-project-id="{{ $project->id }}"
+                                                    data-project-name="{{ $project->name }}"
+                                                    data-project-units="{{ $project->units }}"
+                                                    data-project-tours="{{ json_encode($project->tours->pluck('id')) }}"
+                                                    data-project-collections="{{ json_encode($project->artworkCollections->pluck('id')) }}"
+                                                    data-project-contributors="{{ json_encode($project->contributors->pluck('id')) }}"
+                                                >
+                                                    <div class="rounded img-home p-2">
+                                                        <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                                     </div>
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                                            <p class="card-text mb-0">
+                                                                <span>{{ $project->name }}</span><br>
+                                                                <small>Created: {{ $project->created_at->format('F jS, Y') }}</small>
+                                                            </p>
+                                                            <div class="d-flex flex-column justify-content-end mb-2 gap-1">
+                                                                <div class="action-icons">
+                                                                    <button class="btn btn-link p-0 me-2" onclick="handleEditProject({{ $project->id }})">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-link p-0" onclick="handleDeleteProject({{ $project->id }})">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
+                                                                </div>
 
-                                                    <a href="javascript:void(0)"
-                                                        onclick="Livewire.dispatch('slide-over.open', {component: 'tour-switcher', arguments: {'project': {{$project->id}} }})"
-                                                        >Enter
-                                                    </a>
-
+                                                                <a href="javascript:void(0)"
+                                                                    onclick="Livewire.dispatch('slide-over.open', {component: 'tour-switcher', arguments: {'project': {{$project->id}} }})"
+                                                                    >Enter
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <hr class="my-2">
+                                                        <div class="project-stats">
+                                                            <span class="me-3"><i class="fas fa-cube"></i> {{ $project->tours_count ?? 0 }} Tours</span>
+                                                            <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
+                                                            <span><i class="fas fa-folder"></i> {{ $project->artwork_collections_count ?? 0 }} Collections</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-
                                             </div>
-                                            <hr class="my-2">
-                                            <div class="project-stats">
-                                                <span class="me-3"><i class="fas fa-cube"></i> {{ $project->tours_count ?? 0 }} Tours</span>
-                                                <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
-                                                <span><i class="fas fa-folder"></i> {{ $project->artwork_collections_count?? 0 }} Collections</span>
-                                            </div>
+                                        @endforeach
+                                    @endif
+                                    <div class="col-md-3 layout-item">
+                                        <div class="card bg-white card-layout">
+                                            <button
+                                                class="add-image-btn create-new-box"
+                                                onclick="openCreateProject({{ $company->id }})"
+                                            >
+                                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                                <span class="add-image-text">Create New Project</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
-                        @else
-                            <div class="col-12">
-                                <p class="text-center">No projects found.</p>
-                            </div>
-                        @endif
-                        <div class="col-md-3 layout-item">
-                            <div class="card bg-white card-layout">
-                                <!-- <button
-                                    class="add-image-btn create-new-box"
-                                    data-mode="create"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#projectModal"
-                                >
-                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                    <span class="add-image-text">Create New Project</span>
-                                </button> -->
-                                <button
-                                    class="add-image-btn create-new-box"
-                                    onclick="openCreateProject()"
-                                >
-                                    <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                    <span class="add-image-text">Create New Project</span>
-                                </button>
                             </div>
                         </div>
+                    @endforeach
+                @else
+                    <div class="col-12">
+                        <p class="text-center">No companies found.</p>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -130,8 +125,13 @@
             </div>
 
             <div class="mb-3">
-                <label for="inlineProjectNameInput" class="form-label">Name</label>
-                <input type="text" class="form-control" id="inlineProjectNameInput" placeholder="Name">
+                <label for="inlineCompanyInput" class="form-label">Company</label>
+                <input type="text" class="form-control" id="inlineCompanyInput" placeholder="Company" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label for="inlineProjectNameInput" class="form-label">Project Name</label>
+                <input type="text" class="form-control" id="inlineProjectNameInput" placeholder="Project">
             </div>
 
             <div class="mb-3">
@@ -257,6 +257,7 @@
 
         // New form elements
         const inlineProjectNameInput = document.getElementById('inlineProjectNameInput');
+        const inlineCompanyInput = document.getElementById('inlineCompanyInput');
         const inlineTourSelect = document.getElementById('inlineTourSelect');
         const inlineCollections = document.getElementById('inlineCollections');
         const inlineContributors = document.getElementById('inlineContributors');
@@ -266,26 +267,32 @@
         const inlineImageName = document.getElementById('inlineImageName');
         const inlineSaveButton = document.getElementById('inlineSaveButton');
 
-        async function openCreateProject() {
+        async function openCreateProject(companyId) {
             try {
                 // Fetch data from the create endpoint
-                const response = await fetch('/tour360/create');
+                const response = await fetch(`/tour360/create/${companyId}`);
                 const data = await response.json();
 
+                // Store company ID for later use
+                document.getElementById('createProjectSection').dataset.companyId = companyId;
+
+                // Populate the company select dropdown
+                inlineCompanyInput.value = data.company.name;
+
                 // Populate the tour select dropdown
-                // inlineTourSelect.innerHTML = '<option selected disabled>Select Tour</option>';
+                inlineTourSelect.innerHTML = '';
                 data.tours.forEach(tour => {
                     inlineTourSelect.innerHTML += `<option value="${tour.id}">${tour.name}</option>`;
                 });
 
                 // Populate the contributors select dropdown
-                // inlineContributors.innerHTML = '<option selected disabled>Select Contributor</option>';
+                inlineContributors.innerHTML = '';
                 data.users.forEach(user => {
                     inlineContributors.innerHTML += `<option value="${user.id}">${user.first_name} ${user.last_name}</option>`;
                 });
 
                 // Populate the collections select dropdown
-                // inlineCollections.innerHTML = '<option selected disabled>Select Collection</option>';
+                inlineCollections.innerHTML = '';
                 data.artworkCollections.forEach(collection => {
                     inlineCollections.innerHTML += `<option value="${collection.id}">${collection.name}</option>`;
                 });
@@ -307,7 +314,7 @@
         function handleCreateProject() {
             // Create FormData object to handle file upload
             const formData = new FormData();
-            
+
             // Get all form values
             const name = document.getElementById('inlineProjectNameInput').value;
             const tours = $('#inlineTourSelect').val(); // Using jQuery for Select2
@@ -315,6 +322,7 @@
             const contributors = $('#inlineContributors').val();
             const units = document.getElementById('inlineUnits').value;
             const thumbnailFile = document.getElementById('inlineImageInput').files[0];
+            const companyId = document.getElementById('createProjectSection').dataset.companyId;
 
             // Validate required fields
             if (!name) {
@@ -334,6 +342,7 @@
             formData.append('user_ids', JSON.stringify(contributors));
             formData.append('units', units);
             formData.append('thumbnail', thumbnailFile);
+            formData.append('company_id', companyId);
 
             // Add CSRF token
             formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
@@ -422,14 +431,14 @@
                     const selectedTours = data.assignedTours.map(tour => tour.id);
                     $('#inlineTourSelect').val(selectedTours).trigger('change');
                 }
-                
+
                 if (data.artworkCollections) {
                     populateSelect('inlineCollections', data.artworkCollections);
                     // Set selected collections
                     const selectedCollections = data.assignedCollections.map(collection => collection.id);
                     $('#inlineCollections').val(selectedCollections).trigger('change');
                 }
-                
+
                 if (data.users) {
                     populateSelect('inlineContributors', data.users);
                     // Set selected contributors
@@ -466,7 +475,7 @@
         function handleUpdateProject(id) {
             // Create FormData object to handle file upload
             const formData = new FormData();
-            
+
             // Get all form values
             const name = document.getElementById('inlineProjectNameInput').value;
             const tours = $('#inlineTourSelect').val();
@@ -603,7 +612,7 @@
             }
         });
 
-     
+
         $(document).ready(function() {
             $('#inlineTourSelect').select2();
             $('#inlineCollections').select2();

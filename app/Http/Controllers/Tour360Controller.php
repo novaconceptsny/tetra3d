@@ -5,6 +5,7 @@ use App\Models\ArtworkCollection;
 use App\Models\CompanyTour;
 use App\Models\PhotoState;
 use App\Models\Project;
+use App\Models\Company;
 use App\Models\Tour;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,31 +16,41 @@ class Tour360Controller extends Controller
     public function index()
     {
         $user = auth()->user();
+        $data = [];
 
         if ($user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
-            // Get all projects from the database
-            $projects = Project::orderBy('created_at', 'desc')->withCount(['tours', 'artworkCollections', 'contributors'])->get();   
+            // For super admin, get all companies with their projects
+            $companies = Company::with(['projects' => function($query) {
+                $query->orderBy('created_at', 'desc')
+                      ->withCount(['tours', 'artworkCollections', 'contributors']);
+            }])->get();
         } else {
-            // Not super admin: get only the user's company
-            $projects = Project::where('company_id', $user->company_id)->orderBy('created_at', 'desc')->withCount(['tours', 'artworkCollections', 'contributors'])->get();
+            // For regular users, get only their company with its projects
+            $companies = Company::where('id', $user->company_id)
+                ->with(['projects' => function($query) {
+                    $query->orderBy('created_at', 'desc')
+                          ->withCount(['tours', 'artworkCollections', 'contributors']);
+                }])
+                ->get();
         }
 
         // Get favorite photo states
         $favorites = PhotoState::where('is_favorite', true)
-            ->with('photo.project') // Assuming you have these relationships set up
+            ->with('photo.project')
             ->get();
 
-        return view('tour360.index', compact('projects', 'favorites'));
+        return view('tour360.index', compact('companies', 'favorites'));
     }
 
-    public function create()
+    public function create($companyId)
     {
         try {
             // Get all tours
-            $tours = Tour::all();
+            $company = Company::findOrFail($companyId);
+            $tours = Tour::where('company_id', $companyId)->get();
 
             // Get extra tours from company_tour table
-            $extraTourIds = CompanyTour::where('company_id', auth()->user()->company_id)->pluck('tour_id');
+            $extraTourIds = CompanyTour::where('company_id', $companyId)->pluck('tour_id');
             $extraTours   = Tour::withoutGlobalScope('forCurrentCompany')->whereIn('id', $extraTourIds)->get();
 
             // Merge and remove duplicates by 'id'
@@ -48,8 +59,9 @@ class Tour360Controller extends Controller
             $data = [
                 'success'            => true,
                 'tours'              => $allTours,
-                'users'              => User::forCurrentCompany()->get(),
-                'artworkCollections' => ArtworkCollection::forCurrentCompany()->get(),
+                'users'              => User::where('company_id', $companyId)->get(),
+                'artworkCollections' => ArtworkCollection::where('company_id', $companyId)->get(),
+                'company'            => $company,
             ];
 
             return response()->json($data);
@@ -67,7 +79,7 @@ class Tour360Controller extends Controller
             $project = Project::findOrFail($id);
 
             // Get all tours
-            $tours = Tour::all();
+            $tours = Tour::where('company_id', $project->company_id)->get();
 
             // Get extra tours from company_tour table
             $extraTourIds = CompanyTour::where('company_id', auth()->user()->company_id)->pluck('tour_id');
@@ -107,6 +119,7 @@ class Tour360Controller extends Controller
                 'artwork_collection_ids' => 'required|string',
                 'units'                  => 'required|string|in:imperial,metric',
                 'thumbnail'              => 'required|image|mimes:jpeg,png|max:2048',
+                'company_id'             => 'required|exists:companies,id',
             ]);
 
             // Decode JSON strings back to arrays
@@ -115,9 +128,10 @@ class Tour360Controller extends Controller
             $collectionIds = json_decode($request->artwork_collection_ids);
 
             // Create the project
-            $project = Project::create($request->only([
-                'name',
-            ]));
+            $project = Project::create([
+                'name' => $request->name,
+                'company_id' => $request->company_id,
+            ]);
 
             // Store thumbnail
             if ($request->hasFile('thumbnail')) {
