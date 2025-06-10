@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(Tour360Controller::class)->group(function () {
         Route::get('/tour-360', 'index')->name('tour-360.index');
         Route::get('/tour360/create', 'create')->name('tour360.create');
+        Route::get('/tour360/edit/{id}', 'edit')->name('tour360.edit');
         Route::post('/tour360/store', 'store')->name('tour360.store');
         Route::post('/tour360/update/{id}', 'update')->name('tour360.update');
         Route::post('/tour360/destroy/{id}', 'destroy')->name('tour360.destroy');   

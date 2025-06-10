@@ -394,56 +394,77 @@
         }
 
         function handleEditProject(id) {
-            // First fetch the project data
-            fetch(`/tour360/create`, {
+            // First fetch the project data using the named route
+            fetch(`/tour360/edit/${id}`, {
                 headers: {
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Get the project element
-                    const projectElement = document.querySelector(`[data-project-id="${id}"]`);
-                    const project = {
-                        id: id,
-                        name: projectElement.getAttribute('data-project-name'),
-                        units: projectElement.getAttribute('data-project-units') || 'imperial',
-                        tour_ids: projectElement.getAttribute('data-project-tours') ? JSON.parse(projectElement.getAttribute('data-project-tours')) : [],
-                        collection_ids: projectElement.getAttribute('data-project-collections') ? JSON.parse(projectElement.getAttribute('data-project-collections')) : [],
-                        contributor_ids: projectElement.getAttribute('data-project-contributors') ? JSON.parse(projectElement.getAttribute('data-project-contributors')) : []
-                    };
-
-                    // Show the create project section (we'll reuse it for editing)
-                    dashboardSection.style.display = 'none';
-                    createProjectSection.style.display = 'block';
-
-                    // Populate form with existing data
-                    document.getElementById('inlineProjectNameInput').value = project.name;
-                    document.getElementById('inlineUnits').value = project.units;
-
-                    // Populate dropdowns
-                    populateSelect('inlineTourSelect', data.tours);
-                    populateSelect('inlineCollections', data.artworkCollections);
-                    populateSelect('inlineContributors', data.users);
-                    // Set up Select2 dropdowns with existing values
-                    $('#inlineTourSelect').val(project.tour_ids).trigger('change');
-                    $('#inlineCollections').val(project.collection_ids).trigger('change');
-                    $('#inlineContributors').val(project.contributor_ids).trigger('change');
-
-                    // Update the save button to handle edit
-                    const saveButton = document.getElementById('inlineSaveButton');
-                    saveButton.textContent = 'Update';
-                    saveButton.onclick = () => handleUpdateProject(id);
-
-
-                } else {
-                    alert(data.message || 'Failed to load project data');
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
+                return response.json();
+            })
+            .then(data => {
+                // Show the create project section (we'll reuse it for editing)
+                dashboardSection.style.display = 'none';
+                createProjectSection.style.display = 'block';
+
+                // Update section title for editing
+                document.querySelector('.create-project-section .modal-title').textContent = 'Edit project';
+
+                // Populate form with existing data from the server response
+                document.getElementById('inlineProjectNameInput').value = data.project.name;
+                document.getElementById('inlineUnits').value = data.project.units || 'imperial';
+
+                // Clear and populate dropdowns
+                console.log(data.project)
+                if (data.tours) {
+                    populateSelect('inlineTourSelect', data.tours);
+                    // Set selected tours
+                    const selectedTours = data.assignedTours.map(tour => tour.id);
+                    $('#inlineTourSelect').val(selectedTours).trigger('change');
+                }
+                
+                if (data.artworkCollections) {
+                    populateSelect('inlineCollections', data.artworkCollections);
+                    // Set selected collections
+                    const selectedCollections = data.assignedCollections.map(collection => collection.id);
+                    $('#inlineCollections').val(selectedCollections).trigger('change');
+                }
+                
+                if (data.users) {
+                    populateSelect('inlineContributors', data.users);
+                    // Set selected contributors
+                    const selectedContributors = data.assignedUsers.map(contributor => contributor.id);
+                    $('#inlineContributors').val(selectedContributors).trigger('change');
+                }
+
+                // If there's an existing thumbnail, show it
+                console.log(data.project);
+                if (data.project.background_url) {
+                    const img = document.createElement('img');
+                    img.src = data.project.background_url;
+                    img.className = 'img-preview';
+                    inlineImageUploadBox.innerHTML = '';
+                    inlineImageUploadBox.appendChild(img);
+                    const overlay = document.createElement('div');
+                    overlay.className = 'overlay';
+                    overlay.textContent = 'Click to replace image';
+                    inlineImageUploadBox.appendChild(overlay);
+                    inlineImageUploadBox.appendChild(inlineImageInput);
+                }
+
+                // Update the save button to handle edit
+                const saveButton = document.getElementById('inlineSaveButton');
+                saveButton.textContent = 'Update';
+                saveButton.onclick = () => handleUpdateProject(id);
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while loading project data');
+                // alert('An error occurred while loading project data. Please try again.');
             });
         }
 

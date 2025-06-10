@@ -56,6 +56,28 @@ class Tour360Controller extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        try {
+            $project = Project::findOrFail($id);
+            $data = array();
+            $data['tours'] = $project->allTours();
+            $data['users'] = User::forCompany($project->company_id)->get();
+            $data['artworkCollections'] = ArtworkCollection::forCompany($project->company_id)->get();
+            $data['project'] = $project;
+            $data['assignedCollections'] = $project->artworkCollections;
+            $data['assignedUsers'] = $project->contributors;
+            $data['assignedTours'] = $project->tours;
+            
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load project data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         try {
