@@ -123,6 +123,9 @@ Route::group([
     Route::resource('tours.surfaces', 'SurfaceController')
         ->shallow();
 
+    Route::post('/tours/regenerate-xml', 'TourController@reGenerateXML')
+        ->name('backend.tours.regenerate-xml');
+
     Route::patch('/tours/{tour}/toggle-model', 'TourController@toggleModel')
         ->name('backend.tours.toggle-model');
 });

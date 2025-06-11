@@ -128,4 +128,30 @@ class TourController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function reGenerateXML()
+    {
+        try {
+            // Get all tours
+            $tours = Tour::with('spots')->get();
+
+            // Loop through each tour and its spots
+            foreach ($tours as $tour) {
+                foreach ($tour->spots as $spot) {
+                    // Generate XML for each spot
+                    $spot->generateXml();
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'XML files regenerated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error regenerating XML files: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
