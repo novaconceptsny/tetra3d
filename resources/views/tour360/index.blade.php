@@ -77,7 +77,7 @@
                                                                 </div>
 
                                                                 <a href="javascript:void(0)"
-                                                                    onclick="Livewire.dispatch('slide-over.open', {component: 'tour-switcher', arguments: {'project': {{$project->id}} }})"
+                                                                    onclick="Livewire.dispatch('slide-over.open', {component: 'updated-tour-switcher', arguments: {'project': {{$project->id}} }})"
                                                                     >Enter
                                                                 </a>
                                                             </div>
