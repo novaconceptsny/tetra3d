@@ -306,6 +306,12 @@ class SpotXmlGenerator
                 continue;
             }
 
+            // Get the spot for this navigation to fetch its display_name
+            $targetSpot = Spot::where('name', $navigation['name'])->first();
+            if ($targetSpot) {
+                $navigation['display_name'] = $targetSpot->display_name;
+            }
+
             $navigation = $this->addNavigation($index, $navigation);
 
             if ($index === array_key_first($navigations)) {
@@ -317,7 +323,7 @@ class SpotXmlGenerator
     private function addNavigation($index, $navigationData)
     {
         $attributes = [
-            'name' => $navigationData['name'] ?? "spot_{$index}",
+            'name' => $navigationData['display_name'] ?? $navigationData['name'] ?? "spot_{$index}",
             'hotspot_type' => 'navigation',
             'onclick' => 'NavigateTo()',
             'style' => 'artwork_hotspot',

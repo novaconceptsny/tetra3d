@@ -10,6 +10,8 @@
     <div class="card">
         <div class="card-header">
             <div class="float-end">
+                <button onclick="reGenerateXML()" class="btn btn-sm btn-outline-secondary me-2"><i
+                        class="fal fa-sync"></i> {{ __('ReGenerateXML') }}</button>
                 @can('create', \App\Models\Tour::class)
                 <a href="{{ route('backend.tours.create') }}" class="btn btn-sm btn-outline-primary"><i
                         class="fal fa-plus"></i> {{ __('Add New') }}</a>
@@ -39,7 +41,7 @@
                                     <input type="checkbox" class="spot-toggle" data-spot-id="{{ $tour->id }}" {{ $tour['has_model'] ? 'checked' : '' }}>
                                     <span class="slider round"></span>
                                 </label>
-                                
+
                                 <!-- Add modal for each tour -->
                                 <div class="modal fade" id="confirmModal{{ $tour->id }}" tabindex="-1" aria-labelledby="confirmModalLabel{{ $tour->id }}" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -114,16 +116,16 @@
                 e.preventDefault();
                 const tourId = this.dataset.spotId;
                 const currentState = this.checked;
-                
+
                 // Show confirmation modal for both enabling and disabling
                 const modal = new bootstrap.Modal(document.getElementById(`confirmModal${tourId}`));
                 const modalBody = document.getElementById(`modalBody${tourId}`);
-                
+
                 // Set appropriate message based on the action
-                modalBody.textContent = currentState 
+                modalBody.textContent = currentState
                     ? "Are you sure you want to switch this tour to 3D?"
                     : "Are you sure you want to disable 3D mode for this tour?";
-                
+
                 // Reset checkbox to its original state when showing modal
                 this.checked = !currentState;
                 modal.show();
@@ -136,7 +138,7 @@
                 const tourId = this.dataset.tourId;
                 const checkbox = document.querySelector(`.spot-toggle[data-spot-id="${tourId}"]`);
                 const modal = bootstrap.Modal.getInstance(document.getElementById(`confirmModal${tourId}`));
-                
+
                 updateTourModel(tourId, checkbox)
                     .then(success => {
                         if (success) {
@@ -167,6 +169,25 @@
                 console.error('Error:', error);
                 return false;
             });
+        }
+
+        function reGenerateXML() {
+            // Send POST request to regenerate XML
+            fetch('/backend/tours/regenerate-xml', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('XML files regenerated successfully');
+            })
+            .catch(error => console.error('Error:', error));
+
         }
     </script>
     @endsection
