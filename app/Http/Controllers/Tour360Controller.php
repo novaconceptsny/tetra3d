@@ -81,7 +81,7 @@ class Tour360Controller extends Controller
             $tours = Tour::where('company_id', $project->company_id)->get();
 
             // Get extra tours from company_tour table
-            $extraTourIds = CompanyTour::where('company_id', auth()->user()->company_id)->pluck('tour_id');
+            $extraTourIds = CompanyTour::where('company_id', $project->company_id)->pluck('tour_id');
             $extraTours   = Tour::withoutGlobalScope('forCurrentCompany')->whereIn('id', $extraTourIds)->get();
 
             // Merge and remove duplicates by 'id'
