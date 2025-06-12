@@ -32,9 +32,11 @@ class UpdatedTourSwitcher extends SlideOver
         $this->selectedTourId = $this->selectedTour?->id;
 
         $this->tourImages = $this->project->assignedTours()
-            ->mapWithKeys(fn ($tour) => [$tour->id => $tour->getFirstMediaUrl('thumbnail')])
+            ->mapWithKeys(function($tour) {
+                $map = $tour->maps()->first();
+                return [$tour->id => $map ? $map->getFirstMediaUrl('image') : ''];
+            })
             ->all();
-            
     }
 
     public function render()
