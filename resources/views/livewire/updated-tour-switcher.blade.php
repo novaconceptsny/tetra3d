@@ -1,3 +1,33 @@
+<!-- <style>
+    .table {
+        --bs-table-bg: transparent;
+        --bs-table-border-color: #eee;
+    }
+    .table th {
+        font-weight: 500;
+        color: #666;
+        border-bottom: 2px solid var(--bs-table-border-color);
+        padding: 1rem;
+    }
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--bs-table-border-color);
+    }
+    .btn-icon {
+        padding: 0.375rem;
+        line-height: 1;
+        border: 1px solid #dee2e6;
+        background: white;
+    }
+    .btn-icon:hover {
+        background: #f8f9fa;
+    }
+    .gap-2 {
+        gap: 0.5rem !important;
+    }
+</style> -->
+
 <x-wire-elements-pro::bootstrap.slide-over :content-padding="false" :close-button="false">
     <div class="sidebar-div">
         <div class="sidebar mysidebar">
@@ -20,59 +50,51 @@
             <div class="mb-3" style ="margin-top: 40px">
                 <table class="table">
                     <tr>
-                        <th>Layout Name</th>
-                        <th>Configuration</th>
-                        <th>Created By</th>
-                        <th>Last modified</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th>Layouts</th>
+                        <th>Content</th>
+                        <th class="text-end" style="width: 120px">Actions</th>
                     </tr>
 
                     @forelse($project->layouts()->orderBy('updated_at', 'desc')->get() as $layout)
                         <tr wire:key="{{ $layout->id }}">
-                            <td class="layout-table-title">
-                                <span>{{ $layout->name }}</span>
-                                <!-- <a class="edit-btn ms-1 text-info text-decoration-none" href="#"
-                                    wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
-                                    <i class="fal fa-edit"></i>
-                                </a> -->
-                            </td>
-                            <td>{{ $layout->assignedTour()->name }}</td>
                             <td>
-                                <span>{{ $layout->user->name }}</span><br>
-                            </td>
-                            <!-- <td>
-                                <span>{{ $layout->created_at->format('M d, Y H:i') }}</span>
-                            </td> -->
-                            <td>
-                                <span>{{ $layout->updated_at->format('M d, Y H:i') }}</span>
+                                <img :src="$wire.tourImages['{{ $layout->assignedTour()->id }}']">
                             </td>
                             <td>
-                                <button class="text-dark tour-show" 
-                                    wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
-                                    <i class="fal fa-edit"></i>
-                                </button>
+                                <div class="d-flex flex-column justify-content-start gap-2">
+                                    <div class="text-center">{{ $layout->name }}</div>
+                                    <div class="text-center">Tour: {{ $layout->assignedTour()->name }}</div>
+                                    <div class="text-center"> Modified: {{ $layout->updated_at->format('m/d/y') }}</div>
+                                </div>
                             </td>
-                            <td>
-                                <button class="text-dark tour-show" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
-                                    <i class="fa fa-files-o"></i>
-                                </button>
-                            </td>
-                            <td>
-                                <button class="text-dark tour-show"
-                                    onClick="window.location.href='{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}'">
-                                    <i class="fal fa-sign-in"></i>
-                                </button>
+                            <td class="text-end">
+                                <div class="d-flex flex-column justify-content-end gap-2">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button class="btn btn-icon btn-sm" 
+                                            wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                            <i class="fal fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-icon btn-sm" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
+                                            <i class="fa fa-copy"></i>
+                                        </button>
+                                        <button class="btn btn-icon btn-sm" wire:click="deleteLayout(@js($layout->id))" onclick="return confirm('Are you sure you want to delete this layout?')">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div> 
+                                    <a href="{{ route('tours.show', [$layout->tour_id, 'layout_id' => $layout->id]) }}" 
+                                        class="btn btn-primary btn-sm">
+                                        Enter
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="pb-5 text-capitalize text-center">
-                                <h6 class="mb-3">No layout created</h6>
-                                <button class="btn btn-light btn sm"
+                            <td colspan="4" class="text-center py-4">
+                                <p class="text-muted mb-3">No layouts created yet</p>
+                                <button class="btn btn-primary"
                                     wire:modal="forms.layout-form, @js(['project' => $project->id])">
-                                    Create Layout <i class="fal fa-plus ms-2"></i>
+                                    New Layout <i class="fal fa-plus ms-2"></i>
                                 </button>
                             </td>
                         </tr>
