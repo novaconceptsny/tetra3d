@@ -53,4 +53,24 @@ class UpdatedTourSwitcher extends SlideOver
             'size' => '4xl'
         ];
     }
+
+    public function toggleFavorite($layoutId)
+    {
+        $layout = Layout::findOrFail($layoutId);
+        $layout->is_favorite = !$layout->is_favorite;
+        $layout->save();
+    }
+
+    public function deleteLayout(Layout $layout)
+    {
+        $this->askForConfirmation(function () use ($layout) {
+            $layout->delete();
+            // $this->close();
+            // $this->dispatch('refresh');
+            $this->dispatch('flashNotification', message: 'Layout deleted');
+            $this->dispatch('layoutDeleted', layoutId: $layout->id);
+        });
+    }
+
+
 }
