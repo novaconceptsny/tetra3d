@@ -12,12 +12,12 @@
                             @foreach($favorites as $favorite)
                                 <div class="col-md-3">
                                     <div class="bg-light rounded p-3">
-                                        <h4><i class="fa fa-star"></i> {{ $favorite->photo->name }}</h4>
-                                        <span>{{ $favorite->photo->project->name }}</span>
-                                        <p class="text-end mb-0">
-                                            <button class="btn enter-link" >
+                                        <h4><i class="fas fa-star text-primary"></i> {{ $favorite->project->name }}</h4>
+                                        <span>{{ $favorite->assignedTour()->name }}</span>
+                                        <p class="text-end mb-0 mt-3 ">
+                                            <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" >
                                                 Enter
-                                            </button>
+                                            </a>
                                         </p>
                                     </div>
                                 </div>
@@ -76,7 +76,7 @@
                                                                     </button>
                                                                 </div>
 
-                                                                <a href="javascript:void(0)"
+                                                                <a href="javascript:void(0)" class="btn-enter"
                                                                     onclick="Livewire.dispatch('slide-over.open', {component: 'updated-tour-switcher', arguments: {'project': {{$project->id}} }})"
                                                                     >Enter
                                                                 </a>
@@ -239,9 +239,23 @@
         .layout-item {
             margin-bottom: 50px;
         }
-        
+
         .layout-item .card {
             height: 100%;
+        }
+
+        .btn-enter {
+            display: flex;
+            /* width: 5px; */
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: #203DCE;
+            padding: 0.5rem;
+            text-decoration: none;
+            border: 1px solid #e0e0e0;
+            height: 32px;
+            transition: all 0.2s ease;
         }
 
         /* Remove the static first-child styles since we'll apply them dynamically */

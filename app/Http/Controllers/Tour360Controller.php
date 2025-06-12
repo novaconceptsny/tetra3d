@@ -7,6 +7,7 @@ use App\Models\PhotoState;
 use App\Models\Project;
 use App\Models\Company;
 use App\Models\Tour;
+use App\Models\Layout;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -35,9 +36,7 @@ class Tour360Controller extends Controller
         }
 
         // Get favorite photo states
-        $favorites = PhotoState::where('is_favorite', true)
-            ->with('photo.project')
-            ->get();
+        $favorites = Layout::where('is_favorite', true)->get();
 
         return view('tour360.index', compact('companies', 'favorites'));
     }
