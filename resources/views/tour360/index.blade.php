@@ -22,11 +22,11 @@
                                         <div class="bg-light rounded p-3">
                                             <h4><i class="fas fa-star text-primary"></i> {{ $favorite->name }}</h4>
                                             <span>{{ $favorite->assignedTour()->name }}</span>
-                                            <p class="text-end mb-0 mt-3 ">
-                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" >
+                                            <div class="text-end mb-0 mt-3 d-flex justify-content-end">
+                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter">
                                                     Enter
                                                 </a>
-                                            </p>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -674,11 +674,11 @@
                         <div class="bg-light rounded p-3">
                             <h4><i class="fas fa-star text-primary"></i> ${favorite.name}</h4>
                             <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
-                            <p class="text-end mb-0 mt-3">
-                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" >
+                            <div class="text-end mb-0 mt-3 d-flex justify-content-end">
+                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter">
                                     Enter
                                 </a>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 `).join('');
