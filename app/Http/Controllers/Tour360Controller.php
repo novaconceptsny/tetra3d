@@ -25,6 +25,8 @@ class Tour360Controller extends Controller
                 $query->orderBy('created_at', 'desc')
                       ->withCount(['tours', 'artworkCollections', 'contributors']);
             }])->get();
+
+            $favorites = Layout::where('is_favorite', true)->get();
         } else {
             // For regular users, get only their company with its projects
             $companies = Company::where('id', $user->company_id)
@@ -33,10 +35,9 @@ class Tour360Controller extends Controller
                           ->withCount(['tours', 'artworkCollections', 'contributors']);
                 }])
                 ->get();
+            $favorites = Layout::where('user_id', $user->id)->where('is_favorite', true)->get();
         }
 
-        // Get favorite photo states
-        $favorites = Layout::where('is_favorite', true)->get();
 
         return view('tour360.index', compact('companies', 'favorites'));
     }
