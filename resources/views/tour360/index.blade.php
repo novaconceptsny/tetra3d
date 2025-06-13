@@ -648,6 +648,7 @@
                 const favoritesContainer = document.getElementById('favoritesContainer');
                 const favorites = event.favorites;
                 
+                console.log(favorites);
                 if (favorites.length === 0) {
                     favoritesContainer.innerHTML = `
                         <div class="row">
@@ -663,9 +664,9 @@
                     <div class="col-md-3">
                         <div class="bg-light rounded p-3">
                             <h4><i class="fas fa-star text-primary"></i> ${favorite.name}</h4>
-                            <span>${favorite.assigned_tour ? favorite.assigned_tour.name : 'No Tour Assigned'}</span>
+                            <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
                             <p class="text-end mb-0 mt-3">
-                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter">
+                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" >
                                     Enter
                                 </a>
                             </p>

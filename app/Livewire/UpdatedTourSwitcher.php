@@ -73,9 +73,16 @@ class UpdatedTourSwitcher extends SlideOver
 
 
         $favorites = $user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin() 
-            ? Layout::where('is_favorite', true)->get()
+            ? Layout::where('is_favorite', true)
+                ->with(['tour' => function($query) {
+                    $query->withoutGlobalScope('forCurrentCompany');
+                }])
+                ->get()
             :  Layout::where('is_favorite', true)
                 ->whereIn('user_id', $userIds)
+                ->with(['tour' => function($query) {
+                    $query->withoutGlobalScope('forCurrentCompany');
+                }])
                 ->get();
                 
         $this->dispatch('favoritesUpdated', favorites: $favorites);
