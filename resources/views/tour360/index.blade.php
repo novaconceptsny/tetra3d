@@ -10,7 +10,7 @@
                     <div class="row">
                         @if($favorites->count() > 0)
                             @foreach($favorites as $favorite)
-                                <div class="col-md-3">
+                                <div class="col-md-3 favourite-card">
                                     <div class="bg-light rounded p-3">
                                         <h4><i class="fas fa-star text-primary"></i> {{ $favorite->name }}</h4>
                                         <span>{{ $favorite->assignedTour()->name }}</span>
@@ -259,6 +259,10 @@
         }
 
         /* Remove the static first-child styles since we'll apply them dynamically */
+        .favourite-card {
+            margin-bottom: 24px; /* space below each card */
+        }
+
     </style>
 @endsection
 
@@ -274,6 +278,8 @@
         let mode = '';
         let projectId = '';
 
+        const favoriteLayouts =  @json($favorites);
+        console.log(favoriteLayouts);
 
         // Add references to dashboard and create project sections
         const dashboardSection = document.getElementById('dashboard-section');
