@@ -39,10 +39,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('tour-360.index') }}">{{ __('Tour 360') }}</a>
                         </li>
-                        @if(auth()->user()->name === 'Super Admin')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('photo.index') }}">{{ __('Photo') }}</a>
-                        </li>
+                        @if(auth()->user() && auth()->user()->isSuperAdmin())
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('photo.index') }}">{{ __('Photo') }}</a>
+                            </li>
                         @endif
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('inventory.index') }}">{{ __('Inventory') }}</a>
