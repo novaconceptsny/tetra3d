@@ -61,6 +61,13 @@ class UpdatedTourSwitcher extends SlideOver
         $layout = Layout::findOrFail($layoutId);
         $layout->is_favorite = !$layout->is_favorite;
         $layout->save();
+        
+        $user = auth()->user();
+        $favorites = $user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin() 
+            ? Layout::where('is_favorite', true)->get()
+            : Layout::where('user_id', $user->id)->where('is_favorite', true)->get();
+            
+        $this->dispatch('favoritesUpdated', favorites: $favorites);
     }
 
     public function deleteLayout(Layout $layout)

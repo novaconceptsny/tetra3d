@@ -6,7 +6,7 @@
         <div class="col-12">
             <div class="favourites-section">
                 <h5 class="mb-4">Favourites</h5>
-                <div class="favourite-items">
+                <div class="favourite-items" id="favoritesContainer">
                     <div class="row">
                         @if($favorites->count() > 0)
                             @foreach($favorites as $favorite)
@@ -273,6 +273,7 @@
         const imageName = document.getElementById('imageName');
         let mode = '';
         let projectId = '';
+
 
         // Add references to dashboard and create project sections
         const dashboardSection = document.getElementById('dashboard-section');
@@ -635,6 +636,44 @@
             }
         });
 
+        // Add event listener for favorites updates
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('favoritesUpdated', (event) => {
+                const favoritesContainer = document.getElementById('favoritesContainer');
+                const favorites = event.favorites;
+                
+                if (favorites.length === 0) {
+                    favoritesContainer.innerHTML = `
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="text-center">No favorites found.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const favoritesHtml = favorites.map(favorite => `
+                    <div class="col-md-3">
+                        <div class="bg-light rounded p-3">
+                            <h4><i class="fas fa-star text-primary"></i> ${favorite.name}</h4>
+                            <span>${favorite.assigned_tour ? favorite.assigned_tour.name : 'No Tour Assigned'}</span>
+                            <p class="text-end mb-0 mt-3">
+                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter">
+                                    Enter
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                `).join('');
+
+                favoritesContainer.innerHTML = `
+                    <div class="row">
+                        ${favoritesHtml}
+                    </div>
+                `;
+            });
+        });
 
         $(document).ready(function() {
             $('#inlineTourSelect').select2();
