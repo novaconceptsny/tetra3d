@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Layout;
 use App\Models\Project;
 use App\Models\Tour;
+use App\Models\Company;
+use App\Models\User;
 use WireElements\Pro\Components\SlideOver\SlideOver;
 use WireElements\Pro\Concerns\InteractsWithConfirmationModal;
 use App\Models\Sculpture;
@@ -63,10 +65,19 @@ class UpdatedTourSwitcher extends SlideOver
         $layout->save();
         
         $user = auth()->user();
+
+        $company = Company::findOrFail($user->company_id);
+
+        // Get all user IDs in this company
+        $userIds = User::where('company_id', $company->id)->pluck('id');
+
+
         $favorites = $user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin() 
             ? Layout::where('is_favorite', true)->get()
-            : Layout::where('user_id', $user->id)->where('is_favorite', true)->get();
-            
+            :  Layout::where('is_favorite', true)
+                ->whereIn('user_id', $userIds)
+                ->get();
+                
         $this->dispatch('favoritesUpdated', favorites: $favorites);
     }
 

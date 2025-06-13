@@ -35,7 +35,15 @@ class Tour360Controller extends Controller
                           ->withCount(['tours', 'artworkCollections', 'contributors']);
                 }])
                 ->get();
-            $favorites = Layout::where('user_id', $user->id)->where('is_favorite', true)->get();
+            $company = Company::findOrFail($user->company_id);
+
+            // Get all user IDs in this company
+            $userIds = User::where('company_id', $company->id)->pluck('id');
+
+            // Get favorite layouts for those users
+            $favorites = Layout::where('is_favorite', true)
+                ->whereIn('user_id', $userIds)
+                ->get();
         }
 
 
