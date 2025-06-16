@@ -1,174 +1,240 @@
 <div class="bg-light-page">
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="collections-sidebar" style="width: 280px; min-width: 220px; background: #f8f9fa; border-radius: 12px; margin-right: 24px;">
-            <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
-                <h5>Collections</h5>
-                <ul class="list-group" id="collectionsContainer">
-                    <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" id="addCollectionBtn">
-                        <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()">
-                            <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                            <span class="add-collection-text">Add Collection</span>
-                        </button>
-                    </li>
-                    @foreach($collections as $collection)
-                    <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="${collection.id}">
-                        @if($collection->image_url)
-                            <img src="{{ $collection->image_url }}" alt="" width="40" class="me-2 rounded">
-                        @else
-                            <i class="fas fa-image collection-icon"></i>
-                        @endif
-                        <div class="collection-info">
-                            <span class="collection-name">{{ $collection->name }}</span>
-                            <span class="collection-items">{{ $collection->artworks()->count() }} items</span>
-                        </div>
-                        <div class="dropdown position-absolute top-0 end-0">
-                            <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
+    <div id="show-collections-container" style="display: block;">
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <div class="collections-sidebar" style="width: 280px; min-width: 220px; background: #f8f9fa; border-radius: 12px; margin-right: 24px;">
+                <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+                    <h5>Collections</h5>
+                    <ul class="list-group" id="collectionsContainer">
+                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" id="addCollectionBtn">
+                            <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()">
+                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                <span class="add-collection-text">Add Collection</span>
                             </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                            </ul>
-                        </div>                           
-                    </li>
-                    @endforeach
-                    <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks">
-                        <i class="fas fa-image collection-icon"></i>
-                        <div class="collection-info">
-                            <span class="collection-name">All</span>
-                            <span class="collection-items">0  items</span>
-                        </div>
-                        <div class="dropdown position-absolute top-0 end-0">
-                            <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v ms-auto"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                            </ul>
-                        </div>                           
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- Main Content -->
-        <div class="flex-grow-1">
-            <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
-                <x-loader/>
-                
-                <div class="card-header d-flex flex-column">
-                    <div class="d-flex mb-2">
-                        <h5 class="me-auto">{{ $heading }}</h5>
-                        <div class="float-end">
-                            @include('backend.includes.datatable.bulk-delete')
-                        </div>
-                    </div>
-                    <!-- Filters Start -->
-                    <div class="d-flex align-items-center">
-                        <div class="d-flex flex-grow-1">
-                            @include('backend.includes.datatable.search')
-                            <div class="me-1">
-                                <select wire:model.live="selectedCollection" class="form-control rounded-0">
-                                    <option value="">All Collections</option>
-                                    @foreach($collections as $collection)
-                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                                    @endforeach
-                                </select>
+                        </li>
+                        @foreach($collections as $collection)
+                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="${collection.id}">
+                            @if($collection->image_url)
+                                <img src="{{ $collection->image_url }}" alt="" width="40" class="me-2 rounded">
+                            @else
+                                <i class="fas fa-image collection-icon"></i>
+                            @endif
+                            <div class="collection-info">
+                                <span class="collection-name">{{ $collection->name }}</span>
+                                <span class="collection-items">{{ $collection->artworks()->count() }} items</span>
                             </div>
-
-                            @if(isset($columns['company_name']))
+                            <div class="dropdown position-absolute top-0 end-0">
+                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ms-auto"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                </ul>
+                            </div>                           
+                        </li>
+                        @endforeach
+                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks">
+                            <i class="fas fa-image collection-icon"></i>
+                            <div class="collection-info">
+                                <span class="collection-name">All</span>
+                                <span class="collection-items">0  items</span>
+                            </div>
+                            <div class="dropdown position-absolute top-0 end-0">
+                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ms-auto"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                </ul>
+                            </div>                           
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="flex-grow-1">
+                <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+                    <x-loader/>
+                    
+                    <div class="card-header d-flex flex-column">
+                        <div class="d-flex mb-2">
+                            <h5 class="me-auto">{{ $heading }}</h5>
+                            <div class="float-end">
+                                @include('backend.includes.datatable.bulk-delete')
+                            </div>
+                        </div>
+                        <!-- Filters Start -->
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex flex-grow-1">
+                                @include('backend.includes.datatable.search')
                                 <div class="me-1">
-                                    <select wire:model.live="selectedCompany" class="form-control rounded-0">
-                                        <option value="">All Companies</option>
-                                        @foreach($companies as $company)
-                                            <option value="{{$company->id}}">{{$company->name}}</option>
+                                    <select wire:model.live="selectedCollection" class="form-control rounded-0">
+                                        <option value="">All Collections</option>
+                                        @foreach($collections as $collection)
+                                            <option value="{{$collection->id}}">{{$collection->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                            @endif
-                            {{--<div class="me-1">
-                                <select wire:model.live="selectedArtist" class="form-control">
-                                    <option value="">All Artists</option>
-                                    @foreach($artists as $artist)
-                                        <option value="{{$artist}}">{{$artist}}</option>
-                                    @endforeach
-                                </select>
-                            </div>--}}
-                            <!-- @include('backend.includes.datatable.reset-filters') -->
-                        </div>
-                        <div class="btn-group ms-auto" role="group" aria-label="Artwork Actions">
-                            <button type="button" class="btn btn-light" title="Add">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-light" title="Copy">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                            <button type="button" class="btn btn-light" title="Swap">
-                                <i class="fas fa-exchange-alt"></i>
-                            </button>
-                            <button type="button" class="btn btn-light" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
 
-                    @if($selectedRows && user()->can('bulkUpdate', \App\Models\Artwork::class))
-                        <div class="d-flex mt-2 justify-content-end">
-                            <div class="me-1 ">
-                                <label for="">Move to Collection</label>
-                                <select wire:model.live="targetCollection" class="form-control  rounded-0 border-black">
-                                    <option value="">Select Collection</option>
-                                    @foreach($collections as $collection)
-                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="align-self-end ms-2">
-                                <button class="btn btn-primary {{ !$targetCollection ? 'disabled' : '' }}" wire:click="updateCollection">{{ __('Move') }}</button>
-                            </div>
-                        </div>
-                    @endif
-                    @include('backend.includes.datatable.toggle-columns')
-                </div>
-                
-                <div class="card-body py-0">
-                    <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
-                        <table class="table table-borderless align-middle mb-0">
-                            @include('backend.includes.datatable.header')
-                            <tbody>
-                            @foreach($rows as $row)
-                                <tr class="dt-row">
-                                    @include('backend.includes.datatable.bulk-selection')
-
-                                    <!-- pre columns !-->
-                                    <td>
-                                        <img src="{{ $row->image_url }}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;">
-                                    </td>
-
-                                    @include('backend.includes.datatable.content')
-
-                                    <td>
-                                        @include('backend.includes.datatable.actions')
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                        <div class="modal fade" id="artworkImage" tabindex="-1" >
-                            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                @if(isset($columns['company_name']))
+                                    <div class="me-1">
+                                        <select wire:model.live="selectedCompany" class="form-control rounded-0">
+                                            <option value="">All Companies</option>
+                                            @foreach($companies as $company)
+                                                <option value="{{$company->id}}">{{$company->name}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    <div class="modal-body text-center">
-                                        <img :src="artworkImage">
+                                @endif
+                                {{--<div class="me-1">
+                                    <select wire:model.live="selectedArtist" class="form-control">
+                                        <option value="">All Artists</option>
+                                        @foreach($artists as $artist)
+                                            <option value="{{$artist}}">{{$artist}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>--}}
+                                <!-- @include('backend.includes.datatable.reset-filters') -->
+                            </div>
+                            <div class="btn-group ms-auto" role="group" aria-label="Artwork Actions">
+                                <button type="button" class="btn btn-light" title="Add" onclick="handleOpenUploadArtworks()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-light" title="Copy">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button type="button" class="btn btn-light" title="Swap">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </button>
+                                <button type="button" class="btn btn-light" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        @if($selectedRows && user()->can('bulkUpdate', \App\Models\Artwork::class))
+                            <div class="d-flex mt-2 justify-content-end">
+                                <div class="me-1 ">
+                                    <label for="">Move to Collection</label>
+                                    <select wire:model.live="targetCollection" class="form-control  rounded-0 border-black">
+                                        <option value="">Select Collection</option>
+                                        @foreach($collections as $collection)
+                                            <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="align-self-end ms-2">
+                                    <button class="btn btn-primary {{ !$targetCollection ? 'disabled' : '' }}" wire:click="updateCollection">{{ __('Move') }}</button>
+                                </div>
+                            </div>
+                        @endif
+                        @include('backend.includes.datatable.toggle-columns')
+                    </div>
+                    
+                    <div class="card-body py-0">
+                        <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
+                            <table class="table table-borderless align-middle mb-0">
+                                @include('backend.includes.datatable.header')
+                                <tbody>
+                                @foreach($rows as $row)
+                                    <tr class="dt-row">
+                                        @include('backend.includes.datatable.bulk-selection')
+
+                                        <!-- pre columns !-->
+                                        <td>
+                                            <img src="{{ $row->image_url }}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;">
+                                        </td>
+
+                                        @include('backend.includes.datatable.content')
+
+                                        <td>
+                                            @include('backend.includes.datatable.actions')
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                            <div class="modal fade" id="artworkImage" tabindex="-1" >
+                                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img :src="artworkImage">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
+                    @include('backend.includes.datatable.footer')
                 </div>
-                @include('backend.includes.datatable.footer')
+            </div>
+        </div>
+    </div>        
+
+    <div id="upload-artwork-container" style="display: none;">
+        <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+            <div class="d-flex justify-content-start">
+                <button class="btn btn-outline-secondary mb-3 d-flex align-items-center" onclick="backToCollections()" style="width: fit-content; background: transparent;">
+                    <i class="fas fa-arrow-left me-2"></i> Back
+                </button>
+            </div>
+            <div class="text-center mb-4">
+                <button class="btn btn-primary" id="download-template-btn" onclick="downloadSpreadsheet()">Download spreadsheet template</button>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Upload spreadsheet</label>
+                    <div class="upload-box" id="spreadsheet-upload">
+                        <span>Drag & drop a file here<br>or choose file</span>
+                        <input type="file" class="form-control-file" style="display:none;" id="spreadsheetInput">
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Upload image files</label>
+                    <div class="upload-box" id="image-upload">
+                        <span>Drag & drop a file here<br>or choose file</span>
+                        <input type="file" class="form-control-file" style="display:none;" id="imageInput" multiple>
+                    </div>
+                </div>
+            </div>
+            <!-- Artworks Table -->
+            <div class="table-responsive mb-3">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Collection</th>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Height (inch)</th>
+                            <th>Width (inch)</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="artworkTableBody">
+                        <!-- Example row, repeat for each artwork -->
+                        <!-- <tr>
+                            <td><img src="..." style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                            <td contenteditable="true">Indispensable exhibition</td>
+                            <td contenteditable="true">Jaguar Attacking a Horse</td>
+                            <td contenteditable="true">Anna Ovanesova</td>
+                            <td contenteditable="true">45.6</td>
+                            <td contenteditable="true">35.4</td>
+                            <td contenteditable="true">Digital Art</td>
+                            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                        </tr> -->
+                        <!-- More rows... -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-primary" id="add-artwork-btn" onclick="handleAddRow()">Add Artwork</button>
+                <button class="btn btn-success" id="submit-artworks-btn">Submit</button>
             </div>
         </div>
     </div>
@@ -346,10 +412,49 @@
         box-shadow: 0 4px 12px rgba(36, 83, 227, 0.15);
     }
 
+    .upload-box {
+        border: 2px dashed #b0b8c1;
+        border-radius: 12px;
+        background: #f7f9fb;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-align: center;
+        font-size: 16px;
+        color: #6c757d;
+        transition: border-color 0.2s, background 0.2s;
+        position: relative;
+    }
+    .upload-box:hover {
+        border-color: #2453e3;
+        background: #e9f0fb;
+    }
+    .upload-box input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        left: 0;
+        top: 0;
+    }
+    .table td[contenteditable="true"] {
+        background: #f7f9fb;
+        border-radius: 4px;
+        outline: none;
+        min-width: 80px;
+    }
+
     </style>
 </div>
 
 <script>
+
+    const allCollections = @json($collections);
+    const mainContainer = document.getElementById('show-collections-container');
+    const uploadContainer = document.getElementById('upload-artwork-container');
 
     function handleOpenCollectionModal() {
         $('#addCollectionModal').modal('show');
@@ -366,4 +471,100 @@
         }
     });
 
+    // Ensure upload container is hidden by default
+    uploadContainer.style.display = 'none';
+
+    // Find the "Add" button (the first .btn-light with title="Add")
+    function handleOpenUploadArtworks() {
+        mainContainer.style.display = 'none';
+        uploadContainer.style.display = 'block';
+    }
+
+    function backToCollections() {
+        uploadContainer.style.display = 'none';
+        mainContainer.style.display = 'block'; // or 'block' if flex doesn't work
+    }
+
+    // Click on upload box triggers file input
+    document.getElementById('spreadsheet-upload').onclick = () => document.getElementById('spreadsheetInput').click();
+    document.getElementById('image-upload').onclick = () => document.getElementById('imageInput').click();
+
+
+    function downloadSpreadsheet() {    
+        console.log("download spreadsheet");
+    }
+
+    // Add Artwork button (add a new editable row)
+    function handleAddRow() {
+        const tbody = document.getElementById('artworkTableBody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td></td>
+            <td style="width: 480px;">
+                <select class="form-select">
+                    <option value="">Select Collection</option>
+                    @foreach($collections as $collection)
+                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                    @endforeach
+                </select>
+            </td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+            <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+            <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+            <td contenteditable="true"></td>
+            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+        `;
+        row.querySelector('button').onclick = function() { row.remove(); };
+        tbody.appendChild(row);
+    }
+
+    // Remove row
+    document.querySelectorAll('#artworkTableBody .btn-danger').forEach(btn => {
+        btn.onclick = function() { btn.closest('tr').remove(); };
+    });
+
+
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const files = event.target.files;
+        const tbody = document.getElementById('artworkTableBody');
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${e.target.result}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                    <td style="width: 480px;">
+                        <select class="form-select">
+                            <option value="">Select Collection</option>
+                            @foreach($collections as $collection)
+                                <option value="{{$collection->id}}">{{$collection->name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+                    <td>
+                        <select class="form-select">
+                            <option value="">Select Type</option>
+                            <option value="Painting">Painting</option>
+                            <option value="Sculpture">Sculpture</option>
+                        </select>
+                    </td>
+                    <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                `;
+                row.querySelector('button').onclick = function() { row.remove(); };
+                tbody.appendChild(row);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        event.target.value = '';
+    });
 </script>
