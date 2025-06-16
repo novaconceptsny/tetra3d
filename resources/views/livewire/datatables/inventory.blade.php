@@ -450,6 +450,7 @@
     </style>
 </div>
 
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script>
 
     const allCollections = @json($collections);
@@ -491,7 +492,65 @@
 
 
     function downloadSpreadsheet() {    
-        console.log("download spreadsheet");
+        // Get all rows from the table
+        const rows = document.querySelectorAll('#artworkTableBody tr');
+        const data = [];
+
+        // Add header row
+        data.push([
+            'ImageName',
+            'Collection',
+            'Title',
+            'Artist',
+            'Height (inch)',
+            'Width (inch)',
+            'Type'
+        ]);
+
+        // Process each row
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const rowData = [];
+
+            // Skip the last cell (remove button)
+            for (let i = 0; i < cells.length - 1; i++) {
+                const cell = cells[i];
+                
+                if (cell.querySelector('img')) {
+                }
+                // Handle different types of cells
+                if (cell.querySelector('select')) {
+                    // For collection dropdown
+                    const select = cell.querySelector('select');
+                    rowData.push(select.value ? select.options[select.selectedIndex].text : '');
+                } else if (cell.querySelector('input')) {
+                    // For number inputs
+                    rowData.push(cell.querySelector('input').value);
+                } else if (cell.contentEditable === 'true') {
+                    // For editable cells
+                    rowData.push(cell.textContent.trim());
+                } else if (cell.querySelector('img')) {
+                    // For image cells
+                    const img = cell.querySelector('img');
+                    const filename = img.getAttribute('data-filename') || '';
+                    rowData.push(filename);
+                } else {
+                    rowData.push(cell.textContent.trim());
+                }
+            }
+
+            data.push(rowData);
+        });
+
+        // Create workbook and worksheet
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, "Artworks");
+
+        // Generate Excel file and trigger download
+        XLSX.writeFile(wb, "artworks.xlsx");
     }
 
     // Add Artwork button (add a new editable row)
@@ -535,8 +594,10 @@
 
             reader.onload = function(e) {
                 const row = document.createElement('tr');
+                // Get filename from the original file
+                const filename = file.name;
                 row.innerHTML = `
-                    <td><img src="${e.target.result}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                    <td><img src="${e.target.result}" data-filename="${filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
                     <td style="width: 480px;">
                         <select class="form-select">
                             <option value="">Select Collection</option>
