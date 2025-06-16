@@ -105,7 +105,7 @@ class Tour360Controller extends Controller
             $data['project']             = $project;
             $data['assignedCollections'] = $project->artworkCollections;
             $data['assignedUsers']       = $project->contributors;
-            $data['assignedTours']       = $project->tours;
+            $data['assignedTours']       = $project->assignedTours();
 
             return response()->json($data);
         } catch (\Exception $e) {
