@@ -14,8 +14,8 @@
                         </li>
                         @foreach($collections as $collection)
                         <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="${collection.id}">
-                            @if($collection->image_url)
-                                <img src="{{ $collection->image_url }}" alt="" width="40" class="me-2 rounded">
+                            @if($collection->thumbnail_url)
+                                <img src="{{ $collection->thumbnail_url }}" alt="" width="40" class="me-2 rounded">
                             @else
                                 <i class="fas fa-image collection-icon"></i>
                             @endif
@@ -96,6 +96,8 @@
                                 </div>--}}
                                 <!-- @include('backend.includes.datatable.reset-filters') -->
                             </div>
+
+                            @if(!user()->isAdmin())
                             <div class="btn-group ms-auto" role="group" aria-label="Artwork Actions">
                                 <button type="button" class="btn btn-light" title="Add" onclick="handleOpenUploadArtworks()">
                                     <i class="fas fa-plus"></i>
@@ -110,6 +112,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
+                            @endif
                         </div>
 
                         @if($selectedRows && user()->can('bulkUpdate', \App\Models\Artwork::class))
@@ -232,9 +235,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-between">
-                <button class="btn btn-outline-primary" id="add-artwork-btn" onclick="handleAddRow()">Add Artwork</button>
-                <button class="btn btn-success" id="submit-artworks-btn">Submit</button>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-primary" id="add-artwork-btn" style="display: none;" onclick="handleAddRow()">Add Artwork</button>
+                <button class="btn btn-success" id="submit-artworks-btn" onclick="handleSubmitArtworks()">Submit</button>
             </div>
         </div>
     </div>
@@ -255,6 +258,19 @@
                             <input type="text" class="form-control" id="collectionName" name="name" placeholder="Name" required>
                         </div>
                         <div class="mb-3">
+                            <label for="collectionCompany" class="form-label">Company</label>
+                            @if(auth()->user()->name === 'Super Admin')
+                            <select class="form-control rounded-0" id="collectionCompany" name="company">
+                                <option value="">Select Company</option>
+                                @foreach($companies as $company)
+                                    <option value="{{$company->id}}">{{$company->name}}</option>
+                                @endforeach
+                            </select>
+                            @else
+                                <input type="text" class="form-control" id="collectionCompany" placeholder="Company" disabled value="{{ user()->company->name }}">
+                            @endif
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Thumbnail</label>
                             <div class="d-flex align-items-center">
                                 <label for="collectionThumbnail" class="thumbnail-upload border rounded d-flex flex-column align-items-center justify-content-center" style="width: 80px; height: 100px; cursor: pointer;">
@@ -266,7 +282,7 @@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-end">
-                    <button type="button" class="btn btn-save-collection" id="saveCollectionBtn">Save</button>
+                    <button type="button" class="btn btn-save-collection" id="saveCollectionBtn" onclick="handleSaveCollection()">Save</button>
                 </div>
             </div>
         </div>
@@ -456,6 +472,7 @@
     const allCollections = @json($collections);
     const mainContainer = document.getElementById('show-collections-container');
     const uploadContainer = document.getElementById('upload-artwork-container');
+    const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
 
     function handleOpenCollectionModal() {
         $('#addCollectionModal').modal('show');
@@ -553,6 +570,48 @@
         XLSX.writeFile(wb, "artworks.xlsx");
     }
 
+    function handleSaveCollection() {
+        const companySelect = document.getElementById('collectionCompany');
+
+        const collectionName = document.getElementById('collectionName').value;
+        const collectionThumbnail = document.getElementById('collectionThumbnail').files[0];
+        let companyName;
+        if (isSuperAdmin) {
+            companyName = companySelect.options[companySelect.selectedIndex].text;
+        } else {
+            companyName = companySelect.value;
+        }
+
+        const formData = new FormData();
+        formData.append('collection_name', collectionName);
+        formData.append('collection_company_name', companyName);
+        formData.append('collection_thumbnail', collectionThumbnail);
+
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('/inventory/collections/add', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Collection added successfully');
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Could not add collection.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding collection.');
+        });
+    }
+
     // Add Artwork button (add a new editable row)
     function handleAddRow() {
         const tbody = document.getElementById('artworkTableBody');
@@ -576,6 +635,26 @@
         `;
         row.querySelector('button').onclick = function() { row.remove(); };
         tbody.appendChild(row);
+    }
+
+    function handleSubmitArtworks() {
+        const tbody = document.getElementById('artworkTableBody');
+        const rows = tbody.querySelectorAll('tr');
+        const data = [];
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const rowData = [];
+
+            cells.forEach(cell => {
+                rowData.push(cell.textContent.trim());
+            });
+
+            data.push(rowData);
+        });
+
+        console.log(data, "data");
+
     }
 
     // Remove row

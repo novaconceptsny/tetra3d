@@ -48,7 +48,7 @@ class InventoryDatatable extends BaseDatatable
         $data['heading'] = __('Inventory');
 
         $data['collections'] = ArtworkCollection::latest('name')->get();
-        $data['companies'] = Company::latest('name')->get();
+        $data['companies'] = user()->isAdmin() ? Company::latest('name')->get() : Company::where('id', user()->company_id)->get();
         $data['artists'] = Artwork::groupBy('artist')->pluck('artist');
 
         $artworkQuery = $this->model::query()
