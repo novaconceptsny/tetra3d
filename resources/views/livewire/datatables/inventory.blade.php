@@ -628,4 +628,67 @@
 
         event.target.value = '';
     });
+
+    // Add spreadsheet input event listener
+    document.getElementById('spreadsheetInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // Get the first worksheet
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            
+            // Convert to JSON
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            
+            // Skip header row and process data
+            const tbody = document.getElementById('artworkTableBody');
+            
+            // Clear existing rows
+            tbody.innerHTML = '';
+            
+            // Process each row starting from index 1 (skip header)
+            for (let i = 1; i < jsonData.length; i++) {
+                const row = jsonData[i];
+                if (!row || row.length === 0) continue;
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td><img src="" data-filename="${row[0] || ''}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                    <td style="width: 480px;">
+                        <select class="form-select">
+                            <option value="">Select Collection</option>
+                            @foreach($collections as $collection)
+                                <option value="{{$collection->id}}">{{$collection->name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td contenteditable="true">${row[1] || ''}</td>
+                    <td contenteditable="true">${row[2] || ''}</td>
+                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${row[3] || ''}" /></td>
+                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${row[4] || ''}" /></td>
+                    <td>
+                        <select class="form-select">
+                            <option value="">Select Type</option>
+                            <option value="Painting" ${row[5] === 'Painting' ? 'selected' : ''}>Painting</option>
+                            <option value="Sculpture" ${row[5] === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
+                        </select>
+                    </td>
+                    <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                `;
+                
+                // Add remove button functionality
+                newRow.querySelector('button').onclick = function() { newRow.remove(); };
+                
+                tbody.appendChild(newRow);
+            }
+        };
+        
+        reader.readAsArrayBuffer(file);
+        event.target.value = ''; // Reset input
+    });
 </script>
