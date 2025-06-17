@@ -404,9 +404,9 @@
     }
 
     .add-collection-modal-dialog .modal-content {
-        height: 450px;
-        min-height: 450px;
-        max-height: 450px;
+        height: 500px   ;
+        min-height: 500px;
+        max-height: 500px;
         overflow: auto;
     }
 
@@ -644,17 +644,55 @@
 
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            const rowData = [];
+            const image = cells[0].querySelector('img').src;
+            const collectionSelect = cells[1].querySelector('select');
+            
+            const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
 
-            cells.forEach(cell => {
-                rowData.push(cell.textContent.trim());
-            });
+            const typeSelect = cells[6].querySelector('select')
+            const typeInfo = typeSelect.options[typeSelect.selectedIndex].text
 
+            const rowData = {   
+                image : image,
+                collection_name: collectionName,
+                title: cells[2].textContent.trim(),
+                artist: cells[3].textContent.trim(),
+                height: cells[4].querySelector('input').value,
+                width: cells[5].querySelector('input').value,
+                type: typeInfo,
+            };
             data.push(rowData);
         });
 
         console.log(data, "data");
 
+        const formData = new FormData();
+        formData.append('artwork_data', JSON.stringify(data));
+
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('/inventory/artworks/add', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Artworks added successfully');
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Could not add artwork.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving artworks.');
+        });
+        
     }
 
     // Remove row
@@ -740,7 +778,6 @@
                     <td><img src="" data-filename="${row[0] || ''}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
                     <td style="width: 480px;">
                         <select class="form-select">
-                            <option value="">Select Collection</option>
                             @foreach($collections as $collection)
                                 <option value="{{$collection->id}}">{{$collection->name}}</option>
                             @endforeach
@@ -752,7 +789,6 @@
                     <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${row[4] || ''}" /></td>
                     <td>
                         <select class="form-select">
-                            <option value="">Select Type</option>
                             <option value="Painting" ${row[5] === 'Painting' ? 'selected' : ''}>Painting</option>
                             <option value="Sculpture" ${row[5] === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
                         </select>

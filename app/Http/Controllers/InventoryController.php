@@ -80,4 +80,41 @@ class InventoryController extends Controller
     {
         //
     }
+
+    public function addArtworks(Request $request)
+    {
+        try {
+            $artworkData = json_decode($request->input('artwork_data'), true);
+
+            if (!$artworkData || !is_array($artworkData)) {
+                return response()->json(['success' => false, 'message' => 'Invalid data.'], 400);
+            }
+
+            foreach ($artworkData as $row) {
+
+                if($row['image'] != null) {
+                    $path = $row['image'];
+                    $artwork->image_url = Storage::url($path);
+                }
+                // You may want to validate each row here
+                $artwork = new Artwork();
+                $artwork->company_id = user()->company_id;
+                $artwork->artwork_collection_id = ArtworkCollection::where('name', $row['collection_name'])->first()->id;
+                $artwork->name = $row['title'] ?? '';
+                $artwork->artist = $row['artist'] ?? '';
+                $artwork->type = $row['type'] ?? '';
+                $artwork->image_url = $row['image'] ?? '';
+                $artwork->data = [
+                    'width' => $row['width'] ?? '',
+                    'height' => $row['height'] ?? '',
+                    'scale' => $row['scale'] ?? '',
+                ];
+                $artwork->save();
+            }
+
+            return response()->json(['success' => true, 'message' => 'Artworks added successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

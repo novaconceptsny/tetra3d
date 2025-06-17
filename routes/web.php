@@ -87,6 +87,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
 
+    Route::post('inventory/artworks/add', 'InventoryController@addArtworks')->name('inventory.artworks.add');
+
 });
 
 
