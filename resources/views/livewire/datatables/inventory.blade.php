@@ -192,14 +192,14 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Upload spreadsheet</label>
                     <div class="upload-box" id="spreadsheet-upload">
-                        <span>Drag & drop a file here<br>or choose file</span>
+                        <span>Drag & drop a file here<br>or choose .csv file</span>
                         <input type="file" class="form-control-file" style="display:none;" id="spreadsheetInput">
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Upload image files</label>
                     <div class="upload-box" id="image-upload">
-                        <span>Drag & drop a file here<br>or choose file</span>
+                        <span>Drag & drop a file here<br>or choose .png, .jpg, .jpeg files</span>
                         <input type="file" class="form-control-file" style="display:none;" id="imageInput" multiple>
                     </div>
                 </div>
@@ -210,7 +210,7 @@
             <div id="artwork-progress-bar" style="display:none; margin-bottom: 20px;">
                 <div style="width: 500px; margin: 0 auto; background: #eee; border-radius: 8px; height: 20px; position: relative;">
                     <div id="artwork-progress-bar-inner" style="background: #2979ff; height: 100%; width: 0%; border-radius: 8px;"></div>
-                    <span id="artwork-progress-bar-label" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: #222; font-weight: 500; line-height: 20px;">0/0 uploaded</span>
+                    <span id="artwork-progress-bar-label" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: #222; font-weight: 500; line-height: 20px;">0/0 processed</span>
                 </div>
             </div>
             <!-- Artworks Table -->
@@ -694,7 +694,6 @@
             data.push(rowData);
         });
 
-        console.log(data, "data");
 
         const formData = new FormData();
         formData.append('artwork_data', JSON.stringify(data));
@@ -748,7 +747,33 @@
             // Parse CSV using XLSX
             const workbook = XLSX.read(csv, { type: 'string' });
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            uploadedSpreadsheetData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            const rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            
+            // Convert to array of objects
+            if (rawData.length > 1) { // Check if we have header and at least one data row
+                const filteredData = rawData.slice(6);
+                uploadedSpreadsheetData = [];
+                
+                // Process each data row (skip header)
+                for (let i = 1; i < filteredData.length; i++) {
+                    const row = filteredData[i];
+                    if (row && row.length === 6) {
+                        const artwork = {};
+                        
+                        artwork.Filename = row[0].toString();
+                        artwork.Title = row[1].toString();
+                        artwork.Artist = row[2].toString();
+                        artwork.Height = row[3].toString();
+                        artwork.Width = row[4].toString();
+                        artwork.Type = row[5].toString();
+                        
+                        // Only add if we have at least a filename
+                        if (artwork.Filename || artwork['ImageName'] || artwork['Image Name']) {
+                            uploadedSpreadsheetData.push(artwork);
+                        }
+                    }
+                }
+            }
         };
         reader.readAsText(file); // <-- Use readAsText for CSV
         event.target.value = '';
@@ -760,28 +785,44 @@
         const progressBar = document.getElementById('artwork-progress-bar');
         progressBar.style.display = 'block';
 
-        // Calculate total artworks
-        let spreadsheetCount = (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 1) ? (uploadedSpreadsheetData.length - 1) : 0;
-        let imageCount = uploadedImageFiles ? uploadedImageFiles.length : 0;
-        let total = spreadsheetCount + imageCount;
+        // Calculate total artworks - only count unique filenames that have both spreadsheet data and images
+        let total = 0;
+
+        if (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 0 && uploadedImageFiles.length > 0) {
+            // Get filenames from spreadsheet (now objects with Filename property)
+            const spreadsheetFilenames = uploadedSpreadsheetData.map(artwork => 
+                artwork.Filename || artwork['ImageName'] || artwork['Image Name']
+            ).filter(filename => filename);
+            
+            // Get filenames from uploaded images
+            const imageFilenames = uploadedImageFiles.map(file => file.name);
+            // Count matches
+            total = spreadsheetFilenames.filter(filename => 
+                imageFilenames.some(imageName => 
+                    imageName.toLowerCase() === filename.toLowerCase() ||
+                    imageName.toLowerCase().replace(/\.[^/.]+$/, "") === filename.toLowerCase().replace(/\.[^/.]+$/, "")
+                )
+            ).length;
+        }
 
         // If nothing to add, just reset UI and return
         if (total === 0) {
             progressBar.style.display = 'none';
             document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+            alert('No matching files found. Please ensure spreadsheet filenames match uploaded image filenames.');
             return;
         }
 
         let current = 0;
         document.getElementById('artwork-progress-bar-inner').style.width = '0%';
-        document.getElementById('artwork-progress-bar-label').innerText = `0/${total} uploaded`;
+        document.getElementById('artwork-progress-bar-label').innerText = `0/${total} processed`;
 
         // Simulate progress bar filling up over 1 second
         let interval = setInterval(() => {
             current++;
             let percent = Math.round((current / total) * 100);
             document.getElementById('artwork-progress-bar-inner').style.width = percent + '%';
-            document.getElementById('artwork-progress-bar-label').innerText = `${current}/${total} uploaded`;
+            document.getElementById('artwork-progress-bar-label').innerText = `${current}/${total} processed`;
             if (current >= total) {
                 clearInterval(interval);
                 setTimeout(() => {
@@ -797,72 +838,62 @@
         const tbody = document.getElementById('artworkTableBody');
         tbody.innerHTML = ''; // Clear previous rows
 
-        // 1. Generate rows from spreadsheet (if any)
-        if (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 1) {
-            for (let i = 1; i < uploadedSpreadsheetData.length; i++) {
-                const row = uploadedSpreadsheetData[i];
-                if (!row || row.length === 0) continue;
-
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td><img src="" data-filename="${row[0] || ''}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
-                    <td style="width: 480px;">
-                        <select class="form-select">
-                            @foreach($collections as $collection)
-                                <option value="{{$collection->id}}">{{$collection->name}}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td contenteditable="true">${row[1] || ''}</td>
-                    <td contenteditable="true">${row[2] || ''}</td>
-                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${row[3] || ''}" /></td>
-                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${row[4] || ''}" /></td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Painting" ${row[5] === 'Painting' ? 'selected' : ''}>Painting</option>
-                            <option value="Sculpture" ${row[5] === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
-                        </select>
-                    </td>
-                    <td><button class="btn btn-danger btn-sm">Remove</button></td>
-                `;
-                newRow.querySelector('button').onclick = function() { newRow.remove(); };
-                tbody.appendChild(newRow);
-            }
+        if (!uploadedSpreadsheetData || uploadedSpreadsheetData.length === 0 || uploadedImageFiles.length === 0) {
+            return;
         }
 
-        // 2. Generate rows from images (if any)
-        if (uploadedImageFiles.length > 0) {
-            uploadedImageFiles.forEach(file => {
+        // Create a map of image files by filename (without extension)
+        const imageFilesMap = new Map();
+        uploadedImageFiles.forEach(file => {
+            const filenameWithoutExt = file.name.toLowerCase().replace(/\.[^/.]+$/, "");
+            imageFilesMap.set(filenameWithoutExt, file);
+        });
+
+        // Process spreadsheet data (now array of objects)
+        uploadedSpreadsheetData.forEach(artwork => {
+            const spreadsheetFilename = artwork.Filename || artwork['ImageName'] || artwork['Image Name'];
+            if (!spreadsheetFilename) return;
+
+            // Try to match filename (with and without extension)
+            const filenameWithoutExt = spreadsheetFilename.toLowerCase().replace(/\.[^/.]+$/, "");
+            const matchingImageFile = imageFilesMap.get(filenameWithoutExt);
+
+            if (matchingImageFile) {
+                // Create image preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const row = document.createElement('tr');
-                    const filename = file.name;
-                    row.innerHTML = `
-                        <td><img src="${e.target.result}" data-filename="${filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td><img src="${e.target.result}" data-filename="${spreadsheetFilename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
                         <td style="width: 480px;">
                             <select class="form-select">
+                                <option value="">Select Collection</option>
                                 @foreach($collections as $collection)
                                     <option value="{{$collection->id}}">{{$collection->name}}</option>
                                 @endforeach
                             </select>
                         </td>
-                        <td contenteditable="true"></td>
-                        <td contenteditable="true"></td>
-                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
-                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+                        <td contenteditable="true">${artwork.Title || artwork['Title'] || ''}</td>
+                        <td contenteditable="true">${artwork.Artist || artwork['Artist'] || ''}</td>
+                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (inch)'] || artwork['Height'] || ''}" /></td>
+                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (inch)'] || artwork['Width'] || ''}" /></td>
                         <td>
                             <select class="form-select">
-                                <option value="Painting">Painting</option>
-                                <option value="Sculpture">Sculpture</option>
-                            </select>
+                                <option value="Painting" ${(artwork.Type || artwork['Type'] || '') === 'Painting' ? 'selected' : ''}>Painting</option>
+                                <option value="Sculpture" ${(artwork.Type || artwork['Type'] || '') === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
                         </td>
                         <td><button class="btn btn-danger btn-sm">Remove</button></td>
                     `;
-                    row.querySelector('button').onclick = function() { row.remove(); };
-                    tbody.appendChild(row);
+                    newRow.querySelector('button').onclick = function() { newRow.remove(); };
+                    tbody.appendChild(newRow);
                 };
-                reader.readAsDataURL(file);
-            });
+                reader.readAsDataURL(matchingImageFile);
+            }
+        });
+
+        // Show the "Add Artwork" button if we have rows
+        if (tbody.children.length > 0) {
+            document.getElementById('add-artwork-btn').style.display = 'inline-block';
         }
     }
 </script>
