@@ -204,6 +204,15 @@
                     </div>
                 </div>
             </div>
+            <div class="text-center mb-3">
+                <button class="btn btn-warning" id="generate-artwork-btn" onclick="handleGenerateArtwork()">Add Artwork</button>
+            </div>
+            <div id="artwork-progress-bar" style="display:none; margin-bottom: 20px;">
+                <div style="width: 500px; margin: 0 auto; background: #eee; border-radius: 8px; height: 20px; position: relative;">
+                    <div id="artwork-progress-bar-inner" style="background: #2979ff; height: 100%; width: 0%; border-radius: 8px;"></div>
+                    <span id="artwork-progress-bar-label" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: #222; font-weight: 500; line-height: 20px;">0/0 uploaded</span>
+                </div>
+            </div>
             <!-- Artworks Table -->
             <div class="table-responsive mb-3">
                 <table class="table align-middle">
@@ -463,16 +472,24 @@
         min-width: 80px;
     }
 
+    .btn-warning {
+        background-color: #ffc107;
+        color: #000;
+        font-weight: bold;
+    }
+
     </style>
 </div>
 
-<!-- <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script> -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script>
 
     const allCollections = @json($collections);
     const mainContainer = document.getElementById('show-collections-container');
     const uploadContainer = document.getElementById('upload-artwork-container');
     const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
+    let uploadedSpreadsheetData = null;
+    let uploadedImageFiles = [];
 
     function handleOpenCollectionModal() {
         $('#addCollectionModal').modal('show');
@@ -715,45 +732,7 @@
 
 
     document.getElementById('imageInput').addEventListener('change', function(event) {
-        const files = event.target.files;
-        const tbody = document.getElementById('artworkTableBody');
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const row = document.createElement('tr');
-                // Get filename from the original file
-                const filename = file.name;
-                row.innerHTML = `
-                    <td><img src="${e.target.result}" data-filename="${filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
-                    <td style="width: 480px;">
-                        <select class="form-select">
-                            @foreach($collections as $collection)
-                                <option value="{{$collection->id}}">{{$collection->name}}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td contenteditable="true"></td>
-                    <td contenteditable="true"></td>
-                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
-                    <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Painting">Painting</option>
-                            <option value="Sculpture">Sculpture</option>
-                        </select>
-                    </td>
-                    <td><button class="btn btn-danger btn-sm">Remove</button></td>
-                `;
-                row.querySelector('button').onclick = function() { row.remove(); };
-                tbody.appendChild(row);
-            };
-
-            reader.readAsDataURL(file);
-        }
-
+        uploadedImageFiles = Array.from(event.target.files);
         event.target.value = '';
     });
 
@@ -764,24 +743,64 @@
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            
-            // Get the first worksheet
+            // Read CSV as text
+            const csv = e.target.result;
+            // Parse CSV using XLSX
+            const workbook = XLSX.read(csv, { type: 'string' });
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            
-            // Convert to JSON
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-            
-            // Skip header row and process data
-            const tbody = document.getElementById('artworkTableBody');
-            
-            // Clear existing rows
-            tbody.innerHTML = '';
-            
-            // Process each row starting from index 1 (skip header)
-            for (let i = 1; i < jsonData.length; i++) {
-                const row = jsonData[i];
+            uploadedSpreadsheetData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+        };
+        reader.readAsText(file); // <-- Use readAsText for CSV
+        event.target.value = '';
+    });
+
+    function handleGenerateArtwork() {
+        // Hide the button and show the progress bar
+        document.getElementById('generate-artwork-btn').style.display = 'none';
+        const progressBar = document.getElementById('artwork-progress-bar');
+        progressBar.style.display = 'block';
+
+        // Calculate total artworks
+        let spreadsheetCount = (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 1) ? (uploadedSpreadsheetData.length - 1) : 0;
+        let imageCount = uploadedImageFiles ? uploadedImageFiles.length : 0;
+        let total = spreadsheetCount + imageCount;
+
+        // If nothing to add, just reset UI and return
+        if (total === 0) {
+            progressBar.style.display = 'none';
+            document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+            return;
+        }
+
+        let current = 0;
+        document.getElementById('artwork-progress-bar-inner').style.width = '0%';
+        document.getElementById('artwork-progress-bar-label').innerText = `0/${total} uploaded`;
+
+        // Simulate progress bar filling up over 1 second
+        let interval = setInterval(() => {
+            current++;
+            let percent = Math.round((current / total) * 100);
+            document.getElementById('artwork-progress-bar-inner').style.width = percent + '%';
+            document.getElementById('artwork-progress-bar-label').innerText = `${current}/${total} uploaded`;
+            if (current >= total) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    actuallyAddArtworksToTable();
+                    progressBar.style.display = 'none';
+                    document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+                }, 200);
+            }
+        }, 1000 / total);
+    }
+
+    function actuallyAddArtworksToTable() {
+        const tbody = document.getElementById('artworkTableBody');
+        tbody.innerHTML = ''; // Clear previous rows
+
+        // 1. Generate rows from spreadsheet (if any)
+        if (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 1) {
+            for (let i = 1; i < uploadedSpreadsheetData.length; i++) {
+                const row = uploadedSpreadsheetData[i];
                 if (!row || row.length === 0) continue;
 
                 const newRow = document.createElement('tr');
@@ -806,15 +825,44 @@
                     </td>
                     <td><button class="btn btn-danger btn-sm">Remove</button></td>
                 `;
-                
-                // Add remove button functionality
                 newRow.querySelector('button').onclick = function() { newRow.remove(); };
-                
                 tbody.appendChild(newRow);
             }
-        };
-        
-        reader.readAsArrayBuffer(file);
-        event.target.value = ''; // Reset input
-    });
+        }
+
+        // 2. Generate rows from images (if any)
+        if (uploadedImageFiles.length > 0) {
+            uploadedImageFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const row = document.createElement('tr');
+                    const filename = file.name;
+                    row.innerHTML = `
+                        <td><img src="${e.target.result}" data-filename="${filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                        <td style="width: 480px;">
+                            <select class="form-select">
+                                @foreach($collections as $collection)
+                                    <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+                        <td>
+                            <select class="form-select">
+                                <option value="Painting">Painting</option>
+                                <option value="Sculpture">Sculpture</option>
+                            </select>
+                        </td>
+                        <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                    `;
+                    row.querySelector('button').onclick = function() { row.remove(); };
+                    tbody.appendChild(row);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
 </script>
