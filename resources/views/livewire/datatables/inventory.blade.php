@@ -466,7 +466,7 @@
     </style>
 </div>
 
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<!-- <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script> -->
 <script>
 
     const allCollections = @json($collections);
@@ -559,15 +559,28 @@
             data.push(rowData);
         });
 
-        // Create workbook and worksheet
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(data);
+        // Convert data to CSV format
+        const csvContent = data.map(row => 
+            row.map(cell => {
+                // Escape quotes and wrap in quotes if contains comma, quote, or newline
+                const escaped = String(cell).replace(/"/g, '""');
+                if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
+                    return `"${escaped}"`;
+                }
+                return escaped;
+            }).join(',')
+        ).join('\n');
 
-        // Add worksheet to workbook
-        XLSX.utils.book_append_sheet(wb, ws, "Artworks");
-
-        // Generate Excel file and trigger download
-        XLSX.writeFile(wb, "artworks.xlsx");
+        // Create and download CSV file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'artworks.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     function handleSaveCollection() {
@@ -717,7 +730,6 @@
                     <td><img src="${e.target.result}" data-filename="${filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
                     <td style="width: 480px;">
                         <select class="form-select">
-                            <option value="">Select Collection</option>
                             @foreach($collections as $collection)
                                 <option value="{{$collection->id}}">{{$collection->name}}</option>
                             @endforeach
@@ -729,7 +741,6 @@
                     <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
                     <td>
                         <select class="form-select">
-                            <option value="">Select Type</option>
                             <option value="Painting">Painting</option>
                             <option value="Sculpture">Sculpture</option>
                         </select>
