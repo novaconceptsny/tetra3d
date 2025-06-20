@@ -648,66 +648,56 @@
     document.getElementById('image-upload').onclick = () => document.getElementById('imageInput').click();
 
 
-    function downloadSpreadsheet() {    
-        // Get all rows from the table
+    function downloadSpreadsheet() {
         const rows = document.querySelectorAll('#artworkTableBody tr');
         const data = [];
 
         // Add header row
-        data.push([
-            'FileName',
-            'Collection',
-            'Title',
-            'Artist',
-            'Height (inch)',
-            'Width (inch)',
-            'Type'
-        ]);
+        const headers = ['Filename', 'Collection', 'Title', 'Artist', 'Height (inch)', 'Width (inch)', 'Type'];
+        data.push(headers);
 
         // Process each row
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
+            if (cells.length < 8) return; // 7 data cells + 1 button cell
+
             const rowData = [];
 
-            // Skip the last cell (remove button)
-            for (let i = 0; i < cells.length - 1; i++) {
-                const cell = cells[i];
-                
-                // Handle different types of cells
-                if (cell.querySelector('select')) {
-                    // For collection dropdown
-                    const select = cell.querySelector('select');
-                    rowData.push(select.value ? select.options[select.selectedIndex].text : '');
-                } else if (cell.querySelector('input')) {
-                    // For number inputs
-                    rowData.push(cell.querySelector('input').value);
-                } else if (cell.contentEditable === 'true') {
-                    // For editable cells
-                    rowData.push(cell.textContent.trim());
-                } else if (cell.querySelector('img')) {
-                    // For image cells
-                    const img = cell.querySelector('img');
-                    const filename = img.getAttribute('data-filename') || '';
-                    rowData.push(filename);
-                } else {
-                    rowData.push(cell.textContent.trim());
-                }
-            }
+            // 1. Filename from image
+            const img = cells[0].querySelector('img');
+            rowData.push(img ? img.getAttribute('data-filename') || '' : '');
+
+            // 2. Collection
+            const collectionSelect = cells[1].querySelector('select');
+            rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
+            
+            // 3. Title
+            rowData.push(cells[2].textContent.trim());
+
+            // 4. Artist
+            rowData.push(cells[3].textContent.trim());
+
+            // 5. Height
+            rowData.push(cells[4].querySelector('input').value);
+
+            // 6. Width
+            rowData.push(cells[5].querySelector('input').value);
+
+            // 7. Type
+            const typeSelect = cells[6].querySelector('select');
+            rowData.push(typeSelect && typeSelect.value ? typeSelect.options[typeSelect.selectedIndex].text : '');
 
             data.push(rowData);
         });
 
         // Convert data to CSV format
-        const csvContent = data.map(row => 
-            row.map(cell => {
-                // Escape quotes and wrap in quotes if contains comma, quote, or newline
-                const escaped = String(cell).replace(/"/g, '""');
-                if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
-                    return `"${escaped}"`;
-                }
-                return escaped;
-            }).join(',')
-        ).join('\n');
+        const csvContent = data.map(e => e.map(cell => {
+            const escaped = String(cell == null ? "" : cell).replace(/"/g, '""');
+            if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
+                return `"${escaped}"`;
+            }
+            return escaped;
+        }).join(',')).join('\n');
 
         // Create and download CSV file
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
