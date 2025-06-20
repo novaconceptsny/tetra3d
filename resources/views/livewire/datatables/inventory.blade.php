@@ -227,6 +227,18 @@
                     <span id="artwork-progress-bar-label" class="artwork-progress-label">0/0 processed</span>
                 </div>
             </div>
+
+            <!-- Master Collection Dropdown -->
+            <div class="mb-3 d-flex align-items-center" style="width: 400px">
+                <label for="masterCollection" class="form-label me-2 mb-0">Collection</label>
+                <select id="masterCollection" class="form-select">
+                    <option value="">Select a collection to apply to all</option>
+                    @foreach($collections as $collection)
+                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+            
             <!-- Artworks Table -->
             <div class="table-responsive mb-3">
                 <table class="table align-middle">
@@ -564,6 +576,24 @@
     let uploadedSpreadsheetData = null;
     let uploadedImageFiles = [];
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const masterCollectionDropdown = document.getElementById('masterCollection');
+        if (masterCollectionDropdown) {
+            masterCollectionDropdown.addEventListener('change', function(event) {
+                const selectedCollectionId = event.target.value;
+                if (selectedCollectionId) {
+                    const artworkRows = document.querySelectorAll('#artworkTableBody tr');
+                    artworkRows.forEach(row => {
+                        const collectionSelect = row.querySelector('.artwork-collection-select');
+                        if (collectionSelect) {
+                            collectionSelect.value = selectedCollectionId;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
     function handleOpenCollectionModal() {
         $('#addCollectionModal').modal('show');
     }
@@ -740,7 +770,7 @@
         row.innerHTML = `
             <td></td>
             <td style="width: 480px;">
-                <select class="form-select">
+                <select class="form-select artwork-collection-select">
                     <option value="">Select Collection</option>
                     @foreach($collections as $collection)
                         <option value="{{$collection->id}}">{{$collection->name}}</option>
@@ -1036,7 +1066,7 @@
                     newRow.innerHTML = `
                         <td><img src="${e.target.result}" data-filename="${spreadsheetFilename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
                         <td style="width: 480px;">
-                            <select class="form-select"
+                            <select class="form-select artwork-collection-select">
                                 @foreach($collections as $collection)
                                     <option value="{{$collection->id}}">{{$collection->name}}</option>
                                 @endforeach
@@ -1050,6 +1080,7 @@
                             <select class="form-select">
                                 <option value="Painting" ${(artwork.Type || artwork['Type'] || '') === 'Painting' ? 'selected' : ''}>Painting</option>
                                 <option value="Sculpture" ${(artwork.Type || artwork['Type'] || '') === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
+                            </select>
                         </td>
                         <td><button class="btn btn-danger btn-sm">Remove</button></td>
                     `;
