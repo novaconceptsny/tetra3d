@@ -944,7 +944,7 @@
                 // Process each data row (skip header)
                 for (let i = 1; i < filteredData.length; i++) {
                     const row = filteredData[i];
-                    if (row && row.length === 6) {
+                    if (row && row.length >= 6) {
                         const artwork = {};
                         
                         artwork.Filename = row[0].toString();
@@ -962,6 +962,7 @@
                 }
             }
         };
+        
         reader.readAsText(file); // <-- Use readAsText for CSV
     }
 
@@ -979,6 +980,7 @@
             const spreadsheetFilenames = uploadedSpreadsheetData.map(artwork => 
                 artwork.Filename || artwork['ImageName'] || artwork['Image Name']
             ).filter(filename => filename);
+
             
             // Get filenames from uploaded images
             const imageFilenames = uploadedImageFiles.map(file => file.name);
