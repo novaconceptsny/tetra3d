@@ -192,15 +192,29 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Upload spreadsheet</label>
                     <div class="upload-box" id="spreadsheet-upload">
-                        <span>Drag & drop a file here<br>or choose .csv file</span>
-                        <input type="file" class="form-control-file" style="display:none;" id="spreadsheetInput">
+                        <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv file</span>
+                        <div id="spreadsheet-progress" style="display: none;">
+                            <div class="progress-container">
+                                <div class="progress-bar-upload"></div>
+                            </div>
+                            <span class="progress-text">Uploading...</span>
+                        </div>
+                        <span id="spreadsheet-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                        <input type="file" class="form-control-file" style="display:none;" id="spreadsheetInput" accept=".csv,.xlsx,.xls">
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Upload image files</label>
                     <div class="upload-box" id="image-upload">
-                        <span>Drag & drop a file here<br>or choose .png, .jpg, .jpeg files</span>
-                        <input type="file" class="form-control-file" style="display:none;" id="imageInput" multiple>
+                        <span id="image-upload-text">Drag & drop a file here<br>or choose .png, .jpg, .jpeg files</span>
+                        <div id="image-progress" style="display: none;">
+                            <div class="progress-container">
+                                <div class="progress-bar-upload"></div>
+                            </div>
+                            <span class="progress-text">Uploading...</span>
+                        </div>
+                        <span id="image-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                        <input type="file" class="form-control-file" style="display:none;" id="imageInput" multiple accept=".png,.jpg,.jpeg">
                     </div>
                 </div>
             </div>
@@ -209,8 +223,8 @@
             </div>
             <div id="artwork-progress-bar" style="display:none; margin-bottom: 20px;">
                 <div style="width: 500px; margin: 0 auto; background: #eee; border-radius: 8px; height: 20px; position: relative;">
-                    <div id="artwork-progress-bar-inner" style="background: #2979ff; height: 100%; width: 0%; border-radius: 8px;"></div>
-                    <span id="artwork-progress-bar-label" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: #222; font-weight: 500; line-height: 20px;">0/0 processed</span>
+                    <div id="artwork-progress-bar-inner" class="artwork-progress-inner"></div>
+                    <span id="artwork-progress-bar-label" class="artwork-progress-label">0/0 processed</span>
                 </div>
             </div>
             <!-- Artworks Table -->
@@ -478,6 +492,56 @@
         font-weight: bold;
     }
 
+    /* Upload Progress Styles */
+    .progress-container {
+        width: 200px;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 10px auto;
+    }
+
+    .progress-bar-upload {
+        height: 100%;
+        background: #28a745;
+        width: 0%;
+        transition: width 0.3s ease;
+        border-radius: 4px;
+    }
+
+    .progress-text {
+        font-size: 14px;
+        color: #6c757d;
+        display: block;
+        margin-top: 5px;
+    }
+
+    #spreadsheet-filename {
+        font-size: 14px;
+        word-break: break-word;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .artwork-progress-label {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translateX(-50%);
+        color: #222;
+        font-weight: 500;
+        line-height: 20px;
+    }
+
+    .artwork-progress-inner {
+        background: #28a745;
+        height: 100%;
+        width: 0%;
+        border-radius: 8px;
+        transition: width 0.3s ease;
+    }
+
     </style>
 </div>
 
@@ -488,6 +552,15 @@
     const mainContainer = document.getElementById('show-collections-container');
     const uploadContainer = document.getElementById('upload-artwork-container');
     const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
+
+    const spreadUploadText = document.getElementById('spreadsheet-upload-text');
+    const spreadProgress = document.getElementById('spreadsheet-progress');
+    const spreadFilename = document.getElementById('spreadsheet-filename');
+
+    const imageUploadText = document.getElementById('image-upload-text');
+    const imageProgress = document.getElementById('image-progress');
+    const imageFilename = document.getElementById('image-filename');
+
     let uploadedSpreadsheetData = null;
     let uploadedImageFiles = [];
 
@@ -518,6 +591,26 @@
     function backToCollections() {
         uploadContainer.style.display = 'none';
         mainContainer.style.display = 'block'; // or 'block' if flex doesn't work
+        resetSpreadsheetUpload();
+        resetImageUpload();
+    }
+
+    function resetSpreadsheetUpload() {
+        // Reset upload box to initial state
+        spreadUploadText.style.display = 'block';
+        spreadProgress.style.display = 'none';
+        spreadFilename.style.display = 'none';
+        document.getElementById('spreadsheetInput').value = '';
+        uploadedSpreadsheetData = null;
+    }
+
+    function resetImageUpload() {
+        // Reset image upload box to initial state
+        imageUploadText.style.display = 'block';
+        imageProgress.style.display = 'none';
+        imageFilename.style.display = 'none';
+        document.getElementById('imageInput').value = '';
+        uploadedImageFiles = [];
     }
 
     // Click on upload box triggers file input
@@ -731,8 +824,39 @@
 
 
     document.getElementById('imageInput').addEventListener('change', function(event) {
-        uploadedImageFiles = Array.from(event.target.files);
-        event.target.value = '';
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+
+        // Show progress bar and hide upload text
+        imageUploadText.style.display = 'none';
+        imageProgress.style.display = 'block';
+        imageFilename.style.display = 'none';
+
+        // Simulate upload progress
+        const progressBar = imageProgress.querySelector('.progress-bar-upload');
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+                
+                // Hide progress and show file count
+                setTimeout(() => {
+                    imageProgress.style.display = 'none';
+                    imageFilename.style.display = 'block';
+                    
+                    // Display file count with appropriate text
+                    const fileCount = files.length;
+                    const fileText = fileCount === 1 ? '1 image uploaded' : `${fileCount} images uploaded`;
+                    imageFilename.textContent = fileText;
+                    
+                    // Store the uploaded files
+                    uploadedImageFiles = files;
+                }, 300);
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
     });
 
     // Add spreadsheet input event listener
@@ -740,6 +864,35 @@
         const file = event.target.files[0];
         if (!file) return;
 
+        // Show progress bar and hide upload text
+        spreadUploadText.style.display = 'none';
+        spreadProgress.style.display = 'block';
+        spreadFilename.style.display = 'none';
+
+        // Simulate upload progress
+        const progressBar = document.querySelector('.progress-bar-upload');
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+                
+                // Hide progress and show filename
+                setTimeout(() => {
+                    spreadProgress.style.display = 'none';
+                    spreadFilename.style.display = 'block';
+                    spreadFilename.textContent = file.name;
+                    
+                    // Process the file
+                    processSpreadsheetFile(file);
+                }, 300);
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
+    });
+
+    function processSpreadsheetFile(file) {
         const reader = new FileReader();
         reader.onload = function(e) {
             // Read CSV as text
@@ -776,8 +929,7 @@
             }
         };
         reader.readAsText(file); // <-- Use readAsText for CSV
-        event.target.value = '';
-    });
+    }
 
     function handleGenerateArtwork() {
         // Hide the button and show the progress bar
