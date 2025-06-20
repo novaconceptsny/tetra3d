@@ -60,6 +60,7 @@ class InventoryDatatable extends BaseDatatable
                 'data',
                 'artist',
                 'type',
+                'image_url',
                 'created_at',
                 \DB::raw("'artwork' as model_type")
             ])
