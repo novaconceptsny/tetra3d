@@ -649,62 +649,58 @@
 
 
     function downloadSpreadsheet() {
+        const data = [
+            ['Artwork upload spreadsheet'],
+            [],
+            ['Add required information for each piece of artwork'],
+            ["Ensure the 'Filename' fully matches the images filename"],
+            ['Upload completed spreadsheet to Tetra'],
+            [],
+            ['Filename', 'Collection', 'Title', 'Artist', 'Height (in)', 'Width (in)', 'Type']
+        ];
+
         const rows = document.querySelectorAll('#artworkTableBody tr');
-        const data = [];
-
-        // Add header row
-        const headers = ['Filename', 'Collection', 'Title', 'Artist', 'Height (inch)', 'Width (inch)', 'Type'];
-        data.push(headers);
-
-        // Process each row
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length < 8) return; // 7 data cells + 1 button cell
+            if (cells.length < 8) return;
 
             const rowData = [];
-
-            // 1. Filename from image
             const img = cells[0].querySelector('img');
             rowData.push(img ? img.getAttribute('data-filename') || '' : '');
-
+            
             // 2. Collection
             const collectionSelect = cells[1].querySelector('select');
             rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
             
-            // 3. Title
             rowData.push(cells[2].textContent.trim());
-
-            // 4. Artist
             rowData.push(cells[3].textContent.trim());
-
-            // 5. Height
             rowData.push(cells[4].querySelector('input').value);
-
-            // 6. Width
             rowData.push(cells[5].querySelector('input').value);
 
-            // 7. Type
             const typeSelect = cells[6].querySelector('select');
             rowData.push(typeSelect && typeSelect.value ? typeSelect.options[typeSelect.selectedIndex].text : '');
 
             data.push(rowData);
         });
 
-        // Convert data to CSV format
-        const csvContent = data.map(e => e.map(cell => {
-            const escaped = String(cell == null ? "" : cell).replace(/"/g, '""');
-            if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
-                return `"${escaped}"`;
-            }
-            return escaped;
-        }).join(',')).join('\n');
+        const worksheet = XLSX.utils.aoa_to_sheet(data, {
+            cellStyles: false,
+            sheetStubs: true
+        });
 
-        // Create and download CSV file
+        if (!worksheet['!merges']) worksheet['!merges'] = [];
+        worksheet['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 2, c: 0 }, e: { r: 2, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 3, c: 0 }, e: { r: 3, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } });
+
+        const csvContent = XLSX.utils.sheet_to_csv(worksheet);
+        
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', 'artworks.csv');
+        link.setAttribute('download', 'artworks_template.csv');
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
