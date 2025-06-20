@@ -625,7 +625,7 @@
 
         // Add header row
         data.push([
-            'ImageName',
+            'FileName',
             'Collection',
             'Title',
             'Artist',
@@ -643,8 +643,6 @@
             for (let i = 0; i < cells.length - 1; i++) {
                 const cell = cells[i];
                 
-                if (cell.querySelector('img')) {
-                }
                 // Handle different types of cells
                 if (cell.querySelector('select')) {
                     // For collection dropdown
@@ -924,7 +922,7 @@
             
             // Convert to array of objects
             if (rawData.length > 1) { // Check if we have header and at least one data row
-                const filteredData = rawData.slice(6);
+                const filteredData = rawData.filter(row => row.length >= 6).slice(0);
                 uploadedSpreadsheetData = [];
                 
                 // Process each data row (skip header)
