@@ -765,18 +765,19 @@
         const rows = tbody.querySelectorAll('tr');
         const data = [];
 
-        rows.forEach(row => {
+        // First, collect all the data
+        rows.forEach((row, index) => {
             const cells = row.querySelectorAll('td');
-            const image = cells[0].querySelector('img').src;
+            const image = cells[0].querySelector('img');
             const collectionSelect = cells[1].querySelector('select');
             
             const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
-
-            const typeSelect = cells[6].querySelector('select')
-            const typeInfo = typeSelect.options[typeSelect.selectedIndex].text
+            const typeSelect = cells[6].querySelector('select');
+            const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
 
             const rowData = {   
-                image : image,
+                image_src: image.src,
+                image_filename: image.getAttribute('data-filename') || `artwork_${index}.jpg`,
                 collection_name: collectionName,
                 title: cells[2].textContent.trim(),
                 artist: cells[3].textContent.trim(),
@@ -787,9 +788,28 @@
             data.push(rowData);
         });
 
-
+        // Create FormData and append artwork data
         const formData = new FormData();
         formData.append('artwork_data', JSON.stringify(data));
+
+        // Convert base64 images to files and append them
+        data.forEach((rowData, index) => {
+            if (rowData.image_src && rowData.image_src.startsWith('data:')) {
+                // Convert base64 to blob
+                const base64Data = rowData.image_src.split(',')[1];
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                
+                // Create file from blob
+                const file = new File([blob], rowData.image_filename, { type: 'image/jpeg' });
+                formData.append(`image_${index}`, file);
+            }
+        });
 
         const token = document.querySelector('meta[name="csrf-token"]').content;
 
@@ -1018,8 +1038,7 @@
                     newRow.innerHTML = `
                         <td><img src="${e.target.result}" data-filename="${spreadsheetFilename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
                         <td style="width: 480px;">
-                            <select class="form-select">
-                                <option value="">Select Collection</option>
+                            <select class="form-select"
                                 @foreach($collections as $collection)
                                     <option value="{{$collection->id}}">{{$collection->name}}</option>
                                 @endforeach

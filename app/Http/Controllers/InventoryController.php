@@ -90,26 +90,63 @@ class InventoryController extends Controller
                 return response()->json(['success' => false, 'message' => 'Invalid data.'], 400);
             }
 
-            foreach ($artworkData as $row) {
-
-                if($row['image'] != null) {
-                    $path = $row['image'];
-                    $artwork->image_url = Storage::url($path);
+            // Validate required fields
+            foreach ($artworkData as $index => $row) {
+                if (empty($row['title'])) {
+                    return response()->json(['success' => false, 'message' => "Title is required for artwork #{$index}."], 400);
                 }
-                // You may want to validate each row here
+                
+                if (empty($row['collection_name'])) {
+                    return response()->json(['success' => false, 'message' => "Collection is required for artwork #{$index}."], 400);
+                }
+            }
+
+            foreach ($artworkData as $index => $row) {
+                // Create artwork object first
                 $artwork = new Artwork();
                 $artwork->company_id = user()->company_id;
-                $artwork->artwork_collection_id = ArtworkCollection::where('name', $row['collection_name'])->first()->id;
+                
+                // Find collection by name
+                $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
+                if (!$collection) {
+                    return response()->json(['success' => false, 'message' => "Collection '{$row['collection_name']}' not found."], 400);
+                }
+                $artwork->artwork_collection_id = $collection->id;
+                
                 $artwork->name = $row['title'] ?? '';
                 $artwork->artist = $row['artist'] ?? '';
                 $artwork->type = $row['type'] ?? '';
-                $artwork->image_url = $row['image'] ?? '';
+                
+                // Set artwork data
                 $artwork->data = [
                     'width' => $row['width'] ?? '',
                     'height' => $row['height'] ?? '',
                     'scale' => $row['scale'] ?? '',
                 ];
+                
+                // Save artwork first to get the ID
                 $artwork->save();
+                
+                // Handle image upload after artwork is saved (so we have the ID)
+                if ($request->hasFile("image_{$index}")) {
+                    $imageFile = $request->file("image_{$index}");
+                    
+                    // Validate image
+                    $request->validate([
+                        "image_{$index}" => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+                    ]);
+                    
+                    // Create directory for this artwork
+                    $artworkDir = 'media/artworks/' . $artwork->id;
+
+                    $filename = $imageFile->getClientOriginalName();                    
+                    // Create a clean filename with extension
+                    $filename = $filename . '.' . "jpg";
+                    
+                    $path = $imageFile->storeAs($artworkDir, $filename, 'public');
+                    $artwork->image_url = Storage::url($path);
+                    $artwork->save();
+                }
             }
 
             return response()->json(['success' => true, 'message' => 'Artworks added successfully']);
