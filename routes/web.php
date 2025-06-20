@@ -6,6 +6,7 @@ use App\Http\Controllers\PhotoStateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\Tour360Controller;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +132,15 @@ Route::group([
 });
 
 
+Route::get('/send-test', function () {
+    Mail::raw('This is a test email via SES SMTP.', function ($msg) {
+        $msg->to('kasia@novaconceptsny.com')
+            ->from('notify@tetra3d.com', 'Tetra3D Notifications')
+            ->subject('SES Laravel Test');
+    });
+
+    return 'Email sent!';
+});
 
 
 
