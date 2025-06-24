@@ -192,7 +192,7 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Upload spreadsheet</label>
                     <div class="upload-box" id="spreadsheet-upload">
-                        <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv file</span>
+                        <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv, .xlsx, .xls file</span>
                         <div id="spreadsheet-progress" style="display: none;">
                             <div class="progress-container">
                                 <div class="progress-bar-upload"></div>
@@ -964,13 +964,27 @@
 
     function processSpreadsheetFile(file) {
         const reader = new FileReader();
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        
         reader.onload = function(e) {
-            // Read CSV as text
-            const csv = e.target.result;
-            // Parse CSV using XLSX
-            const workbook = XLSX.read(csv, { type: 'string' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            let rawData;
+            
+            if (fileExtension === 'csv') {
+                // Handle CSV files
+                const csv = e.target.result;
+                const workbook = XLSX.read(csv, { type: 'string' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+                // Handle XLSX/XLS files
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            } else {
+                alert('Unsupported file format. Please upload a .csv, .xlsx, or .xls file.');
+                return;
+            }
             
             // Convert to array of objects
             if (rawData.length > 1) { // Check if we have header and at least one data row
@@ -999,7 +1013,12 @@
             }
         };
         
-        reader.readAsText(file); // <-- Use readAsText for CSV
+        // Use appropriate read method based on file type
+        if (fileExtension === 'csv') {
+            reader.readAsText(file);
+        } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+            reader.readAsArrayBuffer(file);
+        }
     }
 
     function handleGenerateArtwork() {
