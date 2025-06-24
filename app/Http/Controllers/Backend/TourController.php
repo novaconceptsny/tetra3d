@@ -81,9 +81,9 @@ class TourController extends Controller
         $request->validate(ValidationRules::updateTour());
 
         $company_ids = (array) $request->input('company_id', []);
-        $main_company_id = array_shift($company_ids); // first is main
 
-        $company_has_changed = $tour->company_id != $main_company_id;
+        $company_has_changed = !in_array($tour->company_id, $company_ids);
+        $main_company_id = $company_has_changed ? array_shift($company_ids) : $tour->company_id;
 
         if ($company_has_changed && $tour->projects->count()) {
             return redirect()->back()
