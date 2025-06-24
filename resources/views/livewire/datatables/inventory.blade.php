@@ -186,7 +186,7 @@
                 </button>
             </div>
             <div class="text-center mb-4">
-                <button class="btn btn-primary" id="download-template-btn" onclick="downloadSpreadsheet()">Download spreadsheet template</button>
+                <button class="btn btn-primary" id="download-template-btn" onclick="downloadSpreadsheet()">Download spreadsheet template (.csv, .xlsx)</button>
             </div>
             <div class="row mb-4">
                 <div class="col-md-6 mb-3">
@@ -683,6 +683,12 @@
             data.push(rowData);
         });
 
+        // Download both formats
+        downloadCSV(data);
+        downloadXLSX(data);
+    }
+
+    function downloadCSV(data) {
         const worksheet = XLSX.utils.aoa_to_sheet(data, {
             cellStyles: false,
             sheetStubs: true
@@ -701,6 +707,36 @@
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
         link.setAttribute('download', 'artworks_template.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function downloadXLSX(data) {
+        const worksheet = XLSX.utils.aoa_to_sheet(data, {
+            cellStyles: false,
+            sheetStubs: true
+        });
+
+        if (!worksheet['!merges']) worksheet['!merges'] = [];
+        worksheet['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 2, c: 0 }, e: { r: 2, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 3, c: 0 }, e: { r: 3, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } });
+
+        // Create workbook with the worksheet
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Artworks Template');
+
+        // Generate XLSX file
+        const xlsxContent = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        
+        const blob = new Blob([xlsxContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'artworks_template.xlsx');
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
