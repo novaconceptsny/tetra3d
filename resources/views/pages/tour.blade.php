@@ -853,6 +853,7 @@
 
         textureLoader.load(image_url, (texture) => {
             // Flip the texture horizontally and vertically
+            console.log(texture, "111111111111111");
             texture.flipY = true; // Flips vertically
             texture.center.set(0.5, 0.5); // Set rotation center point
             texture.rotation = Math.PI; // Rotate 180 degrees to flip horizontally
