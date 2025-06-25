@@ -274,7 +274,7 @@
     var sculptures = @json($sculptures);
     var sculpture_data = @json($sculptureData);
     var artworks_data = @json($artworkData);
-    console.log(artworks_data, "ppppppppppppp");
+    console.log(artworks_data, "assigned artworks");
     var surface_data = @json($surfaceData);
     var spot_id = "{{ $spot->id }}";
 
@@ -845,7 +845,6 @@
     }
 
     function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, normal_x, normal_y, normal_z) {
-        console.log(art_id, image_url, "ppppppppppppp");
         // Load a texture (image)
         const textureLoader = new THREE.TextureLoader();
 
@@ -853,7 +852,6 @@
 
         textureLoader.load(image_url, (texture) => {
             // Flip the texture horizontally and vertically
-            console.log(texture, "111111111111111");
             texture.flipY = true; // Flips vertically
             texture.center.set(0.5, 0.5); // Set rotation center point
             texture.rotation = Math.PI; // Rotate 180 degrees to flip horizontally
