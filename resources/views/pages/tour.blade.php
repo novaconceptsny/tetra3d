@@ -845,14 +845,12 @@
     }
 
     function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, normal_x, normal_y, normal_z) {
-
+        console.log(art_id, image_url, "ppppppppppppp");
         // Load a texture (image)
         const textureLoader = new THREE.TextureLoader();
 
         var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
-        // const _image_url = "thumb2.png";
-        // var base_url = '<?php echo asset(''); ?>';
-        // var model_url = base_url + 'storage/' + image_url;
+
         textureLoader.load(image_url, (texture) => {
             // Flip the texture horizontally and vertically
             texture.flipY = true; // Flips vertically
