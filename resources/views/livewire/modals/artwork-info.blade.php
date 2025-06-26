@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body p-0">
-                        <h4 class="card-title text-primary mb-3">{{ $artwork->name }}</h4>
+                        <h5 class="card-title text-primary mb-3">{{ $artwork->name }}</h5>
                         <ul class="list-unstyled mb-0">
                             @if($artwork->artist)
                                 <li class="mb-2">
