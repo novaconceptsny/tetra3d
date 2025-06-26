@@ -339,9 +339,7 @@ function krpanoplugin() {
 
 	function do_object_hittest(mx, my) {
 		// Check if current URL contains "/shared-tours/"
-		if (window.location.pathname.includes("shared-tours")) {
-			return null;
-		}
+		const tour_is_shared = window.location.pathname.includes("shared-tours");
 
 		const pointer = new THREE.Vector2();
 		pointer.x = (mx / krpano.area.pixelwidth) * 2.0 - 1.0;
@@ -390,8 +388,17 @@ function krpanoplugin() {
 		if (intersects.length > 0) {
 			var obj = intersects[0].object;
 		}
-		if (point)
+		if (point){
+			if(tour_is_shared){
+				if(object.userData.type === "artwork"){
+					console.log(object.userData, "artwork");
+					return { object: object, gizmo: gizmo, point: point };
+				}else{
+					return null;
+				}
+			}
 			return { object: object, gizmo: gizmo, point: point };
+		}
 		else return null;
 	}
 
