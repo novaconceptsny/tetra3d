@@ -83,6 +83,8 @@ function krpanoplugin() {
 	var krpano_depthbuffer_scale = 1.0001;				// depthbuffer scaling (use ThreeJS defaults: znear=0.1, zfar=2000)
 	var krpano_depthbuffer_offset = -0.2;
 
+	var sharedArtworkInfo = false;
+
 	function start() {
 		// create the ThreeJS WebGL renderer, but use the WebGL context from krpano
 		renderer = new THREE.WebGLRenderer({ canvas: krpano.webGL.canvas, context: krpano.webGL.context });
@@ -340,8 +342,6 @@ function krpanoplugin() {
 	function do_object_hittest(mx, my) {
 		// Check if current URL contains "/shared-tours/"
 		const tour_is_shared = window.location.pathname.includes("shared-tours");
-		console.log(tour_is_shared, "tour_is_shared");
-
 		const pointer = new THREE.Vector2();
 		pointer.x = (mx / krpano.area.pixelwidth) * 2.0 - 1.0;
 		pointer.y = -(my / krpano.area.pixelheight) * 2.0 + 1.0;
@@ -392,7 +392,7 @@ function krpanoplugin() {
 		if (point){
 			if(tour_is_shared){
 				if(object.userData.type === "artwork"){
-					console.log(object.userData, "artwork");
+					sharedArtworkInfo = true;
 					return { object: object, gizmo: gizmo, point: point };
 				}else{
 					return null;
