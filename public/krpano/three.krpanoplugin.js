@@ -83,7 +83,7 @@ function krpanoplugin() {
 	var krpano_depthbuffer_scale = 1.0001;				// depthbuffer scaling (use ThreeJS defaults: znear=0.1, zfar=2000)
 	var krpano_depthbuffer_offset = -0.2;
 
-	var sharedArtworkInfo = false;
+	var isSharedArtwork = false;
 
 	function start() {
 		// create the ThreeJS WebGL renderer, but use the WebGL context from krpano
@@ -389,14 +389,14 @@ function krpanoplugin() {
 		if (intersects.length > 0) {
 			var obj = intersects[0].object;
 		}
-		if (point){
-			if(tour_is_shared){
-				if(object.userData.type === "artwork"){
-					sharedArtworkInfo = true;
-					return { object: object, gizmo: gizmo, point: point };
-				}else{
-					return null;
+		if (point) {
+			if (tour_is_shared) {
+				if (object.userData.type === "artwork") {
+					isSharedArtwork = true;
+					// Store the artwork ID for modal
+					window.selectedArtworkId = object.userData.art_id;
 				}
+				return null;
 			}
 			return { object: object, gizmo: gizmo, point: point };
 		}
@@ -556,6 +556,29 @@ function krpanoplugin() {
 				make_gizmo(selectedObj);
 				// }
 			}
+
+			// Check if this is a shared tour and artwork was clicked
+			if (isSharedArtwork &&  window.selectedArtworkId) {
+				console.log('Artwork clicked in shared tour:', {
+					artworkId: window.selectedArtworkId,
+					isSharedArtwork: isSharedArtwork
+				});
+
+				// Trigger the artwork info modal
+				if (typeof Livewire !== 'undefined') {
+					console.log('Triggering artwork info modal for artwork ID:', window.selectedArtworkId);
+					Livewire.dispatch('modal.open', {
+						component: 'modals.artwork-info',
+						arguments: { 'artworkId': window.selectedArtworkId }
+					});
+				} else {
+					console.warn('Livewire is not available');
+				}
+				// Reset the flag
+				isSharedArtwork = false;
+				window.selectedArtworkId = null;
+			}
+
 			if (hitobj && isDown && (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") && selected_surface_id === hitobj.userData.surface_id) {
 				var hlookat = krpano.view.hlookat;
 				var vlookat = krpano.view.vlookat;
@@ -605,7 +628,7 @@ function krpanoplugin() {
 		arrow_y.rotation.x = -Math.PI; // Y arrow rotation
 		arrow_z.rotation.x = Math.PI / 2;
 		direct_x.rotation.z = Math.PI / 2;
-	    direct_y.rotation.z = 0; // Y direct rotation
+		direct_y.rotation.z = 0; // Y direct rotation
 		direct_z.rotation.x = Math.PI / 2;
 		gizmoPlane.rotation.x = Math.PI / 2;
 
