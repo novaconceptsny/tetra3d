@@ -340,6 +340,7 @@ function krpanoplugin() {
 	function do_object_hittest(mx, my) {
 		// Check if current URL contains "/shared-tours/"
 		const tour_is_shared = window.location.pathname.includes("shared-tours");
+		console.log(tour_is_shared, "tour_is_shared");
 
 		const pointer = new THREE.Vector2();
 		pointer.x = (mx / krpano.area.pixelwidth) * 2.0 - 1.0;
