@@ -85,7 +85,6 @@ class SurfaceController extends Controller
 
     public function update(Request $request, Surface $surface)
     {
-        dd($request->all());
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'display_name' => 'required|string|max:255',
