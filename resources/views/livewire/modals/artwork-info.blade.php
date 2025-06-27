@@ -11,7 +11,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center gap-4">
                 <div class="col-md-12">
                     @if($artwork->image_url)
-                        <img src="{{ $artwork->image_url }}" class="img-fluid rounded shadow-sm" alt="{{ $artwork->name }}" style="max-height: 800px; object-fit: cover;">
+                        <img src="{{ $artwork->image_url }}" class="img-fluid rounded shadow-sm" alt="{{ $artwork->name }}" style="max-height: 500px; object-fit: cover;">
                     @else
                         <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
                             <i class="fas fa-image fa-3x text-muted"></i>
