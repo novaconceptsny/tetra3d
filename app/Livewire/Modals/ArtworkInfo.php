@@ -27,4 +27,13 @@ class ArtworkInfo extends Modal
     {
         $this->dispatch('modal.close');
     }
+ 
+    public static function attributes(): array
+    {
+        return [
+            // Set the modal size to 2xl, you can choose between:
+            // xs, sm, md, lg, xl, 2xl, 3xl, 4xl, 5xl, 6xl, 7xl, fullscreen
+            'size' => '8xl',
+        ];
+    }
 } 
