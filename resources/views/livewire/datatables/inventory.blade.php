@@ -482,6 +482,12 @@
         border-color: #2453e3;
         background: #e9f0fb;
     }
+    .upload-box.dragover {
+        border-color: #007bff;
+        background: #f8f9fa;
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+    }
     .upload-box input[type="file"] {
         position: absolute;
         width: 100%;
@@ -592,6 +598,15 @@
                 }
             });
         }
+
+        // Prevent default drag and drop behavior on the entire document
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+        });
     });
 
     function handleOpenCollectionModal() {
@@ -647,6 +662,93 @@
     document.getElementById('spreadsheet-upload').onclick = () => document.getElementById('spreadsheetInput').click();
     document.getElementById('image-upload').onclick = () => document.getElementById('imageInput').click();
 
+    // Add drag and drop functionality for spreadsheet upload
+    const spreadsheetUpload = document.getElementById('spreadsheet-upload');
+    const spreadsheetInput = document.getElementById('spreadsheetInput');
+
+    spreadsheetUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    spreadsheetUpload.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    spreadsheetUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            // Check if file type is valid
+            const validTypes = ['.csv', '.xlsx', '.xls'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (validTypes.includes(fileExtension)) {
+                // Set the file to the input
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                spreadsheetInput.files = dataTransfer.files;
+                
+                // Trigger the change event
+                const event = new Event('change', { bubbles: true });
+                spreadsheetInput.dispatchEvent(event);
+            } else {
+                alert('Please select a valid file type (.csv, .xlsx, .xls)');
+            }
+        }
+    });
+
+    // Add drag and drop functionality for image upload
+    const imageUpload = document.getElementById('image-upload');
+    const imageInput = document.getElementById('imageInput');
+
+    imageUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    imageUpload.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    imageUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            // Check if all files are valid image types
+            const validTypes = ['.png', '.jpg', '.jpeg'];
+            const validFiles = Array.from(files).filter(file => {
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                return validTypes.includes(fileExtension);
+            });
+            
+            if (validFiles.length === files.length) {
+                // Set the files to the input
+                const dataTransfer = new DataTransfer();
+                validFiles.forEach(file => dataTransfer.items.add(file));
+                imageInput.files = dataTransfer.files;
+                
+                // Trigger the change event
+                const event = new Event('change', { bubbles: true });
+                imageInput.dispatchEvent(event);
+            } else {
+                alert('Please select valid image files (.png, .jpg, .jpeg)');
+            }
+        }
+    });
 
     function downloadSpreadsheet() {
         const data = [
