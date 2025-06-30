@@ -787,7 +787,7 @@
 
         // Download both formats
         downloadCSV(data);
-        downloadXLSX(data);
+       // downloadXLSX(data);
     }
 
     function downloadCSV(data) {
