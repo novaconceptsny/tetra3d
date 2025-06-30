@@ -119,8 +119,8 @@ class InventoryController extends Controller
                 
                 // Set artwork data
                 $artwork->data = [
-                    'width' => $row['width'] ?? '',
-                    'height' => $row['height'] ?? '',
+                    'height_inch' => $row['height'] ?? '',
+                    'width_inch' => $row['width'] ?? '',
                     'scale' => $row['scale'] ?? '',
                 ];
                 

@@ -1100,11 +1100,11 @@
                         const artwork = {};
                         
                         artwork.Filename = row[0].toString();
-                        artwork.Title = row[1].toString();
-                        artwork.Artist = row[2].toString();
-                        artwork.Height = row[3].toString();
-                        artwork.Width = row[4].toString();
-                        artwork.Type = row[5].toString();
+                        artwork.Title = row.length > 6 ? row[2].toString() : row[1].toString();
+                        artwork.Artist = row.length > 6 ? row[3].toString() : row[2].toString();
+                        artwork.Height = row.length > 6 ? row[4].toString() : row[3].toString();
+                        artwork.Width = row.length > 6 ? row[5].toString() : row[4].toString();
+                        artwork.Type = row.length > 6 ? row[6].toString() : row[5].toString();
                         
                         // Only add if we have at least a filename
                         if (artwork.Filename || artwork['ImageName'] || artwork['Image Name']) {
