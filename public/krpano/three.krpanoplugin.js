@@ -343,6 +343,7 @@ function krpanoplugin() {
 	function do_object_hittest(mx, my) {
 		// Check if current URL contains "/shared-tours/"
 		tour_is_shared = window.location.pathname.includes("shared-tours");
+		
 		const pointer = new THREE.Vector2();
 		pointer.x = (mx / krpano.area.pixelwidth) * 2.0 - 1.0;
 		pointer.y = -(my / krpano.area.pixelheight) * 2.0 + 1.0;
@@ -356,7 +357,6 @@ function krpanoplugin() {
 		var i;
 		var object = null;
 		var gizmo = null;
-		var surface = null;
 		var point = null;
 
 		for (i = 0; i < intersects.length; i++) {
@@ -373,15 +373,12 @@ function krpanoplugin() {
 
 			if (obj.userData.type === "surface") {
 				obj = intersects[0].object;
-				surface = obj;
 				point = intersects[i].point;
 				object = obj;
 			}
 
 			if (obj.userData.type === "artwork") {
-
 				obj = intersects[0].object;
-				surface = obj;
 				point = intersects[i].point;
 				object = obj;
 			}
@@ -664,7 +661,7 @@ function krpanoplugin() {
 		{
 			var hittest = do_object_hittest(krpano.mouse.x, krpano.mouse.y);
 
-			if (hittest) {
+			if (hittest && (!tour_is_shared || (tour_is_shared && hittest.object.userData.type === "artwork"))) {
 				if (hittest.object || hittest.gizmo) {
 					krpano.control.layer.style.cursor = krpano.cursors.hit;
 				} else {

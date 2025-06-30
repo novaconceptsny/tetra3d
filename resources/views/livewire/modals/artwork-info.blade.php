@@ -85,9 +85,9 @@
     </div>
 
     <div class="d-flex justify-content-end">
-        <button class="btn btn-primary c-btn-primary" type="button" wire:click="closeModal">
+        <!-- <button class="btn btn-primary c-btn-primary" type="button" wire:click="closeModal">
             <i class="fas fa-times me-1"></i>
             {{ __('Close') }}
-        </button>
+        </button> -->
     </div>
 </x-wire-elements-pro::bootstrap.modal> 
