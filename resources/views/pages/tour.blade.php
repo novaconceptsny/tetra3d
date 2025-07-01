@@ -856,53 +856,45 @@
             texture.center.set(0.5, 0.5); // Set rotation center point
             texture.rotation = Math.PI; // Rotate 180 degrees to flip horizontally
             // Create a geometry with the same aspect ratio
-            const geometry = new THREE.PlaneGeometry(imageWidth, imageHeight);
+            const boxDepth = 0.1; // Adjust as needed
+            const geometry = new THREE.BoxGeometry(imageWidth, imageHeight, boxDepth);
             geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
 
-            // Create a material with transparency enabled
-            const material = new THREE.MeshBasicMaterial({
-                map: texture,
-                side: THREE.DoubleSide,
-                transparent: true,  // Enable transparency
-                alphaTest: 0.1     // Optional: helps prevent alpha sorting issues
-            });
+            const materials = [
+                new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }), // right
+                new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }), // left
+                new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }), // top
+                new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }), // bottom
+                new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }),    // front
+                new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 })  // back
+            ];
 
-            // Create a mesh with the geometry and material
-            const plane = new THREE.Mesh(geometry, material);
-            plane.userData.type = "artwork";
-            plane.userData.art_id = art_id;
-            plane.userData.surfacestateId = surfacestateId;
-            plane.userData.surface_id = surface_id;
-            plane.userData.layout_id = layout_id;
-            plane.userData.spot_id = spot_id;
-            scene.add(plane);
+            const box = new THREE.Mesh(geometry, materials);
+            box.userData.type = "artwork";
+            box.userData.art_id = art_id;
+            box.userData.surfacestateId = surfacestateId;
+            box.userData.surface_id = surface_id;
+            box.userData.layout_id = layout_id;
+            box.userData.spot_id = spot_id;
+            scene.add(box);
 
-                // Create normal vector and calculate rotation
+            // Create normal vector and calculate rotation
             const normal = new THREE.Vector3(normal_x, normal_y, normal_z).normalize();
             // Default plane normal (facing forward)
             const defaultNormal = new THREE.Vector3(0.001, 0, 1);
-
-            // Calculate rotation axis and angle
-            const rotationAxis = new THREE.Vector3();
-            rotationAxis.crossVectors(defaultNormal, normal);
-            rotationAxis.normalize();
-
+            const rotationAxis = new THREE.Vector3().crossVectors(defaultNormal, normal).normalize();
             const rotationAngle = Math.acos(defaultNormal.dot(normal));
-
-            // Create quaternion for the rotation
-            const quaternion = new THREE.Quaternion();
-            quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
+            const quaternion = new THREE.Quaternion().setFromAxisAngle(rotationAxis, rotationAngle);
+            box.setRotationFromQuaternion(quaternion);
 
             // Apply the rotation
-            plane.setRotationFromQuaternion(quaternion);
-
             // Convert quaternion to Euler angles for the assign_object_properties function
             const euler = new THREE.Euler();
             euler.setFromQuaternion(quaternion);
 
             const ry = 180- Math.atan2(normal.x, normal.z) * (180 / Math.PI);
 
-            assign_object_properties(plane, "artwork", {
+            assign_object_properties(box, "artwork", {
                 ath: spherical_position.phi,
                 atv: spherical_position.theta,
                 depth: spherical_position.r,
