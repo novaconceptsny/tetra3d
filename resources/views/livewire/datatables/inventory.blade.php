@@ -903,8 +903,15 @@
     function handleAddRow() {
         const tbody = document.getElementById('artworkTableBody');
         const row = document.createElement('tr');
+        const uniqueId = 'artwork-image-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+
         row.innerHTML = `
-            <td></td>
+            <td>
+                <div class="upload-box artwork-image-upload" style="width: 60px; height: 60px; min-height: 0; padding: 0; font-size: 12px; cursor: pointer;">
+                    <span class="artwork-image-upload-text">Select or drag file</span>
+                    <input type="file" accept=".png,.jpg,.jpeg" style="display:none;" id="${uniqueId}">
+                </div>
+            </td>
             <td style="width: 480px;">
                 <select class="form-select artwork-collection-select">
                     <option value="">Select Collection</option>
@@ -928,6 +935,47 @@
         `;
         row.querySelector('button').onclick = function() { row.remove(); };
         tbody.appendChild(row);
+
+        // --- Image upload logic for this row ---
+        const uploadBox = row.querySelector('.artwork-image-upload');
+        const fileInput = row.querySelector('input[type="file"]');
+        const uploadText = row.querySelector('.artwork-image-upload-text');
+
+        // Click upload box triggers file input
+        uploadBox.onclick = function(e) {
+            if (e.target === fileInput) return; // Don't double-trigger
+            fileInput.click();
+        };
+
+        // Drag & drop support
+        uploadBox.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+        uploadBox.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+        });
+        uploadBox.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
+        // File input change: show preview
+        fileInput.addEventListener('change', function(e) {
+            const file = fileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                uploadBox.innerHTML = `<img src="${ev.target.result}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" data-filename="${file.name}">`;
+            };
+            reader.readAsDataURL(file);
+        });
     }
 
     function handleSubmitArtworks() {
