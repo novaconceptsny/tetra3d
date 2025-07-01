@@ -37,6 +37,10 @@
                 <x-backend::inputs.text col="col-6" name="data.width_inch" value="{{ $artwork?->data->width_inch }}"
                     label="Width" />
                 <div class="col-12">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" name="description" id="description" rows="4">{{ $artwork?->description }}</textarea>
+                </div>
+                <div class="col-12">
                     <h5>{{ __('Artwork') }}</h5>
                     <x-backend::media-attachment name="image" rules="max:20480"
                         :media="$artwork?->getFirstMedia('image')" />

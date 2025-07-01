@@ -37,6 +37,7 @@ class ArtworkController extends Controller
             'name',
             'artist',
             'type',
+            'description',
             'data',
             'artwork_collection_id'
         ]));
@@ -79,6 +80,7 @@ class ArtworkController extends Controller
             'name',
             'artist',
             'type',
+            'description',
             'data',
             'artwork_collection_id'
         ]));
