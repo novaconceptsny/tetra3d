@@ -505,6 +505,16 @@
         min-width: 80px;
     }
 
+    .table td[contenteditable="true"]:empty:before {
+        content: attr(data-placeholder);
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    .table td[contenteditable="true"]:focus:empty:before {
+        color: #adb5bd;
+    }
+
     .btn-warning {
         background-color: #ffc107;
         color: #000;
@@ -903,11 +913,11 @@
                     @endforeach
                 </select>
             </td>
-            <td contenteditable="true"></td>
-            <td contenteditable="true"></td>
+            <td contenteditable="true" data-placeholder="Enter title..."></td>
+            <td contenteditable="true" data-placeholder="Enter artist name..."></td>
             <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
             <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
-            <td contenteditable="true"></td>
+            <td contenteditable="true" data-placeholder="Enter artwork description..."></td>
             <td>
                 <select class="form-select">
                     <option value="Painting">Painting</option>
@@ -1227,11 +1237,11 @@
                                 @endforeach
                             </select>
                         </td>
-                        <td contenteditable="true">${artwork.Title || artwork['Title'] || ''}</td>
-                        <td contenteditable="true">${artwork.Artist || artwork['Artist'] || ''}</td>
+                        <td contenteditable="true" data-placeholder="Enter title...">${artwork.Title || artwork['Title'] || ''}</td>
+                        <td contenteditable="true" data-placeholder="Enter artist name...">${artwork.Artist || artwork['Artist'] || ''}</td>
                         <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (inch)'] || artwork['Height'] || ''}" /></td>
                         <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (inch)'] || artwork['Width'] || ''}" /></td>
-                        <td contenteditable="true">${artwork.Description || artwork['Description'] || ''}</td>
+                        <td contenteditable="true" data-placeholder="Enter artwork description...">${artwork.Description || artwork['Description'] || ''}</td>
                         <td>
                             <select class="form-select">
                                 <option value="Painting" ${(artwork.Type || artwork['Type'] || '') === 'Painting' ? 'selected' : ''}>Painting</option>
