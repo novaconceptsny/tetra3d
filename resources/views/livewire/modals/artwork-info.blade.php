@@ -28,6 +28,17 @@
                                     <span class="text-dark">{{ $artwork->artist }}</span>
                                 </li>
                             @endif
+                            @if(isset($artwork->data['description']))
+                                <li class="mb-2">
+                                    <span class="fw-bold me-2 text-muted">Description:</span> 
+                                    <span class="text-dark">{{ $artwork->data['description'] }}</span>
+                                </li>
+                            @else
+                                <li class="mb-2">
+                                    <span class="fw-bold me-2 text-muted">Description:</span> 
+                                    <span class="text-dark">No Description</span>
+                                </li>
+                            @endif
                             @if($artwork->type)
                                 <li class="mb-2">
                                     <span class="fw-bold me-2 text-muted">Type:</span> 
@@ -50,12 +61,6 @@
                                 <li class="mb-2">
                                     <span class="fw-bold me-2 text-muted">Collection:</span> 
                                     <span class="text-dark">{{ $artwork->collection->name }}</span>
-                                </li>
-                            @endif
-                            @if(isset($artwork->data['description']))
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Description:</span> 
-                                    <span class="text-dark">{{ $artwork->data['description'] }}</span>
                                 </li>
                             @endif
                             @if(isset($artwork->data['year']))

@@ -30,7 +30,7 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                                 </ul>
-                            </div>                           
+                            </div>
                         </li>
                         @endforeach
                         <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks">
@@ -46,7 +46,7 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
                                 </ul>
-                            </div>                           
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -55,7 +55,7 @@
             <div class="flex-grow-1">
                 <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
                     <x-loader/>
-                    
+
                     <div class="card-header d-flex flex-column">
                         <div class="d-flex mb-2">
                             <h5 class="me-auto">{{ $heading }}</h5>
@@ -133,7 +133,7 @@
                         @endif
                         @include('backend.includes.datatable.toggle-columns')
                     </div>
-                    
+
                     <div class="card-body py-0">
                         <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
                             <table class="table table-borderless align-middle mb-0">
@@ -176,7 +176,7 @@
                 </div>
             </div>
         </div>
-    </div>        
+    </div>
 
     <div id="upload-artwork-container" style="display: none;">
         <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
@@ -238,7 +238,7 @@
                     @endforeach
                 </select>
             </div>
-            
+
             <!-- Artworks Table -->
             <div class="table-responsive mb-3">
                 <table class="table align-middle">
@@ -250,6 +250,7 @@
                             <th>Artist</th>
                             <th>Height (inch)</th>
                             <th>Width (inch)</th>
+                            <th>Description</th>
                             <th>Type</th>
                             <th></th>
                         </tr>
@@ -364,7 +365,7 @@
         font-size: 14px;
         color: #000;
     }
-        
+
     /* Collection List Styling */
     .list-group-item {
         border: none !important;
@@ -603,7 +604,7 @@
         document.addEventListener('dragover', function(e) {
             e.preventDefault();
         });
-        
+
         document.addEventListener('drop', function(e) {
             e.preventDefault();
         });
@@ -682,20 +683,20 @@
         e.preventDefault();
         e.stopPropagation();
         this.classList.remove('dragover');
-        
+
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             const file = files[0];
             // Check if file type is valid
             const validTypes = ['.csv', '.xlsx', '.xls'];
             const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-            
+
             if (validTypes.includes(fileExtension)) {
                 // Set the file to the input
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 spreadsheetInput.files = dataTransfer.files;
-                
+
                 // Trigger the change event
                 const event = new Event('change', { bubbles: true });
                 spreadsheetInput.dispatchEvent(event);
@@ -725,7 +726,7 @@
         e.preventDefault();
         e.stopPropagation();
         this.classList.remove('dragover');
-        
+
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             // Check if all files are valid image types
@@ -734,13 +735,13 @@
                 const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
                 return validTypes.includes(fileExtension);
             });
-            
+
             if (validFiles.length === files.length) {
                 // Set the files to the input
                 const dataTransfer = new DataTransfer();
                 validFiles.forEach(file => dataTransfer.items.add(file));
                 imageInput.files = dataTransfer.files;
-                
+
                 // Trigger the change event
                 const event = new Event('change', { bubbles: true });
                 imageInput.dispatchEvent(event);
@@ -758,36 +759,37 @@
             ["Ensure the 'Filename' fully matches the images filename"],
             ['Upload completed spreadsheet to Tetra'],
             [],
-            ['Filename', 'Collection', 'Title', 'Artist', 'Height (in)', 'Width (in)', 'Type']
+            ['Filename', 'Collection', 'Title', 'Artist', 'Height (in)', 'Width (in)', 'Description', 'Type']
         ];
 
         const rows = document.querySelectorAll('#artworkTableBody tr');
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length < 8) return;
+            if (cells.length < 9) return;
 
             const rowData = [];
             const img = cells[0].querySelector('img');
             rowData.push(img ? img.getAttribute('data-filename') || '' : '');
-            
+
             // 2. Collection
             const collectionSelect = cells[1].querySelector('select');
             rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
-            
+
             rowData.push(cells[2].textContent.trim());
             rowData.push(cells[3].textContent.trim());
             rowData.push(cells[4].querySelector('input').value);
             rowData.push(cells[5].querySelector('input').value);
+            rowData.push(cells[6].textContent.trim());
 
-            const typeSelect = cells[6].querySelector('select');
+            const typeSelect = cells[7].querySelector('select');
             rowData.push(typeSelect && typeSelect.value ? typeSelect.options[typeSelect.selectedIndex].text : '');
 
             data.push(rowData);
         });
 
         // Download both formats
-        downloadCSV(data);
-       // downloadXLSX(data);
+        // downloadCSV(data);
+        downloadXLSX(data);
     }
 
     function downloadCSV(data) {
@@ -803,7 +805,7 @@
         worksheet['!merges'].push({ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } });
 
         const csvContent = XLSX.utils.sheet_to_csv(worksheet);
-        
+
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
@@ -833,7 +835,7 @@
 
         // Generate XLSX file
         const xlsxContent = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-        
+
         const blob = new Blob([xlsxContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
@@ -906,6 +908,12 @@
             <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
             <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
             <td contenteditable="true"></td>
+            <td>
+                <select class="form-select">
+                    <option value="Painting">Painting</option>
+                    <option value="Sculpture">Sculpture</option>
+                </select>
+            </td>
             <td><button class="btn btn-danger btn-sm">Remove</button></td>
         `;
         row.querySelector('button').onclick = function() { row.remove(); };
@@ -922,12 +930,12 @@
             const cells = row.querySelectorAll('td');
             const image = cells[0].querySelector('img');
             const collectionSelect = cells[1].querySelector('select');
-            
+
             const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
-            const typeSelect = cells[6].querySelector('select');
+            const typeSelect = cells[7].querySelector('select');
             const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
 
-            const rowData = {   
+            const rowData = {
                 image_src: image.src,
                 image_filename: image.getAttribute('data-filename') || `artwork_${index}.jpg`,
                 collection_name: collectionName,
@@ -935,6 +943,7 @@
                 artist: cells[3].textContent.trim(),
                 height: cells[4].querySelector('input').value,
                 width: cells[5].querySelector('input').value,
+                description: cells[6].textContent.trim(),
                 type: typeInfo,
             };
             data.push(rowData);
@@ -956,7 +965,7 @@
                 }
                 const byteArray = new Uint8Array(byteNumbers);
                 const blob = new Blob([byteArray], { type: 'image/jpeg' });
-                
+
                 // Create file from blob
                 const file = new File([blob], rowData.image_filename, { type: 'image/jpeg' });
                 formData.append(`image_${index}`, file);
@@ -986,7 +995,7 @@
             console.error('Error:', error);
             alert('Error saving artworks.');
         });
-        
+
     }
 
     // Remove row
@@ -1012,17 +1021,17 @@
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(progressInterval);
-                
+
                 // Hide progress and show file count
                 setTimeout(() => {
                     imageProgress.style.display = 'none';
                     imageFilename.style.display = 'block';
-                    
+
                     // Display file count with appropriate text
                     const fileCount = files.length;
                     const fileText = fileCount === 1 ? '1 image uploaded' : `${fileCount} images uploaded`;
                     imageFilename.textContent = fileText;
-                    
+
                     // Store the uploaded files
                     uploadedImageFiles = files;
                 }, 300);
@@ -1049,13 +1058,13 @@
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(progressInterval);
-                
+
                 // Hide progress and show filename
                 setTimeout(() => {
                     spreadProgress.style.display = 'none';
                     spreadFilename.style.display = 'block';
                     spreadFilename.textContent = file.name;
-                    
+
                     // Process the file
                     processSpreadsheetFile(file);
                 }, 300);
@@ -1067,10 +1076,10 @@
     function processSpreadsheetFile(file) {
         const reader = new FileReader();
         const fileExtension = file.name.split('.').pop().toLowerCase();
-        
+
         reader.onload = function(e) {
             let rawData;
-            
+
             if (fileExtension === 'csv') {
                 // Handle CSV files
                 const csv = e.target.result;
@@ -1087,25 +1096,26 @@
                 alert('Unsupported file format. Please upload a .csv, .xlsx, or .xls file.');
                 return;
             }
-            
+
             // Convert to array of objects
             if (rawData.length > 1) { // Check if we have header and at least one data row
                 const filteredData = rawData.filter(row => row.length >= 6).slice(0);
                 uploadedSpreadsheetData = [];
-                
+
                 // Process each data row (skip header)
                 for (let i = 1; i < filteredData.length; i++) {
                     const row = filteredData[i];
                     if (row && row.length >= 6) {
                         const artwork = {};
-                        
+
                         artwork.Filename = row[0].toString();
-                        artwork.Title = row.length > 6 ? row[2].toString() : row[1].toString();
-                        artwork.Artist = row.length > 6 ? row[3].toString() : row[2].toString();
-                        artwork.Height = row.length > 6 ? row[4].toString() : row[3].toString();
-                        artwork.Width = row.length > 6 ? row[5].toString() : row[4].toString();
-                        artwork.Type = row.length > 6 ? row[6].toString() : row[5].toString();
-                        
+                        artwork.Title = row.length > 7 ? row[2].toString() : row[1].toString();
+                        artwork.Artist = row.length > 7 ? row[3].toString() : row[2].toString();
+                        artwork.Height = row.length > 7 ? row[4].toString() : row[3].toString();
+                        artwork.Width = row.length > 7 ? row[5].toString() : row[4].toString();
+                        artwork.Description = row.length > 7 ? row[6].toString() : '';
+                        artwork.Type = row.length > 7 ? row[7].toString() : row[5].toString();
+
                         // Only add if we have at least a filename
                         if (artwork.Filename || artwork['ImageName'] || artwork['Image Name']) {
                             uploadedSpreadsheetData.push(artwork);
@@ -1114,7 +1124,7 @@
                 }
             }
         };
-        
+
         // Use appropriate read method based on file type
         if (fileExtension === 'csv') {
             reader.readAsText(file);
@@ -1134,16 +1144,16 @@
 
         if (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 0 && uploadedImageFiles.length > 0) {
             // Get filenames from spreadsheet (now objects with Filename property)
-            const spreadsheetFilenames = uploadedSpreadsheetData.map(artwork => 
+            const spreadsheetFilenames = uploadedSpreadsheetData.map(artwork =>
                 artwork.Filename || artwork['ImageName'] || artwork['Image Name']
             ).filter(filename => filename);
 
-            
+
             // Get filenames from uploaded images
             const imageFilenames = uploadedImageFiles.map(file => file.name);
             // Count matches
-            total = spreadsheetFilenames.filter(filename => 
-                imageFilenames.some(imageName => 
+            total = spreadsheetFilenames.filter(filename =>
+                imageFilenames.some(imageName =>
                     imageName.toLowerCase() === filename.toLowerCase() ||
                     imageName.toLowerCase().replace(/\.[^/.]+$/, "") === filename.toLowerCase().replace(/\.[^/.]+$/, "")
                 )
@@ -1221,6 +1231,7 @@
                         <td contenteditable="true">${artwork.Artist || artwork['Artist'] || ''}</td>
                         <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (inch)'] || artwork['Height'] || ''}" /></td>
                         <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (inch)'] || artwork['Width'] || ''}" /></td>
+                        <td contenteditable="true">${artwork.Description || artwork['Description'] || ''}</td>
                         <td>
                             <select class="form-select">
                                 <option value="Painting" ${(artwork.Type || artwork['Type'] || '') === 'Painting' ? 'selected' : ''}>Painting</option>
