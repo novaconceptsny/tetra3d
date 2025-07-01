@@ -219,7 +219,7 @@
                 </div>
             </div>
             <div class="text-center mb-3">
-                <button class="btn btn-warning" id="generate-artwork-btn" onclick="handleGenerateArtwork()">Add Artwork</button>
+                <button class="btn btn-warning" id="generate-artwork-btn" onclick="handleGenerateArtwork()">Generate Artwork</button>
             </div>
             <div id="artwork-progress-bar" style="display:none; margin-bottom: 20px;">
                 <div style="width: 500px; margin: 0 auto; background: #eee; border-radius: 8px; height: 20px; position: relative;">
@@ -271,8 +271,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-outline-primary" id="add-artwork-btn" style="display: none;" onclick="handleAddRow()">Add Artwork</button>
+            <div class="d-flex flex-column justify-content-end gap-2" style="width: fit-content; margin-left: auto;">
+                <button class="btn btn-outline-primary" id="add-artwork-btn"  onclick="handleAddRow()">Add Artwork</button>
                 <button class="btn btn-success" id="submit-artworks-btn" onclick="handleSubmitArtworks()">Submit</button>
             </div>
         </div>
