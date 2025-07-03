@@ -28,10 +28,10 @@
                                     <span class="text-dark">{{ $artwork->artist }}</span>
                                 </li>
                             @endif
-                            @if(isset($artwork->data['description']))
+                            @if(isset($artwork->description))
                                 <li class="mb-2">
                                     <span class="fw-bold me-2 text-muted">Description:</span> 
-                                    <span class="text-dark">{{ $artwork->data['description'] }}</span>
+                                    <span class="text-dark">{{ $artwork->description }}</span>
                                 </li>
                             @else
                                 <li class="mb-2">

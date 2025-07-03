@@ -922,8 +922,8 @@
             </td>
             <td contenteditable="true" data-placeholder="Enter title..."></td>
             <td contenteditable="true" data-placeholder="Enter artist name..."></td>
-            <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
-            <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+            <td><input type="number" id="artwork-height" class="form-control" style="width: 100px; min-width: 60px;" /></td>
+            <td><input type="number" id="artwork-width" class="form-control" style="width: 100px; min-width: 60px;" /></td>
             <td contenteditable="true" data-placeholder="Enter artwork description..."></td>
             <td>
                 <select class="form-select">
@@ -940,6 +940,39 @@
         const uploadBox = row.querySelector('.artwork-image-upload');
         const fileInput = row.querySelector('input[type="file"]');
         const uploadText = row.querySelector('.artwork-image-upload-text');
+
+        // Function to handle image selection and populate fields
+        function handleImageSelection(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                // Create image element to get dimensions
+                const img = new Image();
+                img.onload = function() {
+                    // Update the upload box with image preview
+                    uploadBox.innerHTML = `<img src="${ev.target.result}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" data-filename="${file.name}">`;
+                    
+                    // Populate title with filename (without extension)
+                    const titleCell = row.querySelector('td:nth-child(3)');
+                    const filenameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+                    titleCell.textContent = filenameWithoutExt;
+                    
+                    // Populate width and height fields
+                    const widthInput = row.querySelector('input[id="artwork-width"]');
+                    const heightInput = row.querySelector('input[id="artwork-height"]');
+                    
+                    // Convert pixels to inches (assuming 96 DPI for web images)
+                    const widthInInches = Math.round((img.width / 96) * 10) / 10;
+                    const heightInInches = Math.round((img.height / 96) * 10) / 10;
+                    
+                    widthInput.value = widthInInches;
+                    heightInput.value = heightInInches;
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
 
         // Click upload box triggers file input
         uploadBox.onclick = function(e) {
@@ -962,19 +995,14 @@
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 fileInput.files = files;
-                fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                handleImageSelection(files[0]);
             }
         });
 
-        // File input change: show preview
+        // File input change: show preview and populate fields
         fileInput.addEventListener('change', function(e) {
             const file = fileInput.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                uploadBox.innerHTML = `<img src="${ev.target.result}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" data-filename="${file.name}">`;
-            };
-            reader.readAsDataURL(file);
+            handleImageSelection(file);
         });
     }
 
