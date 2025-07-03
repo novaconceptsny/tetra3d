@@ -5,28 +5,37 @@
     <div id="dashboard-section" class="row">
         <div class="col-12">
             <div class="favourites-section">
-                <h5 class="mb-4">Favourites</h5>
-                <div class="favourite-items">
-                    <div class="row">
-                        @if($favorites->count() > 0)
-                            @foreach($favorites as $favorite)
-                                <div class="col-md-3">
-                                    <div class="bg-light rounded p-3">
-                                        <h4><i class="fas fa-star text-primary"></i> {{ $favorite->name }}</h4>
-                                        <span>{{ $favorite->assignedTour()->name }}</span>
-                                        <p class="text-end mb-0 mt-3 ">
-                                            <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" >
-                                                Enter
-                                            </a>
-                                        </p>
+                <div class="d-flex align-items-center mb-4">
+                    <h5 class="mb-4">Favourites</h5>
+                    @if(auth()->user() && auth()->user()->isSuperAdmin())
+                        <button id="toggleFavouritesBtn" class="btn btn-link ms-2 mb-4" title="Show/Hide Favourites" style="font-size: 1.2rem;">
+                            <i id="favouritesEyeIcon" class="fas fa-eye"></i>
+                        </button>
+                    @endif
+                </div>
+                <div id="favouritesSection">
+                    <div class="favourite-items" id="favoritesContainer">
+                        <div class="row">
+                            @if($favorites->count() > 0)
+                                @foreach($favorites as $favorite)
+                                    <div class="col-md-3 favourite-card">
+                                        <div class="bg-light rounded p-3">
+                                            <h4><i class="fas fa-star text-primary"></i> {{ $favorite->name }}</h4>
+                                            <span>{{ $favorite->assignedTour()->name }}</span>
+                                            <div class="text-end mb-0 mt-3 d-flex justify-content-end">
+                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter">
+                                                    Enter
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
+                                @endforeach
+                            @else
+                                <div class="col-12">
+                                    <p class="text-center">No favorites found.</p>
                                 </div>
-                            @endforeach
-                        @else
-                            <div class="col-12">
-                                <p class="text-center">No favorites found.</p>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,7 +93,7 @@
                                                         </div>
                                                         <hr class="my-2">
                                                         <div class="project-stats">
-                                                            <span class="me-3"><i class="fas fa-cube"></i> {{ $project->tours_count ?? 0 }} Tours</span>
+                                                            <span class="me-3"><i class="fas fa-cube"></i> {{ $project->assignedTours()->count() ?? 0 }} Tours</span>
                                                             <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
                                                             <span><i class="fas fa-folder"></i> {{ $project->artwork_collections_count ?? 0 }} Collections</span>
                                                         </div>
@@ -259,6 +268,10 @@
         }
 
         /* Remove the static first-child styles since we'll apply them dynamically */
+        .favourite-card {
+            margin-bottom: 24px; /* space below each card */
+        }
+
     </style>
 @endsection
 
@@ -273,6 +286,9 @@
         const imageName = document.getElementById('imageName');
         let mode = '';
         let projectId = '';
+
+        const favoriteLayouts =  @json($favorites);
+        console.log(favoriteLayouts);
 
         // Add references to dashboard and create project sections
         const dashboardSection = document.getElementById('dashboard-section');
@@ -635,12 +651,68 @@
             }
         });
 
+        // Add event listener for favorites updates
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('favoritesUpdated', (event) => {
+                const favoritesContainer = document.getElementById('favoritesContainer');
+                const favorites = event.favorites;
+                
+                console.log(favorites);
+                if (favorites.length === 0) {
+                    favoritesContainer.innerHTML = `
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="text-center">No favorites found.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const favoritesHtml = favorites.map(favorite => `
+                    <div class="col-md-3">
+                        <div class="bg-light rounded p-3">
+                            <h4><i class="fas fa-star text-primary"></i> ${favorite.name}</h4>
+                            <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
+                            <div class="text-end mb-0 mt-3 d-flex justify-content-end">
+                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter">
+                                    Enter
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                favoritesContainer.innerHTML = `
+                    <div class="row">
+                        ${favoritesHtml}
+                    </div>
+                `;
+            });
+        });
 
         $(document).ready(function() {
             $('#inlineTourSelect').select2();
             $('#inlineCollections').select2();
             $('#inlineContributors').select2();
         });
+
+
+        @if(auth()->user() && auth()->user()->isSuperAdmin())
+        document.getElementById('toggleFavouritesBtn').addEventListener('click', function() {
+            const section = document.getElementById('favouritesSection');
+            const icon = document.getElementById('favouritesEyeIcon');
+            if (section.style.display === 'none') {
+                section.style.display = '';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                section.style.display = 'none';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        });
+        @endif
 
     </script>
 @endsection
