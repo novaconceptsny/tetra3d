@@ -5,6 +5,7 @@ use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class InventoryController extends Controller
@@ -101,56 +102,82 @@ class InventoryController extends Controller
                 }
             }
 
-            foreach ($artworkData as $index => $row) {
-                // Create artwork object first
-                $artwork = new Artwork();
-                $artwork->company_id = user()->company_id;
-                
-                // Find collection by name
-                $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
-                if (!$collection) {
-                    return response()->json(['success' => false, 'message' => "Collection '{$row['collection_name']}' not found."], 400);
-                }
-                $artwork->artwork_collection_id = $collection->id;
-                
-                $artwork->name = $row['title'] ?? '';
-                $artwork->artist = $row['artist'] ?? '';
-                $artwork->type = $row['type'] ?? '';
-                $artwork->description = $row['description'] ?? '';
-                
-                // Set artwork data
-                $artwork->data = [
-                    'height_inch' => $row['height'] ?? '',
-                    'width_inch' => $row['width'] ?? '',
-                    'scale' => $row['scale'] ?? '',
-                ];
-                
-                // Save artwork first to get the ID
-                $artwork->save();
-                
-                // Handle image upload after artwork is saved (so we have the ID)
-                if ($request->hasFile("image_{$index}")) {
-                    $imageFile = $request->file("image_{$index}");
-                    
-                    // Validate image
-                    $request->validate([
-                        "image_{$index}" => 'image|mimes:jpeg,png,jpg,gif|max:2048'
-                    ]);
-                    
-                    // Create directory for this artwork
-                    $artworkDir = 'media/artworks/' . $artwork->id;
+            $createdCount = 0;
+            $errors = [];
 
-                    $filename = $imageFile->getClientOriginalName();                    
-                    // Create a clean filename with extension
-                    $filename = $filename . '.' . "jpg";
+            foreach ($artworkData as $index => $row) {
+                try {
+                    // Create artwork object first
+                    $artwork = new Artwork();
+                    $artwork->company_id = user()->company_id;
                     
-                    $path = $imageFile->storeAs($artworkDir, $filename, 'public');
-                    $artwork->image_url = Storage::url($path);
+                    // Find collection by name
+                    $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
+                    if (!$collection) {
+                        $errors[] = "Collection '{$row['collection_name']}' not found for artwork #{$index}.";
+                        continue;
+                    }
+                    $artwork->artwork_collection_id = $collection->id;
+                    
+                    $artwork->name = $row['title'] ?? '';
+                    $artwork->artist = $row['artist'] ?? '';
+                    $artwork->type = $row['type'] ?? '';
+                    $artwork->description = $row['description'] ?? '';
+                    
+                    // Set artwork data
+                    $artwork->data = [
+                        'height_inch' => $row['height'] ?? '',
+                        'width_inch' => $row['width'] ?? '',
+                        'scale' => $row['scale'] ?? '',
+                    ];
+                    
+                    // Save artwork first to get the ID
                     $artwork->save();
+
+                    // Handle image if provided
+                    if (!empty($row['image']) && str_starts_with($row['image'], 'data:image')) {
+                        try {
+                            // Extract base64 data from data URL
+                            $base64Data = $row['image'];
+                            
+                            // Add image to media collection
+                            $artwork->addMediaFromBase64($base64Data)
+                                ->usingFileName('artwork_' . $artwork->id . '_' . time() . '.jpg')
+                                ->usingName($artwork->name)
+                                ->toMediaCollection('image');
+                            
+                            // Refresh model to ensure media is attached
+                            $artwork->refresh();
+                            
+                            // Resize image if dimensions are available
+                            if (!empty($artwork->data->width_inch) && !empty($artwork->data->height_inch)) {
+                                $artwork->resizeImage();
+                            }
+                        } catch (\Exception $e) {
+                            // Log the error but don't fail the entire operation
+                            \Log::warning("Failed to add image for artwork {$artwork->id}: " . $e->getMessage());
+                        }
+                    }
+                    
+                    $createdCount++;
+                    
+                } catch (\Exception $e) {
+                    $errors[] = "Error creating artwork #{$index}: " . $e->getMessage();
                 }
             }
 
-            return response()->json(['success' => true, 'message' => 'Artworks added successfully']);
+            $response = [
+                'success' => true, 
+                'message' => "Successfully created {$createdCount} artwork(s).",
+                'created_count' => $createdCount
+            ];
+            
+            if (!empty($errors)) {
+                $response['errors'] = $errors;
+            }
+
+            return response()->json($response);
+            
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }

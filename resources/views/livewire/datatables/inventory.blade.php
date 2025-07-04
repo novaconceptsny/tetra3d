@@ -1022,8 +1022,6 @@
             const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
 
             const rowData = {
-                image_src: image.src,
-                image_filename: image.getAttribute('data-filename') || `artwork_${index}.jpg`,
                 collection_name: collectionName,
                 title: cells[2].textContent.trim(),
                 artist: cells[3].textContent.trim(),
@@ -1032,31 +1030,18 @@
                 description: cells[6].textContent.trim(),
                 type: typeInfo,
             };
+
+            if (image && image.src && image.src.startsWith('data:')) {
+                // Send the base64 data directly
+                rowData.image = image.src;
+            }
+
             data.push(rowData);
         });
 
         // Create FormData and append artwork data
         const formData = new FormData();
         formData.append('artwork_data', JSON.stringify(data));
-
-        // Convert base64 images to files and append them
-        data.forEach((rowData, index) => {
-            if (rowData.image_src && rowData.image_src.startsWith('data:')) {
-                // Convert base64 to blob
-                const base64Data = rowData.image_src.split(',')[1];
-                const byteCharacters = atob(base64Data);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray], { type: 'image/jpeg' });
-
-                // Create file from blob
-                const file = new File([blob], rowData.image_filename, { type: 'image/jpeg' });
-                formData.append(`image_${index}`, file);
-            }
-        });
 
         const token = document.querySelector('meta[name="csrf-token"]').content;
 
@@ -1071,8 +1056,16 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Artworks added successfully');
-                window.location.reload();
+                console.log(data);
+                if (data.created_count > 0) {
+                    alert(`Successfully created ${data.created_count} artwork(s).`);
+                    if (data.errors && data.errors.length > 0) {
+                        console.warn('Some errors occurred:', data.errors);
+                    }
+                    window.location.reload();
+                } else {
+                    alert('No artworks were created. Please check the data and try again.');
+                }
             } else {
                 alert('Error: ' + (data.message || 'Could not add artwork.'));
             }
@@ -1081,7 +1074,6 @@
             console.error('Error:', error);
             alert('Error saving artworks.');
         });
-
     }
 
     // Remove row
