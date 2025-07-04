@@ -59,9 +59,6 @@
                     <div class="card-header d-flex flex-column">
                         <div class="d-flex mb-2">
                             <h5 class="me-auto">{{ $heading }}</h5>
-                            <div class="float-end">
-                                @include('backend.includes.datatable.bulk-delete')
-                            </div>
                         </div>
                         <!-- Filters Start -->
                         <div class="d-flex align-items-center">
