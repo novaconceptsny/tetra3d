@@ -1056,7 +1056,6 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                console.log(data);
                 if (data.created_count > 0) {
                     alert(`Successfully created ${data.created_count} artwork(s).`);
                     if (data.errors && data.errors.length > 0) {

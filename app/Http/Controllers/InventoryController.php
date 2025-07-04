@@ -5,7 +5,6 @@ use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Company;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class InventoryController extends Controller
@@ -154,8 +153,7 @@ class InventoryController extends Controller
                                 $artwork->resizeImage();
                             }
                         } catch (\Exception $e) {
-                            // Log the error but don't fail the entire operation
-                            \Log::warning("Failed to add image for artwork {$artwork->id}: " . $e->getMessage());
+                            // Continue without failing the entire operation
                         }
                     }
                     
