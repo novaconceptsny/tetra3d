@@ -340,6 +340,26 @@
         </div>
     </div>
 
+    <!-- Submit Progress Modal -->
+    <div class="modal fade" id="submitProgressModal" tabindex="-1" aria-labelledby="submitProgressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <h5 class="mb-3">Saving Artworks...</h5>
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="submitProgressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-muted mb-0" id="submitProgressText">Processing artwork data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
     .bg-light-page {
         background: #f7f9fb;
@@ -598,6 +618,45 @@
         border: 1px solid #007bff !important;
     }
 
+    /* Submit Progress Modal Styles */
+    #submitProgressModal .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    #submitProgressModal .modal-body {
+        padding: 2rem;
+    }
+
+    #submitProgressModal .spinner-border {
+        color: #2453e3 !important;
+    }
+
+    #submitProgressModal .progress {
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #submitProgressModal .progress-bar {
+        background: linear-gradient(90deg, #2453e3, #4a6cf7);
+        border-radius: 10px;
+    }
+
+    #submitProgressModal h5 {
+        color: #333;
+        font-weight: 600;
+    }
+
+    #submitProgressModal p {
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    #submitProgressModal[data-bs-backdrop="static"] {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
     </style>
 </div>
 
@@ -1086,9 +1145,13 @@
         const submitBtn = document.getElementById('submit-artworks-btn');
         const originalText = submitBtn.innerHTML;
         
-        // Show loading state
+        // Show loading state on button
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving artworks...';
         submitBtn.disabled = true;
+        
+        // Show progress modal
+        const progressModal = new bootstrap.Modal(document.getElementById('submitProgressModal'));
+        progressModal.show();
         
         const tbody = document.getElementById('artworkTableBody');
         const rows = tbody.querySelectorAll('tr');
@@ -1122,11 +1185,33 @@
             data.push(rowData);
         });
 
+        // Update progress text
+        document.getElementById('submitProgressText').textContent = `Preparing ${data.length} artwork(s) for upload...`;
+        document.getElementById('submitProgressBar').style.width = '25%';
+
         // Create FormData and append artwork data
         const formData = new FormData();
         formData.append('artwork_data', JSON.stringify(data));
 
         const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Simulate progress updates
+        const progressInterval = setInterval(() => {
+            const currentWidth = parseInt(document.getElementById('submitProgressBar').style.width) || 25;
+            if (currentWidth < 90) {
+                const newWidth = Math.min(currentWidth + Math.random() * 10, 90);
+                document.getElementById('submitProgressBar').style.width = newWidth + '%';
+                
+                // Update progress text based on progress
+                if (newWidth < 50) {
+                    document.getElementById('submitProgressText').textContent = 'Uploading artwork data...';
+                } else if (newWidth < 75) {
+                    document.getElementById('submitProgressText').textContent = 'Processing artwork information...';
+                } else {
+                    document.getElementById('submitProgressText').textContent = 'Finalizing artwork creation...';
+                }
+            }
+        }, 500);
 
         fetch('/inventory/artworks/add', {
             method: 'POST',
@@ -1138,28 +1223,46 @@
         })
         .then(response => response.json())
         .then(data => {
+            // Clear progress interval
+            clearInterval(progressInterval);
+            
+            // Complete the progress bar
+            document.getElementById('submitProgressBar').style.width = '100%';
+            document.getElementById('submitProgressText').textContent = 'Artworks saved successfully!';
+            
             // Reset button state
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
             
-            if (data.success) {
-                if (data.created_count > 0) {
-                    alert(`Successfully created ${data.created_count} artwork(s).`);
-                    if (data.errors && data.errors.length > 0) {
-                        console.warn('Some errors occurred:', data.errors);
+            // Hide modal after a short delay
+            setTimeout(() => {
+                progressModal.hide();
+                
+                if (data.success) {
+                    if (data.created_count > 0) {
+                        alert(`Successfully created ${data.created_count} artwork(s).`);
+                        if (data.errors && data.errors.length > 0) {
+                            console.warn('Some errors occurred:', data.errors);
+                        }
+                        window.location.reload();
+                    } else {
+                        alert('No artworks were created. Please check the data and try again.');
                     }
-                    window.location.reload();
                 } else {
-                    alert('No artworks were created. Please check the data and try again.');
+                    alert('Error: ' + (data.message || 'Could not add artwork.'));
                 }
-            } else {
-                alert('Error: ' + (data.message || 'Could not add artwork.'));
-            }
+            }, 1000);
         })
         .catch(error => {
+            // Clear progress interval
+            clearInterval(progressInterval);
+            
             // Reset button state on error
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
+            
+            // Hide modal immediately on error
+            progressModal.hide();
             
             console.error('Error:', error);
             alert('Error saving artworks.');
