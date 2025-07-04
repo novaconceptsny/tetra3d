@@ -273,9 +273,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex flex-column justify-content-end gap-2" style="width: fit-content; margin-left: auto;">
-                <button class="btn btn-outline-primary" id="add-artwork-btn"  onclick="handleAddRow()">Add Artwork</button>
-                <button class="btn btn-success" id="submit-artworks-btn" onclick="handleSubmitArtworks()">Submit</button>
+            <div class="d-flex flex-column align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
+                <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
+                <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()">Submit</button>
             </div>
         </div>
     </div>
@@ -1083,6 +1083,13 @@
     }
 
     function handleSubmitArtworks() {
+        const submitBtn = document.getElementById('submit-artworks-btn');
+        const originalText = submitBtn.innerHTML;
+        
+        // Show loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving artworks...';
+        submitBtn.disabled = true;
+        
         const tbody = document.getElementById('artworkTableBody');
         const rows = tbody.querySelectorAll('tr');
         const data = [];
@@ -1131,6 +1138,10 @@
         })
         .then(response => response.json())
         .then(data => {
+            // Reset button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
             if (data.success) {
                 if (data.created_count > 0) {
                     alert(`Successfully created ${data.created_count} artwork(s).`);
@@ -1146,6 +1157,10 @@
             }
         })
         .catch(error => {
+            // Reset button state on error
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
             console.error('Error:', error);
             alert('Error saving artworks.');
         });
