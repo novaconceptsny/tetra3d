@@ -108,7 +108,7 @@
                                 <button type="button" class="btn btn-light" title="Swap">
                                     <i class="fas fa-exchange-alt"></i>
                                 </button>
-                                <button type="button" class="btn btn-light" title="Delete">
+                                <button type="button" class="btn btn-light" title="Delete" id="bulkDeleteBtn"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -319,6 +319,20 @@
                 </div>
                 <div class="modal-footer d-flex justify-content-end">
                     <button type="button" class="btn btn-save-collection" id="saveCollectionBtn" onclick="handleSaveCollection()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    Are you sure you want to perform this action?
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger" id="confirmDeleteYes" onclick="handleDeleteArtworks()">Yes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                 </div>
             </div>
         </div>
@@ -578,6 +592,7 @@
 <script>
 
     const allCollections = @json($collections);
+
     const mainContainer = document.getElementById('show-collections-container');
     const uploadContainer = document.getElementById('upload-artwork-container');
     const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
@@ -618,6 +633,20 @@
         document.addEventListener('drop', function(e) {
             e.preventDefault();
         });
+
+        const deleteBtn = document.getElementById('bulkDeleteBtn');
+        const checkboxes = document.querySelectorAll('.bulk-select-checkbox'); // Update selector as needed
+
+        function updateDeleteBtnState() {
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            deleteBtn.disabled = !anyChecked;
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateDeleteBtnState);
+        });
+
+        updateDeleteBtnState(); // Initial state
     });
 
     function handleOpenCollectionModal() {
@@ -944,7 +973,7 @@
         // Function to handle image selection and populate fields
         function handleImageSelection(file) {
             if (!file) return;
-            
+
             const reader = new FileReader();
             reader.onload = function(ev) {
                 // Create image element to get dimensions
@@ -952,20 +981,20 @@
                 img.onload = function() {
                     // Update the upload box with image preview
                     uploadBox.innerHTML = `<img src="${ev.target.result}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" data-filename="${file.name}">`;
-                    
+
                     // Populate title with filename (without extension)
                     const titleCell = row.querySelector('td:nth-child(3)');
                     const filenameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
                     titleCell.textContent = filenameWithoutExt;
-                    
+
                     // Populate width and height fields
                     const widthInput = row.querySelector('input[id="artwork-width"]');
                     const heightInput = row.querySelector('input[id="artwork-height"]');
-                    
+
                     // Convert pixels to inches (assuming 96 DPI for web images)
                     const widthInInches = Math.round((img.width / 96) * 10) / 10;
                     const heightInInches = Math.round((img.height / 96) * 10) / 10;
-                    
+
                     widthInput.value = widthInInches;
                     heightInput.value = heightInInches;
                 };
@@ -1328,5 +1357,45 @@
         if (tbody.children.length > 0) {
             document.getElementById('add-artwork-btn').style.display = 'inline-block';
         }
+    }
+
+
+    function handleDeleteArtworks() {
+        // Collect selected IDs
+        const selectedCheckboxes = document.querySelectorAll('.bulk-select-checkbox:checked');
+        console.log('Found checkboxes:', selectedCheckboxes.length);
+
+        const selectedIds = Array.from(selectedCheckboxes)
+            .map(cb => cb.value);
+
+        console.log('Selected IDs:', selectedIds);
+
+        if (selectedIds.length === 0) {
+            alert('No items selected for deletion.');
+            return;
+        }
+
+        // Send AJAX request (adjust URL as needed)
+        fetch('/inventory/artworks/bulk-delete', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ids: selectedIds }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Optionally: remove rows from DOM or reload
+                window.location.reload();
+            } else {
+                alert('Failed to delete artworks.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting artworks.');
+        });
     }
 </script>

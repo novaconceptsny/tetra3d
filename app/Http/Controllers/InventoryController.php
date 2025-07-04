@@ -180,4 +180,14 @@ class InventoryController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (!empty($ids)) {
+            Artwork::whereIn('id', $ids)->delete();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 400);
+    }
 }
