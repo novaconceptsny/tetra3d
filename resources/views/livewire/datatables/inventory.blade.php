@@ -1202,29 +1202,38 @@
 
             // Convert to array of objects
             if (rawData.length > 1) { // Check if we have header and at least one data row
-                const filteredData = rawData.filter(row => row.length >= 6).slice(0);
+                console.log(rawData, "pppppppp")
+                
+                // Get the header row (first row)
+                const headers = rawData.find(row => row.length >=6 && row[0] === "Filename");
+                
+                // Filter out empty rows and process data rows (skip header)
+                const filteredData = rawData.filter(row => row[0] !== "Filename" && row.length >= 6);
                 uploadedSpreadsheetData = [];
+                console.log(headers, "headers")
 
-                // Process each data row (skip header)
-                for (let i = 1; i < filteredData.length; i++) {
-                    const row = filteredData[i];
+                // Process each data row
+                filteredData.forEach(row => {
                     if (row && row.length >= 6) {
                         const artwork = {};
-
-                        artwork.Filename = row[0].toString();
-                        artwork.Title = row.length > 7 ? row[2].toString() : row[1].toString();
-                        artwork.Artist = row.length > 7 ? row[3].toString() : row[2].toString();
-                        artwork.Height = row.length > 7 ? row[4].toString() : row[3].toString();
-                        artwork.Width = row.length > 7 ? row[5].toString() : row[4].toString();
-                        artwork.Description = row.length > 7 ? row[6].toString() : '';
-                        artwork.Type = row.length > 7 ? row[7].toString() : row[5].toString();
+                        
+                        // Map each column to its corresponding header
+                        headers.forEach((header, index) => {
+                            if (row[index] !== undefined) {
+                                // Clean up the header name and use it as property name
+                                const cleanHeader = header.toString().trim();
+                                artwork[cleanHeader] = row[index] ? row[index].toString() : '';
+                            }
+                        });
 
                         // Only add if we have at least a filename
                         if (artwork.Filename || artwork['ImageName'] || artwork['Image Name']) {
                             uploadedSpreadsheetData.push(artwork);
                         }
                     }
-                }
+                });
+                
+                console.log('Processed data:', uploadedSpreadsheetData);
             }
         };
 
@@ -1326,14 +1335,14 @@
                         <td style="width: 480px;">
                             <select class="form-select artwork-collection-select">
                                 @foreach($collections as $collection)
-                                    <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                    <option value="{{$collection->id}}" ${(artwork.Collection || artwork['Collection'] || '') === '{{$collection->name}}' ? 'selected' : ''}>{{$collection->name}}</option>
                                 @endforeach
                             </select>
                         </td>
                         <td contenteditable="true" data-placeholder="Enter title...">${artwork.Title || artwork['Title'] || ''}</td>
                         <td contenteditable="true" data-placeholder="Enter artist name...">${artwork.Artist || artwork['Artist'] || ''}</td>
-                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (inch)'] || artwork['Height'] || ''}" /></td>
-                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (inch)'] || artwork['Width'] || ''}" /></td>
+                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (in)'] || artwork['Height'] || ''}" /></td>
+                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (in)'] || artwork['Width'] || ''}" /></td>
                         <td contenteditable="true" data-placeholder="Enter artwork description...">${artwork.Description || artwork['Description'] || ''}</td>
                         <td>
                             <select class="form-select">
