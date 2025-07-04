@@ -582,6 +582,17 @@
         transition: width 0.3s ease;
     }
 
+    /* Highlight empty cells */
+    .empty-cell {
+        background-color: #ffe6e6 !important;
+        border: 1px solid #ffcccc !important;
+    }
+
+    .empty-cell:focus {
+        background-color: #ffe6e6 !important;
+        border: 1px solid #007bff !important;
+    }
+
     </style>
 </div>
 
@@ -939,20 +950,20 @@
                 </div>
             </td>
             <td style="width: 480px;">
-                <select class="form-select artwork-collection-select">
+                <select class="form-select artwork-collection-select empty-cell">
                     <option value="">Select Collection</option>
                     @foreach($collections as $collection)
                         <option value="{{$collection->id}}">{{$collection->name}}</option>
                     @endforeach
                 </select>
             </td>
-            <td contenteditable="true" data-placeholder="Enter title..."></td>
-            <td contenteditable="true" data-placeholder="Enter artist name..."></td>
-            <td><input type="number" id="artwork-height" class="form-control" style="width: 100px; min-width: 60px;" /></td>
-            <td><input type="number" id="artwork-width" class="form-control" style="width: 100px; min-width: 60px;" /></td>
-            <td contenteditable="true" data-placeholder="Enter artwork description..."></td>
+            <td contenteditable="true" data-placeholder="Enter title..." class="empty-cell"></td>
+            <td contenteditable="true" data-placeholder="Enter artist name..." class="empty-cell"></td>
+            <td><input type="number" id="artwork-height" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
+            <td><input type="number" id="artwork-width" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
+            <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
             <td>
-                <select class="form-select">
+                <select class="form-select empty-cell">
                     <option value="Painting">Painting</option>
                     <option value="Sculpture">Sculpture</option>
                 </select>
@@ -1029,6 +1040,40 @@
         fileInput.addEventListener('change', function(e) {
             const file = fileInput.files[0];
             handleImageSelection(file);
+        });
+
+        // Add event listeners to remove empty-cell class when user interacts
+        const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
+        contentEditableCells.forEach(cell => {
+            cell.addEventListener('input', function() {
+                if (this.textContent.trim() !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+
+        const inputFields = row.querySelectorAll('input[type="number"]');
+        inputFields.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+
+        const selectFields = row.querySelectorAll('select');
+        selectFields.forEach(select => {
+            select.addEventListener('change', function() {
+                if (this.value !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
         });
     }
 
@@ -1339,13 +1384,13 @@
                                 @endforeach
                             </select>
                         </td>
-                        <td contenteditable="true" data-placeholder="Enter title...">${artwork.Title || artwork['Title'] || ''}</td>
-                        <td contenteditable="true" data-placeholder="Enter artist name...">${artwork.Artist || artwork['Artist'] || ''}</td>
-                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (in)'] || artwork['Height'] || ''}" /></td>
-                        <td><input type="number" class="form-control" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (in)'] || artwork['Width'] || ''}" /></td>
-                        <td contenteditable="true" data-placeholder="Enter artwork description...">${artwork.Description || artwork['Description'] || ''}</td>
+                        <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.Title && !artwork['Title'] ? 'empty-cell' : ''}">${artwork.Title || artwork['Title'] || ''}</td>
+                        <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.Artist && !artwork['Artist'] ? 'empty-cell' : ''}">${artwork.Artist || artwork['Artist'] || ''}</td>
+                        <td><input type="number" class="form-control ${!artwork.Height && !artwork['Height (in)'] && !artwork['Height'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (in)'] || artwork['Height'] || ''}" /></td>
+                        <td><input type="number" class="form-control ${!artwork.Width && !artwork['Width (in)'] && !artwork['Width'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (in)'] || artwork['Width'] || ''}" /></td>
+                        <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.Description && !artwork['Description'] ? 'empty-cell' : ''}">${artwork.Description || artwork['Description'] || ''}</td>
                         <td>
-                            <select class="form-select">
+                            <select class="form-select ${!artwork.Type && !artwork['Type'] ? 'empty-cell' : ''}">
                                 <option value="Painting" ${(artwork.Type || artwork['Type'] || '') === 'Painting' ? 'selected' : ''}>Painting</option>
                                 <option value="Sculpture" ${(artwork.Type || artwork['Type'] || '') === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
                             </select>
@@ -1354,6 +1399,40 @@
                     `;
                     newRow.querySelector('button').onclick = function() { newRow.remove(); };
                     tbody.appendChild(newRow);
+
+                    // Add event listeners to remove empty-cell class when user interacts
+                    const contentEditableCells = newRow.querySelectorAll('[contenteditable="true"]');
+                    contentEditableCells.forEach(cell => {
+                        cell.addEventListener('input', function() {
+                            if (this.textContent.trim() !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
+
+                    const inputFields = newRow.querySelectorAll('input[type="number"]');
+                    inputFields.forEach(input => {
+                        input.addEventListener('input', function() {
+                            if (this.value.trim() !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
+
+                    const selectFields = newRow.querySelectorAll('select');
+                    selectFields.forEach(select => {
+                        select.addEventListener('change', function() {
+                            if (this.value !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
                 };
                 reader.readAsDataURL(matchingImageFile);
             }
