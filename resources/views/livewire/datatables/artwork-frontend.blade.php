@@ -86,7 +86,7 @@
                 </tbody>
             </table>
             <div class="pagination-div pagination-white">
-                {{ $rows->appends(request()->query())->links() }}
+                {{ $rows->links() }}
             </div>
 
         </div>

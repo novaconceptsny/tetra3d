@@ -83,11 +83,12 @@ class ActivityDatatable extends BaseDatatable
             return str_contains($layout_name, $search) || str_contains($project_name, $search) || str_contains($user_name, $search) || str_contains($activity, $search) || str_contains($date, $search);
         });
 
-            // Get unique tours from the filtered rows
+        // Get unique tours from the filtered rows
         $uniqueTours = $filtered->pluck('tour')->filter()->unique('id')->values();
 
-        $currentPage = $rows->currentPage();
-        $perPage = $rows->perPage();
+        // Use Livewire's pagination instead of manual pagination
+        $currentPage = $this->getPage();
+        $perPage = $this->perPage;
         $total = $filtered->count();
         $paginator = new LengthAwarePaginator(
             $filtered->forPage($currentPage, $perPage),
@@ -97,12 +98,46 @@ class ActivityDatatable extends BaseDatatable
             ['path' => request()->url()]
         );
 
-
         $data['rows'] = $paginator;
         $data['label'] = 'activity';
         $data['uniqueTours'] = $uniqueTours; // Pass unique tours to the view
         
         return view("livewire.datatables.activity", $data);
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedProject()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedTour()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortBy()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortOrder()
+    {
+        $this->resetPage();
+    }
+
+    public function gotoPage($page, $pageName = 'page')
+    {
+        $this->setPage($page, $pageName);
     }
 
     public function resetFilters()

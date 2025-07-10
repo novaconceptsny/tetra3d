@@ -145,22 +145,62 @@ class InventoryDatatable extends BaseDatatable
             ]);
         }
 
-        // Apply pagination after sorting
-        $page = request()->get('page', 1);
+        // Use Livewire's pagination instead of manual pagination
+        $currentPage = $this->getPage();
         $perPage = $this->perPage;
-        $items = $mergedCollection->forPage($page, $perPage);
+        $items = $mergedCollection->forPage($currentPage, $perPage);
 
         $data['rows'] = new \Illuminate\Pagination\LengthAwarePaginator(
             $items,
             $mergedCollection->count(),
             $perPage,
-            $page,
+            $currentPage,
             ['path' => request()->url()]
         );
         $data['label'] = 'artwork';
 
         $view = "livewire.datatables.inventory";
         return view($view, $data);
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedCollection()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedCompany()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedArtist()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortBy()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortOrder()
+    {
+        $this->resetPage();
+    }
+
+    public function gotoPage($page, $pageName = 'page')
+    {
+        $this->setPage($page, $pageName);
     }
 
     public function resetFilters()
