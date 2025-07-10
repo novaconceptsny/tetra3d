@@ -47,7 +47,7 @@
         <x-menu-item text="List View" icon="fal fa-clone" :visible="$project && !$tour_is_shared"
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))" />
     @endif -->
-    <x-menu-item text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self" />
+    <x-menu-item :visible="false" text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self" />
     <x-menu-item :visible="$layout && !$tour_is_shared" target="_self"
         onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
         text="Share" icon="fal fa-share-nodes" />
