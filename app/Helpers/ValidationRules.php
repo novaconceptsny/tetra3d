@@ -103,6 +103,7 @@ class ValidationRules
             'name' => 'required',
             'artist' => 'required',
             'type' => 'required',
+            'description' => 'nullable|string|max:1000',
             'data.width_inch' => 'required|numeric',
             'data.height_inch' => 'required|numeric',
             'image' => 'required',

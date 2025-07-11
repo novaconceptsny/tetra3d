@@ -83,6 +83,9 @@ function krpanoplugin() {
 	var krpano_depthbuffer_scale = 1.0001;				// depthbuffer scaling (use ThreeJS defaults: znear=0.1, zfar=2000)
 	var krpano_depthbuffer_offset = -0.2;
 
+	var isSharedArtwork = false;
+	var tour_is_shared = false;
+
 	function start() {
 		// create the ThreeJS WebGL renderer, but use the WebGL context from krpano
 		renderer = new THREE.WebGLRenderer({ canvas: krpano.webGL.canvas, context: krpano.webGL.context });
@@ -339,10 +342,8 @@ function krpanoplugin() {
 
 	function do_object_hittest(mx, my) {
 		// Check if current URL contains "/shared-tours/"
-		if (window.location.pathname.includes("shared-tours")) {
-			return null;
-		}
-
+		tour_is_shared = window.location.pathname.includes("shared-tours");
+		
 		const pointer = new THREE.Vector2();
 		pointer.x = (mx / krpano.area.pixelwidth) * 2.0 - 1.0;
 		pointer.y = -(my / krpano.area.pixelheight) * 2.0 + 1.0;
@@ -356,7 +357,6 @@ function krpanoplugin() {
 		var i;
 		var object = null;
 		var gizmo = null;
-		var surface = null;
 		var point = null;
 
 		for (i = 0; i < intersects.length; i++) {
@@ -373,15 +373,12 @@ function krpanoplugin() {
 
 			if (obj.userData.type === "surface") {
 				obj = intersects[0].object;
-				surface = obj;
 				point = intersects[i].point;
 				object = obj;
 			}
 
 			if (obj.userData.type === "artwork") {
-
 				obj = intersects[0].object;
-				surface = obj;
 				point = intersects[i].point;
 				object = obj;
 			}
@@ -390,8 +387,15 @@ function krpanoplugin() {
 		if (intersects.length > 0) {
 			var obj = intersects[0].object;
 		}
-		if (point)
+		if (point) {
+			if (tour_is_shared) {
+				if (object.userData.type === "artwork") {
+					return { object: object, gizmo: gizmo, point: point };
+				}
+				return null;
+			}
 			return { object: object, gizmo: gizmo, point: point };
+		}
 		else return null;
 	}
 
@@ -471,29 +475,41 @@ function krpanoplugin() {
 				});
 			}
 			if (hitobj || gizmo) {
-				isDown = true;
-				krpano.mouse.down = true;
 
-				if (gizmo) {
-					event.preventDefault();
-					event.stopPropagation();
-					selectedObj = gizmo.parent.userData.temp;
-					gizmoObj = gizmo.parent;
-					plane_point_temp = point;
-					canMove = true;
-					if (gizmo.name == 'arrow_x' || gizmo.name == 'direct_x') direction = 'x';
-					if (gizmo.name == 'arrow_y' || gizmo.name == 'direct_y') direction = 'y';
-					if (gizmo.name == 'arrow_z' || gizmo.name == 'direct_z') direction = 'z';
-					if (gizmo.name == 'gizmoPlane') direction = 'xz';
+				if (tour_is_shared) {
+
+					if (hitobj.userData.type === "artwork") {
+						isSharedArtwork = true;
+						// Store the artwork ID for modal
+						window.selectedArtworkId = hitobj.userData.art_id;
+					}
 				} else {
-					if (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") {
-						selected_surface_id = hitobj.userData.surface_id;
-					} else {
+
+					isDown = true;
+					krpano.mouse.down = true;
+
+					if (gizmo) {
 						event.preventDefault();
 						event.stopPropagation();
-						selectedObj = hitobj.userData.temp;
+						selectedObj = gizmo.parent.userData.temp;
+						gizmoObj = gizmo.parent;
+						plane_point_temp = point;
+						canMove = true;
+						if (gizmo.name == 'arrow_x' || gizmo.name == 'direct_x') direction = 'x';
+						if (gizmo.name == 'arrow_y' || gizmo.name == 'direct_y') direction = 'y';
+						if (gizmo.name == 'arrow_z' || gizmo.name == 'direct_z') direction = 'z';
+						if (gizmo.name == 'gizmoPlane') direction = 'xz';
+					} else {
+						if (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") {
+							selected_surface_id = hitobj.userData.surface_id;
+						} else {
+							event.preventDefault();
+							event.stopPropagation();
+							selectedObj = hitobj.userData.temp;
+						}
 					}
 				}
+
 			} else {
 				label.innerHTML = "";
 
@@ -548,6 +564,29 @@ function krpanoplugin() {
 				make_gizmo(selectedObj);
 				// }
 			}
+
+			// Check if this is a shared tour and artwork was clicked
+			if (isSharedArtwork && window.selectedArtworkId) {
+				console.log('Artwork clicked in shared tour:', {
+					artworkId: window.selectedArtworkId,
+					isSharedArtwork: isSharedArtwork
+				});
+
+				// Trigger the artwork info modal
+				if (typeof Livewire !== 'undefined') {
+					console.log('Triggering artwork info modal for artwork ID:', window.selectedArtworkId);
+					Livewire.dispatch('modal.open', {
+						component: 'modals.artwork-info',
+						arguments: { 'artworkId': window.selectedArtworkId }
+					});
+				} else {
+					console.warn('Livewire is not available');
+				}
+				// Reset the flag
+				isSharedArtwork = false;
+				window.selectedArtworkId = null;
+			}
+
 			if (hitobj && isDown && (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") && selected_surface_id === hitobj.userData.surface_id) {
 				var hlookat = krpano.view.hlookat;
 				var vlookat = krpano.view.vlookat;
@@ -597,7 +636,7 @@ function krpanoplugin() {
 		arrow_y.rotation.x = -Math.PI; // Y arrow rotation
 		arrow_z.rotation.x = Math.PI / 2;
 		direct_x.rotation.z = Math.PI / 2;
-	    direct_y.rotation.z = 0; // Y direct rotation
+		direct_y.rotation.z = 0; // Y direct rotation
 		direct_z.rotation.x = Math.PI / 2;
 		gizmoPlane.rotation.x = Math.PI / 2;
 
@@ -622,7 +661,7 @@ function krpanoplugin() {
 		{
 			var hittest = do_object_hittest(krpano.mouse.x, krpano.mouse.y);
 
-			if (hittest) {
+			if (hittest && (!tour_is_shared || (tour_is_shared && hittest.object.userData.type === "artwork"))) {
 				if (hittest.object || hittest.gizmo) {
 					krpano.control.layer.style.cursor = krpano.cursors.hit;
 				} else {

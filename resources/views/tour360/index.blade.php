@@ -86,7 +86,7 @@
                                                                 </div>
 
                                                                 <a href="javascript:void(0)" class="btn-enter"
-                                                                    onclick="Livewire.dispatch('slide-over.open', {component: 'updated-tour-switcher', arguments: {'project': {{$project->id}} }})"
+                                                                    onclick="handleEnterProject({{ $project->id }}, {{ $project->assignedTours()->count() }})"
                                                                     >Enter
                                                                 </a>
                                                             </div>
@@ -219,6 +219,32 @@
                 </div>
                 <div class="image-name" id="imageName"></div>
                 <button type="button" class="btn btn-save">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Warning Modal for No Tours -->
+<div class="modal fade" id="noToursModal" tabindex="-1" aria-labelledby="noToursModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="noToursModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Warning
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-4">
+                    <i class="fas fa-info-circle text-info" style="font-size: 3rem;"></i>
+                </div>
+                <h6 class="mb-3">No Tours Assigned</h6>
+                <p class="text-muted">This project doesn't have any tours assigned. Please add tours to the project before proceeding.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editProjectBtn">Edit Project</button>
             </div>
         </div>
     </div>
@@ -578,6 +604,27 @@
                     opt.textContent = option.name;
                 }
                 select.appendChild(opt);
+            });
+        }
+
+        function handleEnterProject(projectId, tourCount) {
+            if (tourCount === 0) {
+                // Show the modal instead of alert
+                const noToursModal = new bootstrap.Modal(document.getElementById('noToursModal'));
+                noToursModal.show();
+                
+                // Set up the Edit Project button to edit the current project
+                document.getElementById('editProjectBtn').onclick = function() {
+                    noToursModal.hide();
+                    handleEditProject(projectId);
+                };
+                return;
+            }
+            
+            // If tours exist, proceed with the original Livewire dispatch
+            Livewire.dispatch('slide-over.open', {
+                component: 'updated-tour-switcher', 
+                arguments: {'project': projectId}
             });
         }
 

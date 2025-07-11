@@ -18,6 +18,15 @@ class Artwork extends Model implements HasMedia
     use HasCompany, InteractsWithMedia, Sortable, Searchable;
 
     protected $guarded = ['id'];
+    
+    protected $fillable = [
+        'name',
+        'type',
+        'description',
+        'artwork_collection_id',
+        'data',
+        'company_id'
+    ];
 
     public function registerMediaCollections(): void
     {

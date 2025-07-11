@@ -71,6 +71,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class=" py-0 px-2">
+                {{ $projects->links() }}
+            </div>
         </div>
         <div class="card-footer py-0"></div>
     </div>

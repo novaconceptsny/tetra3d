@@ -32,6 +32,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
     Route::post('artworks/destroy/{id}', 'ArtworksController@destroyCollection')->name('artworks.destroyCollection');
     Route::get('inventory', 'InventoryController@index')->name('inventory.index');
+    Route::post('inventory/collections/add', 'InventoryController@addCollection')->name('inventory.collections.add');
+    Route::post('inventory/artworks/bulk-delete', 'InventoryController@bulkDelete')->name('inventory.artworks.bulk-delete');
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
     Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');
     Route::post('/profile/password', 'ProfileController@updatePassword')->name('profile.password.update');
@@ -85,6 +87,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
+
+    Route::post('inventory/artworks/add', 'InventoryController@addArtworks')->name('inventory.artworks.add');
 
 });
 

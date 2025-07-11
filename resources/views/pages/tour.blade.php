@@ -856,7 +856,7 @@
             texture.center.set(0.5, 0.5); // Set rotation center point
             texture.rotation = Math.PI; // Rotate 180 degrees to flip horizontally
             // Create a geometry with the same aspect ratio
-            const boxDepth = 0.1; // Adjust as needed
+            const boxDepth = 0.04; // Adjust as needed
             const geometry = new THREE.BoxGeometry(imageWidth, imageHeight, boxDepth);
             geometry.translate(-imageWidth / 2, imageHeight / 2, 0);
 

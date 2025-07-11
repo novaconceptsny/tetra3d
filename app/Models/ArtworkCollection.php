@@ -11,6 +11,12 @@ class ArtworkCollection extends Model
 
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'name',
+        'company_id',
+        'thumbnail_url'
+    ];
+
     public static function boot() {
         parent::boot();
 
