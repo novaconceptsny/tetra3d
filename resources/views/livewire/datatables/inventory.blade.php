@@ -1,107 +1,1658 @@
-<div class="card">
-    <x-loader/>
-    <div class="card-header d-flex flex-column">
-        <div class="d-flex mb-2">
-            <h5 class="me-auto">{{ $heading }}</h5>
-            <div class="float-end">
-                @include('backend.includes.datatable.bulk-delete')
-            </div>
-        </div>
-        <!-- Filters Start -->
+<div class="bg-light-page">
+    <div id="show-collections-container" style="display: block;">
         <div class="d-flex">
-            @include('backend.includes.datatable.search')
-            <div class="me-1">
-                <select wire:model.live="selectedCollection" class="form-control rounded-0">
-                    <option value="">All Collections</option>
-                    @foreach($collections as $collection)
-                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                    @endforeach
-                </select>
+            <!-- Sidebar -->
+            <div class="collections-sidebar" style="width: 280px; min-width: 220px; background: #f8f9fa; border-radius: 12px; margin-right: 24px;">
+                <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+                    <h5>Collections</h5>
+                    <ul class="list-group" id="collectionsContainer">
+                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" id="addCollectionBtn">
+                            <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()">
+                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                <span class="add-collection-text">Add Collection</span>
+                            </button>
+                        </li>
+                        @foreach($collections as $collection)
+                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="${collection.id}">
+                            @if($collection->thumbnail_url)
+                                <img src="{{ $collection->thumbnail_url }}" alt="" width="40" class="me-2 rounded">
+                            @else
+                                <i class="fas fa-image collection-icon"></i>
+                            @endif
+                            <div class="collection-info">
+                                <span class="collection-name">{{ $collection->name }}</span>
+                                <span class="collection-items">{{ $collection->artworks()->count() }} items</span>
+                            </div>
+                            <div class="dropdown position-absolute top-0 end-0">
+                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ms-auto"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        @endforeach
+                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks">
+                            <i class="fas fa-image collection-icon"></i>
+                            <div class="collection-info">
+                                <span class="collection-name">All</span>
+                                <span class="collection-items">0  items</span>
+                            </div>
+                            <div class="dropdown position-absolute top-0 end-0">
+                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ms-auto"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="flex-grow-1">
+                <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+                    <x-loader/>
+
+                    <div class="card-header d-flex flex-column">
+                        <div class="d-flex mb-2">
+                            <h5 class="me-auto">{{ $heading }}</h5>
+                            @if(user()->isAdmin())
+                            <div class="float-end">
+                                @include('backend.includes.datatable.bulk-delete')
+                            </div>
+                            @endif
+                        </div>
+                        <!-- Filters Start -->
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex flex-grow-1">
+                                @include('backend.includes.datatable.search')
+                                <div class="me-1">
+                                    <select wire:model.live="selectedCollection" class="form-control rounded-0">
+                                        <option value="">All Collections</option>
+                                        @foreach($collections as $collection)
+                                            <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                @if(isset($columns['company_name']))
+                                    <div class="me-1">
+                                        <select wire:model.live="selectedCompany" class="form-control rounded-0">
+                                            <option value="">All Companies</option>
+                                            @foreach($companies as $company)
+                                                <option value="{{$company->id}}">{{$company->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                                {{--<div class="me-1">
+                                    <select wire:model.live="selectedArtist" class="form-control">
+                                        <option value="">All Artists</option>
+                                        @foreach($artists as $artist)
+                                            <option value="{{$artist}}">{{$artist}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>--}}
+                                <!-- @include('backend.includes.datatable.reset-filters') -->
+                            </div>
+
+                            @if(!user()->isAdmin())
+                            <div class="btn-group ms-auto" role="group" aria-label="Artwork Actions">
+                                <button type="button" class="btn btn-light" title="Add" onclick="handleOpenUploadArtworks()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-light" title="Copy">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button type="button" class="btn btn-light" title="Swap">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </button>
+                                <button type="button" class="btn btn-light" title="Delete" id="bulkDeleteBtn"  data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            @endif
+                        </div>
+
+                        @if($selectedRows && user()->can('bulkUpdate', \App\Models\Artwork::class))
+                            <div class="d-flex mt-2 justify-content-end">
+                                <div class="me-1 ">
+                                    <label for="">Move to Collection</label>
+                                    <select wire:model.live="targetCollection" class="form-control  rounded-0 border-black">
+                                        <option value="">Select Collection</option>
+                                        @foreach($collections as $collection)
+                                            <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="align-self-end ms-2">
+                                    <button class="btn btn-primary {{ !$targetCollection ? 'disabled' : '' }}" wire:click="updateCollection">{{ __('Move') }}</button>
+                                </div>
+                            </div>
+                        @endif
+                        @include('backend.includes.datatable.toggle-columns')
+                    </div>
+
+                    <div class="card-body py-0">
+                        <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
+                            <table class="table table-borderless align-middle mb-0">
+                                @include('backend.includes.datatable.header')
+                                <tbody>
+                                @foreach($rows as $row)
+                                    <tr class="dt-row">
+                                        @include('backend.includes.datatable.bulk-selection')
+
+                                        <!-- pre columns !-->
+                                        <td>
+                                            <img src="{{ $row->image_url }}" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;">
+                                        </td>
+
+                                        @include('backend.includes.datatable.content')
+
+                                        <td>
+                                            @include('backend.includes.datatable.actions')
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                            <div class="modal fade" id="artworkImage" tabindex="-1" >
+                                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img :src="artworkImage">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    @include('backend.includes.datatable.footer')
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="upload-artwork-container" style="display: none;">
+        <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+            <div class="d-flex justify-content-start">
+                <button class="btn btn-outline-secondary mb-3 d-flex align-items-center" onclick="backToCollections()" style="width: fit-content; background: transparent;">
+                    <i class="fas fa-arrow-left me-2"></i> Back
+                </button>
+            </div>
+            <div class="text-center mb-4">
+                <button class="btn btn-primary" id="download-template-btn" onclick="downloadSpreadsheet()">Download spreadsheet template (.csv, .xlsx)</button>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Upload spreadsheet</label>
+                    <div class="upload-box" id="spreadsheet-upload">
+                        <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv, .xlsx, .xls file</span>
+                        <div id="spreadsheet-progress" style="display: none;">
+                            <div class="progress-container">
+                                <div class="progress-bar-upload"></div>
+                            </div>
+                            <span class="progress-text">Uploading...</span>
+                        </div>
+                        <span id="spreadsheet-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                        <input type="file" class="form-control-file" style="display:none;" id="spreadsheetInput" accept=".csv,.xlsx,.xls">
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Upload image files</label>
+                    <div class="upload-box" id="image-upload">
+                        <span id="image-upload-text">Drag & drop a file here<br>or choose .png, .jpg, .jpeg files</span>
+                        <div id="image-progress" style="display: none;">
+                            <div class="progress-container">
+                                <div class="progress-bar-upload"></div>
+                            </div>
+                            <span class="progress-text">Uploading...</span>
+                        </div>
+                        <span id="image-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                        <input type="file" class="form-control-file" style="display:none;" id="imageInput" multiple accept=".png,.jpg,.jpeg">
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mb-3">
+                <button class="btn btn-warning" id="generate-artwork-btn" onclick="handleGenerateArtwork()">Generate Artwork</button>
+            </div>
+            <div id="artwork-progress-bar" style="display:none; margin-bottom: 20px;">
+                <div style="width: 500px; margin: 0 auto; background: #eee; border-radius: 8px; height: 20px; position: relative;">
+                    <div id="artwork-progress-bar-inner" class="artwork-progress-inner"></div>
+                    <span id="artwork-progress-bar-label" class="artwork-progress-label">0/0 processed</span>
+                </div>
             </div>
 
-            @if(isset($columns['company_name']))
-                <div class="me-1">
-                    <select wire:model.live="selectedCompany" class="form-control rounded-0">
-                        <option value="">All Companies</option>
-                        @foreach($companies as $company)
-                            <option value="{{$company->id}}">{{$company->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            @endif
-            {{--<div class="me-1">
-                <select wire:model.live="selectedArtist" class="form-control">
-                    <option value="">All Artists</option>
-                    @foreach($artists as $artist)
-                        <option value="{{$artist}}">{{$artist}}</option>
-                    @endforeach
-                </select>
-            </div>--}}
-            @include('backend.includes.datatable.reset-filters')
-        </div>
-
-        @if($selectedRows && user()->can('bulkUpdate', \App\Models\Artwork::class))
-            <div class="d-flex mt-2 justify-content-end">
-                <div class="me-1 ">
-                    <label for="">Move to Collection</label>
-                    <select wire:model.live="targetCollection" class="form-control  rounded-0 border-black">
-                        <option value="">Select Collection</option>
+            <!-- Master Collection and Unit Dropdowns in a Row -->
+            <div class="mb-3 d-flex align-items-center" style="gap: 40px;">
+                <div class="d-flex align-items-center" style="min-width: 200px;">
+                    <label for="masterCollection" class="form-label me-2 mb-0">Collection</label>
+                    <select id="masterCollection" class="form-select">
+                        <option value="">Select a collection to apply to all</option>
                         @foreach($collections as $collection)
                             <option value="{{$collection->id}}">{{$collection->name}}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="align-self-end ms-2">
-                    <button class="btn btn-primary {{ !$targetCollection ? 'disabled' : '' }}" wire:click="updateCollection">{{ __('Move') }}</button>
+                <div class="d-flex align-items-center" style="min-width: 200px;">
+                    <label for="masterUnit" class="form-label me-2 mb-0">Unit</label>
+                    <select id="masterUnit" class="form-select">
+                        <option value="">Select a unit to apply to all</option>
+                        <option value="inch">inch</option>
+                        <option value="m">m</option>
+                        <option value="cm">cm</option>
+                    </select>
                 </div>
             </div>
-        @endif
-        @include('backend.includes.datatable.toggle-columns')
+
+            <!-- Artworks Table -->
+            <div class="table-responsive mb-3">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Collection</th>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Height (inch)</th>
+                            <th>Width (inch)</th>
+                            <th>Unit</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="artworkTableBody">
+                        <!-- Example row, repeat for each artwork -->
+                        <!-- <tr>
+                            <td><img src="..." style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                            <td contenteditable="true">Indispensable exhibition</td>
+                            <td contenteditable="true">Jaguar Attacking a Horse</td>
+                            <td contenteditable="true">Anna Ovanesova</td>
+                            <td contenteditable="true">45.6</td>
+                            <td contenteditable="true">35.4</td>
+                            <td contenteditable="true">Digital Art</td>
+                            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                        </tr> -->
+                        <!-- More rows... -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex flex-column align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
+                <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
+                <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()">Submit</button>
+            </div>
+        </div>
     </div>
-    <div class="card-body py-0">
-        <div class="mb-3 scrollbar table-responsive" x-data="{artworkImage: null}">
-            <table class="table table-hover collection-table fs--1 table-sm" >
 
-                @include('backend.includes.datatable.header')
 
-                <tbody class="list">
-                @foreach($rows as $row)
-                    <tr class="dt-row">
-                        @include('backend.includes.datatable.bulk-selection')
-
-                        <!-- pre columns !-->
-                        <td class="td artwork-img">
-                            <img
-                                @click="artworkImage = @js($row->image_url);"
-                                src="{{ $row->image_url }}"
-                                alt="" width="50"
-                                data-bs-toggle="modal" data-bs-target="#artworkImage"
-                            >
-                        </td>
-
-                        @include('backend.includes.datatable.content')
-
-                        <td>
-                            @include('backend.includes.datatable.actions')
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-            <div class="modal fade" id="artworkImage" tabindex="-1" >
-                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Add Collection Modal -->
+    <div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered add-collection-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCollectionModalLabel">Add new collection</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCollectionForm">
+                        <div class="mb-3">
+                            <label for="collectionName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="collectionName" name="name" placeholder="Name" required>
                         </div>
-                        <div class="modal-body text-center">
-                            <img :src="artworkImage">
+                        <div class="mb-3">
+                            <label for="collectionCompany" class="form-label">Company</label>
+                            @if(auth()->user()->name === 'Super Admin')
+                            <select class="form-control rounded-0" id="collectionCompany" name="company">
+                                <option value="">Select Company</option>
+                                @foreach($companies as $company)
+                                    <option value="{{$company->id}}">{{$company->name}}</option>
+                                @endforeach
+                            </select>
+                            @else
+                                <input type="text" class="form-control" id="collectionCompany" placeholder="Company" disabled value="{{ user()->company->name }}">
+                            @endif
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Thumbnail</label>
+                            <div class="d-flex align-items-center">
+                                <label for="collectionThumbnail" class="thumbnail-upload border rounded d-flex flex-column align-items-center justify-content-center" style="width: 80px; height: 100px; cursor: pointer;">
+                                    <span id="thumbnailText">Click to add image</span>
+                                    <input type="file" id="collectionThumbnail" name="thumbnail" accept="image/*" style="display: none;">
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-save-collection" id="saveCollectionBtn" onclick="handleSaveCollection()">Save</button>
                 </div>
             </div>
         </div>
-
     </div>
-    @include('backend.includes.datatable.footer')
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    Are you sure you want to perform this action?
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger" id="confirmDeleteYes" onclick="handleDeleteArtworks()">Yes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Progress Modal -->
+    <div class="modal fade" id="submitProgressModal" tabindex="-1" aria-labelledby="submitProgressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <h5 class="mb-3">Saving Artworks...</h5>
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="submitProgressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-muted mb-0" id="submitProgressText">Processing artwork data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .bg-light-page {
+        background: #f7f9fb;
+        min-height: 100vh;
+    }
+
+    .table tbody tr:hover {
+        background: #f1f3f7;
+    }
+
+    .add-collection-btn {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .add-collection-btn:hover {
+        background-color: #f8f9fa;
+    }
+
+    .icon-circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background-color: #a9cff5;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .icon-circle i {
+        font-size: 14px;
+        color: #000;
+    }
+
+    /* Collection List Styling */
+    .list-group-item {
+        border: none !important;
+        padding: 10px 0;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .list-group-item:hover{
+        background-color: #f8f9fa;
+    }
+
+    .collection-icon {
+        font-size: 20px;
+        margin-right: 10px;
+        color: #000;
+    }
+
+
+    .collection-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .collection-name {
+        font-size: 14px;
+        font-weight: bold;
+        color: #000;
+    }
+
+
+    .list-group{
+        margin-top: 20px;
+        /* max-height: 250px;
+        overflow: hidden; */
+    }
+
+    .list-group-item i.fa-ellipsis-v {
+        font-size: 14px;
+        color: #6c757d;
+        position: absolute;
+        top: 9px;
+        right: 9px;
+    }
+ }
+
+    .btn-group .btn {
+        margin-right: 4px;
+        border-radius: 6px !important;
+        border: 1px solid #e0e0e0;
+    }
+    .btn-group .btn:last-child {
+        margin-right: 0;
+    }
+
+    .thumbnail-upload {
+        background: #f8f9fa;
+        color: #888;
+        font-size: 14px;
+        text-align: center;
+        transition: background 0.2s;
+    }
+    .thumbnail-upload:hover {
+        background: #e9ecef;
+    }
+
+    .add-collection-modal-dialog {
+        max-width: 800px;
+        width: 800px;
+    }
+
+    .add-collection-modal-dialog .modal-content {
+        height: 500px   ;
+        min-height: 500px;
+        max-height: 500px;
+        overflow: auto;
+    }
+
+    .btn-save-collection {
+        background: #2453e3;
+        color: #fff;
+        border-radius: 8px;
+        min-width: 120px;
+        padding: 8px 32px;
+        border: none;
+        box-shadow: 0 2px 6px rgba(36, 83, 227, 0.08);
+        font-weight: 500;
+        font-size: 16px;
+        transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn-save-collection:hover, .btn-save-collection:focus {
+        background: #1a3fa6;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(36, 83, 227, 0.15);
+    }
+
+    .upload-box {
+        border: 2px dashed #b0b8c1;
+        border-radius: 12px;
+        background: #f7f9fb;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-align: center;
+        font-size: 16px;
+        color: #6c757d;
+        transition: border-color 0.2s, background 0.2s;
+        position: relative;
+    }
+    .upload-box:hover {
+        border-color: #2453e3;
+        background: #e9f0fb;
+    }
+    .upload-box.dragover {
+        border-color: #007bff;
+        background: #f8f9fa;
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+    }
+    .upload-box input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        left: 0;
+        top: 0;
+    }
+    .table td[contenteditable="true"] {
+        background: #f7f9fb;
+        border-radius: 4px;
+        outline: none;
+        min-width: 80px;
+    }
+
+    .table td[contenteditable="true"]:empty:before {
+        content: attr(data-placeholder);
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    .table td[contenteditable="true"]:focus:empty:before {
+        color: #adb5bd;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #000;
+        font-weight: bold;
+    }
+
+    /* Upload Progress Styles */
+    .progress-container {
+        width: 200px;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 10px auto;
+    }
+
+    .progress-bar-upload {
+        height: 100%;
+        background: #28a745;
+        width: 0%;
+        transition: width 0.3s ease;
+        border-radius: 4px;
+    }
+
+    .progress-text {
+        font-size: 14px;
+        color: #6c757d;
+        display: block;
+        margin-top: 5px;
+    }
+
+    #spreadsheet-filename {
+        font-size: 14px;
+        word-break: break-word;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .artwork-progress-label {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translateX(-50%);
+        color: #222;
+        font-weight: 500;
+        line-height: 20px;
+    }
+
+    .artwork-progress-inner {
+        background: #28a745;
+        height: 100%;
+        width: 0%;
+        border-radius: 8px;
+        transition: width 0.3s ease;
+    }
+
+    /* Highlight empty cells */
+    .empty-cell {
+        background-color: #ffe6e6 !important;
+        border: 1px solid #ffcccc !important;
+    }
+
+    .empty-cell:focus {
+        background-color: #ffe6e6 !important;
+        border: 1px solid #007bff !important;
+    }
+
+    /* Submit Progress Modal Styles */
+    #submitProgressModal .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    #submitProgressModal .modal-body {
+        padding: 2rem;
+    }
+
+    #submitProgressModal .spinner-border {
+        color: #2453e3 !important;
+    }
+
+    #submitProgressModal .progress {
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #submitProgressModal .progress-bar {
+        background: linear-gradient(90deg, #2453e3, #4a6cf7);
+        border-radius: 10px;
+    }
+
+    #submitProgressModal h5 {
+        color: #333;
+        font-weight: 600;
+    }
+
+    #submitProgressModal p {
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    #submitProgressModal[data-bs-backdrop="static"] {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    </style>
 </div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script>
+
+    const allCollections = @json($collections);
+
+    const mainContainer = document.getElementById('show-collections-container');
+    const uploadContainer = document.getElementById('upload-artwork-container');
+    const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
+
+    const spreadUploadText = document.getElementById('spreadsheet-upload-text');
+    const spreadProgress = document.getElementById('spreadsheet-progress');
+    const spreadFilename = document.getElementById('spreadsheet-filename');
+
+    const imageUploadText = document.getElementById('image-upload-text');
+    const imageProgress = document.getElementById('image-progress');
+    const imageFilename = document.getElementById('image-filename');
+
+    let uploadedSpreadsheetData = null;
+    let uploadedImageFiles = [];
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const masterCollectionDropdown = document.getElementById('masterCollection');
+        if (masterCollectionDropdown) {
+            masterCollectionDropdown.addEventListener('change', function(event) {
+                const selectedCollectionId = event.target.value;
+                if (selectedCollectionId) {
+                    const artworkRows = document.querySelectorAll('#artworkTableBody tr');
+                    artworkRows.forEach(row => {
+                        const collectionSelect = row.querySelector('.artwork-collection-select');
+                        if (collectionSelect) {
+                            collectionSelect.value = selectedCollectionId;
+                        }
+                    });
+                }
+            });
+        }
+
+        const masterUnitDropdown = document.getElementById('masterUnit');
+        if (masterUnitDropdown) {
+            masterUnitDropdown.addEventListener('change', function(event) {
+                const selectedUnit = event.target.value;
+                if (selectedUnit) {
+                    const artworkRows = document.querySelectorAll('#artworkTableBody tr');
+                    artworkRows.forEach(row => {
+                        const unitSelect = row.querySelector('.artwork-unit-select');
+                        if (unitSelect) {
+                            unitSelect.value = selectedUnit;
+                        }
+                    });
+                }
+            });
+        }
+
+        // Prevent default drag and drop behavior on the entire document
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+        });
+
+        const deleteBtn = document.getElementById('bulkDeleteBtn');
+        const checkboxes = document.querySelectorAll('.bulk-select-checkbox'); // Update selector as needed
+
+        function updateDeleteBtnState() {
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            deleteBtn.disabled = !anyChecked;
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateDeleteBtnState);
+        });
+
+        updateDeleteBtnState(); // Initial state
+    });
+
+    function handleOpenCollectionModal() {
+        $('#addCollectionModal').modal('show');
+    }
+
+    document.getElementById('collectionThumbnail').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('thumbnailText').innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 80px;" />`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Ensure upload container is hidden by default
+    uploadContainer.style.display = 'none';
+
+    // Find the "Add" button (the first .btn-light with title="Add")
+    function handleOpenUploadArtworks() {
+        mainContainer.style.display = 'none';
+        uploadContainer.style.display = 'block';
+    }
+
+    function backToCollections() {
+        uploadContainer.style.display = 'none';
+        mainContainer.style.display = 'block'; // or 'block' if flex doesn't work
+        resetSpreadsheetUpload();
+        resetImageUpload();
+    }
+
+    function resetSpreadsheetUpload() {
+        // Reset upload box to initial state
+        spreadUploadText.style.display = 'block';
+        spreadProgress.style.display = 'none';
+        spreadFilename.style.display = 'none';
+        document.getElementById('spreadsheetInput').value = '';
+        uploadedSpreadsheetData = null;
+    }
+
+    function resetImageUpload() {
+        // Reset image upload box to initial state
+        imageUploadText.style.display = 'block';
+        imageProgress.style.display = 'none';
+        imageFilename.style.display = 'none';
+        document.getElementById('imageInput').value = '';
+        uploadedImageFiles = [];
+    }
+
+    // Click on upload box triggers file input
+    document.getElementById('spreadsheet-upload').onclick = () => document.getElementById('spreadsheetInput').click();
+    document.getElementById('image-upload').onclick = () => document.getElementById('imageInput').click();
+
+    // Add drag and drop functionality for spreadsheet upload
+    const spreadsheetUpload = document.getElementById('spreadsheet-upload');
+    const spreadsheetInput = document.getElementById('spreadsheetInput');
+
+    spreadsheetUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    spreadsheetUpload.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    spreadsheetUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            // Check if file type is valid
+            const validTypes = ['.csv', '.xlsx', '.xls'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (validTypes.includes(fileExtension)) {
+                // Set the file to the input
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                spreadsheetInput.files = dataTransfer.files;
+
+                // Trigger the change event
+                const event = new Event('change', { bubbles: true });
+                spreadsheetInput.dispatchEvent(event);
+            } else {
+                alert('Please select a valid file type (.csv, .xlsx, .xls)');
+            }
+        }
+    });
+
+    // Add drag and drop functionality for image upload
+    const imageUpload = document.getElementById('image-upload');
+    const imageInput = document.getElementById('imageInput');
+
+    imageUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    imageUpload.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    imageUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            // Check if all files are valid image types
+            const validTypes = ['.png', '.jpg', '.jpeg'];
+            const validFiles = Array.from(files).filter(file => {
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                return validTypes.includes(fileExtension);
+            });
+
+            if (validFiles.length === files.length) {
+                // Set the files to the input
+                const dataTransfer = new DataTransfer();
+                validFiles.forEach(file => dataTransfer.items.add(file));
+                imageInput.files = dataTransfer.files;
+
+                // Trigger the change event
+                const event = new Event('change', { bubbles: true });
+                imageInput.dispatchEvent(event);
+            } else {
+                alert('Please select valid image files (.png, .jpg, .jpeg)');
+            }
+        }
+    });
+
+    function downloadSpreadsheet() {
+        const data = [
+            ['Artwork upload spreadsheet'],
+            [],
+            ['Add required information for each piece of artwork'],
+            ["Ensure the 'Filename' fully matches the images filename"],
+            ['Upload completed spreadsheet to Tetra'],
+            [],
+            ['Filename', 'Collection', 'Title', 'Artist', 'Height (in)', 'Width (in)', 'Description', 'Type']
+        ];
+
+        const rows = document.querySelectorAll('#artworkTableBody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 9) return;
+
+            const rowData = [];
+            const img = cells[0].querySelector('img');
+            rowData.push(img ? img.getAttribute('data-filename') || '' : '');
+
+            // 2. Collection
+            const collectionSelect = cells[1].querySelector('select');
+            rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
+
+            rowData.push(cells[2].textContent.trim());
+            rowData.push(cells[3].textContent.trim());
+            rowData.push(cells[4].querySelector('input').value);
+            rowData.push(cells[5].querySelector('input').value);
+            rowData.push(cells[6].textContent.trim());
+
+            const typeSelect = cells[7].querySelector('select');
+            rowData.push(typeSelect && typeSelect.value ? typeSelect.options[typeSelect.selectedIndex].text : '');
+
+            data.push(rowData);
+        });
+
+        // Download both formats
+        // downloadCSV(data);
+        downloadXLSX(data);
+    }
+
+    function downloadCSV(data) {
+        const worksheet = XLSX.utils.aoa_to_sheet(data, {
+            cellStyles: false,
+            sheetStubs: true
+        });
+
+        if (!worksheet['!merges']) worksheet['!merges'] = [];
+        worksheet['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 2, c: 0 }, e: { r: 2, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 3, c: 0 }, e: { r: 3, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } });
+
+        const csvContent = XLSX.utils.sheet_to_csv(worksheet);
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'artworks_template.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function downloadXLSX(data) {
+        const worksheet = XLSX.utils.aoa_to_sheet(data, {
+            cellStyles: false,
+            sheetStubs: true
+        });
+
+        if (!worksheet['!merges']) worksheet['!merges'] = [];
+        worksheet['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 2, c: 0 }, e: { r: 2, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 3, c: 0 }, e: { r: 3, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } });
+
+        // Create workbook with the worksheet
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Artworks Template');
+
+        // Generate XLSX file
+        const xlsxContent = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+        const blob = new Blob([xlsxContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'artworks_template.xlsx');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function handleSaveCollection() {
+        const companySelect = document.getElementById('collectionCompany');
+
+        const collectionName = document.getElementById('collectionName').value;
+        const collectionThumbnail = document.getElementById('collectionThumbnail').files[0];
+        let companyName;
+        if (isSuperAdmin) {
+            companyName = companySelect.options[companySelect.selectedIndex].text;
+        } else {
+            companyName = companySelect.value;
+        }
+
+        const formData = new FormData();
+        formData.append('collection_name', collectionName);
+        formData.append('collection_company_name', companyName);
+        formData.append('collection_thumbnail', collectionThumbnail);
+
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('/inventory/collections/add', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Collection added successfully');
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Could not add collection.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding collection.');
+        });
+    }
+
+    // Add Artwork button (add a new editable row)
+    function handleAddRow() {
+        const tbody = document.getElementById('artworkTableBody');
+        const row = document.createElement('tr');
+        const uniqueId = 'artwork-image-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+
+        row.innerHTML = `
+            <td>
+                <div class="upload-box artwork-image-upload" style="width: 60px; height: 60px; min-height: 0; padding: 0; font-size: 12px; cursor: pointer;">
+                    <span class="artwork-image-upload-text">Select or drag file</span>
+                    <input type="file" accept=".png,.jpg,.jpeg" style="display:none;" id="${uniqueId}">
+                </div>
+            </td>
+            <td style="width: 480px;">
+                <select class="form-select artwork-collection-select empty-cell">
+                    <option value="">Select Collection</option>
+                    @foreach($collections as $collection)
+                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                    @endforeach
+                </select>
+            </td>
+            <td contenteditable="true" data-placeholder="Enter title..." class="empty-cell"></td>
+            <td contenteditable="true" data-placeholder="Enter artist name..." class="empty-cell"></td>
+            <td><input type="number" id="artwork-height" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
+            <td><input type="number" id="artwork-width" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
+            <td>
+                <select class="form-select artwork-unit-select">
+                    <option value="inch">inch</option>
+                    <option value="m">m</option>
+                    <option value="cm">cm</option>
+                </select>
+            </td>
+            <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
+            <td>
+                <select class="form-select empty-cell">
+                    <option value="Painting">Painting</option>
+                    <option value="Sculpture">Sculpture</option>
+                </select>
+            </td>
+            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+        `;
+        row.querySelector('button').onclick = function() { row.remove(); };
+        tbody.appendChild(row);
+
+        // --- Image upload logic for this row ---
+        const uploadBox = row.querySelector('.artwork-image-upload');
+        const fileInput = row.querySelector('input[type="file"]');
+        const uploadText = row.querySelector('.artwork-image-upload-text');
+
+        // Function to handle image selection and populate fields
+        function handleImageSelection(file) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                // Create image element to get dimensions
+                const img = new Image();
+                img.onload = function() {
+                    // Update the upload box with image preview
+                    uploadBox.innerHTML = `<img src="${ev.target.result}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" data-filename="${file.name}">`;
+
+                    // Populate title with filename (without extension)
+                    const titleCell = row.querySelector('td:nth-child(3)');
+                    const filenameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+                    titleCell.textContent = filenameWithoutExt;
+
+                    // Populate width and height fields
+                    const widthInput = row.querySelector('input[id="artwork-width"]');
+                    const heightInput = row.querySelector('input[id="artwork-height"]');
+
+                    // Convert pixels to inches (assuming 96 DPI for web images)
+                    const widthInInches = Math.round((img.width / 96) * 10) / 10;
+                    const heightInInches = Math.round((img.height / 96) * 10) / 10;
+
+                    widthInput.value = widthInInches;
+                    heightInput.value = heightInInches;
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Click upload box triggers file input
+        uploadBox.onclick = function(e) {
+            if (e.target === fileInput) return; // Don't double-trigger
+            fileInput.click();
+        };
+
+        // Drag & drop support
+        uploadBox.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+        uploadBox.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+        });
+        uploadBox.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleImageSelection(files[0]);
+            }
+        });
+
+        // File input change: show preview and populate fields
+        fileInput.addEventListener('change', function(e) {
+            const file = fileInput.files[0];
+            handleImageSelection(file);
+        });
+
+        // Add event listeners to remove empty-cell class when user interacts
+        const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
+        contentEditableCells.forEach(cell => {
+            cell.addEventListener('input', function() {
+                if (this.textContent.trim() !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+
+        const inputFields = row.querySelectorAll('input[type="number"]');
+        inputFields.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+
+        const selectFields = row.querySelectorAll('select');
+        selectFields.forEach(select => {
+            select.addEventListener('change', function() {
+                if (this.value !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+    }
+
+    function handleSubmitArtworks() {
+        const submitBtn = document.getElementById('submit-artworks-btn');
+        const originalText = submitBtn.innerHTML;
+
+        // Show loading state on button
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving artworks...';
+        submitBtn.disabled = true;
+
+        // Show progress modal
+        const progressModal = new bootstrap.Modal(document.getElementById('submitProgressModal'));
+        progressModal.show();
+
+        const tbody = document.getElementById('artworkTableBody');
+        const rows = tbody.querySelectorAll('tr');
+        const data = [];
+
+        // First, collect all the data
+        rows.forEach((row, index) => {
+            const cells = row.querySelectorAll('td');
+            const image = cells[0].querySelector('img');
+            const collectionSelect = cells[1].querySelector('select');
+            const typeSelect = cells[8].querySelector('select');
+
+            console.log(collectionSelect, "collectionSelect");
+            console.log(typeSelect, "typeSelect");
+            const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
+
+            const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
+
+            const unitSelect = cells[6].querySelector('select'); // Adjust index as needed
+            const unitValue = unitSelect ? unitSelect.value : '';
+
+            const rowData = {
+                collection_name: collectionName,
+                title: cells[2].textContent.trim(),
+                artist: cells[3].textContent.trim(),
+                height: cells[4].querySelector('input').value,
+                width: cells[5].querySelector('input').value,
+                description: cells[6].textContent.trim(),
+                type: typeInfo,
+                unit: unitValue,
+            };
+
+            if (image && image.src && image.src.startsWith('data:')) {
+                // Send the base64 data directly
+                rowData.image = image.src;
+            }
+
+            data.push(rowData);
+        });
+
+        // Update progress text
+        document.getElementById('submitProgressText').textContent = `Preparing ${data.length} artwork(s) for upload...`;
+        document.getElementById('submitProgressBar').style.width = '25%';
+
+        // Create FormData and append artwork data
+        const formData = new FormData();
+        formData.append('artwork_data', JSON.stringify(data));
+
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Simulate progress updates
+        const progressInterval = setInterval(() => {
+            const currentWidth = parseInt(document.getElementById('submitProgressBar').style.width) || 25;
+            if (currentWidth < 90) {
+                const newWidth = Math.min(currentWidth + Math.random() * 10, 90);
+                document.getElementById('submitProgressBar').style.width = newWidth + '%';
+
+                // Update progress text based on progress
+                if (newWidth < 50) {
+                    document.getElementById('submitProgressText').textContent = 'Uploading artwork data...';
+                } else if (newWidth < 75) {
+                    document.getElementById('submitProgressText').textContent = 'Processing artwork information...';
+                } else {
+                    document.getElementById('submitProgressText').textContent = 'Finalizing artwork creation...';
+                }
+            }
+        }, 500);
+
+        fetch('/inventory/artworks/add', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Clear progress interval
+            clearInterval(progressInterval);
+
+            // Complete the progress bar
+            document.getElementById('submitProgressBar').style.width = '100%';
+            document.getElementById('submitProgressText').textContent = 'Artworks saved successfully!';
+
+            // Reset button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+
+            // Hide modal after a short delay
+            setTimeout(() => {
+                progressModal.hide();
+
+                if (data.success) {
+                    if (data.created_count > 0) {
+                        alert(`Successfully created ${data.created_count} artwork(s).`);
+                        if (data.errors && data.errors.length > 0) {
+                            console.warn('Some errors occurred:', data.errors);
+                        }
+                        window.location.reload();
+                    } else {
+                        alert('No artworks were created. Please check the data and try again.');
+                    }
+                } else {
+                    alert('Error: ' + (data.message || 'Could not add artwork.'));
+                }
+            }, 1000);
+        })
+        .catch(error => {
+            // Clear progress interval
+            clearInterval(progressInterval);
+
+            // Reset button state on error
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+
+            // Hide modal immediately on error
+            progressModal.hide();
+
+            console.error('Error:', error);
+            alert('Error saving artworks.');
+        });
+    }
+
+    // Remove row
+    document.querySelectorAll('#artworkTableBody .btn-danger').forEach(btn => {
+        btn.onclick = function() { btn.closest('tr').remove(); };
+    });
+
+
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+
+        // Show progress bar and hide upload text
+        imageUploadText.style.display = 'none';
+        imageProgress.style.display = 'block';
+        imageFilename.style.display = 'none';
+
+        // Simulate upload progress
+        const progressBar = imageProgress.querySelector('.progress-bar-upload');
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+
+                // Hide progress and show file count
+                setTimeout(() => {
+                    imageProgress.style.display = 'none';
+                    imageFilename.style.display = 'block';
+
+                    // Display file count with appropriate text
+                    const fileCount = files.length;
+                    const fileText = fileCount === 1 ? '1 image uploaded' : `${fileCount} images uploaded`;
+                    imageFilename.textContent = fileText;
+
+                    // Store the uploaded files
+                    uploadedImageFiles = files;
+                }, 300);
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
+    });
+
+    // Add spreadsheet input event listener
+    document.getElementById('spreadsheetInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Show progress bar and hide upload text
+        spreadUploadText.style.display = 'none';
+        spreadProgress.style.display = 'block';
+        spreadFilename.style.display = 'none';
+
+        // Simulate upload progress
+        const progressBar = document.querySelector('.progress-bar-upload');
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+
+                // Hide progress and show filename
+                setTimeout(() => {
+                    spreadProgress.style.display = 'none';
+                    spreadFilename.style.display = 'block';
+                    spreadFilename.textContent = file.name;
+
+                    // Process the file
+                    processSpreadsheetFile(file);
+                }, 300);
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
+    });
+
+    function processSpreadsheetFile(file) {
+        const reader = new FileReader();
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        reader.onload = function(e) {
+            let rawData;
+
+            if (fileExtension === 'csv') {
+                // Handle CSV files
+                const csv = e.target.result;
+                const workbook = XLSX.read(csv, { type: 'string' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+                // Handle XLSX/XLS files
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            } else {
+                alert('Unsupported file format. Please upload a .csv, .xlsx, or .xls file.');
+                return;
+            }
+
+            // Convert to array of objects
+            if (rawData.length > 1) { // Check if we have header and at least one data row
+                console.log(rawData, "pppppppp")
+
+                // Get the header row (first row)
+                const headers = rawData.find(row => row.length >=6 && row[0] === "Filename");
+
+                // Filter out empty rows and process data rows (skip header)
+                const filteredData = rawData.filter(row => row[0] !== "Filename" && row.length >= 6);
+                uploadedSpreadsheetData = [];
+                console.log(headers, "headers")
+
+                // Process each data row
+                filteredData.forEach(row => {
+                    if (row && row.length >= 6) {
+                        const artwork = {};
+
+                        // Map each column to its corresponding header
+                        headers.forEach((header, index) => {
+                            if (row[index] !== undefined) {
+                                // Clean up the header name and use it as property name
+                                const cleanHeader = header.toString().trim();
+                                artwork[cleanHeader] = row[index] ? row[index].toString() : '';
+                            }
+                        });
+
+                        // Only add if we have at least a filename
+                        if (artwork.Filename || artwork['ImageName'] || artwork['Image Name']) {
+                            uploadedSpreadsheetData.push(artwork);
+                        }
+                    }
+                });
+
+                console.log('Processed data:', uploadedSpreadsheetData);
+            }
+        };
+
+        // Use appropriate read method based on file type
+        if (fileExtension === 'csv') {
+            reader.readAsText(file);
+        } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+            reader.readAsArrayBuffer(file);
+        }
+    }
+
+    function handleGenerateArtwork() {
+        // Hide the button and show the progress bar
+        document.getElementById('generate-artwork-btn').style.display = 'none';
+        const progressBar = document.getElementById('artwork-progress-bar');
+        progressBar.style.display = 'block';
+
+        // Calculate total artworks - only count unique filenames that have both spreadsheet data and images
+        let total = 0;
+
+        if (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 0 && uploadedImageFiles.length > 0) {
+            // Get filenames from spreadsheet (now objects with Filename property)
+            const spreadsheetFilenames = uploadedSpreadsheetData.map(artwork =>
+                artwork.Filename || artwork['ImageName'] || artwork['Image Name']
+            ).filter(filename => filename);
+
+
+            // Get filenames from uploaded images
+            const imageFilenames = uploadedImageFiles.map(file => file.name);
+            // Count matches
+            total = spreadsheetFilenames.filter(filename =>
+                imageFilenames.some(imageName =>
+                    imageName.toLowerCase() === filename.toLowerCase() ||
+                    imageName.toLowerCase().replace(/\.[^/.]+$/, "") === filename.toLowerCase().replace(/\.[^/.]+$/, "")
+                )
+            ).length;
+        }
+
+        // If nothing to add, just reset UI and return
+        if (total === 0) {
+            progressBar.style.display = 'none';
+            document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+            alert('No matching files found. Please ensure spreadsheet filenames match uploaded image filenames.');
+            return;
+        }
+
+        let current = 0;
+        document.getElementById('artwork-progress-bar-inner').style.width = '0%';
+        document.getElementById('artwork-progress-bar-label').innerText = `0/${total} processed`;
+
+        // Simulate progress bar filling up over 1 second
+        let interval = setInterval(() => {
+            current++;
+            let percent = Math.round((current / total) * 100);
+            document.getElementById('artwork-progress-bar-inner').style.width = percent + '%';
+            document.getElementById('artwork-progress-bar-label').innerText = `${current}/${total} processed`;
+            if (current >= total) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    actuallyAddArtworksToTable();
+                    progressBar.style.display = 'none';
+                    document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+                }, 200);
+            }
+        }, 1000 / total);
+    }
+
+    function actuallyAddArtworksToTable() {
+        const tbody = document.getElementById('artworkTableBody');
+        tbody.innerHTML = ''; // Clear previous rows
+
+        if (!uploadedSpreadsheetData || uploadedSpreadsheetData.length === 0 || uploadedImageFiles.length === 0) {
+            return;
+        }
+
+        // Create a map of image files by filename (without extension)
+        const imageFilesMap = new Map();
+        uploadedImageFiles.forEach(file => {
+            const filenameWithoutExt = file.name.toLowerCase().replace(/\.[^/.]+$/, "");
+            imageFilesMap.set(filenameWithoutExt, file);
+        });
+
+        // Process spreadsheet data (now array of objects)
+        uploadedSpreadsheetData.forEach(artwork => {
+            const spreadsheetFilename = artwork.Filename || artwork['ImageName'] || artwork['Image Name'];
+            if (!spreadsheetFilename) return;
+
+            // Try to match filename (with and without extension)
+            const filenameWithoutExt = spreadsheetFilename.toLowerCase().replace(/\.[^/.]+$/, "");
+            const matchingImageFile = imageFilesMap.get(filenameWithoutExt);
+
+            if (matchingImageFile) {
+                // Create image preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td><img src="${e.target.result}" data-filename="${spreadsheetFilename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                        <td style="width: 480px;">
+                            <select class="form-select artwork-collection-select">
+                                @foreach($collections as $collection)
+                                    <option value="{{$collection->id}}" ${(artwork.Collection || artwork['Collection'] || '') === '{{$collection->name}}' ? 'selected' : ''}>{{$collection->name}}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.Title && !artwork['Title'] ? 'empty-cell' : ''}">${artwork.Title || artwork['Title'] || ''}</td>
+                        <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.Artist && !artwork['Artist'] ? 'empty-cell' : ''}">${artwork.Artist || artwork['Artist'] || ''}</td>
+                        <td><input type="number" class="form-control ${!artwork.Height && !artwork['Height (in)'] && !artwork['Height'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (in)'] || artwork['Height'] || ''}" /></td>
+                        <td><input type="number" class="form-control ${!artwork.Width && !artwork['Width (in)'] && !artwork['Width'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (in)'] || artwork['Width'] || ''}" /></td>
+                        <td>
+                            <select class="form-select artwork-unit-select">
+                                <option value="" ${(artwork.Unit === "" || !artwork.Unit) ? "selected" : ""}>inch</option>
+                                <option value="m" ${artwork.Unit === "m" ? "selected" : ""}>m</option>
+                                <option value="cm" ${artwork.Unit === "cm" ? "selected" : ""}>cm</option>
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.Description && !artwork['Description'] ? 'empty-cell' : ''}">${artwork.Description || artwork['Description'] || ''}</td>
+                        <td>
+                            <select class="form-select ${!artwork.Type && !artwork['Type'] ? 'empty-cell' : ''}">
+                                <option value="Painting" ${(artwork.Type || artwork['Type'] || '') === 'Painting' ? 'selected' : ''}>Painting</option>
+                                <option value="Sculpture" ${(artwork.Type || artwork['Type'] || '') === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
+                            </select>
+                        </td>
+                        <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                    `;
+                    newRow.querySelector('button').onclick = function() { newRow.remove(); };
+                    tbody.appendChild(newRow);
+
+                    // Add event listeners to remove empty-cell class when user interacts
+                    const contentEditableCells = newRow.querySelectorAll('[contenteditable="true"]');
+                    contentEditableCells.forEach(cell => {
+                        cell.addEventListener('input', function() {
+                            if (this.textContent.trim() !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
+
+                    const inputFields = newRow.querySelectorAll('input[type="number"]');
+                    inputFields.forEach(input => {
+                        input.addEventListener('input', function() {
+                            if (this.value.trim() !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
+
+                    const selectFields = newRow.querySelectorAll('select');
+                    selectFields.forEach(select => {
+                        select.addEventListener('change', function() {
+                            if (this.value !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
+                };
+                reader.readAsDataURL(matchingImageFile);
+            }
+        });
+
+        // Show the "Add Artwork" button if we have rows
+        if (tbody.children.length > 0) {
+            document.getElementById('add-artwork-btn').style.display = 'inline-block';
+        }
+    }
+
+
+    function handleDeleteArtworks() {
+        // Collect selected IDs
+        const selectedCheckboxes = document.querySelectorAll('.bulk-select-checkbox:checked');
+        console.log('Found checkboxes:', selectedCheckboxes.length);
+
+        const selectedIds = Array.from(selectedCheckboxes)
+            .map(cb => cb.value);
+
+        console.log('Selected IDs:', selectedIds);
+
+        if (selectedIds.length === 0) {
+            alert('No items selected for deletion.');
+            return;
+        }
+
+        // Send AJAX request (adjust URL as needed)
+        fetch('/inventory/artworks/bulk-delete', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ids: selectedIds }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Optionally: remove rows from DOM or reload
+                window.location.reload();
+            } else {
+                alert('Failed to delete artworks.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting artworks.');
+        });
+    }
+</script>
