@@ -1410,7 +1410,6 @@
 
             // Convert to array of objects
             if (rawData.length > 1) { // Check if we have header and at least one data row
-                console.log(rawData, "pppppppp")
 
                 // Get the header row (first row)
                 const headers = rawData.find(row => row.length >=6 && row[0] === "Filename");
@@ -1418,7 +1417,6 @@
                 // Filter out empty rows and process data rows (skip header)
                 const filteredData = rawData.filter(row => row[0] !== "Filename" && row.length >= 6);
                 uploadedSpreadsheetData = [];
-                console.log(headers, "headers")
 
                 // Process each data row
                 filteredData.forEach(row => {
@@ -1441,7 +1439,6 @@
                     }
                 });
 
-                console.log('Processed data:', uploadedSpreadsheetData);
             }
         };
 
@@ -1618,12 +1615,10 @@
     function handleDeleteArtworks() {
         // Collect selected IDs
         const selectedCheckboxes = document.querySelectorAll('.bulk-select-checkbox:checked');
-        console.log('Found checkboxes:', selectedCheckboxes.length);
 
         const selectedIds = Array.from(selectedCheckboxes)
             .map(cb => cb.value);
 
-        console.log('Selected IDs:', selectedIds);
 
         if (selectedIds.length === 0) {
             alert('No items selected for deletion.');
