@@ -1199,8 +1199,6 @@
             const collectionSelect = cells[1].querySelector('select');
             const typeSelect = cells[8].querySelector('select');
 
-            console.log(collectionSelect, "collectionSelect");
-            console.log(typeSelect, "typeSelect");
             const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
 
             const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
