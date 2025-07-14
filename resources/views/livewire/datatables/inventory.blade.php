@@ -1197,9 +1197,12 @@
             const cells = row.querySelectorAll('td');
             const image = cells[0].querySelector('img');
             const collectionSelect = cells[1].querySelector('select');
+            const typeSelect = cells[8].querySelector('select');
 
+            console.log(collectionSelect, "collectionSelect");
+            console.log(typeSelect, "typeSelect");
             const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
-            const typeSelect = cells[7].querySelector('select');
+
             const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
 
             const unitSelect = cells[6].querySelector('select'); // Adjust index as needed
