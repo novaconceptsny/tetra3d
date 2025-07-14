@@ -173,9 +173,8 @@
             <div class="mb-3">
                 <label for="inlineUnits" class="form-label">Units</label>
                 <select class="form-select" id="inlineUnits">
-                    <option selected disabled>Select measurement units</option>
+                    <option value="metric" selected>Metric</option>
                     <option value="imperial">Imperial</option>
-                    <option value="metric">Metric</option>
                 </select>
             </div>
 
@@ -385,7 +384,7 @@
             const tours = $('#inlineTourSelect').val(); // Using jQuery for Select2
             const collections = $('#inlineCollections').val();
             const contributors = $('#inlineContributors').val();
-            const units = document.getElementById('inlineUnits').value;
+            const unit = document.getElementById('inlineUnits').value;
             const thumbnailFile = document.getElementById('inlineImageInput').files[0];
             const companyId = document.getElementById('createProjectSection').dataset.companyId;
 
@@ -405,7 +404,7 @@
             formData.append('tour_ids', JSON.stringify(tours));
             formData.append('artwork_collection_ids', JSON.stringify(collections));
             formData.append('user_ids', JSON.stringify(contributors));
-            formData.append('units', units);
+            formData.append('unit', unit);
             formData.append('thumbnail', thumbnailFile);
             formData.append('company_id', companyId);
 
@@ -486,7 +485,7 @@
 
                 // Populate form with existing data from the server response
                 document.getElementById('inlineProjectNameInput').value = data.project.name;
-                document.getElementById('inlineUnits').value = data.project.units || 'imperial';
+                document.getElementById('inlineUnits').value = data.project.unit || 'metric';
 
                 // Clear and populate dropdowns
                 console.log(data)
@@ -546,7 +545,7 @@
             const tours = $('#inlineTourSelect').val();
             const collections = $('#inlineCollections').val();
             const contributors = $('#inlineContributors').val();
-            const units = document.getElementById('inlineUnits').value;
+            const unit = document.getElementById('inlineUnits').value;
             const thumbnailFile = document.getElementById('inlineImageInput').files[0];
 
             // Validate required fields
@@ -560,8 +559,8 @@
             formData.append('tour_ids', JSON.stringify(tours));
             formData.append('artwork_collection_ids', JSON.stringify(collections));
             formData.append('user_ids', JSON.stringify(contributors));
-            formData.append('units', units);
-            console.log(thumbnailFile)
+            formData.append('unit', unit);
+            console.log(unit)
             if (thumbnailFile) {
                 formData.append('thumbnail', thumbnailFile);
             }
@@ -661,7 +660,7 @@
             formData.append('tour', inlineTourSelect.value);
             formData.append('collections', inlineCollections.value);
             formData.append('contributors', inlineContributors.value);
-            formData.append('units', inlineUnits.value);
+            formData.append('unit', inlineUnits.value);
             formData.append('image', inlineImageInput.files[0]);
 
             try {

@@ -125,7 +125,7 @@ class Tour360Controller extends Controller
                 'tour_ids'               => 'required|string',
                 'user_ids'               => 'required|string',
                 'artwork_collection_ids' => 'required|string',
-                'units'                  => 'required|string|in:imperial,metric',
+                'unit'                   => 'required|string|in:imperial,metric',
                 'thumbnail'              => 'nullable|image|mimes:jpeg,png|max:2048',
                 'company_id'             => 'required|exists:companies,id',
             ]);
@@ -139,6 +139,7 @@ class Tour360Controller extends Controller
             $project = Project::create([
                 'name' => $request->name,
                 'company_id' => $request->company_id,
+                'unit' => $request->unit,
             ]);
 
             // Store thumbnail
@@ -178,13 +179,13 @@ class Tour360Controller extends Controller
                 'tour_ids'               => 'required|string',
                 'user_ids'               => 'required|string',
                 'artwork_collection_ids' => 'required|string',
-                'units'                  => 'required|string|in:imperial,metric',
+                'unit'                   => 'required|string|in:imperial,metric',
                 'thumbnail'              => 'nullable|image|mimes:jpeg,png|max:2048',
             ]);
 
             // Update basic project information
             $project->name = $request->name;
-            // $project->units = $request->units;
+            $project->unit = $request->unit;
 
             // Decode JSON strings back to arrays
             $tourIds       = json_decode($request->tour_ids);

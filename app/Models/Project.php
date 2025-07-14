@@ -24,6 +24,7 @@ class Project extends Model implements HasMedia
         'tour_id',
         'is_curate_2d',
         'background_url',
+        'unit',
     ];
 
     public static function boot()
