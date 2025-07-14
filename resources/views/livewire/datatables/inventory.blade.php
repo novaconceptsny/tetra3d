@@ -230,15 +230,26 @@
                 </div>
             </div>
 
-            <!-- Master Collection Dropdown -->
-            <div class="mb-3 d-flex align-items-center" style="width: 400px">
-                <label for="masterCollection" class="form-label me-2 mb-0">Collection</label>
-                <select id="masterCollection" class="form-select">
-                    <option value="">Select a collection to apply to all</option>
-                    @foreach($collections as $collection)
-                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                    @endforeach
-                </select>
+            <!-- Master Collection and Unit Dropdowns in a Row -->
+            <div class="mb-3 d-flex align-items-center" style="gap: 40px;">
+                <div class="d-flex align-items-center" style="min-width: 200px;">
+                    <label for="masterCollection" class="form-label me-2 mb-0">Collection</label>
+                    <select id="masterCollection" class="form-select">
+                        <option value="">Select a collection to apply to all</option>
+                        @foreach($collections as $collection)
+                            <option value="{{$collection->id}}">{{$collection->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="d-flex align-items-center" style="min-width: 200px;">
+                    <label for="masterUnit" class="form-label me-2 mb-0">Unit</label>
+                    <select id="masterUnit" class="form-select">
+                        <option value="">Select a unit to apply to all</option>
+                        <option value="inch">inch</option>
+                        <option value="m">m</option>
+                        <option value="cm">cm</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Artworks Table -->
@@ -252,6 +263,7 @@
                             <th>Artist</th>
                             <th>Height (inch)</th>
                             <th>Width (inch)</th>
+                            <th>Unit</th>
                             <th>Description</th>
                             <th>Type</th>
                             <th></th>
@@ -697,6 +709,22 @@
             });
         }
 
+        const masterUnitDropdown = document.getElementById('masterUnit');
+        if (masterUnitDropdown) {
+            masterUnitDropdown.addEventListener('change', function(event) {
+                const selectedUnit = event.target.value;
+                if (selectedUnit) {
+                    const artworkRows = document.querySelectorAll('#artworkTableBody tr');
+                    artworkRows.forEach(row => {
+                        const unitSelect = row.querySelector('.artwork-unit-select');
+                        if (unitSelect) {
+                            unitSelect.value = selectedUnit;
+                        }
+                    });
+                }
+            });
+        }
+
         // Prevent default drag and drop behavior on the entire document
         document.addEventListener('dragover', function(e) {
             e.preventDefault();
@@ -1025,6 +1053,13 @@
             <td contenteditable="true" data-placeholder="Enter artist name..." class="empty-cell"></td>
             <td><input type="number" id="artwork-height" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
             <td><input type="number" id="artwork-width" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
+            <td>
+                <select class="form-select artwork-unit-select">
+                    <option value="inch">inch</option>
+                    <option value="m">m</option>
+                    <option value="cm">cm</option>
+                </select>
+            </td>
             <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
             <td>
                 <select class="form-select empty-cell">
@@ -1144,15 +1179,15 @@
     function handleSubmitArtworks() {
         const submitBtn = document.getElementById('submit-artworks-btn');
         const originalText = submitBtn.innerHTML;
-        
+
         // Show loading state on button
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving artworks...';
         submitBtn.disabled = true;
-        
+
         // Show progress modal
         const progressModal = new bootstrap.Modal(document.getElementById('submitProgressModal'));
         progressModal.show();
-        
+
         const tbody = document.getElementById('artworkTableBody');
         const rows = tbody.querySelectorAll('tr');
         const data = [];
@@ -1167,6 +1202,9 @@
             const typeSelect = cells[7].querySelector('select');
             const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
 
+            const unitSelect = cells[6].querySelector('select'); // Adjust index as needed
+            const unitValue = unitSelect ? unitSelect.value : '';
+
             const rowData = {
                 collection_name: collectionName,
                 title: cells[2].textContent.trim(),
@@ -1175,6 +1213,7 @@
                 width: cells[5].querySelector('input').value,
                 description: cells[6].textContent.trim(),
                 type: typeInfo,
+                unit: unitValue,
             };
 
             if (image && image.src && image.src.startsWith('data:')) {
@@ -1201,7 +1240,7 @@
             if (currentWidth < 90) {
                 const newWidth = Math.min(currentWidth + Math.random() * 10, 90);
                 document.getElementById('submitProgressBar').style.width = newWidth + '%';
-                
+
                 // Update progress text based on progress
                 if (newWidth < 50) {
                     document.getElementById('submitProgressText').textContent = 'Uploading artwork data...';
@@ -1225,19 +1264,19 @@
         .then(data => {
             // Clear progress interval
             clearInterval(progressInterval);
-            
+
             // Complete the progress bar
             document.getElementById('submitProgressBar').style.width = '100%';
             document.getElementById('submitProgressText').textContent = 'Artworks saved successfully!';
-            
+
             // Reset button state
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
-            
+
             // Hide modal after a short delay
             setTimeout(() => {
                 progressModal.hide();
-                
+
                 if (data.success) {
                     if (data.created_count > 0) {
                         alert(`Successfully created ${data.created_count} artwork(s).`);
@@ -1256,14 +1295,14 @@
         .catch(error => {
             // Clear progress interval
             clearInterval(progressInterval);
-            
+
             // Reset button state on error
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
-            
+
             // Hide modal immediately on error
             progressModal.hide();
-            
+
             console.error('Error:', error);
             alert('Error saving artworks.');
         });
@@ -1371,10 +1410,10 @@
             // Convert to array of objects
             if (rawData.length > 1) { // Check if we have header and at least one data row
                 console.log(rawData, "pppppppp")
-                
+
                 // Get the header row (first row)
                 const headers = rawData.find(row => row.length >=6 && row[0] === "Filename");
-                
+
                 // Filter out empty rows and process data rows (skip header)
                 const filteredData = rawData.filter(row => row[0] !== "Filename" && row.length >= 6);
                 uploadedSpreadsheetData = [];
@@ -1384,7 +1423,7 @@
                 filteredData.forEach(row => {
                     if (row && row.length >= 6) {
                         const artwork = {};
-                        
+
                         // Map each column to its corresponding header
                         headers.forEach((header, index) => {
                             if (row[index] !== undefined) {
@@ -1400,7 +1439,7 @@
                         }
                     }
                 });
-                
+
                 console.log('Processed data:', uploadedSpreadsheetData);
             }
         };
@@ -1511,6 +1550,13 @@
                         <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.Artist && !artwork['Artist'] ? 'empty-cell' : ''}">${artwork.Artist || artwork['Artist'] || ''}</td>
                         <td><input type="number" class="form-control ${!artwork.Height && !artwork['Height (in)'] && !artwork['Height'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (in)'] || artwork['Height'] || ''}" /></td>
                         <td><input type="number" class="form-control ${!artwork.Width && !artwork['Width (in)'] && !artwork['Width'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (in)'] || artwork['Width'] || ''}" /></td>
+                        <td>
+                            <select class="form-select artwork-unit-select">
+                                <option value="" ${(artwork.Unit === "" || !artwork.Unit) ? "selected" : ""}>inch</option>
+                                <option value="m" ${artwork.Unit === "m" ? "selected" : ""}>m</option>
+                                <option value="cm" ${artwork.Unit === "cm" ? "selected" : ""}>cm</option>
+                            </select>
+                        </td>
                         <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.Description && !artwork['Description'] ? 'empty-cell' : ''}">${artwork.Description || artwork['Description'] || ''}</td>
                         <td>
                             <select class="form-select ${!artwork.Type && !artwork['Type'] ? 'empty-cell' : ''}">

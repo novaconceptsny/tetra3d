@@ -122,6 +122,7 @@ class InventoryController extends Controller
                     $artwork->artist = $row['artist'] ?? '';
                     $artwork->type = $row['type'] ?? '';
                     $artwork->description = $row['description'] ?? '';
+                    $artwork->original_unit = $row['unit'] ?? '';
                     
                     // Set artwork data
                     $artwork->data = [

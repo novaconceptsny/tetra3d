@@ -25,7 +25,8 @@ class Artwork extends Model implements HasMedia
         'description',
         'artwork_collection_id',
         'data',
-        'company_id'
+        'company_id',
+        'original_unit'
     ];
 
     public function registerMediaCollections(): void
