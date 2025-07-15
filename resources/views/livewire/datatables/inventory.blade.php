@@ -287,7 +287,7 @@
             </div>
             <div class="d-flex flex-column align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
                 <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
-                <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()">Submit</button>
+                <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
             </div>
         </div>
     </div>
@@ -669,6 +669,22 @@
     #submitProgressModal[data-bs-backdrop="static"] {
         background-color: rgba(0, 0, 0, 0.5);
     }
+
+    /* Disabled submit button styles */
+    #submit-artworks-btn:disabled {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: #fff !important;
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    #submit-artworks-btn:disabled:hover {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: #fff !important;
+        opacity: 0.6;
+    }
     </style>
 </div>
 
@@ -691,6 +707,9 @@
 
     let uploadedSpreadsheetData = null;
     let uploadedImageFiles = [];
+    let totalExpectedArtworks = 0;
+    let processedArtworks = 0;
+    let isProcessingArtworks = false;
 
     document.addEventListener('DOMContentLoaded', function () {
         const masterCollectionDropdown = document.getElementById('masterCollection');
@@ -747,6 +766,7 @@
         });
 
         updateDeleteBtnState(); // Initial state
+        updateSubmitButtonState(); // Initial submit button state
     });
 
     function handleOpenCollectionModal() {
@@ -767,10 +787,22 @@
     // Ensure upload container is hidden by default
     uploadContainer.style.display = 'none';
 
+    // Function to check if submit button should be enabled
+    function updateSubmitButtonState() {
+        const submitBtn = document.getElementById('submit-artworks-btn');
+        const tbody = document.getElementById('artworkTableBody');
+        const hasEntries = tbody.children.length > 0;
+        const allProcessed = !isProcessingArtworks && processedArtworks >= totalExpectedArtworks;
+        
+        // Enable button only if we have entries and all processing is complete
+        submitBtn.disabled = !hasEntries || !allProcessed;
+    }
+
     // Find the "Add" button (the first .btn-light with title="Add")
     function handleOpenUploadArtworks() {
         mainContainer.style.display = 'none';
         uploadContainer.style.display = 'block';
+        updateSubmitButtonState(); // Ensure submit button is disabled initially
     }
 
     function backToCollections() {
@@ -1069,8 +1101,14 @@
             </td>
             <td><button class="btn btn-danger btn-sm">Remove</button></td>
         `;
-        row.querySelector('button').onclick = function() { row.remove(); };
+        row.querySelector('button').onclick = function() { 
+            row.remove(); 
+            updateSubmitButtonState(); // Update state when row is removed
+        };
         tbody.appendChild(row);
+
+        // Update submit button state after adding row
+        updateSubmitButtonState();
 
         // --- Image upload logic for this row ---
         const uploadBox = row.querySelector('.artwork-image-upload');
@@ -1477,10 +1515,18 @@
             ).length;
         }
 
+        // Set processing state
+        totalExpectedArtworks = total;
+        processedArtworks = 0;
+        isProcessingArtworks = true;
+        updateSubmitButtonState();
+
         // If nothing to add, just reset UI and return
         if (total === 0) {
             progressBar.style.display = 'none';
             document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+            isProcessingArtworks = false;
+            updateSubmitButtonState();
             alert('No matching files found. Please ensure spreadsheet filenames match uploaded image filenames.');
             return;
         }
@@ -1501,6 +1547,8 @@
                     actuallyAddArtworksToTable();
                     progressBar.style.display = 'none';
                     document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+                    isProcessingArtworks = false;
+                    updateSubmitButtonState();
                 }, 200);
             }
         }, 1000 / total);
@@ -1511,6 +1559,8 @@
         tbody.innerHTML = ''; // Clear previous rows
 
         if (!uploadedSpreadsheetData || uploadedSpreadsheetData.length === 0 || uploadedImageFiles.length === 0) {
+            processedArtworks = 0;
+            updateSubmitButtonState();
             return;
         }
 
@@ -1521,10 +1571,20 @@
             imageFilesMap.set(filenameWithoutExt, file);
         });
 
+        let processedCount = 0;
+        const totalToProcess = uploadedSpreadsheetData.length;
+
         // Process spreadsheet data (now array of objects)
         uploadedSpreadsheetData.forEach(artwork => {
             const spreadsheetFilename = artwork.Filename || artwork['ImageName'] || artwork['Image Name'];
-            if (!spreadsheetFilename) return;
+            if (!spreadsheetFilename) {
+                processedCount++;
+                if (processedCount >= totalToProcess) {
+                    processedArtworks = processedCount;
+                    updateSubmitButtonState();
+                }
+                return;
+            }
 
             // Try to match filename (with and without extension)
             const filenameWithoutExt = spreadsheetFilename.toLowerCase().replace(/\.[^/.]+$/, "");
@@ -1564,7 +1624,10 @@
                         </td>
                         <td><button class="btn btn-danger btn-sm">Remove</button></td>
                     `;
-                    newRow.querySelector('button').onclick = function() { newRow.remove(); };
+                    newRow.querySelector('button').onclick = function() { 
+                        newRow.remove(); 
+                        updateSubmitButtonState(); // Update state when row is removed
+                    };
                     tbody.appendChild(newRow);
 
                     // Add event listeners to remove empty-cell class when user interacts
@@ -1600,8 +1663,22 @@
                             }
                         });
                     });
+
+                    // Track processed artwork
+                    processedCount++;
+                    if (processedCount >= totalToProcess) {
+                        processedArtworks = processedCount;
+                        updateSubmitButtonState();
+                    }
                 };
                 reader.readAsDataURL(matchingImageFile);
+            } else {
+                // No matching image found, but still count as processed
+                processedCount++;
+                if (processedCount >= totalToProcess) {
+                    processedArtworks = processedCount;
+                    updateSubmitButtonState();
+                }
             }
         });
 
