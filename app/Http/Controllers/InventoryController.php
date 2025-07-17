@@ -83,6 +83,12 @@ class InventoryController extends Controller
 
     public function addArtworks(Request $request)
     {
+
+        // Increase PHP execution time and memory limit for large uploads
+        ini_set('max_execution_time', 300); // 5 minutes
+        // ini_set('memory_limit', '512M'); // 512MB memory limit
+        // set_time_limit(300); // 5 minutes timeout
+
         try {
             $artworkData = json_decode($request->input('artwork_data'), true);
 

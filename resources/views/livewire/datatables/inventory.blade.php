@@ -431,6 +431,16 @@
                             you'll be asked if you want to continue with the next page.
                         </small>
                     </div>
+                    <div class="text-center mt-3">
+                        <div class="countdown-container">
+                            <span class="text-muted">Auto-submit in </span>
+                            <span id="countdown-timer" class="fw-bold text-primary">10</span>
+                            <span class="text-muted"> seconds</span>
+                        </div>
+                        <div class="progress mt-2" style="height: 4px;">
+                            <div class="progress-bar bg-primary" id="countdown-progress" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -878,6 +888,41 @@
         font-weight: 500;
         color: #6c757d;
     }
+
+    /* Countdown Timer Styles */
+    .countdown-container {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    #countdown-timer {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2453e3;
+    }
+
+    #countdown-progress {
+        background: linear-gradient(90deg, #2453e3, #4a6cf7);
+        border-radius: 2px;
+        transition: width 0.3s ease;
+    }
+
+    /* Countdown animation for urgency */
+    @keyframes countdownPulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+
+    #countdown-timer.warning {
+        color: #ffc107;
+        animation: countdownPulse 1s infinite;
+    }
+
+    #countdown-timer.danger {
+        color: #dc3545;
+        animation: countdownPulse 0.5s infinite;
+    }
     </style>
 </div>
 
@@ -911,6 +956,11 @@
     let allArtworksData = []; // Store all processed artwork data
     let currentPageArtworks = []; // Store current page artwork data
     let uploadedPages = new Set(); // Track which pages have been uploaded
+
+    // Auto-submit countdown variables
+    let countdownInterval = null;
+    let countdownTime = 10; // 10 seconds
+    let currentCountdown = 10;
 
     document.addEventListener('DOMContentLoaded', function () {
         const masterCollectionDropdown = document.getElementById('masterCollection');
@@ -1486,13 +1536,69 @@
         // Update confirm button text
         confirmBtn.textContent = `Yes, Upload ${pageSize} Artworks`;
 
+        // Reset countdown
+        currentCountdown = countdownTime;
+        updateCountdownDisplay();
+
         // Set up confirm button click handler
         confirmBtn.onclick = function() {
+            clearCountdown();
             modal.hide();
             uploadCurrentPageArtworks();
         };
 
+        // Set up modal events
+        modal._element.addEventListener('hidden.bs.modal', function() {
+            clearCountdown();
+        });
+
+        // Start countdown
+        startCountdown(() => {
+            modal.hide();
+            uploadCurrentPageArtworks();
+        });
+
         modal.show();
+    }
+
+    function startCountdown(callback) {
+        clearCountdown(); // Clear any existing countdown
+        
+        countdownInterval = setInterval(() => {
+            currentCountdown--;
+            updateCountdownDisplay();
+            
+            if (currentCountdown <= 0) {
+                clearCountdown();
+                if (callback) callback();
+            }
+        }, 1000);
+    }
+
+    function clearCountdown() {
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+    }
+
+    function updateCountdownDisplay() {
+        const timerElement = document.getElementById('countdown-timer');
+        const progressElement = document.getElementById('countdown-progress');
+        
+        if (timerElement && progressElement) {
+            timerElement.textContent = currentCountdown;
+            const progressPercentage = (currentCountdown / countdownTime) * 100;
+            progressElement.style.width = progressPercentage + '%';
+            
+            // Add visual urgency indicators
+            timerElement.classList.remove('warning', 'danger');
+            if (currentCountdown <= 3) {
+                timerElement.classList.add('danger');
+            } else if (currentCountdown <= 5) {
+                timerElement.classList.add('warning');
+            }
+        }
     }
 
     function uploadCurrentPageArtworks() {
