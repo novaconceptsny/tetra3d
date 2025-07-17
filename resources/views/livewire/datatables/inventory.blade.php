@@ -698,6 +698,12 @@
         background-color: #198754 !important;
         border-color: #198754 !important;
     }
+
+    /* Hide Unit column temporarily */
+    .table thead th:nth-child(7),
+    .table tbody tr td:nth-child(7) {
+        display: none !important;
+    }
     </style>
 </div>
 
