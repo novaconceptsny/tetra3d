@@ -1293,7 +1293,7 @@
                     artist: cells[3].textContent.trim(),
                     height: cells[4].querySelector('input').value,
                     width: cells[5].querySelector('input').value,
-                    description: cells[6].textContent.trim(),
+                    description: cells[7].textContent.trim(),
                     type: typeInfo,
                     unit: unitValue,
                 };
