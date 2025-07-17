@@ -685,6 +685,19 @@
         color: #fff !important;
         opacity: 0.6;
     }
+
+    /* Mouse down visual feedback for submit button */
+    #submit-artworks-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    #submit-artworks-btn.mouse-down {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+    }
     </style>
 </div>
 
@@ -767,6 +780,24 @@
 
         updateDeleteBtnState(); // Initial state
         updateSubmitButtonState(); // Initial submit button state
+
+        // Add mouse down feedback for submit button
+        const submitBtn = document.getElementById('submit-artworks-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('mousedown', function() {
+                if (!this.disabled) {
+                    this.classList.add('mouse-down');
+                }
+            });
+
+            submitBtn.addEventListener('mouseup', function() {
+                this.classList.remove('mouse-down');
+            });
+
+            submitBtn.addEventListener('mouseleave', function() {
+                this.classList.remove('mouse-down');
+            });
+        }
     });
 
     function handleOpenCollectionModal() {
@@ -1218,133 +1249,136 @@
         const submitBtn = document.getElementById('submit-artworks-btn');
         const originalText = submitBtn.innerHTML;
 
-        // Show loading state on button
+        // Show loading state on button immediately
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving artworks...';
         submitBtn.disabled = true;
 
-        // Show progress modal
+        // Show progress modal immediately
         const progressModal = new bootstrap.Modal(document.getElementById('submitProgressModal'));
         progressModal.show();
 
-        const tbody = document.getElementById('artworkTableBody');
-        const rows = tbody.querySelectorAll('tr');
-        const data = [];
+        // Use setTimeout to allow the modal to render first, then collect data
+        setTimeout(() => {
+            const tbody = document.getElementById('artworkTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            const data = [];
 
-        // First, collect all the data
-        rows.forEach((row, index) => {
-            const cells = row.querySelectorAll('td');
-            const image = cells[0].querySelector('img');
-            const collectionSelect = cells[1].querySelector('select');
-            const typeSelect = cells[8].querySelector('select');
+            // Update progress text immediately
+            document.getElementById('submitProgressText').textContent = `Preparing ${rows.length} artwork(s) for upload...`;
+            document.getElementById('submitProgressBar').style.width = '25%';
 
-            const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
+            // Collect all the data
+            rows.forEach((row, index) => {
+                const cells = row.querySelectorAll('td');
+                const image = cells[0].querySelector('img');
+                const collectionSelect = cells[1].querySelector('select');
+                const typeSelect = cells[8].querySelector('select');
 
-            const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
+                const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
 
-            const unitSelect = cells[6].querySelector('select'); // Adjust index as needed
-            const unitValue = unitSelect ? unitSelect.value : '';
+                const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
 
-            const rowData = {
-                collection_name: collectionName,
-                title: cells[2].textContent.trim(),
-                artist: cells[3].textContent.trim(),
-                height: cells[4].querySelector('input').value,
-                width: cells[5].querySelector('input').value,
-                description: cells[6].textContent.trim(),
-                type: typeInfo,
-                unit: unitValue,
-            };
+                const unitSelect = cells[6].querySelector('select'); // Adjust index as needed
+                const unitValue = unitSelect ? unitSelect.value : '';
 
-            if (image && image.src && image.src.startsWith('data:')) {
-                // Send the base64 data directly
-                rowData.image = image.src;
-            }
+                const rowData = {
+                    collection_name: collectionName,
+                    title: cells[2].textContent.trim(),
+                    artist: cells[3].textContent.trim(),
+                    height: cells[4].querySelector('input').value,
+                    width: cells[5].querySelector('input').value,
+                    description: cells[6].textContent.trim(),
+                    type: typeInfo,
+                    unit: unitValue,
+                };
 
-            data.push(rowData);
-        });
-
-        // Update progress text
-        document.getElementById('submitProgressText').textContent = `Preparing ${data.length} artwork(s) for upload...`;
-        document.getElementById('submitProgressBar').style.width = '25%';
-
-        // Create FormData and append artwork data
-        const formData = new FormData();
-        formData.append('artwork_data', JSON.stringify(data));
-
-        const token = document.querySelector('meta[name="csrf-token"]').content;
-
-        // Simulate progress updates
-        const progressInterval = setInterval(() => {
-            const currentWidth = parseInt(document.getElementById('submitProgressBar').style.width) || 25;
-            if (currentWidth < 90) {
-                const newWidth = Math.min(currentWidth + Math.random() * 10, 90);
-                document.getElementById('submitProgressBar').style.width = newWidth + '%';
-
-                // Update progress text based on progress
-                if (newWidth < 50) {
-                    document.getElementById('submitProgressText').textContent = 'Uploading artwork data...';
-                } else if (newWidth < 75) {
-                    document.getElementById('submitProgressText').textContent = 'Processing artwork information...';
-                } else {
-                    document.getElementById('submitProgressText').textContent = 'Finalizing artwork creation...';
+                if (image && image.src && image.src.startsWith('data:')) {
+                    // Send the base64 data directly
+                    rowData.image = image.src;
                 }
-            }
-        }, 500);
 
-        fetch('/inventory/artworks/add', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Clear progress interval
-            clearInterval(progressInterval);
+                data.push(rowData);
+            });
 
-            // Complete the progress bar
-            document.getElementById('submitProgressBar').style.width = '100%';
-            document.getElementById('submitProgressText').textContent = 'Artworks saved successfully!';
+            // Create FormData and append artwork data
+            const formData = new FormData();
+            formData.append('artwork_data', JSON.stringify(data));
 
-            // Reset button state
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+            const token = document.querySelector('meta[name="csrf-token"]').content;
 
-            // Hide modal after a short delay
-            setTimeout(() => {
+            // Simulate progress updates
+            const progressInterval = setInterval(() => {
+                const currentWidth = parseInt(document.getElementById('submitProgressBar').style.width) || 25;
+                if (currentWidth < 90) {
+                    const newWidth = Math.min(currentWidth + Math.random() * 10, 90);
+                    document.getElementById('submitProgressBar').style.width = newWidth + '%';
+
+                    // Update progress text based on progress
+                    if (newWidth < 50) {
+                        document.getElementById('submitProgressText').textContent = 'Uploading artwork data...';
+                    } else if (newWidth < 75) {
+                        document.getElementById('submitProgressText').textContent = 'Processing artwork information...';
+                    } else {
+                        document.getElementById('submitProgressText').textContent = 'Finalizing artwork creation...';
+                    }
+                }
+            }, 500);
+
+            fetch('/inventory/artworks/add', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Clear progress interval
+                clearInterval(progressInterval);
+
+                // Complete the progress bar
+                document.getElementById('submitProgressBar').style.width = '100%';
+                document.getElementById('submitProgressText').textContent = 'Artworks saved successfully!';
+
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Hide modal after a short delay
+                setTimeout(() => {
+                    progressModal.hide();
+
+                    if (data.success) {
+                        if (data.created_count > 0) {
+                            alert(`Successfully created ${data.created_count} artwork(s).`);
+                            if (data.errors && data.errors.length > 0) {
+                                console.warn('Some errors occurred:', data.errors);
+                            }
+                            window.location.reload();
+                        } else {
+                            alert('No artworks were created. Please check the data and try again.');
+                        }
+                    } else {
+                        alert('Error: ' + (data.message || 'Could not add artwork.'));
+                    }
+                }, 1000);
+            })
+            .catch(error => {
+                // Clear progress interval
+                clearInterval(progressInterval);
+
+                // Reset button state on error
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Hide modal immediately on error
                 progressModal.hide();
 
-                if (data.success) {
-                    if (data.created_count > 0) {
-                        alert(`Successfully created ${data.created_count} artwork(s).`);
-                        if (data.errors && data.errors.length > 0) {
-                            console.warn('Some errors occurred:', data.errors);
-                        }
-                        window.location.reload();
-                    } else {
-                        alert('No artworks were created. Please check the data and try again.');
-                    }
-                } else {
-                    alert('Error: ' + (data.message || 'Could not add artwork.'));
-                }
-            }, 1000);
-        })
-        .catch(error => {
-            // Clear progress interval
-            clearInterval(progressInterval);
-
-            // Reset button state on error
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-
-            // Hide modal immediately on error
-            progressModal.hide();
-
-            console.error('Error:', error);
-            alert('Error saving artworks.');
-        });
+                console.error('Error:', error);
+                alert('Error saving artworks.');
+            });
+        }, 50); // Small delay to ensure modal renders first
     }
 
     // Remove row
