@@ -450,6 +450,55 @@
         </div>
     </div>
 
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successModalLabel">
+                        <i class="fas fa-check-circle me-2"></i>Upload Successful
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 id="successModalTitle">Upload Completed!</h6>
+                    <p id="successModalMessage" class="text-muted mb-0"></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Continue Upload Confirmation Modal -->
+    <div class="modal fade" id="continueUploadModal" tabindex="-1" aria-labelledby="continueUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="continueUploadModalLabel">
+                        <i class="fas fa-question-circle me-2"></i>Continue Upload
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-arrow-right text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 id="continueUploadTitle">Continue with next page?</h6>
+                    <p id="continueUploadMessage" class="text-muted mb-0"></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Stop Here</button>
+                    <button type="button" class="btn btn-primary" id="continueUploadBtn">Yes, Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
     .bg-light-page {
         background: #f7f9fb;
@@ -1713,17 +1762,15 @@
                             // Check if there are more pages to upload
                             if (currentPage < totalPages) {
                                 // Ask if user wants to continue with next page
-                                if (confirm(`Successfully uploaded ${data.created_count} artworks from page ${currentPage}. Do you want to continue with page ${currentPage + 1}?`)) {
+                                showContinueUploadModal(data.created_count, currentPage, function() {
                                     currentPage++;
                                     displayCurrentPage();
                                     updatePaginationControls();
                                     showPageUploadConfirmation();
-                                } else {
-                                    alert(`Upload completed! ${data.created_count} artworks uploaded from page ${currentPage}.`);
-                                }
+                                });
                             } else {
                                 // All pages uploaded
-                                alert(`Upload completed! All ${allArtworksData.length} artworks have been uploaded successfully.`);
+                                showSuccessModal('Upload Completed!', `All ${allArtworksData.length} artworks have been uploaded successfully.`);
                                 // Optionally reload the page or reset
                                 window.location.reload();
                             }
@@ -2356,5 +2403,36 @@
         currentPageArtworks = [];
         uploadedPages.clear();
         hidePaginationControls();
+    }
+
+    // Function to show success modal
+    function showSuccessModal(title, message) {
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        document.getElementById('successModalTitle').textContent = title;
+        document.getElementById('successModalMessage').textContent = message;
+        successModal.show();
+    }
+
+    // Function to show continue upload confirmation modal
+    function showContinueUploadModal(createdCount, currentPage, callback) {
+        const continueModal = new bootstrap.Modal(document.getElementById('continueUploadModal'));
+        document.getElementById('continueUploadTitle').textContent = 'Continue with next page?';
+        document.getElementById('continueUploadMessage').textContent = `Successfully uploaded ${createdCount} artworks from page ${currentPage}. Do you want to continue with page ${currentPage + 1}?`;
+        
+        // Set up the continue button click handler
+        const continueBtn = document.getElementById('continueUploadBtn');
+        continueBtn.onclick = function() {
+            continueModal.hide();
+            if (callback) callback();
+        };
+        
+        // Set up modal hidden event to handle "No" response
+        continueModal._element.addEventListener('hidden.bs.modal', function() {
+            // If modal is hidden without clicking continue, it means user chose "No"
+            // The callback won't be called, so we just show the success message
+          //  showSuccessModal('Upload Completed!', `${createdCount} artworks uploaded from page ${currentPage}.`);
+        });
+        
+        continueModal.show();
     }
 </script>
