@@ -254,27 +254,6 @@
 
             <!-- Artworks Table -->
             <div class="table-responsive mb-3">
-                <!-- Top Pagination Controls -->
-                <div id="pagination-controls-top" style="display: none;" class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="pagination-info">
-                            <span id="pagination-text-top">Page 1 of 1</span>
-                            <span class="ms-3">(<span id="total-artworks-top">0</span> total artworks)</span>
-                        </div>
-                        <div class="pagination-buttons d-flex align-items-center">
-                            <button class="btn btn-outline-secondary btn-sm" id="prev-page-btn-top" onclick="handlePrevPage()">
-                                <i class="fas fa-chevron-left"></i> Previous
-                            </button>
-                            <div class="page-numbers ms-2 me-2" id="page-numbers-top">
-                                <!-- Page numbers will be generated here -->
-                            </div>
-                            <button class="btn btn-outline-secondary btn-sm" id="next-page-btn-top" onclick="handleNextPage()">
-                                Next <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 <table class="table align-middle">
                     <thead>
                         <tr>
@@ -306,28 +285,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pagination Controls -->
-            <div id="pagination-controls" style="display: none;" class="mb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="pagination-info">
-                        <span id="pagination-text">Page 1 of 1</span>
-                        <span class="ms-3">(<span id="total-artworks">0</span> total artworks)</span>
-                    </div>
-                    <div class="pagination-buttons d-flex align-items-center">
-                        <button class="btn btn-outline-secondary btn-sm" id="prev-page-btn" onclick="handlePrevPage()">
-                            <i class="fas fa-chevron-left"></i> Previous
-                        </button>
-                        <div class="page-numbers ms-2 me-2" id="page-numbers">
-                            <!-- Page numbers will be generated here -->
-                        </div>
-                        <button class="btn btn-outline-secondary btn-sm" id="next-page-btn" onclick="handleNextPage()">
-                            Next <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <div class="d-flex flex-column align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
                 <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
                 <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
@@ -410,31 +367,6 @@
                         <div class="progress-bar progress-bar-striped progress-bar-animated" id="submitProgressBar" role="progressbar" style="width: 0%"></div>
                     </div>
                     <p class="text-muted mb-0" id="submitProgressText">Processing artwork data...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Page Upload Confirmation Modal -->
-    <div class="modal fade" id="pageUploadModal" tabindex="-1" aria-labelledby="pageUploadModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="pageUploadModalLabel">Upload Artworks</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="pageUploadText">Do you want to upload the artworks on this page?</p>
-                    <div class="alert alert-info">
-                        <small>
-                            <strong>Note:</strong> You can upload artworks page by page. After each page is uploaded, 
-                            you'll be asked if you want to continue with the next page.
-                        </small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmPageUploadBtn">Yes, Upload This Page</button>
                 </div>
             </div>
         </div>
@@ -788,96 +720,6 @@
     .table tbody tr td:nth-child(7) {
         display: none !important;
     }
-
-    /* Pagination Controls Styles */
-    #pagination-controls {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 15px 20px;
-        border: 1px solid #e9ecef;
-    }
-
-    .pagination-info {
-        font-size: 14px;
-        color: #6c757d;
-    }
-
-    .pagination-info span {
-        font-weight: 500;
-    }
-
-    .pagination-buttons .btn {
-        border-radius: 6px;
-        font-size: 14px;
-        padding: 6px 12px;
-    }
-
-    .pagination-buttons .btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    /* Uploaded page indicator */
-    #submit-artworks-btn.btn-secondary {
-        background-color: #6c757d !important;
-        border-color: #6c757d !important;
-        color: #fff !important;
-        opacity: 0.8;
-        cursor: not-allowed;
-    }
-
-    #submit-artworks-btn.btn-secondary:hover {
-        background-color: #6c757d !important;
-        border-color: #6c757d !important;
-        color: #fff !important;
-        opacity: 0.8;
-    }
-
-    /* Page number buttons */
-    .page-number-btn {
-        margin: 0 2px;
-        min-width: 35px;
-        height: 35px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    .page-number-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .page-number-btn.btn-primary {
-        background-color: #2453e3;
-        border-color: #2453e3;
-        color: white;
-    }
-
-    .page-number-btn.btn-primary:hover {
-        background-color: #1a3fa6;
-        border-color: #1a3fa6;
-        color: white;
-    }
-
-    .page-number-btn.btn-outline-secondary {
-        border-color: #dee2e6;
-        color: #6c757d;
-    }
-
-    .page-number-btn.btn-outline-secondary:hover {
-        background-color: #e9ecef;
-        border-color: #adb5bd;
-        color: #495057;
-    }
-
-    /* Ellipsis styling */
-    .page-numbers .text-muted {
-        font-size: 14px;
-        font-weight: 500;
-        color: #6c757d;
-    }
     </style>
 </div>
 
@@ -903,14 +745,6 @@
     let totalExpectedArtworks = 0;
     let processedArtworks = 0;
     let isProcessingArtworks = false;
-
-    // Pagination variables
-    let currentPage = 1;
-    let totalPages = 1;
-    let artworksPerPage = 100;
-    let allArtworksData = []; // Store all processed artwork data
-    let currentPageArtworks = []; // Store current page artwork data
-    let uploadedPages = new Set(); // Track which pages have been uploaded
 
     document.addEventListener('DOMContentLoaded', function () {
         const masterCollectionDropdown = document.getElementById('masterCollection');
@@ -1014,22 +848,8 @@
         const hasEntries = tbody.children.length > 0;
         const allProcessed = !isProcessingArtworks && processedArtworks >= totalExpectedArtworks;
         
-        // For paginated data, check if current page has been uploaded
-        const currentPageUploaded = uploadedPages.has(currentPage);
-        
-        // Enable button only if we have entries, all processing is complete, and current page hasn't been uploaded
-        submitBtn.disabled = !hasEntries || !allProcessed || currentPageUploaded;
-        
-        // Update button text based on upload status
-        if (currentPageUploaded) {
-            submitBtn.textContent = 'Page Uploaded';
-            submitBtn.classList.add('btn-secondary');
-            submitBtn.classList.remove('btn-success');
-        } else {
-            submitBtn.textContent = 'Submit';
-            submitBtn.classList.remove('btn-secondary');
-            submitBtn.classList.add('btn-success');
-        }
+        // Enable button only if we have entries and all processing is complete
+        submitBtn.disabled = !hasEntries || !allProcessed;
     }
 
     // Function to update generate artwork button state
@@ -1054,7 +874,6 @@
         mainContainer.style.display = 'block'; // or 'block' if flex doesn't work
         resetSpreadsheetUpload();
         resetImageUpload();
-        resetPagination(); // Reset pagination when going back
         updateGenerateArtworkButtonState(); // Reset generate button state
     }
 
@@ -1462,45 +1281,11 @@
     }
 
     function handleSubmitArtworks() {
-        // Check if we have pagination (large dataset)
-        if (allArtworksData.length > 0 && totalPages > 1) {
-            // Show page upload confirmation modal
-            showPageUploadConfirmation();
-        } else {
-            // Handle single page upload (existing logic)
-            uploadCurrentPageArtworks();
-        }
-    }
-
-    function showPageUploadConfirmation() {
-        const modal = new bootstrap.Modal(document.getElementById('pageUploadModal'));
-        const pageUploadText = document.getElementById('pageUploadText');
-        const confirmBtn = document.getElementById('confirmPageUploadBtn');
-
-        const startIndex = (currentPage - 1) * artworksPerPage;
-        const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
-        const pageSize = endIndex - startIndex;
-
-        pageUploadText.textContent = `Do you want to upload artworks ${startIndex + 1}-${endIndex} of page ${currentPage}?`;
-
-        // Update confirm button text
-        confirmBtn.textContent = `Yes, Upload ${pageSize} Artworks`;
-
-        // Set up confirm button click handler
-        confirmBtn.onclick = function() {
-            modal.hide();
-            uploadCurrentPageArtworks();
-        };
-
-        modal.show();
-    }
-
-    function uploadCurrentPageArtworks() {
         const submitBtn = document.getElementById('submit-artworks-btn');
         const originalText = submitBtn.innerHTML;
 
         // Show loading state on button immediately
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving artworks...';
         submitBtn.disabled = true;
 
         // Show progress modal immediately
@@ -1514,12 +1299,10 @@
             const data = [];
 
             // Update progress text immediately
-            const startIndex = (currentPage - 1) * artworksPerPage;
-            const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
-            document.getElementById('submitProgressText').textContent = `Preparing artworks ${startIndex + 1}-${endIndex} for upload...`;
+            document.getElementById('submitProgressText').textContent = `Preparing ${rows.length} artwork(s) for upload...`;
             document.getElementById('submitProgressBar').style.width = '25%';
 
-            // Collect all the data from current page
+            // Collect all the data
             rows.forEach((row, index) => {
                 const cells = row.querySelectorAll('td');
                 const image = cells[0].querySelector('img');
@@ -1527,8 +1310,10 @@
                 const typeSelect = cells[8].querySelector('select');
 
                 const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
+
                 const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
-                const unitSelect = cells[6].querySelector('select');
+
+                const unitSelect = cells[6].querySelector('select'); // Adjust index as needed
                 const unitValue = unitSelect ? unitSelect.value : '';
 
                 const rowData = {
@@ -1601,26 +1386,11 @@
 
                     if (data.success) {
                         if (data.created_count > 0) {
-                            // Mark current page as uploaded
-                            uploadedPages.add(currentPage);
-                            
-                            // Check if there are more pages to upload
-                            if (currentPage < totalPages) {
-                                // Ask if user wants to continue with next page
-                                if (confirm(`Successfully uploaded ${data.created_count} artworks from page ${currentPage}. Do you want to continue with page ${currentPage + 1}?`)) {
-                                    currentPage++;
-                                    displayCurrentPage();
-                                    updatePaginationControls();
-                                    showPageUploadConfirmation();
-                                } else {
-                                    alert(`Upload completed! ${data.created_count} artworks uploaded from page ${currentPage}.`);
-                                }
-                            } else {
-                                // All pages uploaded
-                                alert(`Upload completed! All ${allArtworksData.length} artworks have been uploaded successfully.`);
-                                // Optionally reload the page or reset
-                                window.location.reload();
+                            alert(`Successfully created ${data.created_count} artwork(s).`);
+                            if (data.errors && data.errors.length > 0) {
+                                console.warn('Some errors occurred:', data.errors);
                             }
+                            window.location.reload();
                         } else {
                             alert('No artworks were created. Please check the data and try again.');
                         }
@@ -1845,7 +1615,7 @@
             if (current >= total) {
                 clearInterval(interval);
                 setTimeout(() => {
-                    actuallyProcessAllArtworks();
+                    actuallyAddArtworksToTable();
                     progressBar.style.display = 'none';
                     document.getElementById('generate-artwork-btn').style.display = 'inline-block';
                     isProcessingArtworks = false;
@@ -1855,7 +1625,7 @@
         }, 1000 / total);
     }
 
-    function actuallyProcessAllArtworks() {
+    function actuallyAddArtworksToTable() {
         const tbody = document.getElementById('artworkTableBody');
         tbody.innerHTML = ''; // Clear previous rows
 
@@ -1874,7 +1644,6 @@
 
         let processedCount = 0;
         const totalToProcess = uploadedSpreadsheetData.length;
-        allArtworksData = []; // Reset all artworks data
 
         // Process spreadsheet data (now array of objects)
         uploadedSpreadsheetData.forEach(artwork => {
@@ -1883,7 +1652,7 @@
                 processedCount++;
                 if (processedCount >= totalToProcess) {
                     processedArtworks = processedCount;
-                    setupPagination();
+                    updateSubmitButtonState();
                 }
                 return;
             }
@@ -1896,25 +1665,81 @@
                 // Create image preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const artworkData = {
-                        imageSrc: e.target.result,
-                        filename: spreadsheetFilename,
-                        collectionId: getCollectionIdByName(artwork.Collection || artwork['Collection'] || ''),
-                        title: artwork.Title || artwork['Title'] || '',
-                        artist: artwork.Artist || artwork['Artist'] || '',
-                        height: artwork.Height || artwork['Height (in)'] || artwork['Height'] || '',
-                        width: artwork.Width || artwork['Width (in)'] || artwork['Width'] || '',
-                        unit: artwork.Unit || 'inch',
-                        description: artwork.Description || artwork['Description'] || '',
-                        type: artwork.Type || artwork['Type'] || 'Painting'
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td><img src="${e.target.result}" data-filename="${spreadsheetFilename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                        <td style="width: 480px;">
+                            <select class="form-select artwork-collection-select">
+                                @foreach($collections as $collection)
+                                    <option value="{{$collection->id}}" ${(artwork.Collection || artwork['Collection'] || '') === '{{$collection->name}}' ? 'selected' : ''}>{{$collection->name}}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.Title && !artwork['Title'] ? 'empty-cell' : ''}">${artwork.Title || artwork['Title'] || ''}</td>
+                        <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.Artist && !artwork['Artist'] ? 'empty-cell' : ''}">${artwork.Artist || artwork['Artist'] || ''}</td>
+                        <td><input type="number" class="form-control ${!artwork.Height && !artwork['Height (in)'] && !artwork['Height'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Height || artwork['Height (in)'] || artwork['Height'] || ''}" /></td>
+                        <td><input type="number" class="form-control ${!artwork.Width && !artwork['Width (in)'] && !artwork['Width'] ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.Width || artwork['Width (in)'] || artwork['Width'] || ''}" /></td>
+                        <td>
+                            <select class="form-select artwork-unit-select">
+                                <option value="" ${(artwork.Unit === "" || !artwork.Unit) ? "selected" : ""}>inch</option>
+                                <option value="m" ${artwork.Unit === "m" ? "selected" : ""}>m</option>
+                                <option value="cm" ${artwork.Unit === "cm" ? "selected" : ""}>cm</option>
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.Description && !artwork['Description'] ? 'empty-cell' : ''}">${artwork.Description || artwork['Description'] || ''}</td>
+                        <td>
+                            <select class="form-select ${!artwork.Type && !artwork['Type'] ? 'empty-cell' : ''}">
+                                <option value="Painting" ${(artwork.Type || artwork['Type'] || '') === 'Painting' ? 'selected' : ''}>Painting</option>
+                                <option value="Sculpture" ${(artwork.Type || artwork['Type'] || '') === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
+                            </select>
+                        </td>
+                        <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                    `;
+                    newRow.querySelector('button').onclick = function() { 
+                        newRow.remove(); 
+                        updateSubmitButtonState(); // Update state when row is removed
                     };
+                    tbody.appendChild(newRow);
 
-                    allArtworksData.push(artworkData);
+                    // Add event listeners to remove empty-cell class when user interacts
+                    const contentEditableCells = newRow.querySelectorAll('[contenteditable="true"]');
+                    contentEditableCells.forEach(cell => {
+                        cell.addEventListener('input', function() {
+                            if (this.textContent.trim() !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
 
+                    const inputFields = newRow.querySelectorAll('input[type="number"]');
+                    inputFields.forEach(input => {
+                        input.addEventListener('input', function() {
+                            if (this.value.trim() !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
+
+                    const selectFields = newRow.querySelectorAll('select');
+                    selectFields.forEach(select => {
+                        select.addEventListener('change', function() {
+                            if (this.value !== '') {
+                                this.classList.remove('empty-cell');
+                            } else {
+                                this.classList.add('empty-cell');
+                            }
+                        });
+                    });
+
+                    // Track processed artwork
                     processedCount++;
                     if (processedCount >= totalToProcess) {
                         processedArtworks = processedCount;
-                        setupPagination();
+                        updateSubmitButtonState();
                     }
                 };
                 reader.readAsDataURL(matchingImageFile);
@@ -1923,37 +1748,18 @@
                 processedCount++;
                 if (processedCount >= totalToProcess) {
                     processedArtworks = processedCount;
-                    setupPagination();
+                    updateSubmitButtonState();
                 }
             }
         });
-    }
 
-    function setupPagination() {
-        if (allArtworksData.length === 0) {
-            hidePaginationControls();
-            return;
+        // Show the "Add Artwork" button if we have rows
+        if (tbody.children.length > 0) {
+            document.getElementById('add-artwork-btn').style.display = 'inline-block';
         }
-
-        // Calculate total pages
-        totalPages = Math.ceil(allArtworksData.length / artworksPerPage);
-        currentPage = 1;
-
-        // Show pagination controls
-        showPaginationControls();
-
-        // Display first page
-        displayCurrentPage();
-
-        // Update submit button state
-        updateSubmitButtonState();
+        updateGenerateArtworkButtonState(); // Update generate button state after adding rows
     }
 
-    function getCollectionIdByName(collectionName) {
-        // Find collection ID by name from the collections data
-        const collection = allCollections.find(c => c.name === collectionName);
-        return collection ? collection.id : '';
-    }
 
     function handleDeleteArtworks() {
         // Collect selected IDs
@@ -1990,265 +1796,5 @@
             console.error('Error:', error);
             alert('Error deleting artworks.');
         });
-    }
-
-    // Pagination Functions
-    function handlePrevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            displayCurrentPage();
-            updatePaginationControls();
-        }
-    }
-
-    function handleNextPage() {
-        if (currentPage < totalPages) {
-            currentPage++;
-            displayCurrentPage();
-            updatePaginationControls();
-        }
-    }
-
-    function updatePaginationControls() {
-        const prevBtn = document.getElementById('prev-page-btn');
-        const nextBtn = document.getElementById('next-page-btn');
-        const paginationText = document.getElementById('pagination-text');
-        const totalArtworks = document.getElementById('total-artworks');
-
-        // Top pagination controls
-        const prevBtnTop = document.getElementById('prev-page-btn-top');
-        const nextBtnTop = document.getElementById('next-page-btn-top');
-        const paginationTextTop = document.getElementById('pagination-text-top');
-        const totalArtworksTop = document.getElementById('total-artworks-top');
-
-        // Update both top and bottom controls
-        [prevBtn, prevBtnTop].forEach(btn => btn.disabled = currentPage === 1);
-        [nextBtn, nextBtnTop].forEach(btn => btn.disabled = currentPage === totalPages);
-        [paginationText, paginationTextTop].forEach(text => text.textContent = `Page ${currentPage} of ${totalPages}`);
-        [totalArtworks, totalArtworksTop].forEach(total => total.textContent = allArtworksData.length);
-
-        // Generate page number buttons for both top and bottom
-        generatePageNumbers();
-        generatePageNumbersTop();
-
-        // Update submit button state
-        updateSubmitButtonState();
-    }
-
-    function generatePageNumbers() {
-        const pageNumbersContainer = document.getElementById('page-numbers');
-        pageNumbersContainer.innerHTML = '';
-
-        if (totalPages <= 1) return;
-
-        const maxVisiblePages = 10; // Show max 10 page numbers
-        let startPage = 1;
-        let endPage = totalPages;
-
-        // Calculate which page numbers to show
-        if (totalPages > maxVisiblePages) {
-            if (currentPage <= 5) {
-                endPage = maxVisiblePages;
-            } else if (currentPage >= totalPages - 4) {
-                startPage = totalPages - maxVisiblePages + 1;
-            } else {
-                startPage = currentPage - 4;
-                endPage = currentPage + 5;
-            }
-        }
-
-        // Add first page and ellipsis if needed
-        if (startPage > 1) {
-            addPageButton(1, pageNumbersContainer);
-            if (startPage > 2) {
-                addEllipsis(pageNumbersContainer);
-            }
-        }
-
-        // Add page numbers
-        for (let i = startPage; i <= endPage; i++) {
-            addPageButton(i, pageNumbersContainer);
-        }
-
-        // Add last page and ellipsis if needed
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                addEllipsis(pageNumbersContainer);
-            }
-            addPageButton(totalPages, pageNumbersContainer);
-        }
-    }
-
-    function generatePageNumbersTop() {
-        const pageNumbersContainer = document.getElementById('page-numbers-top');
-        pageNumbersContainer.innerHTML = '';
-
-        if (totalPages <= 1) return;
-
-        const maxVisiblePages = 10; // Show max 10 page numbers
-        let startPage = 1;
-        let endPage = totalPages;
-
-        // Calculate which page numbers to show
-        if (totalPages > maxVisiblePages) {
-            if (currentPage <= 5) {
-                endPage = maxVisiblePages;
-            } else if (currentPage >= totalPages - 4) {
-                startPage = totalPages - maxVisiblePages + 1;
-            } else {
-                startPage = currentPage - 4;
-                endPage = currentPage + 5;
-            }
-        }
-
-        // Add first page and ellipsis if needed
-        if (startPage > 1) {
-            addPageButton(1, pageNumbersContainer);
-            if (startPage > 2) {
-                addEllipsis(pageNumbersContainer);
-            }
-        }
-
-        // Add page numbers
-        for (let i = startPage; i <= endPage; i++) {
-            addPageButton(i, pageNumbersContainer);
-        }
-
-        // Add last page and ellipsis if needed
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                addEllipsis(pageNumbersContainer);
-            }
-            addPageButton(totalPages, pageNumbersContainer);
-        }
-    }
-
-    function addPageButton(pageNum, container) {
-        const button = document.createElement('button');
-        button.className = `btn btn-sm page-number-btn ${pageNum === currentPage ? 'btn-primary' : 'btn-outline-secondary'}`;
-        button.textContent = pageNum;
-        button.onclick = () => handlePageClick(pageNum);
-        container.appendChild(button);
-    }
-
-    function addEllipsis(container) {
-        const span = document.createElement('span');
-        span.className = 'mx-2 text-muted';
-        span.textContent = '...';
-        container.appendChild(span);
-    }
-
-    function handlePageClick(pageNum) {
-        if (pageNum !== currentPage && pageNum >= 1 && pageNum <= totalPages) {
-            currentPage = pageNum;
-            displayCurrentPage();
-            updatePaginationControls();
-        }
-    }
-
-    function displayCurrentPage() {
-        const tbody = document.getElementById('artworkTableBody');
-        tbody.innerHTML = ''; // Clear current page
-
-        const startIndex = (currentPage - 1) * artworksPerPage;
-        const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
-        currentPageArtworks = allArtworksData.slice(startIndex, endIndex);
-
-        // Display current page artworks
-        currentPageArtworks.forEach(artwork => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
-                <td style="width: 480px;">
-                    <select class="form-select artwork-collection-select">
-                        @foreach($collections as $collection)
-                            <option value="{{$collection->id}}" ${artwork.collectionId == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
-                <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
-                <td><input type="number" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
-                <td><input type="number" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
-                <td>
-                    <select class="form-select artwork-unit-select">
-                        <option value="inch" ${artwork.unit === 'inch' ? 'selected' : ''}>inch</option>
-                        <option value="m" ${artwork.unit === 'm' ? 'selected' : ''}>m</option>
-                        <option value="cm" ${artwork.unit === 'cm' ? 'selected' : ''}>cm</option>
-                    </select>
-                </td>
-                <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.description ? 'empty-cell' : ''}">${artwork.description || ''}</td>
-                <td>
-                    <select class="form-select ${!artwork.type ? 'empty-cell' : ''}">
-                        <option value="Painting" ${artwork.type === 'Painting' ? 'selected' : ''}>Painting</option>
-                        <option value="Sculpture" ${artwork.type === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
-                    </select>
-                </td>
-                <td><button class="btn btn-danger btn-sm">Remove</button></td>
-            `;
-            row.querySelector('button').onclick = function() { 
-                row.remove(); 
-                updateSubmitButtonState();
-            };
-            tbody.appendChild(row);
-
-            // Add event listeners for empty-cell class
-            const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
-            contentEditableCells.forEach(cell => {
-                cell.addEventListener('input', function() {
-                    if (this.textContent.trim() !== '') {
-                        this.classList.remove('empty-cell');
-                    } else {
-                        this.classList.add('empty-cell');
-                    }
-                });
-            });
-
-            const inputFields = row.querySelectorAll('input[type="number"]');
-            inputFields.forEach(input => {
-                input.addEventListener('input', function() {
-                    if (this.value.trim() !== '') {
-                        this.classList.remove('empty-cell');
-                    } else {
-                        this.classList.add('empty-cell');
-                    }
-                });
-            });
-
-            const selectFields = row.querySelectorAll('select');
-            selectFields.forEach(select => {
-                select.addEventListener('change', function() {
-                    if (this.value !== '') {
-                        this.classList.remove('empty-cell');
-                    } else {
-                        this.classList.add('empty-cell');
-                    }
-                });
-            });
-        });
-    }
-
-    function showPaginationControls() {
-        const paginationControls = document.getElementById('pagination-controls');
-        const paginationControlsTop = document.getElementById('pagination-controls-top');
-        paginationControls.style.display = 'block';
-        paginationControlsTop.style.display = 'block';
-        updatePaginationControls();
-    }
-
-    function hidePaginationControls() {
-        const paginationControls = document.getElementById('pagination-controls');
-        const paginationControlsTop = document.getElementById('pagination-controls-top');
-        paginationControls.style.display = 'none';
-        paginationControlsTop.style.display = 'none';
-    }
-
-    function resetPagination() {
-        currentPage = 1;
-        totalPages = 1;
-        allArtworksData = [];
-        currentPageArtworks = [];
-        uploadedPages.clear();
-        hidePaginationControls();
     }
 </script>
