@@ -221,7 +221,7 @@
                 </div>
             </div>
             <div class="text-center mb-3">
-                <button class="btn btn-warning" id="generate-artwork-btn" onclick="handleGenerateArtwork()">Generate Artwork</button>
+                <button class="btn btn-warning" id="generate-artwork-btn" onclick="handleGenerateArtwork()" disabled>Generate Artwork</button>
             </div>
             <div id="artwork-progress-bar" style="display:none; margin-bottom: 20px;">
                 <div style="width: 500px; margin: 0 auto; background: #eee; border-radius: 8px; height: 20px; position: relative;">
@@ -699,6 +699,22 @@
         border-color: #198754 !important;
     }
 
+    /* Disabled generate artwork button styles */
+    #generate-artwork-btn:disabled {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: #fff !important;
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    #generate-artwork-btn:disabled:hover {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: #fff !important;
+        opacity: 0.6;
+    }
+
     /* Hide Unit column temporarily */
     .table thead th:nth-child(7),
     .table tbody tr td:nth-child(7) {
@@ -786,6 +802,7 @@
 
         updateDeleteBtnState(); // Initial state
         updateSubmitButtonState(); // Initial submit button state
+        updateGenerateArtworkButtonState(); // Initial generate button state
 
         // Add mouse down feedback for submit button
         const submitBtn = document.getElementById('submit-artworks-btn');
@@ -835,11 +852,21 @@
         submitBtn.disabled = !hasEntries || !allProcessed;
     }
 
+    // Function to update generate artwork button state
+    function updateGenerateArtworkButtonState() {
+        const generateBtn = document.getElementById('generate-artwork-btn');
+        const hasSpreadsheet = uploadedSpreadsheetData && uploadedSpreadsheetData.length > 0;
+        const hasImages = uploadedImageFiles && uploadedImageFiles.length > 0;
+        
+        generateBtn.disabled = !(hasSpreadsheet && hasImages);
+    }
+
     // Find the "Add" button (the first .btn-light with title="Add")
     function handleOpenUploadArtworks() {
         mainContainer.style.display = 'none';
         uploadContainer.style.display = 'block';
         updateSubmitButtonState(); // Ensure submit button is disabled initially
+        updateGenerateArtworkButtonState(); // Ensure generate button is disabled initially
     }
 
     function backToCollections() {
@@ -847,6 +874,7 @@
         mainContainer.style.display = 'block'; // or 'block' if flex doesn't work
         resetSpreadsheetUpload();
         resetImageUpload();
+        updateGenerateArtworkButtonState(); // Reset generate button state
     }
 
     function resetSpreadsheetUpload() {
@@ -1146,6 +1174,7 @@
 
         // Update submit button state after adding row
         updateSubmitButtonState();
+        updateGenerateArtworkButtonState(); // Update generate button state after adding row
 
         // --- Image upload logic for this row ---
         const uploadBox = row.querySelector('.artwork-image-upload');
@@ -1423,6 +1452,7 @@
 
                     // Store the uploaded files
                     uploadedImageFiles = files;
+                    updateGenerateArtworkButtonState(); // Update generate button state after image upload
                 }, 300);
             }
             progressBar.style.width = progress + '%';
@@ -1517,6 +1547,7 @@
                     }
                 });
 
+                updateGenerateArtworkButtonState(); // Update generate button state after processing spreadsheet
             }
         };
 
@@ -1726,6 +1757,7 @@
         if (tbody.children.length > 0) {
             document.getElementById('add-artwork-btn').style.display = 'inline-block';
         }
+        updateGenerateArtworkButtonState(); // Update generate button state after adding rows
     }
 
 
