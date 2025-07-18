@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\ProjectImageHelper;
 use App\Models\ArtworkCollection;
 use App\Models\CompanyTour;
 use App\Models\PhotoState;
@@ -126,9 +127,15 @@ class Tour360Controller extends Controller
                 'user_ids'               => 'required|string',
                 'artwork_collection_ids' => 'required|string',
                 'unit'                   => 'required|string|in:imperial,metric',
-                'thumbnail'              => 'nullable|image|mimes:jpeg,png|max:2048',
                 'company_id'             => 'required|exists:companies,id',
             ]);
+
+            // Add conditional validation for thumbnail
+            if ($request->hasFile('thumbnail')) {
+                $request->validate([
+                    'thumbnail' => 'image|mimes:jpeg,png|max:2048',
+                ]);
+            }
 
             // Decode JSON strings back to arrays
             $tourIds       = json_decode($request->tour_ids);
@@ -146,6 +153,10 @@ class Tour360Controller extends Controller
             if ($request->hasFile('thumbnail')) {
                 $path                    = $request->file('thumbnail')->store('project-thumbnails', 'public');
                 $project->background_url = '/storage/' . $path;
+                $project->save();
+            } else {
+                // Assign a random default image if no thumbnail is provided
+                $project->background_url = ProjectImageHelper::getRandomDefaultImage();
                 $project->save();
             }
 
@@ -180,8 +191,14 @@ class Tour360Controller extends Controller
                 'user_ids'               => 'required|string',
                 'artwork_collection_ids' => 'required|string',
                 'unit'                   => 'required|string|in:imperial,metric',
-                'thumbnail'              => 'nullable|image|mimes:jpeg,png|max:2048',
             ]);
+
+            // Add conditional validation for thumbnail
+            if ($request->hasFile('thumbnail')) {
+                $request->validate([
+                    'thumbnail' => 'image|mimes:jpeg,png|max:2048',
+                ]);
+            }
 
             // Update basic project information
             $project->name = $request->name;

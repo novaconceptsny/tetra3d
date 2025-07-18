@@ -394,10 +394,7 @@
                 return;
             }
 
-            if (!thumbnailFile) {
-                alert('Please select a thumbnail image');
-                return;
-            }
+            // Note: If no thumbnail is selected, a random default image will be assigned
 
             // Append all data to FormData
             formData.append('name', name);
@@ -405,7 +402,9 @@
             formData.append('artwork_collection_ids', JSON.stringify(collections));
             formData.append('user_ids', JSON.stringify(contributors));
             formData.append('unit', unit);
-            formData.append('thumbnail', thumbnailFile);
+            if (thumbnailFile) {
+                formData.append('thumbnail', thumbnailFile);
+            }
             formData.append('company_id', companyId);
 
             // Add CSRF token

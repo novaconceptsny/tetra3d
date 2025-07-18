@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Helpers\ProjectImageHelper;
 use App\Models\ArtworkCollection;
 use App\Models\Curate2dSurface;
+use App\Models\Layout;
 use App\Models\Photo;
 use App\Models\PhotoState;
 use App\Models\Project;
@@ -521,11 +523,25 @@ class PhotoController extends Controller
             // Validate the request
             $request->validate([
                 'name'  => 'required|string|max:255',
-                'image' => 'nullable|image|mimes:jpeg,png|max:2048',
             ]);
 
+            // Add conditional validation for image
+            if ($request->hasFile('image')) {
+                $request->validate([
+                    'image' => 'image|mimes:jpeg,png|max:2048',
+                ]);
+            }
+
             $image = $request->file('image');
-            $path  = $image->store('media/project-thumbnails', 'public');
+            $backgroundUrl = null;
+
+            if ($image) {
+                $path = $image->store('media/project-thumbnails', 'public');
+                $backgroundUrl = '/storage/' . $path;
+            } else {
+                // Assign a random default image if no image is provided
+                $backgroundUrl = ProjectImageHelper::getRandomDefaultImage();
+            }
 
             // Create the project
             $project = Project::create([
@@ -533,7 +549,7 @@ class PhotoController extends Controller
                 'tour_id'        => 0,
                 'name'           => $request->input('name'), // Use input() method to get the name
                 'is_curate_2d'   => true,
-                'background_url' => '/storage/' . $path,
+                'background_url' => $backgroundUrl,
             ]);
 
             return response()->json([
@@ -555,16 +571,26 @@ class PhotoController extends Controller
             // Validate the request
             $request->validate([
                 'name'       => 'required|string|max:255',
-                'image'      => 'nullable|image|mimes:jpeg,png|max:2048',
                 'project_id' => 'required|exists:projects,id',
             ]);
 
-            $image = $request->file('image');
-            $path  = $image->store('media/project-thumbnails', 'public');
+            // Add conditional validation for image
+            if ($request->hasFile('image')) {
+                $request->validate([
+                    'image' => 'image|mimes:jpeg,png|max:2048',
+                ]);
+            }
 
-            $project                 = Project::findOrFail($request->project_id);
-            $project->name           = $request->input('name');
-            $project->background_url = '/storage/' . $path;
+            $image = $request->file('image');
+            $project = Project::findOrFail($request->project_id);
+            $project->name = $request->input('name');
+
+            if ($image) {
+                $path = $image->store('media/project-thumbnails', 'public');
+                $project->background_url = '/storage/' . $path;
+            }
+            // If no image is provided, keep the existing background_url
+
             $project->save();
 
             return response()->json([
