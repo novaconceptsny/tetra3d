@@ -36,7 +36,16 @@ class SharedTourController extends Controller
             ])
             ->where('tour_id', $tour->id);
 
-        $spot = $spot_id ? $spotQuery->findOrFail($spot_id) : $spotQuery->first();
+        // If no specific spot_id is provided, use the tour's starting spot
+        if (!$spot_id) {
+            if ($tour->starting_spot_id) {
+                $spot = $spotQuery->findOrFail($tour->starting_spot_id);
+            } else {
+                $spot = $spotQuery->first();
+            }
+        } else {
+            $spot = $spotQuery->findOrFail($spot_id);
+        }
 
         $spot->surfaces->map(function ($surface) use ($sharedTour) {
             $surface->setRelation('state',

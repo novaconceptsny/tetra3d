@@ -20,7 +20,8 @@ class Tour extends Model implements HasMedia
         'company_id',
         'created_at',
         'updated_at',
-        'has_model'
+        'has_model',
+        'starting_spot_id'
     ];
 
 
@@ -100,6 +101,11 @@ class Tour extends Model implements HasMedia
     public function maps()
     {
         return $this->hasMany(Map::class);
+    }
+
+    public function startingSpot()
+    {
+        return $this->belongsTo(Spot::class, 'starting_spot_id');
     }
 
     public function scopeRelevant(Builder $builder)

@@ -61,7 +61,8 @@ class ValidationRules
     {
         return array_merge([
             'name' => 'required',
-            'company_id' => new RequiredForAdmin()
+            'company_id' => new RequiredForAdmin(),
+            'starting_spot_id' => 'nullable|exists:spots,id'
         ]);
     }
 

@@ -79,8 +79,16 @@ class TourController extends Controller
             ]))
             ->where('tour_id', $tour->id);
 
-        $spot = $spot_id ? $spotQuery->findOrFail($spot_id)
-        : $spotQuery->firstOrFail();
+        // If no specific spot_id is provided, use the tour's starting spot
+        if (!$spot_id) {
+            if ($tour->starting_spot_id) {
+                $spot = $spotQuery->findOrFail($tour->starting_spot_id);
+            } else {
+                $spot = $spotQuery->firstOrFail();
+            }
+        } else {
+            $spot = $spotQuery->findOrFail($spot_id);
+        }
 
         $spot->surfaces->map(function ($surface) use ($layout_id) {
             if (! $layout_id) {

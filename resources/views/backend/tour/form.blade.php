@@ -58,6 +58,24 @@
                             </x-backend::inputs.select2>
                             
                             <x-backend::inputs.text name="name" value="{{ $tour?->name }}"/>
+                            
+                            @if($tour && $tour->spots->count() > 0)
+                                <x-backend::inputs.select name="starting_spot_id" label="Tour starting spot">
+                                    @foreach($tour->spots as $spot)
+                                        <option value="{{ $spot->id }}" {{ $tour->starting_spot_id == $spot->id ? 'selected' : '' }}>
+                                            {{ $spot->name }}
+                                        </option>
+                                    @endforeach
+                                </x-backend::inputs.select>
+                            @elseif($tour && $tour->spots->count() == 0)
+                                <div class="col-12">
+                                    <label class="form-label">{{ __('Tour starting spot') }}</label>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        {{ __('No spots available for this tour. Add spots first to set a starting point.') }}
+                                    </div>
+                                </div>
+                            @endif
                             <div class="col-12">
                                 <h5>{{ __('Thumbnail') }}</h5>
                                 <x-backend::media-attachment

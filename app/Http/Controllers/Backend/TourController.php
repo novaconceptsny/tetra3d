@@ -29,6 +29,7 @@ class TourController extends Controller
         $data = array();
         $data['route'] = route('backend.tours.store');
         $data['companies'] = Company::all();
+        $data['spots'] = collect(); // Empty collection for new tours
 
         return view('backend.tour.form', $data);
     }
@@ -40,7 +41,7 @@ class TourController extends Controller
         $company_ids = (array) $request->input('company_id', []);
         $main_company_id = array_shift($company_ids); // first is main
 
-        $data = $request->only(['name']);
+        $data = $request->only(['name', 'starting_spot_id']);
         $data['name'] = is_array($data['name']) ? $data['name'][0] : $data['name'];
         $data['company_id'] = $main_company_id;
 
@@ -72,6 +73,7 @@ class TourController extends Controller
         $data['method'] = 'put';
         $data['tour'] = $tour;
         $data['companies'] = Company::all();
+        $data['spots'] = $tour->spots;
 
         return view('backend.tour.form', $data);
     }
@@ -94,6 +96,7 @@ class TourController extends Controller
         $tour->update([
             'name' => is_array($request->name) ? $request->name[0] : $request->name,
             'company_id' => $main_company_id,
+            'starting_spot_id' => $request->starting_spot_id,
         ]);
 
         // Sync additional companies to pivot table
