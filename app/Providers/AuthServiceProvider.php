@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\Like;
 use App\Models\Map;
 use App\Models\Project;
+use App\Models\SculptureModel;
 use App\Models\SharedTour;
 use App\Models\Spot;
 use App\Models\Surface;
@@ -25,6 +26,7 @@ use App\Policies\CompanyPolicy;
 use App\Policies\LikePolicy;
 use App\Policies\MapPolicy;
 use App\Policies\ProjectPolicy;
+use App\Policies\SculptureModelPolicy;
 use App\Policies\SharedTourPolicy;
 use App\Policies\SpotConfigurationPolicy;
 use App\Policies\SpotPolicy;
@@ -59,6 +61,7 @@ class AuthServiceProvider extends ServiceProvider
         Comment::class => CommentPolicy::class,
         Like::class => LikePolicy::class,
         SharedTour::class => SharedTourPolicy::class,
+        SculptureModel::class => SculptureModelPolicy::class,
     ];
 
     /**

@@ -24,7 +24,7 @@
             />
             <x-backend::layout.sidebar.nav-item
                 label="Sculptures" icon="fal fa-cube" route="{{ route('backend.sculptures.index') }}"
-                permission="viewAny" :permission-params="\App\Models\Artwork::class"
+                permission="viewAny" :permission-params="\App\Models\SculptureModel::class"
             />
             <x-backend::layout.sidebar.nav-item
                 label="Artworks" icon="fal fa-paint-brush" route="{{ route('backend.artworks.index') }}"
