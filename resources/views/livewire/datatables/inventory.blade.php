@@ -241,7 +241,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="d-flex align-items-center" style="min-width: 200px;">
+                <!-- <div class="d-flex align-items-center" style="min-width: 200px;">
                     <label for="masterUnit" class="form-label me-2 mb-0">Unit</label>
                     <select id="masterUnit" class="form-select">
                         <option value="">Select a unit to apply to all</option>
@@ -249,7 +249,7 @@
                         <option value="m">m</option>
                         <option value="cm">cm</option>
                     </select>
-                </div>
+                </div> -->
             </div>
 
             <!-- Artworks Table -->
@@ -276,18 +276,23 @@
                 </div>
 
                 <table class="table align-middle">
-                    <thead>
+                    <thead style="background-color: #f8f9fa;">
                         <tr>
-                            <th>Image</th>
-                            <th>Collection</th>
-                            <th>Title</th>
-                            <th>Artist</th>
-                            <th>Height (inch)</th>
-                            <th>Width (inch)</th>
-                            <th>Unit</th>
-                            <th>Description</th>
-                            <th>Type</th>
-                            <th></th>
+                            <th style="color: black; font-weight: 500;">Image</th>
+                            <th style="color: black; font-weight: 500;">Collection</th>
+                            <th style="color: black; font-weight: 500;">Title</th>
+                            <th style="color: black; font-weight: 500;">Artist</th>
+                            <th style="color: black; font-weight: 500;">Height</th>
+                            <th style="color: black; font-weight: 500;">Width</th>
+                            <th style="color: black; font-weight: 500;">
+                                Unit
+                                <select id="masterUnit" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                    <option value="inch">Inch</option>
+                                    <option value="cm">cm</option>
+                                </select>
+                            </th>
+                            <th style="color: black; font-weight: 500;">Type</th>
+                            <th style="color: black; font-weight: 500;"></th>
                         </tr>
                     </thead>
                     <tbody id="artworkTableBody">
@@ -1433,7 +1438,6 @@
             <td>
                 <select class="form-select artwork-unit-select">
                     <option value="inch">inch</option>
-                    <option value="m">m</option>
                     <option value="cm">cm</option>
                 </select>
             </td>
