@@ -54,7 +54,7 @@
             @foreach($templateTours as $i => $gallery)
                 <div style="position: relative;">
                     <img
-                        src="{{ asset('images/gallery_' . ($i > 1 ? 1 : ($i+1)) . '.png') }}"
+                        src="{{ $gallery->getFirstMediaUrl('thumbnail') ?: asset('images/gallery_' . ($i > 1 ? 1 : ($i+1)) . '.png') }}"
                         style="width:350px; border-radius:12px;"
                         ondblclick="goToTour({{ $gallery->id }})"
                     >
