@@ -53,7 +53,7 @@ class TourController extends Controller
 
         // else, we check auth
         if (! auth()->check()) {
-            return redirect()->route('login');
+            return redirect()->route('login', ['redirect' => request()->url()]);
         }
 
         $spot_id = request('spot_id');

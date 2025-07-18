@@ -10,6 +10,9 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
+                        @if(request('redirect'))
+                            <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+                        @endif
 
                         <div class="row mb-3">
                             <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>

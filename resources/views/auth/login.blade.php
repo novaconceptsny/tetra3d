@@ -30,6 +30,9 @@
                     </p>
                     <form class="d-flex flex-column align-items-center" method="POST" action="{{ route('login') }}">
                         @csrf
+                        @if(request('redirect'))
+                            <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+                        @endif
                         <div class="form-group login-custum-form-group">
                             <label for="email">{{ __('Email') }}</label>
                             <input type="email" id="email" placeholder="Email"
