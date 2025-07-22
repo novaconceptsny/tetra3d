@@ -53,6 +53,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('activity.index') }}">{{ __('Activity') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('share.index') }}">{{ __('Share') }}</a>
+                        </li>
                     </ul>
                 @endif
 

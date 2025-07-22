@@ -6,6 +6,7 @@ use App\Http\Controllers\PhotoStateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\Tour360Controller;
+use App\Http\Controllers\SharePageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +90,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
 
     Route::post('inventory/artworks/add', 'InventoryController@addArtworks')->name('inventory.artworks.add');
+
+    Route::get('/share', [SharePageController::class, 'index'])->name('share.index');
 
 });
 
