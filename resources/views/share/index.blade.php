@@ -48,24 +48,46 @@
                             </div>
                         @endif
                         <div class="card-body">
-                            <h5 class="card-title">{{ $sharedLayout->title }}</h5>
+                            <!-- First row: Title left, icons right -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">{{ $sharedLayout->title }}</h5>
+                                <div class="card-actions ms-2">
+                                    <a href="#" class="text-muted {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" title="Preview"><i class="bi bi-eye"></i></a>
+                                    @if($sharedLayout->layout)
+                                        <a href="#" class="text-muted share-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" data-layout-id="{{ $sharedLayout->layout->id }}" title="Share"><i class="bi bi-share"></i></a>
+                                    @else
+                                        <span class="text-muted" title="Layout not available"><i class="bi bi-share"></i></span>
+                                    @endif
+                                    <a href="#" class="text-muted edit-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" data-id="{{ $sharedLayout->id }}" data-title="{{ $sharedLayout->title }}" data-description="{{ $sharedLayout->description }}" title="Edit"><i class="bi bi-pencil"></i></a>
+                                    @if($sharedLayout->active)
+                                        <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Disable"><i class="bi bi-x-circle"></i></a>
+                                    @else
+                                        <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Enable"><i class="bi bi-check-circle"></i></a>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Second row: Company name and Disabled badge right-aligned -->
+                            <div class="d-flex align-items-center mb-2">
+                                @if($sharedLayout->layout && $sharedLayout->layout->project)
+                                    <div class="text-muted small">{{ $sharedLayout->layout->project->company->name }}</div>
+                                @endif
+                                @if(!$sharedLayout->active)
+                                    <span class="badge bg-danger ms-auto">Disabled</span>
+                                @endif
+                            </div>
+
+                            <!-- Description -->
                             <p class="card-text">{{ $sharedLayout->description ?: 'No description available.' }}</p>
-                            @if(!$sharedLayout->active)
-                                <span class="badge bg-danger">Disabled</span>
-                            @endif
-                            <div class="card-actions">
-                                <a href="#" class="text-muted" title="Preview"><i class="bi bi-eye"></i></a>
-                                @if($sharedLayout->layout)
-                                    <a href="#" class="text-muted share-shared-layout" data-layout-id="{{ $sharedLayout->layout->id }}" title="Share"><i class="bi bi-share"></i></a>
-                                @else
-                                    <span class="text-muted" title="Layout not available"><i class="bi bi-share"></i></span>
-                                @endif
-                                <a href="#" class="text-muted edit-shared-layout" data-id="{{ $sharedLayout->id }}" data-title="{{ $sharedLayout->title }}" data-description="{{ $sharedLayout->description }}" title="Edit"><i class="bi bi-pencil"></i></a>
-                                @if($sharedLayout->active)
-                                    <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Disable"><i class="bi bi-x-circle"></i></a>
-                                @else
-                                    <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Enable"><i class="bi bi-check-circle"></i></a>
-                                @endif
+
+                            <!-- Divider line -->
+                            <hr class="my-2" />
+
+                            <!-- Layout/Tour/Project info -->
+                            <div class="mt-2 small text-muted">
+                                <div>Layout: {{ $sharedLayout->layout->name ?? 'N/A' }}</div>
+                                <div>Tour: {{ $sharedLayout->layout->assignedTour()->name ?? 'N/A' }}</div>
+                                <div>Project: {{ $sharedLayout->layout->project?->name ?? 'N/A' }}</div>
                             </div>
                         </div>
                     </div>
@@ -133,6 +155,25 @@
     </div>
   </div>
 </div>
+
+<!-- Modal for enable/disable confirmation -->
+<div class="modal fade" id="confirmToggleModal" tabindex="-1" aria-labelledby="confirmToggleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmToggleModalLabel">Confirm Action</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmToggleModalBody">
+        <!-- Message will be set by JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmToggleOkBtn">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('styles')
@@ -148,6 +189,11 @@
             .modal-dialog {
                 min-height: calc(100% - 3.5rem);
             }
+        }
+        .disabled-icon {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed !important;
         }
     </style>
 @endsection
@@ -241,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
+              //  alert(data.message);
                 // Reload the page to show the new shared layout
                 window.location.reload();
             } else {
@@ -259,48 +305,61 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle disable shared layout
+    let toggleLayoutId = null;
+    let toggleIsActive = null;
+
     document.addEventListener('click', function(e) {
         if (e.target.closest('.toggle-shared-layout')) {
             e.preventDefault();
-            
+
             var link = e.target.closest('.toggle-shared-layout');
-            var sharedLayoutId = link.getAttribute('data-id');
-            var isActive = link.getAttribute('title') === 'Disable'; // Check if it's the disable link
-            
-            if (confirm('Are you sure you want to ' + (isActive ? 'disable' : 'enable') + ' this shared layout?')) {
-                // Disable the link to prevent double clicks
-                link.style.pointerEvents = 'none';
-                link.style.opacity = '0.5';
-                
-                fetch(`/share/${sharedLayoutId}/toggle`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        // Reload the page to show updated status
-                        window.location.reload();
-                    } else {
-                        alert('Error: ' + (data.message || 'Something went wrong'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while toggling the shared layout.');
-                })
-                .finally(() => {
-                    // Re-enable the link
-                    link.style.pointerEvents = '';
-                    link.style.opacity = '';
-                });
-            }
+            toggleLayoutId = link.getAttribute('data-id');
+            toggleIsActive = link.getAttribute('title') === 'Disable';
+
+            // Set modal message
+            var modalBody = document.getElementById('confirmToggleModalBody');
+            modalBody.textContent = `Are you sure you want to ${toggleIsActive ? 'disable' : 'enable'} this shared layout?`;
+
+            // Show modal
+            var confirmModal = new bootstrap.Modal(document.getElementById('confirmToggleModal'));
+            confirmModal.show();
         }
+    });
+
+    // Handle OK button in modal
+    document.getElementById('confirmToggleOkBtn').addEventListener('click', function() {
+        if (!toggleLayoutId) return;
+
+        // Optionally, disable the button here
+
+        fetch(`/share/${toggleLayoutId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+               // alert(data.message);
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Something went wrong'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while toggling the shared layout.');
+        })
+        .finally(() => {
+            // Optionally, re-enable the button here
+            // Hide the modal
+            var confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmToggleModal'));
+            confirmModal.hide();
+            toggleLayoutId = null;
+            toggleIsActive = null;
+        });
     });
 
     // Handle share shared layout
@@ -376,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
+               // alert(data.message);
                 // Reload the page to show updated data
                 window.location.reload();
             } else {

@@ -10,6 +10,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use App\Models\CompanyTour;
+use App\Models\Company;
 use App\Models\ProjectTour;
 
 class Project extends Model implements HasMedia
@@ -84,6 +85,11 @@ class Project extends Model implements HasMedia
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }   
 
 
     public function contributors()

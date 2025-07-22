@@ -44,8 +44,8 @@
 
 .shared-layouts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 2rem;
     align-items: start;
 }
 
@@ -56,6 +56,7 @@
     border-radius: 12px;
     overflow: hidden;
     background: white;
+    padding: 1.5rem;
 }
 
 .card:hover {
@@ -100,7 +101,6 @@
     display: flex;
     gap: 0.75rem;
     align-items: center;
-    margin-top: 1rem;
 }
 
 .card-actions a {
@@ -232,4 +232,10 @@
 .modal-footer {
     border-top: 1px solid #e9ecef;
     padding: 1.5rem;
+}
+
+.disabled-icon {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed !important;
 }
