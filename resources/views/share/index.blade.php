@@ -8,7 +8,7 @@
         <div class="col-md-3">
             <div class="card p-3">
                 <!-- Select Layout Button -->
-                <button class="btn btn-outline-secondary mb-3 w-100" data-bs-toggle="modal" data-bs-target="#selectLayoutModal" id="selectLayoutBtn">
+                <button class="btn btn-outline-secondary mb-3 w-100" id="selectLayoutBtn">
                     Select layout
                 </button>
                 <!-- Thumbnail preview area -->
@@ -98,61 +98,73 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-document.getElementById('selectLayoutOkBtn').onclick = function() {
-    var select = document.getElementById('layoutSelect');
-    var selectedOption = select.options[select.selectedIndex];
-    var layoutName = selectedOption.value;
-    var thumbnailUrl = selectedOption.getAttribute('data-thumbnail');
-
-    console.log('Selected layout:', layoutName);
-    console.log('Thumbnail URL:', thumbnailUrl);
-
-    // Set title
-    document.getElementById('selectedLayoutTitle').value = layoutName;
-
-    // Set thumbnail
-    var img = document.getElementById('selectedThumbnail');
-    var placeholder = document.getElementById('thumbnailPlaceholder');
-    
-    if (thumbnailUrl && thumbnailUrl.trim() !== '') {
-        img.src = thumbnailUrl;
-        img.style.display = 'block';
-        placeholder.style.display = 'none';
-        console.log('Thumbnail set successfully');
-    } else {
-        img.style.display = 'none';
-        placeholder.style.display = 'block';
-        console.log('No thumbnail available, showing placeholder');
-    }
-
-    // Close modal and remove backdrop
-    var modal = bootstrap.Modal.getInstance(document.getElementById('selectLayoutModal'));
-    if (modal) {
-        modal.hide();
-        // Remove backdrop manually if it persists
-        setTimeout(function() {
-            var backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove();
-            }
-            // Remove modal-open class from body
-            document.body.classList.remove('modal-open');
-            document.body.style.paddingRight = '';
-        }, 150);
-    }
-};
-
-// Also handle modal close via the X button and backdrop click
 document.addEventListener('DOMContentLoaded', function() {
-    var modal = document.getElementById('selectLayoutModal');
-    modal.addEventListener('hidden.bs.modal', function() {
-        // Clean up backdrop and body classes
+    var modalElement = document.getElementById('selectLayoutModal');
+    var modal = new bootstrap.Modal(modalElement);
+    var selectLayoutBtn = document.getElementById('selectLayoutBtn');
+    var selectLayoutOkBtn = document.getElementById('selectLayoutOkBtn');
+    var layoutSelect = document.getElementById('layoutSelect');
+
+    // Handle opening the modal
+    selectLayoutBtn.addEventListener('click', function() {
+        // Reset the select to first option when opening modal
+        layoutSelect.selectedIndex = 0;
+        modal.show();
+    });
+
+    // Handle OK button click
+    selectLayoutOkBtn.addEventListener('click', function() {
+        var selectedOption = layoutSelect.options[layoutSelect.selectedIndex];
+        var layoutName = selectedOption.value;
+        var thumbnailUrl = selectedOption.getAttribute('data-thumbnail');
+
+        console.log('Selected layout:', layoutName);
+        console.log('Thumbnail URL:', thumbnailUrl);
+
+        // Only proceed if a layout is actually selected
+        if (layoutName && layoutName.trim() !== '') {
+            // Set title
+            document.getElementById('selectedLayoutTitle').value = layoutName;
+
+            // Set thumbnail
+            var img = document.getElementById('selectedThumbnail');
+            var placeholder = document.getElementById('thumbnailPlaceholder');
+            
+            if (thumbnailUrl && thumbnailUrl.trim() !== '') {
+                img.src = thumbnailUrl;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+                console.log('Thumbnail set successfully');
+            } else {
+                img.style.display = 'none';
+                placeholder.style.display = 'block';
+                console.log('No thumbnail available, showing placeholder');
+            }
+
+            // Close modal
+            modal.hide();
+        } else {
+            // Show some feedback if no layout is selected
+            console.log('No layout selected');
+        }
+    });
+
+    // Handle modal hidden event for cleanup
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        // Clean up any remaining backdrop
         var backdrop = document.querySelector('.modal-backdrop');
         if (backdrop) {
             backdrop.remove();
         }
+        // Clean up body classes
         document.body.classList.remove('modal-open');
         document.body.style.paddingRight = '';
+    });
+
+    // Handle modal shown event
+    modalElement.addEventListener('shown.bs.modal', function() {
+        // Focus on the select element when modal opens
+        layoutSelect.focus();
     });
 });
 </script>
