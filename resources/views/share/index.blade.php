@@ -48,7 +48,11 @@
                             @endif
                             <div class="mt-2 d-flex gap-2">
                                 <a href="#" class="text-muted" title="Preview"><i class="bi bi-eye"></i></a>
-                                <a href="#" class="text-muted" title="Share"><i class="bi bi-share"></i></a>
+                                @if($sharedLayout->layout)
+                                    <a href="#" class="text-muted share-shared-layout" data-layout-id="{{ $sharedLayout->layout->id }}" title="Share"><i class="bi bi-share"></i></a>
+                                @else
+                                    <span class="text-muted" title="Layout not available"><i class="bi bi-share"></i></span>
+                                @endif
                                 <a href="#" class="text-muted edit-shared-layout" data-id="{{ $sharedLayout->id }}" data-title="{{ $sharedLayout->title }}" data-description="{{ $sharedLayout->description }}" title="Edit"><i class="bi bi-pencil"></i></a>
                                 @if($sharedLayout->active)
                                     <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Disable"><i class="bi bi-x-circle"></i></a>
@@ -291,6 +295,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     link.style.opacity = '';
                 });
             }
+        }
+    });
+
+    // Handle share shared layout
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.share-shared-layout')) {
+            e.preventDefault();
+            
+            var link = e.target.closest('.share-shared-layout');
+            var layoutId = link.getAttribute('data-layout-id');
+            
+            if (!layoutId) {
+                alert('Layout not available for sharing.');
+                return;
+            }
+            
+            // Dispatch Livewire modal event
+            Livewire.dispatch('modal.open', {
+                component: 'modals.share-tour', 
+                arguments: {'layout': layoutId}
+            });
         }
     });
 
