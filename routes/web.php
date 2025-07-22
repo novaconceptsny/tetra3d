@@ -92,6 +92,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('inventory/artworks/add', 'InventoryController@addArtworks')->name('inventory.artworks.add');
 
     Route::get('/share', [SharePageController::class, 'index'])->name('share.index');
+    Route::post('/share/store', [SharePageController::class, 'store'])->name('share.store');
+    Route::post('/share/{id}/toggle', [SharePageController::class, 'toggle'])->name('share.toggle');
+    Route::post('/share/{id}/edit', [SharePageController::class, 'edit'])->name('share.edit');
 
 });
 
