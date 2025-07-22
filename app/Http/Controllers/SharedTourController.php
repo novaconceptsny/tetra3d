@@ -18,8 +18,20 @@ class SharedTourController extends Controller
     public function show(SharedTour $sharedTour)
     {
         $layout  = $sharedTour->layout;
-        $tour    = $sharedTour->layout->tour;
-        $project = $sharedTour->layout->project;
+        // Bypass global scope to get the tour regardless of company
+        $tour    = $layout->tour()->withoutGlobalScope('forCurrentCompany')->first();
+        // Bypass global scope to get the project regardless of company
+        $project = $layout->project()->withoutGlobalScope('forCurrentCompany')->first();
+
+        // If tour is not found, it might be due to company restrictions
+        if (!$tour) {
+            abort(404, 'Tour not found or access denied');
+        }
+
+        // If project is not found, it might be due to company restrictions
+        if (!$project) {
+            abort(404, 'Project not found or access denied');
+        }
 
         $spot_id = request('spot_id', $sharedTour->spot_id);
 
@@ -63,7 +75,7 @@ class SharedTourController extends Controller
             $sculpture_list[] = $artwork_collection->artwork_collection_id;
         }
 
-        $sculptures = ! empty($sculpture_list) ? SculptureModel::whereIn('artwork_collection_id', $sculpture_list)->get() : [];
+        $sculptures = ! empty($sculpture_list) ? SculptureModel::withoutGlobalScope('forCurrentCompany')->whereIn('artwork_collection_id', $sculpture_list)->get() : [];
 
         $tourModel = $tour ? TourModel::where('tour_id', $tour->id)->get() : null;
         if ($tourModel !== null && ! $tourModel->isEmpty()) {
@@ -119,7 +131,7 @@ class SharedTourController extends Controller
             $artworkId = $artworkData[$index]['artwork_id'] ?? null; // Safely access artwork_id
             $surfacestateId = $artworkData[$index]['surface_state_id'] ?? null;
             if ($artworkId) {
-                $artInfo     = Artwork::find($artworkId); // Find by ID
+                $artInfo     = Artwork::withoutGlobalScope('forCurrentCompany')->find($artworkId); // Find by ID
                 $surfaceInfo = SurfaceState::find($surfacestateId);
                 $surfaceInfo = SurfaceInfo::where('surface_id', $surfaceInfo->surface_id)->first();
 

@@ -1,37 +1,44 @@
 @extends('layouts.redesign')
 
 @section('content')
-<div class="container-fluid">
-    <h5 class="mb-4">Share layouts</h5>
-    <div class="row">
-        <!-- Left Panel: Share Layout Form -->
-        <div class="col-md-3">
-            <div class="card p-3">
-                <form id="shareLayoutForm" method="POST" action="{{ route('share.store') }}">
-                    @csrf
-                    <!-- Select Layout Button -->
-                    <button type="button" class="btn btn-outline-secondary mb-3 w-100" id="selectLayoutBtn">
-                        Select layout
-                    </button>
-                    <!-- Hidden field for layout_id -->
-                    <input type="hidden" name="layout_id" id="selectedLayoutId">
-                    <!-- Thumbnail preview area -->
-                    <div class="mb-3" id="thumbnailContainer" style="height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
-                        <span id="thumbnailPlaceholder">Share layout thumbnail</span>
-                        <img id="selectedThumbnail" src="" alt="Selected Thumbnail" style="display:none; max-height: 100%; max-width: 100%;"/>
+<div class="share-page-container">
+    <div class="share-page-content">
+        <div class="share-page-header">
+            <h5>Share layouts</h5>
+        </div>
+        <div class="row">
+            <!-- Left Panel: Share Layout Form -->
+            <div class="col-md-4">
+                <div class="share-form-panel">
+                    <div class="card p-3">
+                        <form id="shareLayoutForm" method="POST" action="{{ route('share.store') }}">
+                            @csrf
+                            <!-- Select Layout Button -->
+                            <button type="button" class="btn btn-outline-secondary mb-3 w-100" id="selectLayoutBtn">
+                                Select layout
+                            </button>
+                            <!-- Hidden field for layout_id -->
+                            <input type="hidden" name="layout_id" id="selectedLayoutId">
+                            <!-- Thumbnail preview area -->
+                            <div class="mb-3" id="thumbnailContainer" style="height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                                <span id="thumbnailPlaceholder">Share layout thumbnail</span>
+                                <img id="selectedThumbnail" src="" alt="Selected Thumbnail" style="display:none; max-height: 100%; max-width: 100%;"/>
+                            </div>
+                            <!-- Title input (readonly, filled by selection) -->
+                            <input type="text" class="form-control mb-2" placeholder="Title" id="selectedLayoutTitle" name="title" readonly>
+                            <textarea class="form-control mb-2" placeholder="Description" name="description"></textarea>
+                            <button type="submit" class="btn btn-primary w-100" id="saveBtn">Save</button>
+                        </form>
                     </div>
-                    <!-- Title input (readonly, filled by selection) -->
-                    <input type="text" class="form-control mb-2" placeholder="Title" id="selectedLayoutTitle" name="title" readonly>
-                    <textarea class="form-control mb-2" placeholder="Description" name="description"></textarea>
-                    <button type="submit" class="btn btn-primary w-100" id="saveBtn">Save</button>
-                </form>
+                </div>
             </div>
         </div>
-        <!-- Right Panel: Shared Layouts -->
-        <div class="col-md-9">
-            <div class="row g-3">
-                @forelse($sharedLayouts as $sharedLayout)
-                <div class="col-md-6">
+        <div class="row" style="margin-top: 50px;">
+
+            <!-- Right Panel: Shared Layouts -->
+            <div class="shared-layouts-panel">
+                <div class="shared-layouts-grid">
+                    @forelse($sharedLayouts as $sharedLayout)
                     <div class="card h-100 shadow-sm {{ !$sharedLayout->active ? 'opacity-50' : '' }}">
                         @if($sharedLayout->layout && $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail'))
                             <img src="{{ $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail') }}" class="card-img-top" alt="{{ $sharedLayout->title }}">
@@ -46,7 +53,7 @@
                             @if(!$sharedLayout->active)
                                 <span class="badge bg-danger">Disabled</span>
                             @endif
-                            <div class="mt-2 d-flex gap-2">
+                            <div class="card-actions">
                                 <a href="#" class="text-muted" title="Preview"><i class="bi bi-eye"></i></a>
                                 @if($sharedLayout->layout)
                                     <a href="#" class="text-muted share-shared-layout" data-layout-id="{{ $sharedLayout->layout->id }}" title="Share"><i class="bi bi-share"></i></a>
@@ -62,15 +69,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                @empty
-                <div class="col-12">
-                    <div class="text-center text-muted py-5">
-                        <i class="bi bi-inbox fs-1"></i>
-                        <p class="mt-3">No shared layouts yet. Create your first one!</p>
+                    @empty
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <p>No shared layouts yet. Create your first one!</p>
                     </div>
+                    @endforelse
                 </div>
-                @endforelse
             </div>
         </div>
     </div>
