@@ -52,7 +52,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0">{{ $sharedLayout->title }}</h5>
                                 <div class="card-actions ms-2">
-                                    <a href="{{ route('tours.show', [$sharedLayout->layout->assignedTour()->id, 'layout_id' => $sharedLayout->layout->id]) }}" class="text-muted {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" title="Preview" target="_blank">
+                                    <a href="{{ route('tours.show', [$sharedLayout->layout->assignedTour()->id, 'layout_id' => $sharedLayout->layout->id, 'shared' => true]) }}" class="text-muted {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" title="Preview" target="_blank">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     @if($sharedLayout->layout)

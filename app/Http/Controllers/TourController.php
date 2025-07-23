@@ -51,8 +51,11 @@ class TourController extends Controller
             return $this->redirectIfTourIsShared();
         }
 
-        // else, we check auth
-        if (! auth()->check()) {
+        // Check if this is a shared tour preview (shared parameter without shared_tour_id)
+        $isSharedPreview = request('shared') && !request('shared_tour_id');
+
+        // else, we check auth (unless it's a shared preview)
+        if (! auth()->check() && !$isSharedPreview) {
             return redirect()->route('login', ['redirect' => request()->url()]);
         }
 
@@ -206,6 +209,7 @@ class TourController extends Controller
         $data['spotPosition']  = $spotPosition;
         $data['artworkData']   = $artworkData;
         $data['surfaceData']   = $surfaceData;
+        $data['tour_is_shared'] = $isSharedPreview;
 
         return view('pages.tour', $data);
     }

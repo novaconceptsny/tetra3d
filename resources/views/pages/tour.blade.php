@@ -5,7 +5,7 @@
     $project = $project ?? null;
     $shared_tour_id = $shared_tour_id ?? null;
     $shared_spot_id = $shared_spot_id ?? null;
-    $tour_is_shared = Route::is('shared-tours.show') || request('shared');
+    $tour_is_shared = $tour_is_shared ?? (Route::is('shared-tours.show') || request('shared'));
     $tracker = request('tracker', 0);
     $parameters = array_merge(request()->all(), ['tour' => $tour]);
     $parameters['tracker'] = $tracker ? 0 : 1;

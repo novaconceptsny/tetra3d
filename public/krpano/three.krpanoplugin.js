@@ -341,9 +341,10 @@ function krpanoplugin() {
 	}
 
 	function do_object_hittest(mx, my) {
-		// Check if current URL contains "/shared-tours/"
-		tour_is_shared = window.location.pathname.includes("shared-tours");
-		
+		// Check if current URL contains "/shared-tours/" or has shared=true parameter
+		tour_is_shared = window.location.pathname.includes("shared-tours") || 
+						new URLSearchParams(window.location.search).get('shared') === "1";
+						
 		const pointer = new THREE.Vector2();
 		pointer.x = (mx / krpano.area.pixelwidth) * 2.0 - 1.0;
 		pointer.y = -(my / krpano.area.pixelheight) * 2.0 + 1.0;
@@ -425,6 +426,10 @@ function krpanoplugin() {
 		var hitobj = null;
 		var gizmo = null;
 		var point = null;
+
+		// Update tour_is_shared status at the beginning of each event
+		tour_is_shared = window.location.pathname.includes("shared-tours") || 
+						new URLSearchParams(window.location.search).get('shared') === "1";
 
 		if (event.type == "mousedown") {
 			type = "ondown";
