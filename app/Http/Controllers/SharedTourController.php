@@ -7,6 +7,7 @@ use App\Models\ArtworkSurfaceState;
 use App\Models\Sculpture;
 use App\Models\SculptureModel;
 use App\Models\SharedTour;
+use App\Models\SharedLayout;
 use App\Models\Spot;
 use App\Models\SpotsPosition;
 use App\Models\SurfaceInfo;
@@ -18,6 +19,13 @@ class SharedTourController extends Controller
     public function show(SharedTour $sharedTour)
     {
         $layout  = $sharedTour->layout;
+        
+        // Check if the corresponding SharedLayout is active
+        $sharedLayout = SharedLayout::where('layout_id', $layout->id)->first();
+        if (!$sharedLayout || !$sharedLayout->active) {
+            abort(404, 'Shared tour is not available or has been disabled');
+        }
+        
         // Bypass global scope to get the tour regardless of company
         $tour    = $layout->tour()->withoutGlobalScope('forCurrentCompany')->first();
         // Bypass global scope to get the project regardless of company
