@@ -19,6 +19,8 @@
                             </button>
                             <!-- Hidden field for layout_id -->
                             <input type="hidden" name="layout_id" id="selectedLayoutId">
+                            <!-- Hidden field for thumbnail_url -->
+                            <input type="hidden" name="thumbnail_url" id="selectedThumbnailUrl">
                             <!-- Thumbnail preview area -->
                             <div class="mb-3" id="thumbnailContainer" style="height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
                                 <span id="thumbnailPlaceholder">Share layout thumbnail</span>
@@ -114,17 +116,27 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <select class="form-select" id="layoutSelect">
-          <option value="" data-thumbnail="" data-id="">-- Select a layout --</option>
-          @foreach($layouts as $layout)
-            <option value="{{ $layout->name }}" data-thumbnail="{{ $layout->assignedTour()->getFirstMediaUrl('thumbnail') }}" data-id="{{ $layout->id }}">
-              {{ $layout->name }}
-            </option>
-          @endforeach
-        </select>
+        <!-- Project Selector -->
+        <div class="mb-3">
+          <label for="projectSelect" class="form-label">Select Project</label>
+          <select class="form-select" id="projectSelect">
+            <option value="">-- Select a project --</option>
+            @foreach($projects as $project)
+              <option value="{{ $project->id }}">{{ $project->name }}</option>
+            @endforeach
+          </select>
+        </div>
+        
+        <!-- Layout Selector (initially disabled) -->
+        <div class="mb-3">
+          <label for="layoutSelect" class="form-label">Select Layout</label>
+          <select class="form-select" id="layoutSelect" disabled>
+            <option value="" data-thumbnail="" data-id="">-- Select a project first --</option>
+          </select>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="selectLayoutOkBtn">OK</button>
+        <button type="button" class="btn btn-primary" id="selectLayoutOkBtn" disabled>OK</button>
       </div>
     </div>
   </div>
@@ -186,10 +198,12 @@
             display: flex;
             align-items: center;
             min-height: calc(100% - 1rem);
+            margin-top: -50px; /* Move modal up by 50px */
         }
         @media (min-width: 576px) {
             .modal-dialog {
                 min-height: calc(100% - 3.5rem);
+                margin-top: -50px; /* Move modal up by 50px on larger screens */
             }
         }
         .disabled-icon {
@@ -202,19 +216,57 @@
 
 @section('scripts')
 <script>
+// Pass layouts data to JavaScript
+var layoutsData = @json($layouts->groupBy('project_id'));
+
 document.addEventListener('DOMContentLoaded', function() {
     var modalElement = document.getElementById('selectLayoutModal');
     var modal = new bootstrap.Modal(modalElement);
     var selectLayoutBtn = document.getElementById('selectLayoutBtn');
     var selectLayoutOkBtn = document.getElementById('selectLayoutOkBtn');
+    var projectSelect = document.getElementById('projectSelect');
     var layoutSelect = document.getElementById('layoutSelect');
     var form = document.getElementById('shareLayoutForm');
 
     // Handle opening the modal
     selectLayoutBtn.addEventListener('click', function() {
-        // Reset the select to first option when opening modal
+        // Reset the selects when opening modal
+        projectSelect.selectedIndex = 0;
         layoutSelect.selectedIndex = 0;
+        layoutSelect.disabled = true;
+        selectLayoutOkBtn.disabled = true;
         modal.show();
+    });
+
+    // Handle project selection
+    projectSelect.addEventListener('change', function() {
+        var selectedProjectId = this.value;
+        var layoutSelect = document.getElementById('layoutSelect');
+        
+        // Clear and disable layout select
+        layoutSelect.innerHTML = '<option value="" data-thumbnail="" data-id="">-- Select a layout --</option>';
+        layoutSelect.disabled = true;
+        selectLayoutOkBtn.disabled = true;
+        
+        if (selectedProjectId && layoutsData[selectedProjectId]) {
+            // Enable layout select and populate with layouts for selected project
+            layoutSelect.disabled = false;
+            
+            layoutsData[selectedProjectId].forEach(function(layout) {
+                var option = document.createElement('option');
+                option.value = layout.name;
+                option.setAttribute('data-thumbnail', layout.thumbnail_url || '');
+                option.setAttribute('data-id', layout.id);
+                option.textContent = layout.name;
+                layoutSelect.appendChild(option);
+            });
+        }
+    });
+
+    // Handle layout selection
+    layoutSelect.addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        selectLayoutOkBtn.disabled = !selectedOption.value;
     });
 
     // Handle OK button click
@@ -232,6 +284,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (layoutName && layoutName.trim() !== '') {
             // Set layout_id
             document.getElementById('selectedLayoutId').value = layoutId;
+            
+            // Set thumbnail_url
+            document.getElementById('selectedThumbnailUrl').value = thumbnailUrl || '';
             
             // Set title
             document.getElementById('selectedLayoutTitle').value = layoutName;
@@ -265,6 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         var layoutId = document.getElementById('selectedLayoutId').value;
         var title = document.getElementById('selectedLayoutTitle').value;
+        var thumbnailUrl = document.getElementById('selectedThumbnailUrl').value;
         
         if (!layoutId || !title) {
             alert('Please select a layout first.');
@@ -468,8 +524,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle modal shown event
     modalElement.addEventListener('shown.bs.modal', function() {
-        // Focus on the select element when modal opens
-        layoutSelect.focus();
+        // Focus on the project select element when modal opens
+        projectSelect.focus();
     });
 });
 </script>

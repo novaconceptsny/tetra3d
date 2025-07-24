@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('layout_id');
             $table->string('title');
             $table->text('description')->nullable();
+            $table->string('thumbnail_url')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
             

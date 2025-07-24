@@ -25,6 +25,7 @@ class SharedLayout extends Model
         'layout_id',
         'title',
         'description',
+        'thumbnail_url',
         'active',
     ];
 
