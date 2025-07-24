@@ -196,7 +196,7 @@
 
 <!-- Modal for editing shared layout -->
 <div class="modal fade" id="editSharedLayoutModal" tabindex="-1" aria-labelledby="editSharedLayoutModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog" style="margin-top: 0px;">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="editSharedLayoutModalLabel">Edit Shared Layout</h5>
@@ -308,6 +308,17 @@
                 min-height: calc(100% - 3.5rem);
                 margin-top: -50px; /* Move modal up by 50px on larger screens */
             }
+        }
+
+        /* Additional modal content height constraints */
+        .modal-content {
+            max-height: 80vh; /* Limit modal content height */
+            overflow-y: auto; /* Add scroll if content is too tall */
+        }
+
+        .modal-body {
+            max-height: 70vh; /* Limit modal body height */
+            overflow-y: auto; /* Add scroll if body content is too tall */
         }
 
         /* Thumbnail container styling */
