@@ -175,7 +175,7 @@ class SharePageController extends Controller
         $sharedLayout = SharedLayout::findOrFail($id);
         
         // Delete related SharedTour records based on layout_id
-        SharedTour::where('layout_id', $sharedLayout->layout_id)->delete();
+        SharedTour::where('shared_layout_id', $id)->delete();
         
         // Delete the storage folder for this shared layout
         $storagePath = "storage/media/shared_layouts/{$sharedLayout->id}";
