@@ -35,6 +35,9 @@ class SharePageController extends Controller
         // Fetch all layouts and format for JavaScript
         $layouts = Layout::all()->map(function($layout) {
             $layout->thumbnail_url = $layout->assignedTour() ? $layout->assignedTour()->getFirstMediaUrl('thumbnail') : '';
+            // Add tour and project information
+            $layout->tour_name = $layout->assignedTour() ? $layout->assignedTour()->name : 'N/A';
+            $layout->project_name = $layout->project ? $layout->project->name : 'N/A';
             return $layout;
         });
         

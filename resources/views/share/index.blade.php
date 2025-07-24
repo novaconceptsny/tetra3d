@@ -86,6 +86,9 @@
                                         data-title="{{ $sharedLayout->title }}"
                                         data-description="{{ $sharedLayout->description }}"
                                         data-thumbnail="{{ $sharedLayout->thumbnail_url ? asset($sharedLayout->thumbnail_url) : $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail') }}"
+                                        data-layout-name="{{ $sharedLayout->layout->name ?? 'N/A' }}"
+                                        data-tour-name="{{ $sharedLayout->layout->assignedTour()->name ?? 'N/A' }}"
+                                        data-project-name="{{ $sharedLayout->layout->project?->name ?? 'N/A' }}"
                                         title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
@@ -169,6 +172,20 @@
             <option value="" data-thumbnail="" data-id="">-- Select a project first --</option>
           </select>
         </div>
+
+        <!-- Layout Information Display (initially hidden) -->
+        <div id="layoutInfoDisplay" class="mb-3" style="display: none;">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title">Layout Information</h6>
+              <div class="small text-muted">
+                <div id="layoutInfoLayout">Layout: <span id="layoutInfoLayoutName">-</span></div>
+                <div id="layoutInfoTour">Tour: <span id="layoutInfoTourName">-</span></div>
+                <div id="layoutInfoProject">Project: <span id="layoutInfoProjectName">-</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" id="selectLayoutOkBtn" disabled>OK</button>
@@ -213,6 +230,20 @@
           </div>
           <!-- Hidden field for thumbnail_url -->
           <input type="hidden" name="thumbnail_url" id="editThumbnailUrl">
+          
+          <!-- Layout Information Display for Edit -->
+          <div class="mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">Layout Information</h6>
+                <div class="small text-muted">
+                  <div>Layout: <span id="editLayoutInfoLayoutName">-</span></div>
+                  <div>Tour: <span id="editLayoutInfoTourName">-</span></div>
+                  <div>Project: <span id="editLayoutInfoProjectName">-</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -360,10 +391,18 @@ function showEditModal(element) {
     var title = link.getAttribute('data-title');
     var description = link.getAttribute('data-description');
     var thumbnailUrl = link.getAttribute('data-thumbnail'); // Get thumbnail_url
+    var layoutName = link.getAttribute('data-layout-name');
+    var tourName = link.getAttribute('data-tour-name');
+    var projectName = link.getAttribute('data-project-name');
 
     // Populate the edit modal with current data
     document.getElementById('editTitle').value = title;
     document.getElementById('editDescription').value = description;
+
+    // Populate layout information
+    document.getElementById('editLayoutInfoLayoutName').textContent = layoutName;
+    document.getElementById('editLayoutInfoTourName').textContent = tourName;
+    document.getElementById('editLayoutInfoProjectName').textContent = projectName;
 
     // Set thumbnail preview in edit modal
     var editThumbnailContainer = document.getElementById('editThumbnailContainer');
@@ -486,6 +525,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var selectLayoutOkBtn = document.getElementById('selectLayoutOkBtn');
     var projectSelect = document.getElementById('projectSelect');
     var layoutSelect = document.getElementById('layoutSelect');
+    var layoutInfoDisplay = document.getElementById('layoutInfoDisplay');
+    var layoutInfoLayoutName = document.getElementById('layoutInfoLayoutName');
+    var layoutInfoTourName = document.getElementById('layoutInfoTourName');
+    var layoutInfoProjectName = document.getElementById('layoutInfoProjectName');
     var form = document.getElementById('shareLayoutForm');
 
     // Thumbnail upload functionality
@@ -547,6 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
         layoutSelect.selectedIndex = 0;
         layoutSelect.disabled = true;
         selectLayoutOkBtn.disabled = true;
+        layoutInfoDisplay.style.display = 'none'; // Hide layout info display
         modal.show();
     });
 
@@ -554,11 +598,16 @@ document.addEventListener('DOMContentLoaded', function() {
     projectSelect.addEventListener('change', function() {
         var selectedProjectId = this.value;
         var layoutSelect = document.getElementById('layoutSelect');
+        var layoutInfoDisplay = document.getElementById('layoutInfoDisplay');
+        var layoutInfoLayoutName = document.getElementById('layoutInfoLayoutName');
+        var layoutInfoTourName = document.getElementById('layoutInfoTourName');
+        var layoutInfoProjectName = document.getElementById('layoutInfoProjectName');
 
         // Clear and disable layout select
         layoutSelect.innerHTML = '<option value="" data-thumbnail="" data-id="">-- Select a layout --</option>';
         layoutSelect.disabled = true;
         selectLayoutOkBtn.disabled = true;
+        layoutInfoDisplay.style.display = 'none'; // Hide layout info display
 
         if (selectedProjectId && layoutsData[selectedProjectId]) {
             // Enable layout select and populate with layouts for selected project
@@ -579,6 +628,28 @@ document.addEventListener('DOMContentLoaded', function() {
     layoutSelect.addEventListener('change', function() {
         var selectedOption = this.options[this.selectedIndex];
         selectLayoutOkBtn.disabled = !selectedOption.value;
+
+        if (selectedOption.value) {
+            // Get the layout data from layoutsData
+            var selectedProjectId = projectSelect.value;
+            var layoutId = selectedOption.getAttribute('data-id');
+            var layoutData = null;
+            
+            // Find the layout data
+            if (layoutsData[selectedProjectId]) {
+                layoutData = layoutsData[selectedProjectId].find(function(layout) {
+                    return layout.id == layoutId;
+                });
+            }
+            
+            // Update layout info display
+            layoutInfoLayoutName.textContent = selectedOption.value;
+            layoutInfoTourName.textContent = layoutData ? layoutData.tour_name : 'N/A';
+            layoutInfoProjectName.textContent = layoutData ? layoutData.project_name : 'N/A';
+            layoutInfoDisplay.style.display = 'block';
+        } else {
+            layoutInfoDisplay.style.display = 'none';
+        }
     });
 
     // Handle OK button click
