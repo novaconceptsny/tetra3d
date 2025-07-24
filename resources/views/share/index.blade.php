@@ -64,23 +64,26 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0">{{ $sharedLayout->title }}</h5>
                                 <div class="card-actions ms-2">
-                                    <a href="{{ route('tours.show', [$sharedLayout->layout->assignedTour()->id, 'layout_id' => $sharedLayout->layout->id, 'shared' => true]) }}" class="text-muted {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" title="Preview" target="_blank">
+                                    <!-- Preview button: always active -->
+                                    <a href="{{ route('tours.show', [$sharedLayout->layout->assignedTour()->id, 'layout_id' => $sharedLayout->layout->id, 'shared' => true]) }}" class="text-muted" title="Preview" target="_blank">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     @if($sharedLayout->layout)
+                                        <!-- Share button: disabled if not active -->
                                         <a href="#" class="text-muted share-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" data-layout-id="{{ $sharedLayout->layout->id }}" title="Share"><i class="bi bi-share"></i></a>
                                     @else
                                         <span class="text-muted" title="Layout not available"><i class="bi bi-share"></i></span>
                                     @endif
-                                        <a href="#"
-                                            class="text-muted edit-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}"
-                                            data-id="{{ $sharedLayout->id }}"
-                                            data-title="{{ $sharedLayout->title }}"
-                                            data-description="{{ $sharedLayout->description }}"
-                                            data-thumbnail="{{ $sharedLayout->thumbnail_url ? asset($sharedLayout->thumbnail_url) : $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail') }}"
-                                            title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
+                                    <!-- Edit button: always active -->
+                                    <a href="#"
+                                        class="text-muted edit-shared-layout"
+                                        data-id="{{ $sharedLayout->id }}"
+                                        data-title="{{ $sharedLayout->title }}"
+                                        data-description="{{ $sharedLayout->description }}"
+                                        data-thumbnail="{{ $sharedLayout->thumbnail_url ? asset($sharedLayout->thumbnail_url) : $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail') }}"
+                                        title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
                                     @if($sharedLayout->active)
                                         <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Disable"><i class="bi bi-x-circle"></i></a>
                                     @else

@@ -15,8 +15,20 @@ class SharePageController extends Controller
 
         if ($user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
             $projects = Project::all();
+
+            // Fetch all shared layouts with their related layouts (super admin sees all)
+            $sharedLayouts = SharedLayout::with('layout')->orderBy('updated_at', 'desc')->get();
+        
         } else {
             $projects = Project::where('company_id', $user->company->id)->get();
+
+            // Fetch shared layouts filtered by user's company
+            $sharedLayouts = SharedLayout::with(['layout.project.company'])
+                ->whereHas('layout.project', function($query) use ($user) {
+                    $query->where('company_id', $user->company->id);
+                })
+                ->orderBy('updated_at', 'desc')
+                ->get();
         }
 
         // Fetch all layouts and format for JavaScript
@@ -25,8 +37,6 @@ class SharePageController extends Controller
             return $layout;
         });
         
-        // Fetch all shared layouts with their related layouts
-        $sharedLayouts = SharedLayout::with('layout')->get();
 
         return view('share.index', compact('sharedLayouts', 'layouts', 'projects'));
     }
