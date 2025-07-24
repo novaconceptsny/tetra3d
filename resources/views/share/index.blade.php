@@ -35,7 +35,7 @@
                                 </div>
                             </div>
                             <!-- Title input (readonly, filled by selection) -->
-                            <input type="text" class="form-control mb-2" placeholder="Title" id="selectedLayoutTitle" name="title" readonly>
+                            <input type="text" class="form-control mb-2" placeholder="Title" id="selectedLayoutTitle" name="title" >
                             <textarea class="form-control mb-2" placeholder="Description" name="description"></textarea>
                             <button type="submit" class="btn btn-primary w-100" id="saveBtn">Save</button>
                         </form>
