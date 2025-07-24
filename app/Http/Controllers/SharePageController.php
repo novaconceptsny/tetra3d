@@ -51,28 +51,32 @@ class SharePageController extends Controller
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
+        // Create shared layout first to get the ID
+        $sharedLayout = SharedLayout::create([
+            'layout_id' => $request->layout_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'thumbnail_url' => null, // Will be updated after file upload
+            'active' => true, // default value
+        ]);
+
         $thumbnailUrl = $request->thumbnail_url;
         
         // Handle file upload
         if ($request->hasFile('thumbnail')) {
-            $thumbnailUrl = $this->saveUploadedImage($request->file('thumbnail'), $request->layout_id);
+            $thumbnailUrl = $this->saveUploadedImage($request->file('thumbnail'), $sharedLayout->id, $request->layout_id);
         }
         // Handle base64 image data
         elseif ($thumbnailUrl && str_starts_with($thumbnailUrl, 'data:image/')) {
-            $thumbnailUrl = $this->saveBase64Image($thumbnailUrl, $request->layout_id);
+            $thumbnailUrl = $this->saveBase64Image($thumbnailUrl, $sharedLayout->id, $request->layout_id);
         }
         // If no thumbnail is provided, set to null
         else {
             $thumbnailUrl = null;
         }
 
-        $sharedLayout = SharedLayout::create([
-            'layout_id' => $request->layout_id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'thumbnail_url' => $thumbnailUrl,
-            'active' => true, // default value
-        ]);
+        // Update the shared layout with the thumbnail URL
+        $sharedLayout->update(['thumbnail_url' => $thumbnailUrl]);
 
         return response()->json([
             'success' => true,
@@ -84,11 +88,11 @@ class SharePageController extends Controller
     /**
      * Save base64 image data to file
      */
-    private function saveBase64Image($base64Data, $layoutId)
+    private function saveBase64Image($base64Data, $sharedLayoutId, $layoutId)
     {
         try {
             // Create directory if it doesn't exist
-            $directory = "storage/media/shared_layouts/{$layoutId}";
+            $directory = "storage/media/shared_layouts/{$sharedLayoutId}/{$layoutId}";
             if (!file_exists($directory)) {
                 mkdir($directory, 0755, true);
             }
@@ -104,7 +108,7 @@ class SharePageController extends Controller
             file_put_contents($filePath, $imageData);
             
             // Return the public URL
-            return '/storage/media/shared_layouts/' . $layoutId . '/' . $filename;
+            return '/storage/media/shared_layouts/' . $sharedLayoutId . '/' . $layoutId . '/' . $filename;
             
         } catch (\Exception $e) {
             \Log::error('Error saving base64 image: ' . $e->getMessage());
@@ -141,11 +145,11 @@ class SharePageController extends Controller
         
         // Handle file upload
         if ($request->hasFile('thumbnail')) {
-            $thumbnailUrl = $this->saveUploadedImage($request->file('thumbnail'), $sharedLayout->layout_id);
+            $thumbnailUrl = $this->saveUploadedImage($request->file('thumbnail'), $sharedLayout->id, $sharedLayout->layout_id);
         }
         // Handle base64 image data
         elseif ($thumbnailUrl && str_starts_with($thumbnailUrl, 'data:image/')) {
-            $thumbnailUrl = $this->saveBase64Image($thumbnailUrl, $sharedLayout->layout_id);
+            $thumbnailUrl = $this->saveBase64Image($thumbnailUrl, $sharedLayout->id, $sharedLayout->layout_id);
         }
         // If no new thumbnail is provided, keep the existing one
         else {
@@ -165,14 +169,25 @@ class SharePageController extends Controller
         ]);
     }
 
+    public function destroy($id)
+    {
+        $sharedLayout = SharedLayout::findOrFail($id);
+        $sharedLayout->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Shared layout deleted successfully!',
+        ]);
+    }
+
     /**
      * Save uploaded image file
      */
-    private function saveUploadedImage($file, $layoutId)
+    private function saveUploadedImage($file, $sharedLayoutId, $layoutId)
     {
         try {
             // Create directory if it doesn't exist
-            $directory = "storage/media/shared_layouts/{$layoutId}";
+            $directory = "storage/media/shared_layouts/{$sharedLayoutId}/{$layoutId}";
             if (!file_exists($directory)) {
                 mkdir($directory, 0755, true);
             }
@@ -193,7 +208,7 @@ class SharePageController extends Controller
             $file->move($directory, $filename);
             
             // Return the public URL
-            return '/storage/media/shared_layouts/' . $layoutId . '/' . $filename;
+            return '/storage/media/shared_layouts/' . $sharedLayoutId . '/' . $layoutId . '/' . $filename;
             
         } catch (\Exception $e) {
             \Log::error('Error saving uploaded image: ' . $e->getMessage());

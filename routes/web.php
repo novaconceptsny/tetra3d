@@ -95,6 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/share/store', [SharePageController::class, 'store'])->name('share.store');
     Route::post('/share/{id}/toggle', [SharePageController::class, 'toggle'])->name('share.toggle');
     Route::post('/share/{id}/edit', [SharePageController::class, 'edit'])->name('share.edit');
+    Route::delete('/share/{id}/delete', [App\Http\Controllers\SharePageController::class, 'destroy'])->name('share.delete');
 
 });
 

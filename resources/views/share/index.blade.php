@@ -84,11 +84,20 @@
                                         title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
+                                    <!-- Toggle button: Enable/Disable -->
                                     @if($sharedLayout->active)
-                                        <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Disable"><i class="bi bi-x-circle"></i></a>
+                                        <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Disable">
+                                            <i class="bi bi-x-circle"></i>
+                                        </a>
                                     @else
-                                        <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Enable"><i class="bi bi-check-circle"></i></a>
+                                        <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Enable">
+                                            <i class="bi bi-check-circle"></i>
+                                        </a>
                                     @endif
+                                    <!-- Delete button: always visible -->
+                                    <a href="#" class="text-muted delete-shared-layout" data-id="{{ $sharedLayout->id }}" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
                                 </div>
                             </div>
 
@@ -355,6 +364,7 @@ function showEditModal(element) {
         editThumbnailUrl.value = ''; // Clear the hidden field
     }
 
+    console.log('Shared layout ID:', sharedLayoutId);
     // Store the shared layout ID for the save operation
     document.getElementById('editSharedLayoutForm').setAttribute('data-shared-layout-id', sharedLayoutId);
 
@@ -798,6 +808,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     editThumbnailContainer.addEventListener('mouseleave', function() {
         editThumbnailOverlay.style.display = 'none';
+    });
+
+    // Handle delete shared layout
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-shared-layout')) {
+            e.preventDefault();
+            var link = e.target.closest('.delete-shared-layout');
+            var sharedLayoutId = link.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this shared layout?')) {
+                fetch(`/share/${sharedLayoutId}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + (data.message || 'Something went wrong'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting.');
+                });
+            }
+        }
     });
 
     // Handle modal hidden event for cleanup
