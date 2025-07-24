@@ -236,6 +236,25 @@
     </div>
   </div>
 </div>
+
+<!-- Modal for delete confirmation -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmDeleteModalBody">
+        Are you sure you want to delete this shared layout? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteOkBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('styles')
@@ -682,6 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let toggleLayoutId = null;
     let toggleIsActive = null;
+    let deleteLayoutId = null;
 
     document.addEventListener('click', function(e) {
         if (e.target.closest('.toggle-shared-layout')) {
@@ -698,6 +718,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show modal
             var confirmModal = new bootstrap.Modal(document.getElementById('confirmToggleModal'));
             confirmModal.show();
+        }
+    });
+
+    // Handle delete shared layout
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-shared-layout')) {
+            e.preventDefault();
+            var link = e.target.closest('.delete-shared-layout');
+            deleteLayoutId = link.getAttribute('data-id');
+
+            // Show delete confirmation modal
+            var deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            deleteModal.show();
         }
     });
 
@@ -734,6 +767,37 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmModal.hide();
             toggleLayoutId = null;
             toggleIsActive = null;
+        });
+    });
+
+    // Handle delete confirmation OK button
+    document.getElementById('confirmDeleteOkBtn').addEventListener('click', function() {
+        if (!deleteLayoutId) return;
+
+        fetch(`/share/${deleteLayoutId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Something went wrong'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting.');
+        })
+        .finally(() => {
+            // Hide the modal
+            var deleteModal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+            deleteModal.hide();
+            deleteLayoutId = null;
         });
     });
 
@@ -808,36 +872,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     editThumbnailContainer.addEventListener('mouseleave', function() {
         editThumbnailOverlay.style.display = 'none';
-    });
-
-    // Handle delete shared layout
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.delete-shared-layout')) {
-            e.preventDefault();
-            var link = e.target.closest('.delete-shared-layout');
-            var sharedLayoutId = link.getAttribute('data-id');
-            if (confirm('Are you sure you want to delete this shared layout?')) {
-                fetch(`/share/${sharedLayoutId}/delete`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        alert('Error: ' + (data.message || 'Something went wrong'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while deleting.');
-                });
-            }
-        }
     });
 
     // Handle modal hidden event for cleanup
