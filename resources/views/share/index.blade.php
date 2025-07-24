@@ -69,8 +69,8 @@
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     @if($sharedLayout->layout)
-                                        <!-- Share button: disabled if not active -->
-                                        <a href="#" class="text-muted share-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}"
+                                        <!-- Share button: always active -->
+                                        <a href="#" class="text-muted share-shared-layout"
                                            data-layout-id="{{ $sharedLayout->layout->id }}"
                                            data-shared-layout-id="{{ $sharedLayout->id }}"
                                            title="Share">
@@ -277,11 +277,6 @@
                 min-height: calc(100% - 3.5rem);
                 margin-top: -50px; /* Move modal up by 50px on larger screens */
             }
-        }
-        .disabled-icon {
-            pointer-events: none;
-            opacity: 0.5;
-            cursor: not-allowed !important;
         }
 
         /* Thumbnail container styling */
