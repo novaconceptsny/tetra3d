@@ -70,7 +70,12 @@
                                     </a>
                                     @if($sharedLayout->layout)
                                         <!-- Share button: disabled if not active -->
-                                        <a href="#" class="text-muted share-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" data-layout-id="{{ $sharedLayout->layout->id }}" title="Share"><i class="bi bi-share"></i></a>
+                                        <a href="#" class="text-muted share-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}"
+                                           data-layout-id="{{ $sharedLayout->layout->id }}"
+                                           data-shared-layout-id="{{ $sharedLayout->id }}"
+                                           title="Share">
+                                            <i class="bi bi-share"></i>
+                                        </a>
                                     @else
                                         <span class="text-muted" title="Layout not available"><i class="bi bi-share"></i></span>
                                     @endif
@@ -808,16 +813,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             var link = e.target.closest('.share-shared-layout');
             var layoutId = link.getAttribute('data-layout-id');
+            var sharedLayoutId = link.getAttribute('data-shared-layout-id');
 
             if (!layoutId) {
                 alert('Layout not available for sharing.');
                 return;
             }
 
-            // Dispatch Livewire modal event
+            // Pass both layout and shared_layout_id
             Livewire.dispatch('modal.open', {
                 component: 'modals.share-tour',
-                arguments: {'layout': layoutId}
+                arguments: {
+                    'layout': layoutId,
+                    'sharedLayout': sharedLayoutId
+                }
             });
         }
     });

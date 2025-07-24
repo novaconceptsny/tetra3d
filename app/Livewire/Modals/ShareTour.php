@@ -5,6 +5,7 @@ namespace App\Livewire\Modals;
 use App\Models\Layout;
 use App\Models\Project;
 use App\Models\SharedTour;
+use App\Models\SharedLayout;
 use App\Models\Spot;
 use App\Models\Tour;
 use WireElements\Pro\Components\Modal\Modal;
@@ -12,6 +13,7 @@ use WireElements\Pro\Components\Modal\Modal;
 class ShareTour extends Modal
 {
     public Layout|int $layout;
+    public SharedLayout|int|null $sharedLayout;
     public $tourId;
     public $spotId;
 
@@ -21,9 +23,10 @@ class ShareTour extends Modal
     public $spotSelectionAllowed = false;
     public $spot = null;
 
-    public function mount(Layout $layout, $spotId = null)
+    public function mount(Layout $layout, SharedLayout $sharedLayout, $spotId = null)
     {
         $this->layout = $layout;
+        $this->sharedLayout = $sharedLayout;
         $this->spotId = $spotId;
         $this->spot = Spot::find($this->spotId);
 
@@ -40,6 +43,7 @@ class ShareTour extends Modal
     public function generateLink()
     {
         $layout = $this->layout;
+        $sharedLayout = $this->sharedLayout;
 
         /*$surfaces = $layout->surfaces()->with([
             'states' => fn($query) => $query->forLayout($layout->id)->active(),
@@ -53,12 +57,14 @@ class ShareTour extends Modal
 
         $surface_states = $layout->surfaceStates->pluck('id')->toArray();
 
-        $sharedTour = SharedTour::updateOrCreate([
+        // Create a new SharedTour record instead of updating existing one
+        $sharedTour = SharedTour::create([
             'spot_id' => $this->share_type == 'spot' ? $this->spot?->id : null,
             'layout_id' => $layout->id,
+            'shared_layout_id' => $sharedLayout->id,
             'user_id' => auth()->id(),
             'surface_states' => json_encode($surface_states),
-        ], []);
+        ]);
 
         $this->link = route('shared-tours.show', $sharedTour);
     }
