@@ -22,8 +22,16 @@ class SharedTourController extends Controller
         
         // Check if the corresponding SharedLayout is active
         $sharedLayout = SharedLayout::where('layout_id', $layout->id)->first();
-        if (!$sharedLayout || !$sharedLayout->active) {
-            abort(404, 'Shared tour is not available or has been disabled');
+        if (!$sharedLayout) {
+            return response()->view('errors.404', [
+                'exception' => new \Exception('The tour doesn\'t exist')
+            ], 404);
+        }
+        
+        if (!$sharedLayout->active) {
+            return response()->view('errors.404', [
+                'exception' => new \Exception('This link has been disabled')
+            ], 404);
         }
         
         // Bypass global scope to get the tour regardless of company
@@ -33,18 +41,24 @@ class SharedTourController extends Controller
 
         // If tour is not found, it might be due to company restrictions
         if (!$tour) {
-            abort(404, 'Tour not found or access denied');
+            return response()->view('errors.404', [
+                'exception' => new \Exception('Tour not found or access denied')
+            ], 404);
         }
 
         // If project is not found, it might be due to company restrictions
         if (!$project) {
-            abort(404, 'Project not found or access denied');
+            return response()->view('errors.404', [
+                'exception' => new \Exception('Project not found or access denied')
+            ], 404);
         }
 
         $spot_id = request('spot_id', $sharedTour->spot_id);
 
         if ($sharedTour->spot_id && $sharedTour->spot_id != $spot_id) {
-            abort(404);
+            return response()->view('errors.404', [
+                'exception' => new \Exception('Invalid spot access')
+            ], 404);
         }
 
         $spotQuery = Spot::query()
