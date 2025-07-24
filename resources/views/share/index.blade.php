@@ -21,10 +21,18 @@
                             <input type="hidden" name="layout_id" id="selectedLayoutId">
                             <!-- Hidden field for thumbnail_url -->
                             <input type="hidden" name="thumbnail_url" id="selectedThumbnailUrl">
+                            <!-- Hidden file input for image upload -->
+                            <input type="file" id="thumbnailFileInput" accept="image/*" style="display: none;">
                             <!-- Thumbnail preview area -->
-                            <div class="mb-3" id="thumbnailContainer" style="height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
-                                <span id="thumbnailPlaceholder">Share layout thumbnail</span>
-                                <img id="selectedThumbnail" src="" alt="Selected Thumbnail" style="display:none; max-height: 100%; max-width: 100%;"/>
+                            <div class="mb-3" id="thumbnailContainer" style="height: 140px; background: #f5f5f5; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative;">
+                                <div id="thumbnailContent" style="text-align: center;">
+                                    <span id="thumbnailPlaceholder">Click to add image</span>
+                                    <img id="selectedThumbnail" src="" alt="Selected Thumbnail" style="display:none; max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 4px;"/>
+                                </div>
+                                <!-- Overlay for hover effect -->
+                                <div id="thumbnailOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.1); display: none; align-items: center; justify-content: center;">
+                                    <span style="color: #666; font-size: 14px;">Click to change image</span>
+                                </div>
                             </div>
                             <!-- Title input (readonly, filled by selection) -->
                             <input type="text" class="form-control mb-2" placeholder="Title" id="selectedLayoutTitle" name="title" readonly>
@@ -42,7 +50,9 @@
                 <div class="shared-layouts-grid">
                     @forelse($sharedLayouts as $sharedLayout)
                     <div class="card h-100 shadow-sm {{ !$sharedLayout->active ? 'opacity-50' : '' }}">
-                        @if($sharedLayout->layout && $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail'))
+                        @if($sharedLayout->thumbnail_url)
+                            <img src="{{ asset($sharedLayout->thumbnail_url) }}" class="card-img-top" alt="{{ $sharedLayout->title }}">
+                        @elseif($sharedLayout->layout && $sharedLayout->layout->assignedTour() && $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail'))
                             <img src="{{ $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail') }}" class="card-img-top" alt="{{ $sharedLayout->title }}">
                         @else
                             <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
@@ -62,7 +72,15 @@
                                     @else
                                         <span class="text-muted" title="Layout not available"><i class="bi bi-share"></i></span>
                                     @endif
-                                    <a href="#" class="text-muted edit-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}" data-id="{{ $sharedLayout->id }}" data-title="{{ $sharedLayout->title }}" data-description="{{ $sharedLayout->description }}" title="Edit"><i class="bi bi-pencil"></i></a>
+                                        <a href="#"
+                                            class="text-muted edit-shared-layout {{ !$sharedLayout->active ? 'disabled-icon' : '' }}"
+                                            data-id="{{ $sharedLayout->id }}"
+                                            data-title="{{ $sharedLayout->title }}"
+                                            data-description="{{ $sharedLayout->description }}"
+                                            data-thumbnail="{{ $sharedLayout->thumbnail_url ? asset($sharedLayout->thumbnail_url) : $sharedLayout->layout->assignedTour()->getFirstMediaUrl('thumbnail') }}"
+                                            title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
                                     @if($sharedLayout->active)
                                         <a href="#" class="text-muted toggle-shared-layout" data-id="{{ $sharedLayout->id }}" title="Disable"><i class="bi bi-x-circle"></i></a>
                                     @else
@@ -126,7 +144,7 @@
             @endforeach
           </select>
         </div>
-        
+
         <!-- Layout Selector (initially disabled) -->
         <div class="mb-3">
           <label for="layoutSelect" class="form-label">Select Layout</label>
@@ -160,11 +178,29 @@
             <label for="editDescription" class="form-label">Description</label>
             <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
           </div>
+          <!-- Thumbnail upload area for edit -->
+          <div class="mb-3">
+            <label class="form-label">Thumbnail</label>
+            <div class="mb-3" id="editThumbnailContainer" style="height: 140px; background: #f5f5f5; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative;">
+                <div id="editThumbnailContent" style="text-align: center;">
+                    <span id="editThumbnailPlaceholder">Click to change image</span>
+                    <img id="editSelectedThumbnail" src="" alt="Selected Thumbnail" style="display:none; max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 4px;"/>
+                </div>
+                <!-- Overlay for hover effect -->
+                <div id="editThumbnailOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.1); display: none; align-items: center; justify-content: center;">
+                    <span style="color: #666; font-size: 14px;">Click to change image</span>
+                </div>
+            </div>
+            <!-- Hidden file input for edit image upload -->
+            <input type="file" id="editThumbnailFileInput" accept="image/*" style="display: none;">
+          </div>
+          <!-- Hidden field for thumbnail_url -->
+          <input type="hidden" name="thumbnail_url" id="editThumbnailUrl">
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+        <button type="button" class="btn btn-primary" id="saveEditBtn" onclick="handleEditSharedLayout()">Save Changes</button>
       </div>
     </div>
   </div>
@@ -211,6 +247,73 @@
             opacity: 0.5;
             cursor: not-allowed !important;
         }
+
+        /* Thumbnail container styling */
+        #thumbnailContainer {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        #thumbnailContainer:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+
+        #thumbnailContainer:active {
+            transform: scale(0.98);
+        }
+
+        #thumbnailPlaceholder {
+            color: #6c757d;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        #selectedThumbnail {
+            border-radius: 6px;
+            transition: opacity 0.3s ease;
+        }
+
+        #thumbnailOverlay {
+            border-radius: 8px;
+            transition: opacity 0.3s ease;
+        }
+
+        #thumbnailOverlay span {
+            background: rgba(0,0,0,0.8);
+            color: #ffffff;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Improved thumbnail image sizing */
+        #selectedThumbnail {
+            max-height: 120px !important;
+            max-width: 120px !important;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Card image styling for shared layouts */
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        /* Edit thumbnail styling */
+        #editSelectedThumbnail {
+            max-height: 120px !important;
+            max-width: 120px !important;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 6px;
+            transition: opacity 0.3s ease;
+        }
     </style>
 @endsection
 
@@ -218,6 +321,131 @@
 <script>
 // Pass layouts data to JavaScript
 var layoutsData = @json($layouts->groupBy('project_id'));
+
+// Global functions that need to be accessible from onclick attributes
+function showEditModal(element) {
+    var link = element.closest('.edit-shared-layout');
+    var sharedLayoutId = link.getAttribute('data-id');
+    var title = link.getAttribute('data-title');
+    var description = link.getAttribute('data-description');
+    var thumbnailUrl = link.getAttribute('data-thumbnail'); // Get thumbnail_url
+
+    // Populate the edit modal with current data
+    document.getElementById('editTitle').value = title;
+    document.getElementById('editDescription').value = description;
+
+    // Set thumbnail preview in edit modal
+    var editThumbnailContainer = document.getElementById('editThumbnailContainer');
+    var editThumbnailPlaceholder = document.getElementById('editThumbnailPlaceholder');
+    var editSelectedThumbnail = document.getElementById('editSelectedThumbnail');
+    var editThumbnailUrl = document.getElementById('editThumbnailUrl');
+
+    if (thumbnailUrl && thumbnailUrl.trim() !== '') {
+        editSelectedThumbnail.src = thumbnailUrl;
+        editSelectedThumbnail.style.display = 'block';
+        editThumbnailPlaceholder.style.display = 'none';
+        editThumbnailUrl.value = thumbnailUrl; // Set the hidden field
+    } else {
+        editSelectedThumbnail.src = '';
+        editSelectedThumbnail.style.display = 'none';
+        editThumbnailPlaceholder.style.display = 'block';
+        editThumbnailUrl.value = ''; // Clear the hidden field
+    }
+
+    // Store the shared layout ID for the save operation
+    document.getElementById('editSharedLayoutForm').setAttribute('data-shared-layout-id', sharedLayoutId);
+
+    // Show the edit modal
+    var editModal = new bootstrap.Modal(document.getElementById('editSharedLayoutModal'));
+    editModal.show();
+}
+
+function handleEditSharedLayout() {
+    var form = document.getElementById('editSharedLayoutForm');
+    var sharedLayoutId = form.getAttribute('data-shared-layout-id');
+    var title = document.getElementById('editTitle').value;
+    var description = document.getElementById('editDescription').value;
+
+    if (!title.trim()) {
+        alert('Title is required.');
+        return;
+    }
+
+    // Disable save button to prevent double submission
+    var saveBtn = document.getElementById('saveEditBtn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
+    // Prepare FormData for thumbnail upload
+    var formData = new FormData(form);
+
+    // Handle thumbnail upload for edit
+    var editThumbnailFileInput = document.getElementById('editThumbnailFileInput');
+    var editThumbnailContainer = document.getElementById('editThumbnailContainer');
+    var editThumbnailPlaceholder = document.getElementById('editThumbnailPlaceholder');
+    var editSelectedThumbnail = document.getElementById('editSelectedThumbnail');
+    var editThumbnailOverlay = document.getElementById('editThumbnailOverlay');
+    var editThumbnailUrl = document.getElementById('editThumbnailUrl');
+
+    if (editThumbnailFileInput.files.length > 0) {
+        var file = editThumbnailFileInput.files[0];
+        if (!file.type.startsWith('image/')) {
+            alert('Please select a valid image file for the thumbnail.');
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Thumbnail image file size must be less than 5MB.');
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+            return;
+        }
+        formData.append('thumbnail', file);
+    } else {
+        // If no new thumbnail, ensure the existing one is kept or cleared
+        if (editThumbnailUrl.value && editThumbnailUrl.value.trim() !== '') {
+            // Keep existing thumbnail
+            formData.append('thumbnail_url', editThumbnailUrl.value);
+        } else {
+            // Clear thumbnail if no new file and no existing one
+            formData.delete('thumbnail');
+            formData.delete('thumbnail_url');
+            editSelectedThumbnail.src = '';
+            editSelectedThumbnail.style.display = 'none';
+            editThumbnailPlaceholder.style.display = 'block';
+        }
+    }
+
+    // Submit form via AJAX
+    fetch(`/share/${sharedLayoutId}/edit`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+           // alert(data.message);
+            // Reload the page to show updated data
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Something went wrong'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the shared layout.');
+    })
+    .finally(() => {
+        // Re-enable save button
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Changes';
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     var modalElement = document.getElementById('selectLayoutModal');
@@ -227,6 +455,58 @@ document.addEventListener('DOMContentLoaded', function() {
     var projectSelect = document.getElementById('projectSelect');
     var layoutSelect = document.getElementById('layoutSelect');
     var form = document.getElementById('shareLayoutForm');
+
+    // Thumbnail upload functionality
+    var thumbnailContainer = document.getElementById('thumbnailContainer');
+    var thumbnailFileInput = document.getElementById('thumbnailFileInput');
+    var thumbnailOverlay = document.getElementById('thumbnailOverlay');
+    var selectedThumbnail = document.getElementById('selectedThumbnail');
+    var thumbnailPlaceholder = document.getElementById('thumbnailPlaceholder');
+    var selectedThumbnailUrl = document.getElementById('selectedThumbnailUrl');
+
+    // Handle thumbnail container click
+    thumbnailContainer.addEventListener('click', function() {
+        thumbnailFileInput.click();
+    });
+
+    // Handle file selection
+    thumbnailFileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file.');
+                return;
+            }
+
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image file size must be less than 5MB.');
+                return;
+            }
+
+            // Create a preview
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                selectedThumbnail.src = e.target.result;
+                selectedThumbnail.style.display = 'block';
+                thumbnailPlaceholder.style.display = 'none';
+                selectedThumbnailUrl.value = e.target.result; // Store the data URL
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle thumbnail container hover effects
+    thumbnailContainer.addEventListener('mouseenter', function() {
+        if (selectedThumbnail.style.display !== 'none') {
+            thumbnailOverlay.style.display = 'flex';
+        }
+    });
+
+    thumbnailContainer.addEventListener('mouseleave', function() {
+        thumbnailOverlay.style.display = 'none';
+    });
 
     // Handle opening the modal
     selectLayoutBtn.addEventListener('click', function() {
@@ -242,16 +522,16 @@ document.addEventListener('DOMContentLoaded', function() {
     projectSelect.addEventListener('change', function() {
         var selectedProjectId = this.value;
         var layoutSelect = document.getElementById('layoutSelect');
-        
+
         // Clear and disable layout select
         layoutSelect.innerHTML = '<option value="" data-thumbnail="" data-id="">-- Select a layout --</option>';
         layoutSelect.disabled = true;
         selectLayoutOkBtn.disabled = true;
-        
+
         if (selectedProjectId && layoutsData[selectedProjectId]) {
             // Enable layout select and populate with layouts for selected project
             layoutSelect.disabled = false;
-            
+
             layoutsData[selectedProjectId].forEach(function(layout) {
                 var option = document.createElement('option');
                 option.value = layout.name;
@@ -284,26 +564,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (layoutName && layoutName.trim() !== '') {
             // Set layout_id
             document.getElementById('selectedLayoutId').value = layoutId;
-            
-            // Set thumbnail_url
-            document.getElementById('selectedThumbnailUrl').value = thumbnailUrl || '';
-            
+
             // Set title
             document.getElementById('selectedLayoutTitle').value = layoutName;
 
-            // Set thumbnail
-            var img = document.getElementById('selectedThumbnail');
-            var placeholder = document.getElementById('thumbnailPlaceholder');
-            
-            if (thumbnailUrl && thumbnailUrl.trim() !== '') {
-                img.src = thumbnailUrl;
-                img.style.display = 'block';
-                placeholder.style.display = 'none';
-                console.log('Thumbnail set successfully');
-            } else {
-                img.style.display = 'none';
-                placeholder.style.display = 'block';
-                console.log('No thumbnail available, showing placeholder');
+            // Set thumbnail - only if no custom thumbnail has been uploaded
+            if (!selectedThumbnailUrl.value || selectedThumbnailUrl.value === '') {
+                selectedThumbnailUrl.value = thumbnailUrl || '';
+
+                var img = document.getElementById('selectedThumbnail');
+                var placeholder = document.getElementById('thumbnailPlaceholder');
+
+                if (thumbnailUrl && thumbnailUrl.trim() !== '') {
+                    img.src = thumbnailUrl;
+                    img.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    console.log('Thumbnail set successfully');
+                } else {
+                    img.style.display = 'none';
+                    placeholder.style.display = 'block';
+                    console.log('No thumbnail available, showing placeholder');
+                }
             }
 
             // Close modal
@@ -317,11 +598,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         var layoutId = document.getElementById('selectedLayoutId').value;
         var title = document.getElementById('selectedLayoutTitle').value;
         var thumbnailUrl = document.getElementById('selectedThumbnailUrl').value;
-        
+
         if (!layoutId || !title) {
             alert('Please select a layout first.');
             return;
@@ -332,10 +613,34 @@ document.addEventListener('DOMContentLoaded', function() {
         saveBtn.disabled = true;
         saveBtn.textContent = 'Saving...';
 
+        // Prepare FormData for file upload
+        var formData = new FormData(form);
+
+        // Handle file upload
+        var thumbnailFileInput = document.getElementById('thumbnailFileInput');
+        if (thumbnailFileInput.files.length > 0) {
+            var file = thumbnailFileInput.files[0];
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file for the thumbnail.');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Thumbnail image file size must be less than 5MB.');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save';
+                return;
+            }
+            formData.append('thumbnail', file);
+            // Remove the base64 data if file is uploaded
+            formData.delete('thumbnail_url');
+        }
+
         // Submit form via AJAX
         fetch(form.action, {
             method: 'POST',
-            body: new FormData(form),
+            body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -423,18 +728,18 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         if (e.target.closest('.share-shared-layout')) {
             e.preventDefault();
-            
+
             var link = e.target.closest('.share-shared-layout');
             var layoutId = link.getAttribute('data-layout-id');
-            
+
             if (!layoutId) {
                 alert('Layout not available for sharing.');
                 return;
             }
-            
+
             // Dispatch Livewire modal event
             Livewire.dispatch('modal.open', {
-                component: 'modals.share-tour', 
+                component: 'modals.share-tour',
                 arguments: {'layout': layoutId}
             });
         }
@@ -444,70 +749,52 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         if (e.target.closest('.edit-shared-layout')) {
             e.preventDefault();
-            
-            var link = e.target.closest('.edit-shared-layout');
-            var sharedLayoutId = link.getAttribute('data-id');
-            var title = link.getAttribute('data-title');
-            var description = link.getAttribute('data-description');
-            
-            // Populate the edit modal with current data
-            document.getElementById('editTitle').value = title;
-            document.getElementById('editDescription').value = description;
-            
-            // Store the shared layout ID for the save operation
-            document.getElementById('editSharedLayoutForm').setAttribute('data-shared-layout-id', sharedLayoutId);
-            
-            // Show the edit modal
-            var editModal = new bootstrap.Modal(document.getElementById('editSharedLayoutModal'));
-            editModal.show();
+            showEditModal(e.target);
         }
     });
 
-    // Handle save edit button
-    document.getElementById('saveEditBtn').addEventListener('click', function() {
-        var form = document.getElementById('editSharedLayoutForm');
-        var sharedLayoutId = form.getAttribute('data-shared-layout-id');
-        var title = document.getElementById('editTitle').value;
-        var description = document.getElementById('editDescription').value;
-        
-        if (!title.trim()) {
-            alert('Title is required.');
-            return;
+    // Handle thumbnail upload for edit modal
+    var editThumbnailContainer = document.getElementById('editThumbnailContainer');
+    var editThumbnailFileInput = document.getElementById('editThumbnailFileInput');
+    var editThumbnailOverlay = document.getElementById('editThumbnailOverlay');
+    var editSelectedThumbnail = document.getElementById('editSelectedThumbnail');
+    var editThumbnailPlaceholder = document.getElementById('editThumbnailPlaceholder');
+
+    editThumbnailContainer.addEventListener('click', function() {
+        editThumbnailFileInput.click();
+    });
+
+    editThumbnailFileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file for the thumbnail.');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Thumbnail image file size must be less than 5MB.');
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                editSelectedThumbnail.src = e.target.result;
+                editSelectedThumbnail.style.display = 'block';
+                editThumbnailPlaceholder.style.display = 'none';
+                editThumbnailUrl.value = e.target.result; // Store the data URL
+            };
+            reader.readAsDataURL(file);
         }
-        
-        // Disable save button to prevent double submission
-        var saveBtn = document.getElementById('saveEditBtn');
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Saving...';
-        
-        // Submit form via AJAX
-        fetch(`/share/${sharedLayoutId}/edit`, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-               // alert(data.message);
-                // Reload the page to show updated data
-                window.location.reload();
-            } else {
-                alert('Error: ' + (data.message || 'Something went wrong'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating the shared layout.');
-        })
-        .finally(() => {
-            // Re-enable save button
-            saveBtn.disabled = false;
-            saveBtn.textContent = 'Save Changes';
-        });
+    });
+
+    editThumbnailContainer.addEventListener('mouseenter', function() {
+        if (editSelectedThumbnail.style.display !== 'none') {
+            editThumbnailOverlay.style.display = 'flex';
+        }
+    });
+
+    editThumbnailContainer.addEventListener('mouseleave', function() {
+        editThumbnailOverlay.style.display = 'none';
     });
 
     // Handle modal hidden event for cleanup
