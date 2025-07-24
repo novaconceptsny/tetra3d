@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Layout;
 use App\Models\Project;
 use App\Models\SharedLayout;
+use App\Models\SharedTour;
 use Illuminate\Http\Request;
 
 class SharePageController extends Controller
@@ -172,6 +173,16 @@ class SharePageController extends Controller
     public function destroy($id)
     {
         $sharedLayout = SharedLayout::findOrFail($id);
+        
+        // Delete related SharedTour records based on layout_id
+        SharedTour::where('layout_id', $sharedLayout->layout_id)->delete();
+        
+        // Delete the storage folder for this shared layout
+        $storagePath = "storage/media/shared_layouts/{$sharedLayout->id}";
+        if (file_exists($storagePath)) {
+            \File::deleteDirectory($storagePath);
+        }
+        
         $sharedLayout->delete();
 
         return response()->json([
