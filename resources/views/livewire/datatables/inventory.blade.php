@@ -291,6 +291,7 @@
                                     <option value="cm">cm</option>
                                 </select>
                             </th>
+                            <th style="color: black; font-weight: 500;">Description</th>
                             <th style="color: black; font-weight: 500;">Type</th>
                             <th style="color: black; font-weight: 500;"></th>
                         </tr>
@@ -1302,8 +1303,7 @@
             rowData.push(cells[5].querySelector('input').value);
             rowData.push(cells[6].textContent.trim());
 
-            const typeSelect = cells[7].querySelector('select');
-            rowData.push(typeSelect && typeSelect.value ? typeSelect.options[typeSelect.selectedIndex].text : '');
+            rowData.push(cells[7].textContent.trim());
 
             data.push(rowData);
         });
@@ -1442,12 +1442,7 @@
                 </select>
             </td>
             <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
-            <td>
-                <select class="form-select empty-cell">
-                    <option value="Painting">Painting</option>
-                    <option value="Sculpture">Sculpture</option>
-                </select>
-            </td>
+            <td contenteditable="true" data-placeholder="Enter artwork type..." class="empty-cell"></td>
             <td><button class="btn btn-danger btn-sm">Remove</button></td>
         `;
         row.querySelector('button').onclick = function() { 
@@ -1683,10 +1678,8 @@
                 const cells = row.querySelectorAll('td');
                 const image = cells[0].querySelector('img');
                 const collectionSelect = cells[1].querySelector('select');
-                const typeSelect = cells[8].querySelector('select');
 
                 const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
-                const typeInfo = typeSelect.options[typeSelect.selectedIndex].text;
                 const unitSelect = cells[6].querySelector('select');
                 const unitValue = unitSelect ? unitSelect.value : '';
 
@@ -1697,7 +1690,7 @@
                     height: cells[4].querySelector('input').value,
                     width: cells[5].querySelector('input').value,
                     description: cells[7].textContent.trim(),
-                    type: typeInfo,
+                    type: cells[8].textContent.trim(),
                     unit: unitValue,
                 };
 
@@ -2335,12 +2328,7 @@
                     </select>
                 </td>
                 <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.description ? 'empty-cell' : ''}">${artwork.description || ''}</td>
-                <td>
-                    <select class="form-select ${!artwork.type ? 'empty-cell' : ''}">
-                        <option value="Painting" ${artwork.type === 'Painting' ? 'selected' : ''}>Painting</option>
-                        <option value="Sculpture" ${artwork.type === 'Sculpture' ? 'selected' : ''}>Sculpture</option>
-                    </select>
-                </td>
+                <td contenteditable="true" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
                 <td><button class="btn btn-danger btn-sm">Remove</button></td>
             `;
             row.querySelector('button').onclick = function() { 
