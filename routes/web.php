@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\Tour360Controller;
 use App\Http\Controllers\SharePageController;
-
+// Ensure MeshyController exists at this path, or update the import to the correct namespace
+use App\Http\Controllers\MeshyController;
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -141,8 +143,12 @@ Route::group([
         ->name('backend.tours.toggle-model');
 });
 
+Route::view('/meshy/text-to-3d', 'text-to-3d');
+
+Route::post('/meshy/text-to-3d', [MeshyController::class, 'textTo3d'])->name('meshy.textTo3d');
+Route::get('/meshy/text-to-3d/status/{taskId}', [MeshyController::class, 'checkStatus']);
+Route::get('/meshy/model-proxy/{taskId}', [MeshyController::class, 'proxyModel'])
+     ->name('meshy.proxyModel');
 
 
-
-
-
+?>
