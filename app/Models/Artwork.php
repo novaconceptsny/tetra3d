@@ -84,6 +84,26 @@ class Artwork extends Model implements HasMedia
         );
     }
 
+    public function getConvertedDimensions($projectUnit = 'imperial')
+    {
+        if (!$this->data->height_inch || !$this->data->width_inch) {
+            return '';
+        }
+
+        $height = $this->data->height_inch;
+        $width = $this->data->width_inch;
+        $unit = 'inches';
+
+        if ($projectUnit === 'metric') {
+            // Convert from inches to meters
+            $height = round($height * 0.0254, 2);
+            $width = round($width * 0.0254, 2);
+            $unit = 'meters';
+        }
+
+        return "{$height} x {$width}x1 {$unit}";
+    }
+
     public function calculateScale()
     {
         if (!$this->data->width_inch || !$this->data->height_inch) {

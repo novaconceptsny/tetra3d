@@ -43,6 +43,7 @@ class ArtworkCollection extends Component
             ->with('media')->paginate(25);
 
         $data['artworks'] = $artworks;
+        $data['projectUnit'] = $this->project->unit ?? 'imperial';
 
         return view('livewire.artwork-collection', $data);
     }
