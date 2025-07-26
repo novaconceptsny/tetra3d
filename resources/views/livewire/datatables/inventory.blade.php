@@ -1042,8 +1042,30 @@
                     const artworkRows = document.querySelectorAll('#artworkTableBody tr');
                     artworkRows.forEach(row => {
                         const unitSelect = row.querySelector('.artwork-unit-select');
+                        
                         if (unitSelect) {
+                            const currentUnit = unitSelect.value;
                             unitSelect.value = selectedUnit;
+                            
+                            // Convert values if both inputs exist and have values
+                            const heightInput = row.querySelector('input[id="artwork-height"]');
+                            const widthInput = row.querySelector('input[id="artwork-width"]');
+                            
+                            if (heightInput && widthInput && heightInput.value && widthInput.value) {
+                                const heightValue = parseFloat(heightInput.value);
+                                const widthValue = parseFloat(widthInput.value);
+                                
+                                // Convert height
+                                const convertedHeight = convertUnit(heightValue, currentUnit, selectedUnit);
+                                heightInput.value = convertedHeight;
+                                
+                                // Convert width
+                                const convertedWidth = convertUnit(widthValue, currentUnit, selectedUnit);
+                                widthInput.value = convertedWidth;
+                            }
+                            
+                            // Update the previous unit for this row's unit select
+                            unitSelect.dataset.previousUnit = selectedUnit;
                         }
                     });
                 }
@@ -1557,6 +1579,17 @@
                 }
             });
         });
+
+        // Add unit change event listener for individual unit dropdowns
+        const unitSelect = row.querySelector('.artwork-unit-select');
+        if (unitSelect) {
+            // Set initial previous unit
+            unitSelect.dataset.previousUnit = unitSelect.value;
+            
+            unitSelect.addEventListener('change', function() {
+                handleUnitChange(this);
+            });
+        }
     }
 
     function handleSubmitArtworks() {
@@ -2318,8 +2351,8 @@
                 </td>
                 <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
                 <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
-                <td><input type="number" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
-                <td><input type="number" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
+                <td><input type="number" id="artwork-height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
+                <td><input type="number" id="artwork-width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
                 <td>
                     <select class="form-select artwork-unit-select">
                         <option value="inch" ${artwork.unit === 'inch' ? 'selected' : ''}>inch</option>
@@ -2370,6 +2403,17 @@
                     }
                 });
             });
+
+            // Add unit change event listener for individual unit dropdowns
+            const unitSelect = row.querySelector('.artwork-unit-select');
+            if (unitSelect) {
+                // Set initial previous unit
+                unitSelect.dataset.previousUnit = unitSelect.value;
+                
+                unitSelect.addEventListener('change', function() {
+                    handleUnitChange(this);
+                });
+            }
         });
     }
 
@@ -2426,5 +2470,76 @@
         });
         
         continueModal.show();
+    }
+
+    // Unit conversion function
+    function convertUnit(value, fromUnit, toUnit) {
+        // First convert to inches (base unit)
+        let inchesValue;
+        
+        switch (fromUnit) {
+            case 'inch':
+                inchesValue = value;
+                break;
+            case 'cm':
+                inchesValue = value / 2.54;
+                break;
+            case 'm':
+                inchesValue = value * 39.3701;
+                break;
+            default:
+                inchesValue = value; // Default to no conversion
+        }
+        
+        // Then convert from inches to target unit
+        let result;
+        switch (toUnit) {
+            case 'inch':
+                result = inchesValue;
+                break;
+            case 'cm':
+                result = inchesValue * 2.54;
+                break;
+            case 'm':
+                result = inchesValue / 39.3701;
+                break;
+            default:
+                result = inchesValue;
+        }
+        
+        // Round to 2 decimal places
+        return Math.round(result * 100) / 100;
+    }
+
+    // Function to handle individual unit dropdown changes
+    function handleUnitChange(unitSelect) {
+        const row = unitSelect.closest('tr');
+        const heightInput = row.querySelector('input[id="artwork-height"]');
+        const widthInput = row.querySelector('input[id="artwork-width"]');
+
+        if (heightInput && widthInput && heightInput.value && widthInput.value) {
+            const currentUnit = unitSelect.dataset.previousUnit || unitSelect.value;
+            const newUnit = unitSelect.value;
+            
+            // Only convert if the unit actually changed
+            if (currentUnit !== newUnit) {
+                const heightValue = parseFloat(heightInput.value);
+                const widthValue = parseFloat(widthInput.value);
+                
+                // Convert height
+                const convertedHeight = convertUnit(heightValue, currentUnit, newUnit);
+                heightInput.value = convertedHeight;
+                
+                // Convert width
+                const convertedWidth = convertUnit(widthValue, currentUnit, newUnit);
+                widthInput.value = convertedWidth;
+            }
+            
+            // Store the new unit as previous unit for next change
+            unitSelect.dataset.previousUnit = newUnit;
+        } else {
+            // If no values to convert, just update the previous unit
+            unitSelect.dataset.previousUnit = unitSelect.value;
+        }
     }
 </script>
