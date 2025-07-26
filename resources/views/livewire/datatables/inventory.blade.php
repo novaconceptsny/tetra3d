@@ -849,10 +849,10 @@
     }
 
     /* Hide Unit column temporarily */
-    .table thead th:nth-child(7),
+    /* .table thead th:nth-child(7),
     .table tbody tr td:nth-child(7) {
         display: none !important;
-    }
+    } */
 
     /* Pagination Controls Styles */
     #pagination-controls {
