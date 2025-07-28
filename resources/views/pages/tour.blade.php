@@ -187,6 +187,22 @@
 
     function krpano_onready_callback(krpano_interface) {
         krpano = krpano_interface;
+
+        // immediately size correctly
+        krpano_interface.call("resize()");
+
+        // debounce future resizes
+        let resizeTimeout;
+        const doResize = () => krpano_interface.call("resize()");
+
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(doResize, 250);
+        });
+
+        window.addEventListener("orientationchange", () => {
+            setTimeout(doResize, 300);
+        });
     }
 
 
@@ -943,30 +959,5 @@
     });
 
 </script>
-<script>
-  let resizeTimeout;
 
-  function resizeKrpanoIfAvailable() {
-    const krpano = document.getElementById("krpanoSWFObject");
-    if (krpano && krpano.call) {
-      krpano.call("resize()");
-    }
-  }
-
-  // Debounced resize handling
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(resizeKrpanoIfAvailable, 300);
-  });
-
-  // Orientation change support
-  window.addEventListener('orientationchange', () => {
-    setTimeout(resizeKrpanoIfAvailable, 400);
-  });
-
-  // Initial call to fix canvas size
-  window.addEventListener('load', () => {
-    setTimeout(resizeKrpanoIfAvailable, 500);
-  });
-</script>
 @endsection
