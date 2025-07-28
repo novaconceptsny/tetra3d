@@ -187,6 +187,50 @@
 
     function krpano_onready_callback(krpano_interface) {
         krpano = krpano_interface;
+
+        console.log("🕵️ krpano ready, interface:", krpano_interface);
+
+        // helper to actually resize both krpano AND the raw canvas
+        let doResize = () => {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const dpr = window.devicePixelRatio;
+            console.log("🔄 doResize() → viewport:", w, "×", h, "DPR:", dpr);
+
+            // 1️⃣ tell krpano to update
+            krpano_interface.call("resize()");
+            console.log("   → called krpano.resize()");
+
+            // 2️⃣ then override the raw canvas element
+            const c = document.querySelector("#krpanoSWFObject canvas");
+            if (c) {
+                c.style.width  = w + "px";
+                c.style.height = h + "px";
+                c.width  = w * dpr;
+                c.height = h * dpr;
+                console.log(
+                "   → canvas forced to CSS:", c.style.width, "×", c.style.height,
+                "ACTUAL:", c.width, "×", c.height
+                );
+            } else {
+                console.warn("   ⚠️ canvas element not found!");
+            }
+        };
+
+        // initial pass after layout
+        setTimeout(doResize, 500);
+
+        // debounce real resizes
+        let resizeTimeout;
+        window.addEventListener("resize", () => {
+            console.log("📐 window.resize fired");
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(doResize, 250);
+        });
+        window.addEventListener("orientationchange", () => {
+            console.log("🔃 orientationchange fired");
+            setTimeout(doResize, 300);
+        });
     }
 
 
