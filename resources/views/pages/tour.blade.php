@@ -188,20 +188,29 @@
     function krpano_onready_callback(krpano_interface) {
         krpano = krpano_interface;
 
-        // immediately size correctly
+        console.log("🕵️ krpano ready, interface:", krpano_interface);
+
+        // initial resize
+        console.log("🔧 Calling initial krpano.resize()");
         krpano_interface.call("resize()");
 
         // debounce future resizes
         let resizeTimeout;
-        const doResize = () => krpano_interface.call("resize()");
+        const doResize = () => {
+        console.log("🔄 doResize() – viewport:", window.innerWidth, window.innerHeight, "DPR:", window.devicePixelRatio);
+        krpano_interface.call("resize()");
+        console.log("✅ Called krpano.resize()");
+        };
 
         window.addEventListener("resize", () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(doResize, 250);
+        console.log("📐 resize event fired");
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(doResize, 250);
         });
 
         window.addEventListener("orientationchange", () => {
-            setTimeout(doResize, 300);
+        console.log("🔃 orientationchange event fired");
+        setTimeout(doResize, 300);
         });
     }
 
