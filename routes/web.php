@@ -9,6 +9,7 @@ use App\Http\Controllers\Tour360Controller;
 use App\Http\Controllers\SharePageController;
 // Ensure MeshyController exists at this path, or update the import to the correct namespace
 use App\Http\Controllers\MeshyController;
+use App\Http\Controllers\ImageTo3DController;
 use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
@@ -143,12 +144,34 @@ Route::group([
         ->name('backend.tours.toggle-model');
 });
 
-Route::view('/meshy/text-to-3d', 'text-to-3d');
 
-Route::post('/meshy/text-to-3d', [MeshyController::class, 'textTo3d'])->name('meshy.textTo3d');
-Route::get('/meshy/text-to-3d/status/{taskId}', [MeshyController::class, 'checkStatus']);
-Route::get('/meshy/model-proxy/{taskId}', [MeshyController::class, 'proxyModel'])
+/// text-to-3d endpoints
+Route::view('/meshy/text-to-3d','text-to-3d');
+
+// Chained endpoints
+Route::post('/meshy/text-to-3d/preview', [MeshyController::class,'preview3d'])
+     ->name('meshy.preview3d');
+Route::post('/meshy/text-to-3d/refine',  [MeshyController::class,'refine3d'])
+     ->name('meshy.refine3d');
+
+// Status & proxy
+Route::get('/meshy/text-to-3d/status/{taskId}',   [MeshyController::class,'checkStatus']);
+Route::get('/meshy/text-to-3d/proxy/{taskId}',    [MeshyController::class,'proxyModel'])
      ->name('meshy.proxyModel');
 
 
+
+
+// image-to-3d endpoints
+
+Route::get('/meshy/image-to-3d', [MeshyController::class, 'showImageForm'])->name('image-to-3d.form');
+Route::post('/meshy/image-to-3d', [MeshyController::class, 'uploadImage'])->name('image-to-3d.upload');
+Route::get('/meshy/image-to-3d/status', [MeshyController::class, 'fetchImageStatus'])->name('image-to-3d.status');
+
+
+
+///debugging
+Route::get('/debug/canvas', function () {
+    return view('debug.canvas');
+});
 ?>
