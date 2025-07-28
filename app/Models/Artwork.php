@@ -95,10 +95,10 @@ class Artwork extends Model implements HasMedia
         $unit = 'inches';
 
         if ($projectUnit === 'metric') {
-            // Convert from inches to meters
-            $height = round($height * 0.0254, 2);
-            $width = round($width * 0.0254, 2);
-            $unit = 'meters';
+            // Convert from inches to centimeters
+            $height = round($height * 2.54, 2);
+            $width = round($width * 2.54, 2);
+            $unit = 'cm';
         }
 
         return "{$height} x {$width}x1 {$unit}";
