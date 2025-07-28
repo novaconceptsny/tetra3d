@@ -943,4 +943,30 @@
     });
 
 </script>
+<script>
+  let resizeTimeout;
+
+  function resizeKrpanoIfAvailable() {
+    const krpano = document.getElementById("krpanoSWFObject");
+    if (krpano && krpano.call) {
+      krpano.call("resize()");
+    }
+  }
+
+  // Debounced resize handling
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(resizeKrpanoIfAvailable, 300);
+  });
+
+  // Orientation change support
+  window.addEventListener('orientationchange', () => {
+    setTimeout(resizeKrpanoIfAvailable, 400);
+  });
+
+  // Initial call to fix canvas size
+  window.addEventListener('load', () => {
+    setTimeout(resizeKrpanoIfAvailable, 500);
+  });
+</script>
 @endsection
