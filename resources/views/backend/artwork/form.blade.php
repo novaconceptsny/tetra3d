@@ -36,6 +36,10 @@
                     label="Height" />
                 <x-backend::inputs.text col="col-6" name="data.width_inch" value="{{ $artwork?->data->width_inch }}"
                     label="Width" />
+                <x-backend::inputs.select col="col-6" name="original_unit" label="Unit">
+                    <x-backend::inputs.select-option value="inch" :selected="$artwork?->original_unit === 'inch'" text="Inch" />
+                    <x-backend::inputs.select-option value="cm" :selected="$artwork?->original_unit === 'cm'" text="Centimeter" />
+                </x-backend::inputs.select>
                 <div class="col-12">
                     <label for="description">Description</label>
                     <textarea class="form-control" name="description" id="description" rows="4">{{ $artwork?->description }}</textarea>

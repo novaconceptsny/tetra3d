@@ -39,7 +39,8 @@ class ArtworkController extends Controller
             'type',
             'description',
             'data',
-            'artwork_collection_id'
+            'artwork_collection_id',
+            'original_unit',
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)
@@ -82,7 +83,8 @@ class ArtworkController extends Controller
             'type',
             'description',
             'data',
-            'artwork_collection_id'
+            'artwork_collection_id',
+            'original_unit',
         ]));
 
         $artwork->addFromMediaLibraryRequest($request->image)
