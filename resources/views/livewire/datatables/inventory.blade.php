@@ -1052,16 +1052,16 @@
                             const widthInput = row.querySelector('input[id="artwork-width"]');
                             
                             if (heightInput && widthInput && heightInput.value && widthInput.value) {
-                                const heightValue = parseFloat(heightInput.value);
-                                const widthValue = parseFloat(widthInput.value);
+                                // const heightValue = parseFloat(heightInput.value);
+                                // const widthValue = parseFloat(widthInput.value);
                                 
-                                // Convert height
-                                const convertedHeight = convertUnit(heightValue, currentUnit, selectedUnit);
-                                heightInput.value = convertedHeight;
+                                // // Convert height
+                                // const convertedHeight = convertUnit(heightValue, currentUnit, selectedUnit);
+                                // heightInput.value = convertedHeight;
                                 
-                                // Convert width
-                                const convertedWidth = convertUnit(widthValue, currentUnit, selectedUnit);
-                                widthInput.value = convertedWidth;
+                                // // Convert width
+                                // const convertedWidth = convertUnit(widthValue, currentUnit, selectedUnit);
+                                // widthInput.value = convertedWidth;
                             }
                             
                             // Update the previous unit for this row's unit select
