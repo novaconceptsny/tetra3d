@@ -284,8 +284,8 @@
                             <th style="color: black; font-weight: 500;">Artist</th>
                             <th style="color: black; font-weight: 500;">Height</th>
                             <th style="color: black; font-weight: 500;">Width</th>
-                            <th style="color: black; font-weight: 500;">
-                                Unit
+                            <th style="color: black; font-weight: 500; width : 300px">
+                            Preferred unit
                                 <select id="masterUnit" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
                                     <option value="inch">Inch</option>
                                     <option value="cm">cm</option>
@@ -1439,6 +1439,7 @@
         const tbody = document.getElementById('artworkTableBody');
         const row = document.createElement('tr');
         const uniqueId = 'artwork-image-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+        const masterUnitDropdown = document.getElementById('masterUnit');
 
         row.innerHTML = `
             <td>
@@ -1460,9 +1461,9 @@
             <td><input type="number" id="artwork-height" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
             <td><input type="number" id="artwork-width" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
             <td>
-                <select class="form-select artwork-unit-select">
-                    <option value="inch">inch</option>
-                    <option value="cm">cm</option>
+                <select class="form-select artwork-unit-select" >
+                    <option value="inch" ${masterUnitDropdown.value === 'inch' ? 'selected' : ''}>inch</option>
+                    <option value="cm" ${masterUnitDropdown.value === 'cm' ? 'selected' : ''}>cm</option>
                 </select>
             </td>
             <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
