@@ -1589,7 +1589,7 @@
             unitSelect.dataset.previousUnit = unitSelect.value;
             
             unitSelect.addEventListener('change', function() {
-                handleUnitChange(this);
+             //   handleUnitChange(this);
             });
         }
     }
@@ -2413,7 +2413,7 @@
                 unitSelect.dataset.previousUnit = unitSelect.value;
                 
                 unitSelect.addEventListener('change', function() {
-                    handleUnitChange(this);
+                //    handleUnitChange(this);
                 });
             }
         });
