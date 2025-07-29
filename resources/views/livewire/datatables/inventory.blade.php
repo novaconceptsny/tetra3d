@@ -334,7 +334,7 @@
                 </div>
             </div>
 
-            <div class="d-flex flex-column align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
+            <div class="d-flex  align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
                 <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
                 <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
             </div>
