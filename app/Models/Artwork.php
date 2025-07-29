@@ -26,7 +26,8 @@ class Artwork extends Model implements HasMedia
         'artwork_collection_id',
         'data',
         'company_id',
-        'original_unit'
+        'original_unit',
+        'tags'
     ];
 
     public function registerMediaCollections(): void
@@ -37,6 +38,7 @@ class Artwork extends Model implements HasMedia
 
     public $casts = [
         'data' => SchemalessAttributes::class,
+        'tags' => 'array',
     ];
 
     public static function boot()
