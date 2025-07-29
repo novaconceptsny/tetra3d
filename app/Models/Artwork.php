@@ -79,8 +79,15 @@ class Artwork extends Model implements HasMedia
 
     public function dimensions(): Attribute
     {
+        $unit = $this->original_unit ?? 'inch';
+        $unitSymbol = $unit === 'inch' ? '"' : 'cm';
+
+        // return Attribute::make(
+        //     get: fn($value) => "{$this->data->height_inch}x{$this->data->width_inch}x1"
+        // );
+
         return Attribute::make(
-            get: fn($value) => "{$this->data->height_inch}x{$this->data->width_inch}x1"
+            get: fn($value) => "{$this->data->height_inch}{$unitSymbol} x {$this->data->width_inch}{$unitSymbol} x 1{$unitSymbol}"
         );
     }
 

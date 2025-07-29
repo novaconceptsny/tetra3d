@@ -1303,7 +1303,7 @@
             ["Ensure the 'Filename' fully matches the images filename"],
             ['Upload completed spreadsheet to Tetra'],
             [],
-            ['Filename', 'Collection', 'Title', 'Artist', 'Height (in)', 'Width (in)', 'Description', 'Type']
+            ['Filename', 'Collection', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type']
         ];
 
         const rows = document.querySelectorAll('#artworkTableBody tr');
@@ -1323,9 +1323,11 @@
             rowData.push(cells[3].textContent.trim());
             rowData.push(cells[4].querySelector('input').value);
             rowData.push(cells[5].querySelector('input').value);
-            rowData.push(cells[6].textContent.trim());
+            const unitSelect = cells[6].querySelector('select');
+            rowData.push(unitSelect ? unitSelect.value : '');
 
             rowData.push(cells[7].textContent.trim());
+            rowData.push(cells[8].textContent.trim());
 
             data.push(rowData);
         });

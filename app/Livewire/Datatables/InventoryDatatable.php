@@ -62,6 +62,7 @@ class InventoryDatatable extends BaseDatatable
                 'type',
                 'image_url',
                 'created_at',
+                'original_unit',
                 \DB::raw("'artwork' as model_type")
             ])
             ->with('collection', 'company', 'media')
@@ -256,7 +257,7 @@ class InventoryDatatable extends BaseDatatable
                 'th-classes' => 'w-40'
             ],
             'dimensions' => [
-                'name' => 'h" x w" x d"',
+                'name' => 'h x w x d',
                 'visible' => true,
             ],
             'artist' => [
