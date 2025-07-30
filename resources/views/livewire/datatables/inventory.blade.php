@@ -1017,6 +1017,16 @@
     let countdownTime = 10; // 10 seconds
     let currentCountdown = 10;
 
+    // Helper function to get property value from multiple possible property names
+    function getProperty(obj, propertyNames) {
+        for (let propName of propertyNames) {
+            if (obj[propName] !== undefined && obj[propName] !== null && obj[propName] !== '') {
+                return obj[propName];
+            }
+        }
+        return null;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const masterCollectionDropdown = document.getElementById('masterCollection');
         if (masterCollectionDropdown) {
@@ -2085,14 +2095,14 @@
                     const artworkData = {
                         imageSrc: e.target.result,
                         filename: spreadsheetFilename,
-                        collectionId: getCollectionIdByName(artwork.Collection || artwork['Collection'] || ''),
-                        title: artwork.Title || artwork['Title'] || '',
-                        artist: artwork.Artist || artwork['Artist'] || '',
-                        height: artwork.Height || artwork['Height (in)'] || artwork['Height'] || '',
-                        width: artwork.Width || artwork['Width (in)'] || artwork['Width'] || '',
-                        unit: artwork.Unit || 'inch',
-                        description: artwork.Description || artwork['Description'] || '',
-                        type: artwork.Type || artwork['Type'] || 'Painting'
+                        collectionId: getCollectionIdByName(getProperty(artwork, ['Collection']) || ''),
+                        title: getProperty(artwork, ['title', 'Title']) || '',
+                        artist: getProperty(artwork, ['artist', 'Artist']) || '',
+                        height: getProperty(artwork, ['height', 'Height', 'Height (in)']) || '',
+                        width: getProperty(artwork, ['width', 'Width', 'Width (in)']) || '',
+                        unit: getProperty(artwork, ['unit', 'Unit']) || 'inch',
+                        description: getProperty(artwork, ['description', 'Description']) || '',
+                        type: getProperty(artwork, ['type', 'Type']) || 'Painting'
                     };
 
                     allArtworksData.push(artworkData);
@@ -2359,7 +2369,6 @@
                 <td>
                     <select class="form-select artwork-unit-select">
                         <option value="inch" ${artwork.unit === 'inch' ? 'selected' : ''}>inch</option>
-                        <option value="m" ${artwork.unit === 'm' ? 'selected' : ''}>m</option>
                         <option value="cm" ${artwork.unit === 'cm' ? 'selected' : ''}>cm</option>
                     </select>
                 </td>
