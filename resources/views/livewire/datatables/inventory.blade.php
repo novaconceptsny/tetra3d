@@ -230,27 +230,6 @@
                 </div>
             </div>
 
-            <!-- Master Collection and Unit Dropdowns in a Row -->
-            <div class="mb-3 d-flex align-items-center" style="gap: 40px;">
-                <div class="d-flex align-items-center" style="min-width: 200px;">
-                    <label for="masterCollection" class="form-label me-2 mb-0">Collection</label>
-                    <select id="masterCollection" class="form-select">
-                        <option value="">Select a collection to apply to all</option>
-                        @foreach($collections as $collection)
-                            <option value="{{$collection->id}}">{{$collection->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <!-- <div class="d-flex align-items-center" style="min-width: 200px;">
-                    <label for="masterUnit" class="form-label me-2 mb-0">Unit</label>
-                    <select id="masterUnit" class="form-select">
-                        <option value="">Select a unit to apply to all</option>
-                        <option value="inch">inch</option>
-                        <option value="m">m</option>
-                        <option value="cm">cm</option>
-                    </select>
-                </div> -->
-            </div>
 
             <!-- Artworks Table -->
             <div class="table-responsive mb-3">
@@ -279,7 +258,14 @@
                     <thead style="background-color: #f8f9fa;">
                         <tr>
                             <th style="color: black; font-weight: 500;">Image</th>
-                            <th style="color: black; font-weight: 500;">Collection</th>
+                            <th style="color: black; font-weight: 500; width: 300px;">
+                            Collection
+                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                    @foreach($collections as $collection)
+                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                    @endforeach
+                                </select>
+                            </th>
                             <th style="color: black; font-weight: 500;">Title</th>
                             <th style="color: black; font-weight: 500;">Artist</th>
                             <th style="color: black; font-weight: 500;">Height</th>
@@ -1028,21 +1014,35 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const masterCollectionDropdown = document.getElementById('masterCollection');
-        if (masterCollectionDropdown) {
-            masterCollectionDropdown.addEventListener('change', function(event) {
-                const selectedCollectionId = event.target.value;
-                if (selectedCollectionId) {
-                    const artworkRows = document.querySelectorAll('#artworkTableBody tr');
-                    artworkRows.forEach(row => {
-                        const collectionSelect = row.querySelector('.artwork-collection-select');
-                        if (collectionSelect) {
-                            collectionSelect.value = selectedCollectionId;
-                        }
-                    });
-                }
-            });
-        }
+        // Handle both master collection dropdowns
+        const masterCollectionDropdowns = [
+            document.getElementById('masterCollectionStandalone'),
+            document.getElementById('masterCollectionHeader')
+        ];
+        
+        masterCollectionDropdowns.forEach(dropdown => {
+            if (dropdown) {
+                dropdown.addEventListener('change', function(event) {
+                    const selectedCollectionId = event.target.value;
+                    if (selectedCollectionId) {
+                        const artworkRows = document.querySelectorAll('#artworkTableBody tr');
+                        artworkRows.forEach(row => {
+                            const collectionSelect = row.querySelector('.artwork-collection-select');
+                            if (collectionSelect) {
+                                collectionSelect.value = selectedCollectionId;
+                            }
+                        });
+                        
+                        // Sync the other dropdown to the same value
+                        masterCollectionDropdowns.forEach(otherDropdown => {
+                            if (otherDropdown && otherDropdown !== dropdown) {
+                                otherDropdown.value = selectedCollectionId;
+                            }
+                        });
+                    }
+                });
+            }
+        });
 
         const masterUnitDropdown = document.getElementById('masterUnit');
         if (masterUnitDropdown) {
@@ -1450,6 +1450,7 @@
         const row = document.createElement('tr');
         const uniqueId = 'artwork-image-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
         const masterUnitDropdown = document.getElementById('masterUnit');
+        const masterCollectionDropdown = document.getElementById('masterCollectionHeader') || document.getElementById('masterCollectionStandalone');
 
         row.innerHTML = `
             <td>
@@ -1459,10 +1460,10 @@
                 </div>
             </td>
             <td style="width: 480px;">
-                <select class="form-select artwork-collection-select empty-cell">
+                <select class="form-select artwork-collection-select ${!masterCollectionDropdown || !masterCollectionDropdown.value ? 'empty-cell' : ''}">
                     <option value="">Select Collection</option>
                     @foreach($collections as $collection)
-                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                        <option value="{{$collection->id}}" ${masterCollectionDropdown && masterCollectionDropdown.value == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
                     @endforeach
                 </select>
             </td>
