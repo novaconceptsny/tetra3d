@@ -133,7 +133,7 @@ class Tour360Controller extends Controller
             // Add conditional validation for thumbnail
             if ($request->hasFile('thumbnail')) {
                 $request->validate([
-                    'thumbnail' => 'image|mimes:jpeg,png|max:2048',
+                    'thumbnail' => 'image|mimes:jpeg,png|max:102400',
                 ]);
             }
 
@@ -196,7 +196,7 @@ class Tour360Controller extends Controller
             // Add conditional validation for thumbnail
             if ($request->hasFile('thumbnail')) {
                 $request->validate([
-                    'thumbnail' => 'image|mimes:jpeg,png|max:2048',
+                    'thumbnail' => 'image|mimes:jpeg,png|max:102400',
                 ]);
             }
 
