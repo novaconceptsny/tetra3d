@@ -128,8 +128,8 @@ class Artwork extends Model implements HasMedia
             }
 
             if($projectUnit === 'imperial' && $artworkUnit === 'cm'){
-                $height = $this->data->height_inch;
-                $width = $this->data->width_inch;
+                $height = round($this->data->height_inch, 1);
+                $width = round($this->data->width_inch, 1);
                 $unitSymbol = 'inches';
                 
                 return "{$height} x {$width}x1 {$unitSymbol}";
