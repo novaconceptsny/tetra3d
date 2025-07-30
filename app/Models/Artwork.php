@@ -104,6 +104,39 @@ class Artwork extends Model implements HasMedia
 
     public function getConvertedDimensions($projectUnit = 'imperial')
     {
+        // If we have original_value with unit information
+        if ($this->original_value && !empty($this->original_value) && isset($this->original_value->unit)) {
+            $artworkUnit = $this->original_value->unit;
+            
+            // If project unit matches artwork unit, use original_value directly
+            if (($projectUnit === 'imperial' && $artworkUnit === 'inch') || 
+                ($projectUnit === 'metric' && $artworkUnit === 'cm')) {
+                
+                $height = $this->original_value->height;
+                $width = $this->original_value->width;
+                $unitSymbol = $artworkUnit === 'inch' ? 'inches' : 'cm';
+                
+                return "{$height} x {$width}x1 {$unitSymbol}";
+            }
+            
+            if($projectUnit === 'metric' && $artworkUnit === 'inch'){
+                $height = round($this->original_value->height * 2.54, 2);
+                $width = round($this->original_value->width * 2.54, 2);
+                $unitSymbol = 'cm';
+                
+                return "{$height} x {$width}x1 {$unitSymbol}";
+            }
+
+            if($projectUnit === 'imperial' && $artworkUnit === 'cm'){
+                $height = $this->data->height_inch;
+                $width = $this->data->width_inch;
+                $unitSymbol = 'inches';
+                
+                return "{$height} x {$width}x1 {$unitSymbol}";
+            }
+        }
+        
+        // Fallback to data properties if no original_value
         if (!$this->data->height_inch || !$this->data->width_inch) {
             return '';
         }
@@ -112,7 +145,7 @@ class Artwork extends Model implements HasMedia
         $width = $this->data->width_inch;
         $unit = 'inches';
 
-        if ($projectUnit === 'metric') {
+        if ($projectUnit === 'metric' ) {
             // Convert from inches to centimeters
             $height = round($height * 2.54, 2);
             $width = round($width * 2.54, 2);
