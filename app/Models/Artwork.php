@@ -27,6 +27,7 @@ class Artwork extends Model implements HasMedia
         'data',
         'company_id',
         'original_unit',
+        'original_value',
         'tags'
     ];
 
@@ -39,6 +40,7 @@ class Artwork extends Model implements HasMedia
     public $casts = [
         'data' => SchemalessAttributes::class,
         'tags' => 'array',
+        'original_value' => SchemalessAttributes::class,
     ];
 
     public static function boot()
@@ -81,16 +83,23 @@ class Artwork extends Model implements HasMedia
 
     public function dimensions(): Attribute
     {
-        $unit = $this->original_unit ?? 'inch';
-        $unitSymbol = $unit === 'inch' ? '"' : 'cm';
-
         // return Attribute::make(
         //     get: fn($value) => "{$this->data->height_inch}x{$this->data->width_inch}x1"
         // );
 
-        return Attribute::make(
-            get: fn($value) => "{$this->data->height_inch}{$unitSymbol} x {$this->data->width_inch}{$unitSymbol} x 1{$unitSymbol}"
-        );
+        if($this->original_value && !empty($this->original_value) && isset($this->original_value->unit)) {
+            $unitSymbol = $this->original_value->unit  === 'inch' ? '"' : 'cm';
+
+            return Attribute::make(
+                get: fn($value) => "{$this->original_value->height}{$unitSymbol} x {$this->original_value->width}{$unitSymbol} x 1{$unitSymbol}"
+            );
+        }else{
+            $unit = $this->original_unit ?? 'inch';
+            $unitSymbol = $unit === 'inch' ? '"' : 'cm';
+            return Attribute::make(
+                get: fn($value) => "{$this->data->height_inch}{$unitSymbol} x {$this->data->width_inch}{$unitSymbol} x 1{$unitSymbol}"
+            );
+        }
     }
 
     public function getConvertedDimensions($projectUnit = 'imperial')

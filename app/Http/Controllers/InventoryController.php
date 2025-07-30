@@ -136,6 +136,33 @@ class InventoryController extends Controller
                         'width_inch' => $row['width'] ?? '',
                         'scale' => $row['scale'] ?? '',
                     ];
+
+                    // Set original_value as JSON object with width, height, and unit
+                    $artwork->original_value = [
+                        'width' => $row['width'] ?? '',
+                        'height' => $row['height'] ?? '',
+                        'unit' => $row['unit'] ?? 'cm'
+                    ];
+                    
+                    // Convert to inches if unit is cm and save to data column
+                    if (($row['unit'] ?? 'cm') === 'cm' && !empty($row['width']) && !empty($row['height'])) {
+                        // Convert cm to inches (1 inch = 2.54 cm)
+                        $widthInch = round($row['width'] / 2.54, 5);
+                        $heightInch = round($row['height'] / 2.54, 5);
+                        
+                        $artwork->data = [
+                            'width_inch' => $widthInch,
+                            'height_inch' => $heightInch,
+                            'scale' => $row['scale'] ?? '',
+                        ];
+                    } else {
+                        // If unit is inch or not specified, use values as is
+                        $artwork->data = [
+                            'width_inch' => $row['width'] ?? '',
+                            'height_inch' => $row['height'] ?? '',
+                            'scale' => $row['scale'] ?? '',
+                        ];
+                    }
                     
                     // Save artwork first to get the ID
                     $artwork->save();

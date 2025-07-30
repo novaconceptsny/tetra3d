@@ -43,6 +43,27 @@ class ArtworkController extends Controller
             'original_unit',
         ]));
 
+        $artwork->original_value = [
+            'width' => $request->data['width_inch'],
+            'height' => $request->data['height_inch'],
+            'unit' => $request->original_unit
+        ];
+
+         // Convert to inches if unit is cm and save to data column
+         if (($request->original_unit ?? 'cm') === 'cm' && !empty($request->data['width_inch']) && !empty($request->data['height_inch'])) {
+            // Convert cm to inches (1 inch = 2.54 cm)
+            $widthInch = round($request->data['width_inch'] / 2.54, 5);
+            $heightInch = round($request->data['height_inch'] / 2.54, 5);
+            
+            $artwork->data = [
+                'width_inch' => $widthInch,
+                'height_inch' => $heightInch,
+                'scale' => $request->data['scale'] ?? '',
+            ];
+        } 
+
+        $artwork->save();
+
         $artwork->addFromMediaLibraryRequest($request->image)
             ->toMediaCollection('image');
 
@@ -86,6 +107,27 @@ class ArtworkController extends Controller
             'artwork_collection_id',
             'original_unit',
         ]));
+
+        $artwork->original_value = [
+            'width' => $request->data['width_inch'],
+            'height' => $request->data['height_inch'],
+            'unit' => $artwork->original_unit
+        ];
+
+        // Convert to inches if unit is cm and save to data column
+        if (($artwork->original_unit ?? 'cm') === 'cm' && !empty($request->data['width_inch']) && !empty($request->data['height_inch'])) {
+            // Convert cm to inches (1 inch = 2.54 cm)
+            $widthInch = round($request->data['width_inch'] / 2.54, 5);
+            $heightInch = round($request->data['height_inch'] / 2.54, 5);   
+            
+            $artwork->data = [
+                'width_inch' => $widthInch,
+                'height_inch' => $heightInch,
+                'scale' => $request->data['scale'] ?? '',
+            ];
+        }       
+        
+        $artwork->save();
 
         $artwork->addFromMediaLibraryRequest($request->image)
             ->toMediaCollection('image');

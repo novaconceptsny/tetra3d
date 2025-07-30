@@ -32,9 +32,9 @@
                 <x-backend::inputs.text col="col-6" name="name" value="{!! $artwork?->name !!}" label="Title" />
                 <x-backend::inputs.text col="col-6" name="artist" value="{{ $artwork?->artist }}" />
                 <x-backend::inputs.text col="col-6" name="type" value="{{ $artwork?->type }}" />
-                <x-backend::inputs.text col="col-6" name="data.height_inch" value="{{ $artwork?->data->height_inch }}"
+                <x-backend::inputs.text col="col-6" name="data.height_inch" value="{{ $artwork?->original_value->height }}"
                     label="Height" />
-                <x-backend::inputs.text col="col-6" name="data.width_inch" value="{{ $artwork?->data->width_inch }}"
+                <x-backend::inputs.text col="col-6" name="data.width_inch" value="{{ $artwork?->original_value->width }}"
                     label="Width" />
                 <x-backend::inputs.select col="col-6" name="original_unit" label="Unit">
                     <x-backend::inputs.select-option value="inch" :selected="$artwork?->original_unit === 'inch'" text="Inch" />
