@@ -50,12 +50,17 @@
                             <x-error field="last_name"/>
                         </div>
                         <div class="form-group login-custum-form-group">
-                            <label for="company">{{ __('Company') }}</label>
-                            <input type="text" id="company" placeholder="Company Name"
-                                   class="form-control @error('company') is-invalid @enderror" name="company"
-                                   value="{{ old('company') }}" autocomplete="organization"
-                            />
-                            <x-error field="company"/>
+                            <label for="company_id">{{ __('Company') }}</label>
+                            <select id="company_id" name="company_id"
+                                    class="form-control @error('company_id') is-invalid @enderror" required>
+                                <option value="">{{ __('Select Company') }}</option>
+                                @foreach(\App\Models\Company::orderBy('name')->get() as $company)
+                                    <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
+                                        {{ $company->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-error field="company_id"/>
                         </div>
                         <div class="form-group login-custum-form-group">
                             <label for="email">{{ __('Email') }}</label>

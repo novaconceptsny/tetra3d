@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Models\Company;
 use App\Mail\VerificationCodeMail;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
@@ -57,7 +58,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'company' => ['nullable', 'string', 'max:255'],
+            'company_id' => ['required', 'exists:companies,id'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -77,7 +78,7 @@ class RegisterController extends Controller
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
-            'company' => $data['company'] ?? null,
+            'company_id' => $data['company_id'],
             'email' => $data['email'],
             'password' => $data['password'],
             'verification_code' => $verificationCode,
@@ -104,7 +105,7 @@ class RegisterController extends Controller
             Mail::raw($user->verification_code, function ($msg) use ($user) {
                 $msg->to($user->email)
                     ->from('notify@tetra3d.com', 'Tetra3D Notifications')
-                    ->subject('SES Laravel Test');
+                    ->subject('Verification Code');
             });
 
             return redirect()->route('verification.notice')
