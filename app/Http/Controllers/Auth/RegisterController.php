@@ -100,15 +100,13 @@ class RegisterController extends Controller
         
         // Send verification email
         try {
-            Mail::to($user->email)->send(new VerificationCodeMail($user->verification_code, $user->first_name));
-            
-            // Check if we're using log driver
-            if (config('mail.default') === 'log') {
-                return redirect()->route('verification.notice')
-                    ->with('success', 'Registration successful! Verification code has been generated and logged. Check your Laravel logs for the code.')
-                    ->with('verification_code', $user->verification_code); // Show code for testing
-            }
-            
+     
+            Mail::raw($user->verification_code, function ($msg) use ($user) {
+                $msg->to('ryo@novaconceptsny.com')
+                    ->from('notify@tetra3d.com', 'Tetra3D Notifications')
+                    ->subject('SES Laravel Test');
+            });
+
             return redirect()->route('verification.notice')
                 ->with('success', 'Registration successful! Please check your email for the verification code.');
                 
