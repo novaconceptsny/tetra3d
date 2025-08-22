@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\Tour360Controller;
 use App\Http\Controllers\SharePageController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,13 @@ use App\Http\Controllers\SharePageController;
 
 
 Auth::routes();
+
+// Email Verification Routes
+Route::get('/verify-email', [EmailVerificationController::class, 'showVerificationForm'])->name('verification.notice');
+Route::post('/verify-email', [EmailVerificationController::class, 'verifyEmail'])->name('verification.verify');
+Route::post('/verify-email/resend', [EmailVerificationController::class, 'resendVerificationCode'])->name('verification.resend');
+Route::post('/verify-email/send', [EmailVerificationController::class, 'sendVerificationCode'])->name('verification.send');
+
 Route::group(['middleware' => 'auth'], function () {
 
     Route::post('login-as/{user}', [UserController::class, 'loginAs'])->name('login.as.user');

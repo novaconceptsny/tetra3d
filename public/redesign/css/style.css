@@ -449,8 +449,31 @@ main.login .inner-div {
   flex-direction: column;
   padding-top: 14px;
   padding-inline: 76px;
-  padding-bottom: 0;
+  padding-bottom: 20px;
   background-color: #ffffff;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #BFBFBF #ffffff;
+}
+
+/* Custom scrollbar styling for webkit browsers */
+main.login .inner-div::-webkit-scrollbar {
+  width: 6px;
+}
+
+main.login .inner-div::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+main.login .inner-div::-webkit-scrollbar-thumb {
+  background: #BFBFBF;
+  border-radius: 3px;
+}
+
+main.login .inner-div::-webkit-scrollbar-thumb:hover {
+  background: #999999;
 }
 main.login .inner-div .logo {
   margin-bottom: 100px;
@@ -610,17 +633,18 @@ main.login .container-fluid .row .sec-col {
   position: relative;
   overflow: hidden;
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 main.login .container-fluid .row .sec-col img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 main.login .container-fluid .row .sec-col .ell-img {
   position: absolute;
@@ -1083,7 +1107,7 @@ main section.main-page .main-intro .intro-row .fir-col .sort-btn.active {
   gap: 20px;
   transition: 0.3s width;
 }
-@media (width > 1150 px) {
+@media (width > 1150px) {
   .project-cards-wrapper {
     grid-template-columns: repeat(3, 1fr);
   }

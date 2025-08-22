@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Mail\VerificationCodeMail;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
@@ -30,7 +34,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/verify-email';
 
     /**
      * Create a new controller instance.
@@ -51,7 +55,9 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'company' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -65,10 +71,18 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // Generate verification code
+        $verificationCode = strtoupper(Str::random(6));
+        
         return User::create([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'company' => $data['company'] ?? null,
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => $data['password'],
+            'verification_code' => $verificationCode,
+            'verification_code_expires_at' => Carbon::now()->addMinutes(10),
+            'is_verified' => false,
         ]);
     }
 
@@ -81,22 +95,31 @@ class RegisterController extends Controller
      */
     protected function registered(Request $request, $user)
     {
-        // Check if there's a redirect parameter
-        if ($request->has('redirect')) {
-            $redirectUrl = $request->get('redirect');
+        // Store email in session for verification form
+        session(['verification_email' => $user->email]);
+        
+        // Send verification email
+        try {
+            Mail::to($user->email)->send(new VerificationCodeMail($user->verification_code, $user->first_name));
             
-            // Validate that the redirect URL is safe (same domain)
-            if (filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
-                $parsedUrl = parse_url($redirectUrl);
-                $currentHost = parse_url(config('app.url'), PHP_URL_HOST);
-                
-                if ($parsedUrl['host'] === $currentHost) {
-                    return redirect($redirectUrl);
-                }
+            // Check if we're using log driver
+            if (config('mail.default') === 'log') {
+                return redirect()->route('verification.notice')
+                    ->with('success', 'Registration successful! Verification code has been generated and logged. Check your Laravel logs for the code.')
+                    ->with('verification_code', $user->verification_code); // Show code for testing
             }
+            
+            return redirect()->route('verification.notice')
+                ->with('success', 'Registration successful! Please check your email for the verification code.');
+                
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Failed to send verification email: ' . $e->getMessage());
+            
+            // If email fails, still redirect to verification page but show error
+            return redirect()->route('verification.notice')
+                ->with('error', 'Registration successful! However, we could not send the verification email. Error: ' . $e->getMessage())
+                ->with('verification_code', $user->verification_code); // Show code for testing
         }
-
-        // Default redirect behavior
-        return redirect()->intended($this->redirectPath());
     }
 }

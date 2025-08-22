@@ -28,7 +28,11 @@ class User extends Authenticatable implements HasMedia
 
     protected $hidden = ['password', 'remember_token',];
 
-    protected $casts = ['email_verified_at' => 'datetime',];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'verification_code_expires_at' => 'datetime',
+        'is_verified' => 'boolean',
+    ];
 
     public static function boot()
     {

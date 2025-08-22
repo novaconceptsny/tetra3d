@@ -28,6 +28,14 @@
                     <p class="text-center">
                         {{ __('Sign in to access your tours') }}
                     </p>
+                    
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
                     <form class="d-flex flex-column align-items-center" method="POST" action="{{ route('login') }}">
                         @csrf
                         @if(request('redirect'))
@@ -57,6 +65,15 @@
                             </div>
                         </div>
                         <button type="submit" class="btn-login btn form-control">Login</button>
+                        
+                        <div class="text-center mt-3">
+                            <p class="m-0">
+                                {{ __("Don't have an account?") }} 
+                                <a href="{{ route('register') }}" class="text-decoration-none fw-bold">
+                                    {{ __('Sign up here') }}
+                                </a>
+                            </p>
+                        </div>
                     </form>
                 </div>
             </div>
