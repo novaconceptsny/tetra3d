@@ -58,6 +58,11 @@
                                 required autocomplete="current-password"
                             >
                         </div>
+                        <div class="text-end w-100 mb-2">
+                            <a href="{{ route('password.request') }}" class="text-decoration-none fw-bold">
+                                {{ __('Forgot Password?') }}
+                            </a>
+                        </div>
                         <div class="check-main w-100">
                             <div class="checkbox">
                                 <input class=" m-0 p-0" type="checkbox" id="checkbox" />

@@ -1,65 +1,91 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ config('app.name') }} - {{ __('Reset Password') }}</title>
+    <!-- bootstrap css link  -->
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"/>
+    <!-- own css file  -->
+    <link rel="stylesheet" href="{{ asset('redesign/css/style.css') }}"/>
+    @include('backend.includes.partial.favicon')
+</head>
+<body class="login_body">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Reset Password') }}</div>
+<main class="login">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('password.update') }}">
+    <div class="container-fluid">
+        <div class="row login-row">
+            <div class="inner-div col-lg-4">
+                <div class="logo">
+                    <img width="200" src="{{ asset('backend/images/logo/logo_dark.png') }}" alt="logo-img"/>
+                </div>
+                <div class="fir-inner">
+                    <h4 class="login d-flex align-items-center justify-content-center">
+                        {{ __('Reset Password') }}
+                    </h4>
+                    <p class="text-center">
+                        {{ __('Enter your new password') }}
+                    </p>
+                    
+                    <form class="d-flex flex-column align-items-center" method="POST" action="{{ route('password.update') }}">
                         @csrf
-
                         <input type="hidden" name="token" value="{{ $token }}">
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        
+                        <div class="form-group login-custum-form-group">
+                            <label for="email">{{ __('Email Address') }}</label>
+                            <input type="email" id="email" placeholder="Email"
+                                   class="form-control @error('email') is-invalid @enderror" name="email"
+                                   value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus
+                            />
+                            <x-error field="email"/>
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        
+                        <div class="form-group login-custum-form-group">
+                            <label for="password">{{ __('New Password') }}</label>
+                            <input type="password" id="password" placeholder="New Password"
+                                   class="form-control @error('password') is-invalid @enderror" name="password"
+                                   required autocomplete="new-password"
+                            />
+                            <x-error field="password"/>
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
+                        
+                        <div class="form-group login-custum-form-group">
+                            <label for="password-confirm">{{ __('Confirm New Password') }}</label>
+                            <input type="password" id="password-confirm" placeholder="Confirm New Password"
+                                   class="form-control" name="password_confirmation"
+                                   required autocomplete="new-password"
+                            />
                         </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Reset Password') }}
-                                </button>
-                            </div>
+                        
+                        <button type="submit" class="btn-login btn form-control">{{ __('Reset Password') }}</button>
+                        
+                        <div class="text-center mt-3">
+                            <p class="m-0">
+                                {{ __('Remember your password?') }} 
+                                <a href="{{ route('login') }}" class="text-decoration-none fw-bold">
+                                    {{ __('Back to Login') }}
+                                </a>
+                            </p>
                         </div>
                     </form>
                 </div>
             </div>
+            <div class="col-lg-8 sec-col">
+                <img src="{{asset('redesign/images/login-hero-banner.gif')}}" alt="login-page-img">
+            </div>
         </div>
     </div>
-</div>
-@endsection
+</main>
+
+<!-- bootstrap script links -->
+<script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+    integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+    crossorigin="anonymous"
+></script>
+
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+</body>
+</html>
