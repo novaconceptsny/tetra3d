@@ -102,7 +102,7 @@ class RegisterController extends Controller
         try {
      
             Mail::raw($user->verification_code, function ($msg) use ($user) {
-                $msg->to('ryo@novaconceptsny.com')
+                $msg->to($user->email)
                     ->from('notify@tetra3d.com', 'Tetra3D Notifications')
                     ->subject('SES Laravel Test');
             });
