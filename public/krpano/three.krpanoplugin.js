@@ -340,6 +340,26 @@ function krpanoplugin() {
 		scene.add(directionalLight);
 	}
 
+	// Function to check if an area should block krpano rotation
+	function should_block_krpano_rotation(hitobj) {
+		// Only block rotation for interactive 3D objects (sculptures, models)
+		// Allow rotation for surfaces and artwork
+		if (!hitobj) return false;
+		
+		// Block rotation for interactive 3D objects
+		if (hitobj.userData.type === "sculpture" || hitobj.name === "interaction-model") {
+			return true;
+		}
+		
+		// Allow rotation for surfaces and artwork
+		if (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") {
+			return false;
+		}
+		
+		// Default: block rotation for other 3D objects
+		return true;
+	}
+
 	function do_object_hittest(mx, my) {
 		// Check if current URL contains "/shared-tours/" or has shared=true parameter
 		tour_is_shared = window.location.pathname.includes("shared-tours") || 
@@ -466,6 +486,9 @@ function krpanoplugin() {
 			gizmo = hittest.gizmo;
 			point = hittest.point;
 		}
+		
+		// Check if we should allow krpano rotation for this area
+		var should_allow_rotation = !hitobj || !should_block_krpano_rotation(hitobj);
 
 		if (type == "ondown") {
 			if (selectedObj) {
@@ -507,10 +530,15 @@ function krpanoplugin() {
 					} else {
 						if (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") {
 							selected_surface_id = hitobj.userData.surface_id;
+							// Don't prevent default for surfaces and artwork - allow krpano rotation
 						} else {
-							event.preventDefault();
-							event.stopPropagation();
-							selectedObj = hitobj.userData.temp;
+							// Only prevent default for interactive 3D objects that should block rotation
+							if (should_block_krpano_rotation(hitobj)) {
+								event.preventDefault();
+								event.stopPropagation();
+								selectedObj = hitobj.userData.temp;
+							}
+							// If not blocking rotation, allow krpano to handle the event
 						}
 					}
 				}
@@ -523,12 +551,16 @@ function krpanoplugin() {
 
 				if (gizmoObj)
 					scene.remove(gizmoObj);
+				
+				// No object hit - allow krpano to handle rotation normally
+				// Don't call preventDefault or stopPropagation here
 			}
 		}
 		else if (type == "onmove") {
-			event.preventDefault();
-			event.stopPropagation();
-			if (canMove && isDown) {
+			// Only prevent default when actually moving 3D objects
+			if (canMove && isDown && selectedObj) {
+				event.preventDefault();
+				event.stopPropagation();
 
 				var plane_point = do_object_point(ms.x, ms.y);
 				update_position(selectedObj, plane_point, plane_point_temp, direction);
@@ -667,11 +699,16 @@ function krpanoplugin() {
 			var hittest = do_object_hittest(krpano.mouse.x, krpano.mouse.y);
 
 			if (hittest && (!tour_is_shared || (tour_is_shared && hittest.object.userData.type === "artwork"))) {
-				if (hittest.object || hittest.gizmo) {
+				// Only change cursor for objects that should block rotation
+				if (should_block_krpano_rotation(hittest.object) || hittest.gizmo) {
 					krpano.control.layer.style.cursor = krpano.cursors.hit;
 				} else {
+					// Allow krpano to handle cursor for surfaces and artwork
 					krpano.cursors.update();
 				}
+			} else {
+				// No object hit, allow krpano to handle cursor
+				krpano.cursors.update();
 			}
 		}
 	}
