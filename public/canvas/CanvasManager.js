@@ -86,6 +86,8 @@ class CanvasManager {
         this.artworkCanvas.setWidth(mainWidth);
         this.artworkCanvas.setHeight(mainHeight);
 
+        // Add drag and drop event listeners
+        this.initializeDragAndDrop();
 
         // Here we need to write a program to calculate whether to scale height or width. Currently only scale width
         if ((this.imgWidth / this.imgHeight) >= (mainWidth / mainHeight)) {
@@ -165,6 +167,149 @@ class CanvasManager {
         document.getElementById('toggle-area')?.addEventListener('click', () => this.toggleArea());
     }
 
+    initializeDragAndDrop() {
+        // Handle drag and drop from artwork sidebar using Fabric.js events
+        this.artworkCanvas.on('dragover', (event) => {
+            // Fabric.js events have a different structure
+            const e = event.e || event;
+            if (e && e.preventDefault) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            this.artworkCanvas.setCursor('grab');
+            
+            // Add visual feedback to canvas
+            this.showDropZone();
+        });
+
+        this.artworkCanvas.on('dragenter', (event) => {
+            // Fabric.js events have a different structure
+            const e = event.e || event;
+            if (e && e.preventDefault) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            this.artworkCanvas.setCursor('grab');
+            
+            // Add visual feedback to canvas
+            this.showDropZone();
+        });
+
+        this.artworkCanvas.on('dragleave', (event) => {
+            // Fabric.js events have a different structure
+            const e = event.e || event;
+            // Only hide drop zone if we're actually leaving the canvas
+            if (e && e.relatedTarget && !this.artworkCanvas.getElement().contains(e.relatedTarget)) {
+                this.hideDropZone();
+            }
+        });
+
+        this.artworkCanvas.on('drop', (event) => {
+            // Fabric.js events have a different structure
+            const e = event.e || event;
+            
+            if (e && e.preventDefault) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            this.artworkCanvas.setCursor('default');
+            
+            // Hide drop zone
+            this.hideDropZone();
+
+            // Get drop position relative to canvas
+            const canvasRect = this.artworkCanvas.getElement().getBoundingClientRect();
+            const dropX = (e ? e.clientX : 0) - canvasRect.left;
+            const dropY = (e ? e.clientY : 0) - canvasRect.top;
+            
+            // Ensure drop position is within canvas bounds
+            const boundedX = Math.max(0, Math.min(dropX, this.artworkCanvas.width));
+            const boundedY = Math.max(0, Math.min(dropY, this.artworkCanvas.height));
+
+            // Check if we're dropping an artwork from the sidebar
+            const dataTransfer = e ? e.dataTransfer : null;
+            if (dataTransfer) {
+                const draggedArtwork = dataTransfer.getData('application/artwork');
+                if (draggedArtwork) {
+                    try {
+                        const artworkData = JSON.parse(draggedArtwork);
+                        this.handleArtworkDrop(artworkData, boundedX, boundedY);
+                    } catch (error) {
+                        console.error('Error parsing artwork data:', error);
+                    }
+                }   
+            }
+        });
+
+        // Add drag start event listeners to artwork items in sidebar
+        this.initializeArtworkDragListeners();
+    }
+
+
+
+    initializeArtworkDragListeners() {
+        // Listen for drag start events on artwork items
+        document.addEventListener('dragstart', (event) => {
+            const artworkElement = event.target.closest('.artwork-img');
+            if (artworkElement) {
+                const artworkData = {
+                    title: artworkElement.dataset.title,
+                    imgUrl: artworkElement.dataset.imgUrl,
+                    artworkId: artworkElement.dataset.artworkId,
+                    scale: artworkElement.dataset.scale
+                };
+                
+                event.dataTransfer.setData('application/artwork', JSON.stringify(artworkData));
+                event.dataTransfer.effectAllowed = 'copy';
+                
+                // Add visual feedback
+                artworkElement.classList.add('dragging');
+                
+                // Set drag image (optional - shows a preview while dragging)
+                if (artworkElement.querySelector('img')) {
+                    event.dataTransfer.setDragImage(artworkElement.querySelector('img'), 25, 25);
+                }
+            }
+        });
+
+        document.addEventListener('dragend', (event) => {
+            const artworkElement = event.target.closest('.artwork-img');
+            if (artworkElement) {
+                artworkElement.classList.remove('dragging');
+            }
+        });
+    }
+
+    handleArtworkDrop(artworkData, dropX, dropY) {
+        try {
+            if (this.isInactive()) {
+                console.log('Canvas is inactive, ignoring drop');
+                return;
+            }
+
+            console.log('Dropping artwork:', artworkData, 'at position:', { x: dropX, y: dropY });
+
+            if (!this.photoEditable) {
+                // For non-photo editable surfaces, create regular artwork selection
+                let newSelection = new ArtSelection(artworkData);
+                this.placeSelectedImage(newSelection, dropY, dropX);
+                this.unsavedChanges = true;
+                this.toggleRemoveButton();
+                
+                // Show success feedback
+             //   this.showDropSuccess(dropX, dropY);
+            } else {
+                // For photo editable surfaces, add warped artwork
+                this.addWarpedArtwork(artworkData, dropX, dropY);
+                
+                // Show success feedback
+                this.showDropSuccess(dropX, dropY);
+            }
+        } catch (error) {
+            console.error('Error in handleArtworkDrop:', error);
+        }
+    }
+
     initializeArea(photoEditable, surfaceData) {
         const corners = surfaceData.corners;
         const boundingBoxLeft = surfaceData.bounding_box_left;
@@ -234,6 +379,11 @@ class CanvasManager {
         $('#site__body').on('click', '.artwork-img', (el) => {
             if (!this.active) {
                 return false
+            }
+
+            // Check if this was part of a drag operation
+            if (el.currentTarget.classList.contains('dragging')) {
+                return false;
             }
 
             let target = el.currentTarget;
@@ -1192,7 +1342,7 @@ class CanvasManager {
         this.artworkCanvas.renderAll();
     }
 
-    addWarpedArtwork(imgData) {
+    addWarpedArtwork(imgData, dropX = null, dropY = null) {
         const { imgUrl, artworkId } = imgData;
         
         // Clean up existing matrices
@@ -1218,10 +1368,10 @@ class CanvasManager {
         // Calculate transformation matrices
         this.M = cv.getPerspectiveTransform(dstTri, srcTri);
 
-        // Store initial position for reference
+        // Store initial position for reference - use drop position if provided
         this.initialWarpPosition = {
-            x: 0,
-            y: 0
+            x: dropX || 0,
+            y: dropY || 0
         };
 
         // Clean up temporary matrices
@@ -1282,14 +1432,14 @@ class CanvasManager {
                     id: artworkId,
                     left: this.initialWarpPosition.x,
                     top: this.initialWarpPosition.y,
-                    selectable: false,
-                    hasControls: false,
-                    hasBorders: false,
-                    lockRotation: true,
-                    lockScalingX: true,
-                    lockScalingY: true,
-                    lockMovementX: true,
-                    lockMovementY: true,
+                    selectable: true,
+                    hasControls: true,
+                    hasBorders: true,
+                    lockRotation: false,
+                    lockScalingX: false,
+                    lockScalingY: false,
+                    lockMovementX: false,
+                    lockMovementY: false,
                     cornerStyle: 'circle',
                     transparentCorners: false,
                     cornerColor: 'rgba(102,153,255,0.5)',
@@ -1331,6 +1481,80 @@ class CanvasManager {
 
         } catch (error) {
             console.error('Error in updateTransformedArtwork:', error);
+        }
+    }
+
+    showDropZone() {
+        // Create or show drop zone indicator
+        if (!this.dropZoneIndicator) {
+            this.dropZoneIndicator = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: this.artworkCanvas.width,
+                height: this.artworkCanvas.height,
+                fill: 'rgba(0, 123, 255, 0.1)',
+                stroke: '#007bff',
+                strokeWidth: 2,
+                strokeDashArray: [10, 5],
+                selectable: false,
+                evented: false,
+                hasControls: false,
+                hasBorders: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true
+            });
+            this.artworkCanvas.add(this.dropZoneIndicator);
+        }
+        
+        this.dropZoneIndicator.visible = true;
+        this.artworkCanvas.renderAll();
+    }
+
+    hideDropZone() {
+        if (this.dropZoneIndicator) {
+            this.dropZoneIndicator.visible = false;
+            this.artworkCanvas.renderAll();
+        }
+    }
+
+    showDropSuccess(x, y) {
+        try {
+            // Create a temporary success indicator
+            const successIndicator = new fabric.Circle({
+                left: x,
+                top: y,
+                radius: 10,
+                fill: 'rgba(40, 167, 69, 0.8)',
+                stroke: '#28a745',
+                strokeWidth: 2,
+                selectable: false,
+                evented: false,
+                hasControls: false,
+                hasBorders: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true
+            });
+
+            this.artworkCanvas.add(successIndicator);
+            this.artworkCanvas.renderAll();
+
+            // Remove the indicator after a short delay
+            setTimeout(() => {
+                try {
+                    this.artworkCanvas.remove(successIndicator);
+                    this.artworkCanvas.renderAll();
+                } catch (error) {
+                    console.error('Error removing success indicator:', error);
+                }
+            }, 1000);
+        } catch (error) {
+            console.error('Error showing drop success:', error);
         }
     }
 

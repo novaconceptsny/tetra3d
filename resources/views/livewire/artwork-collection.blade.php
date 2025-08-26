@@ -1,3 +1,65 @@
+<style>
+    .artwork-img {
+        cursor: grab;
+        transition: all 0.2s ease;
+        user-select: none;
+        position: relative;
+    }
+    
+    .artwork-img:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .artwork-img:active {
+        cursor: grabbing;
+    }
+    
+    .artwork-img.dragging {
+        opacity: 0.5;
+        transform: scale(0.95);
+        cursor: grabbing;
+        z-index: 1000;
+    }
+    
+    .artwork-img.drag-over {
+        border: 2px dashed #007bff;
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+    
+    /* Add a subtle indicator that items are draggable */
+    .artwork-img::before {
+        content: '⋮⋮';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 12px;
+        color: #6c757d;
+        opacity: 0.6;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+    
+    .artwork-img:hover::before {
+        opacity: 1;
+        color: #007bff;
+    }
+    
+    .artwork-img.dragging::before {
+        opacity: 0;
+    }
+    
+    /* Improve card appearance */
+    .artwork-img .card {
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease;
+    }
+    
+    .artwork-img:hover .card {
+        border-color: #007bff;
+    }
+</style>
+
 <div class="col-3 side-col" :class="{ 'd-none': sidebar === 'comments' }">
     <x-loader/>
     <div class="top-div">
@@ -43,6 +105,7 @@
                 @foreach($artworkColumn as $artwork)
                     <div class="col-12 mb-3 card-col">
                         <div class="card mb-3 artwork-img"
+                             draggable="true"
                              data-img-url="{{ $artwork->image_url. "?uuid=". str()->uuid() }}"
                              data-title="{{$artwork->name}}"
                              data-thumb-url="{{$artwork->image_url}}"
