@@ -122,11 +122,7 @@ class RegisterController extends Controller
         // Send verification email
         try {
      
-            Mail::raw($user->verification_code, function ($msg) use ($user) {
-                $msg->to($user->email)
-                    ->from('notify@tetra3d.com', 'Tetra3D Notifications')
-                    ->subject('Verification Code');
-            });
+            Mail::to($user->email)->send(new VerificationCodeMail($user->verification_code, $user->first_name));
 
             return redirect()->route('verification.notice')
                 ->with('success', 'Registration successful! Please check your email for the verification code.');
