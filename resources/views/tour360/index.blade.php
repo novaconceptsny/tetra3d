@@ -173,8 +173,8 @@
             <div class="mb-3">
                 <label for="inlineUnits" class="form-label">Units</label>
                 <select class="form-select" id="inlineUnits">
-                    <option value="metric" selected>Metric</option>
-                    <option value="imperial">Imperial</option>
+                    <option value="metric" selected>Metric (cm)</option>
+                    <option value="imperial">Imperial (inch)</option>
                 </select>
             </div>
 
