@@ -71,7 +71,7 @@
                     </form>
 
                     <div class="mt-3 text-center">
-                        <p>Didn't receive the code?</p>
+                        <p>Didn't receive the code? <small class="text-muted">(Check your spam folder)</small></p>
                         <form method="POST" action="{{ route('verification.resend') }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="email" value="{{ session('verification_email') ?? old('email') }}">

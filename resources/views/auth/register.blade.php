@@ -8,6 +8,8 @@
     <title>{{ config('app.name') }}</title>
     <!-- bootstrap css link  -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"/>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <!-- own css file  -->
     <link rel="stylesheet" href="{{ asset('redesign/css/style.css') }}"/>
     @include('backend.includes.partial.favicon')
@@ -63,22 +65,32 @@
                         </div>
                         <div class="form-group login-custum-form-group">
                             <label for="password">{{ __('Password') }}</label>
-                            <input
-                                placeholder="Password"
-                                class="form-control @error('password') is-invalid @enderror"
-                                name="password" id="password" type="password"
-                                required autocomplete="new-password"
-                            >
+                            <div class="password-input-wrapper">
+                                <input
+                                    placeholder="Password"
+                                    class="form-control @error('password') is-invalid @enderror"
+                                    name="password" id="password" type="password"
+                                    required autocomplete="new-password"
+                                >
+                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye" id="password-eye"></i>
+                                </button>
+                            </div>
                             <x-error field="password"/>
                         </div>
                         <div class="form-group login-custum-form-group">
                             <label for="password-confirm">{{ __('Confirm Password') }}</label>
-                            <input
-                                placeholder="Confirm Password"
-                                class="form-control"
-                                name="password_confirmation" id="password-confirm" type="password"
-                                required autocomplete="new-password"
-                            >
+                            <div class="password-input-wrapper">
+                                <input
+                                    placeholder="Confirm Password"
+                                    class="form-control"
+                                    name="password_confirmation" id="password-confirm" type="password"
+                                    required autocomplete="new-password"
+                                >
+                                <button type="button" class="password-toggle" onclick="togglePassword('password-confirm')">
+                                    <i class="fas fa-eye" id="password-confirm-eye"></i>
+                                </button>
+                            </div>
                         </div>
                         <button type="submit" class="btn-login btn form-control">Register</button>
                         
@@ -115,6 +127,79 @@
 
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 
+<style>
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 10;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    font-size: 16px;
+    min-width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.password-toggle:focus {
+    outline: none;
+    color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.password-toggle:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.password-input-wrapper .form-control {
+    padding-right: 45px;
+}
+
+/* Ensure the icon is visible */
+.password-toggle i {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 1;
+}
+</style>
+
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const eyeIcon = document.getElementById(inputId + '-eye');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+    }
+}
+</script>
 
 </body>
 </html>
