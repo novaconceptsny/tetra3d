@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     protected $guarded = ['id'];
+    
+    protected $fillable = ['name', 'collector_subscription_id'];
 
     public function users()
     {

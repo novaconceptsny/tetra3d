@@ -18,6 +18,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Company API routes for registration form
+Route::get('/companies/search', [App\Http\Controllers\Api\CompanyController::class, 'search']);
+Route::post('/companies', [App\Http\Controllers\Api\CompanyController::class, 'store']);
+
 Route::middleware(['auth:sanctum', 'can:perform-admin-actions'])->group(function () {
     Route::post('/sculpture_save', 'SculptureController@save')->name('sculpture_save');
     Route::post('/sculpture_delete', 'SculptureController@delete')->name('sculpture_delete');

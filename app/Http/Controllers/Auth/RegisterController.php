@@ -58,7 +58,8 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'company_id' => ['required', 'exists:companies,id'],
+            'company_name' => ['required', 'string', 'max:255'],
+            'company_id' => ['nullable', 'exists:companies,id'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -72,13 +73,32 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // Handle company creation or selection
+        $companyId = $data['company_id'];
+        
+        if (!$companyId) {
+            // Check if company already exists by name (case-insensitive)
+            $existingCompany = Company::whereRaw('LOWER(name) = ?', [strtolower($data['company_name'])])->first();
+            
+            if ($existingCompany) {
+                // Use existing company
+                $companyId = $existingCompany->id;
+            } else {
+                // Create new company if it doesn't exist
+                $company = Company::create([
+                    'name' => $data['company_name']
+                ]);
+                $companyId = $company->id;
+            }
+        }
+
         // Generate verification code
         $verificationCode = strtoupper(Str::random(6));
         
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
-            'company_id' => $data['company_id'],
+            'company_id' => $companyId,
             'email' => $data['email'],
             'password' => $data['password'],
             'verification_code' => $verificationCode,
