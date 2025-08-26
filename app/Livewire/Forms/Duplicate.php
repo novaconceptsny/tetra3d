@@ -74,6 +74,9 @@ class Duplicate extends Modal
 
         $newLayout = $this->layout->replicate();
         $newLayout->name = $this->layout->name;
+        $newLayout->user_id = auth()->id(); // Set to current user who is creating the duplicate
+        $newLayout->created_at = now(); // Reset creation timestamp
+        $newLayout->updated_at = now(); // Reset update timestamp
         $newLayout->save();
 
         $sculptures = Sculpture::where('layout_id', $this->layout->id)->get();
