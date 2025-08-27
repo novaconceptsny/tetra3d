@@ -35,7 +35,13 @@
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->role }}</td>
-                            <td>{{ $user->company?->name }}</td>
+                            <td>
+                                @if($user->company?->name === 'My workspace')
+                                    {{ $user->company->name }}_{{ str_pad($user->company->id, 2, '0', STR_PAD_LEFT) }}
+                                @else
+                                    {{ $user->company?->name }}
+                                @endif
+                            </td>
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$user">
                                     <x-backend::dropdown.item

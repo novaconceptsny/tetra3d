@@ -124,14 +124,24 @@ class InventoryDatatable extends BaseDatatable
             ->get();
 
         $sculptureRows->transform(function ($row) {
-            $row->company_name = $row->company->name;
+            // Add company ID for "My workspace" entries, but only for super admin
+            if (user()->isAdmin() && $row->company->name === 'My workspace') {
+                $row->company_name = $row->company->name . '_' . str_pad($row->company->id, 2, '0', STR_PAD_LEFT);
+            } else {
+                $row->company_name = $row->company->name;
+            }
             $row->collection_name = $row->collection?->name;
             $row->route_prefix = 'sculpture';
             return $row;
         });
 
         $artworkRows->transform(function ($row) {
-            $row->company_name = $row->company->name;
+            // Add company ID for "My workspace" entries, but only for super admin
+            if (user()->isAdmin() && $row->company->name === 'My workspace') {
+                $row->company_name = $row->company->name . '_' . str_pad($row->company->id, 2, '0', STR_PAD_LEFT);
+            } else {
+                $row->company_name = $row->company->name;
+            }
             $row->collection_name = $row->collection?->name;
             $row->route_prefix = 'artwork';
             return $row;
