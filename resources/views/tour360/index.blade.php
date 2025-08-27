@@ -100,7 +100,7 @@
                                                         <hr class="my-2">
                                                         <div class="project-stats">
                                                             <span class="me-3"><i class="fas fa-cube"></i> {{ $project->assignedTours()->count() ?? 0 }} Tours</span>
-                                                            <span class="me-3"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
+                                                            <span class="me-3 contributors-count"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
                                                             <span><i class="fas fa-folder"></i> {{ $project->artwork_collections_count ?? 0 }} Collections</span>
                                                         </div>
                                                     </div>
@@ -167,10 +167,10 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="inlineContributors" class="form-label">Contributors</label>
+            <div class="mb-3 contributors-section">
+                <label for="inlineContributors" class="form-label contributors-label">Contributors</label>
                 <div class="input-group">
-                    <select id="inlineContributors"  name="states[]" multiple="multiple" style="width: 100%;">
+                    <select id="inlineContributors" class="contributors-select" name="states[]" multiple="multiple" style="width: 100%;">
                         <!-- <option selected disabled>Select Contributor</option> -->
                     </select>
                 </div>
@@ -318,6 +318,14 @@
 
         .image-upload-box:hover {
             border-color: #007bff;
+        }
+
+        /* Hide contributors section */
+        .contributors-section,
+        .contributors-label,
+        .contributors-select,
+        .contributors-count {
+            display: none !important;
         }
 
     </style>

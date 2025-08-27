@@ -230,6 +230,11 @@
             text-decoration: none;
             font-weight: 500;
         }
+
+        /* Hide contributors section */
+        .contributor {
+            display: none;
+        }
     </style>
 
     <div class="modal fade" id="duplicat_confirmation" tabindex="-1">
