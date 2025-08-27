@@ -33,7 +33,13 @@
                     @forelse($projects as $project)
                         <tr>
                             <td>{{ $project->name }}</td>
-                            <td>{{ $project->company->name }}</td>
+                            <td>
+                                @if(user()->isAdmin() && $project->company->name === 'My Workspace')
+                                    {{ $project->company->name }}_{{ str_pad($project->company->id, 2, '0', STR_PAD_LEFT) }}
+                                @else
+                                    {{ $project->company->name }}
+                                @endif
+                            </td>
                             <td>
                                 @foreach($project->assignedTours() as $tour)
                                     <a href="{{ route('tours.show', [$tour, 'project_id' => $project->id]) }}" target="_blank">

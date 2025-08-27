@@ -59,7 +59,12 @@ class SculptureDatatable extends BaseDatatable
             ->paginate($this->perPage);
 
         $rows->getCollection()->transform(function ($row) {
-            $row->company_name = $row->company->name;
+            // Add company ID for "My workspace" entries, but only for super admin
+            if (user()->isAdmin() && $row->company->name === 'My Workspace') {
+                $row->company_name = $row->company->name . '_' . str_pad($row->company->id, 2, '0', STR_PAD_LEFT);
+            } else {
+                $row->company_name = $row->company->name;
+            }
             $row->collection_name = $row->collection?->name;
             $length = number_format((float) $row->data['length'], 2);
             $width = number_format((float) $row->data['width'], 2);

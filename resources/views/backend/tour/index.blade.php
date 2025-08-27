@@ -63,7 +63,13 @@
                             </td>
                             <td><a href="{{ route('backend.tours.spots.index', $tour) }}">{{ $tour->spots_count }} Spots</a></td>
                             <td><a href="{{ route('backend.tours.surfaces.index', $tour) }}">{{ $tour->surfaces_count }} Surfaces</a></td>
-                            <td>{{ $tour->company->name }}</td>
+                            <td>
+                                @if(user()->isAdmin() && $tour->company->name === 'My Workspace')
+                                    {{ $tour->company->name }}_{{ str_pad($tour->company->id, 2, '0', STR_PAD_LEFT) }}
+                                @else
+                                    {{ $tour->company->name }}
+                                @endif
+                            </td>
                             <td>
                                 <x-backend::dropdown.container permission="viewany|update|delete" :permission_params="$tour">
                                     <x-backend::dropdown.item

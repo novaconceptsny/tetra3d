@@ -32,7 +32,13 @@
                     <tbody class="list">
                     @forelse($collections as $collection)
                         <tr>
-                            <td>{{ $collection->company->name }}</td>
+                            <td>
+                                @if(user()->isAdmin() && $collection->company->name === 'My Workspace')
+                                    {{ $collection->company->name }}_{{ str_pad($collection->company->id, 2, '0', STR_PAD_LEFT) }}
+                                @else
+                                    {{ $collection->company->name }}
+                                @endif
+                            </td>
                             <td>{{ $collection->name }}</td>
                             <td>{{ $collection->artworks_count }}</td>
                             <td>{{ $collection->sculpture_models_count }}</td>

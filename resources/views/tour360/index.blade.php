@@ -45,7 +45,13 @@
                     @foreach($companies as $company)
                         <div class="company-section mb-5">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5>{{ $company->name }}</h5>
+                                <h5>
+                                    @if(user()->isAdmin() && $company->name === 'My Workspace')
+                                        {{ $company->name }}_{{ str_pad($company->id, 2, '0', STR_PAD_LEFT) }}
+                                    @else
+                                        {{ $company->name }}
+                                    @endif
+                                </h5>
                                 <div class="sort-dropdown">
                                     <select class="form-select">
                                         <option>Recently added</option>
