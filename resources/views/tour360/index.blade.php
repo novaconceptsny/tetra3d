@@ -182,7 +182,7 @@
                 <label class="form-label">Thumbnail</label>
                 <div class="image-upload-box mb-2" id="inlineImageUploadBox">
                     <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
-                    <span>Click to add image</span>
+                    <span>Click or drag & drop to add image</span>
                     <div class="overlay">Click to replace image</div>
                 </div>
                 <div class="image-name" id="inlineImageName"></div>
@@ -213,7 +213,7 @@
                 </div>
                 <div class="image-upload-box mb-3" id="imageUploadBox">
                     <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
-                    <span>+ Image</span>
+                    <span>+ Image (or drag & drop)</span>
                     <div class="overlay">Click to replace image</div>
                 </div>
                 <div class="image-name" id="imageName"></div>
@@ -295,6 +295,23 @@
         /* Remove the static first-child styles since we'll apply them dynamically */
         .favourite-card {
             margin-bottom: 24px; /* space below each card */
+        }
+
+        /* Drag and drop styles for image upload */
+        .image-upload-box.drag-over {
+            border: 2px dashed #007bff !important;
+            background-color: rgba(0, 123, 255, 0.1) !important;
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+        }
+
+        .image-upload-box {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .image-upload-box:hover {
+            border-color: #007bff;
         }
 
     </style>
@@ -626,31 +643,104 @@
             });
         }
 
-        // Handle inline image upload
+        // Handle inline image upload with drag and drop
         inlineImageUploadBox.addEventListener('click', () => {
             inlineImageInput.click();
+        });
+
+        // Drag and drop functionality for inline image upload
+        inlineImageUploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            inlineImageUploadBox.classList.add('drag-over');
+        });
+
+        inlineImageUploadBox.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            inlineImageUploadBox.classList.remove('drag-over');
+        });
+
+        inlineImageUploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            inlineImageUploadBox.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    handleImageFile(file, inlineImageUploadBox, inlineImageInput, inlineImageName);
+                } else {
+                    alert('Please drop an image file (JPEG or PNG)');
+                }
+            }
         });
 
         inlineImageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'img-preview';
-                    inlineImageUploadBox.innerHTML = '';
-                    inlineImageUploadBox.appendChild(img);
-                    const overlay = document.createElement('div');
-                    overlay.className = 'overlay';
-                    overlay.textContent = 'Click to replace image';
-                    inlineImageUploadBox.appendChild(overlay);
-                    inlineImageUploadBox.appendChild(inlineImageInput);
-                    inlineImageName.textContent = file.name;
-                };
-                reader.readAsDataURL(file);
+                handleImageFile(file, inlineImageUploadBox, inlineImageInput, inlineImageName);
             }
         });
+
+        // Function to handle image file processing
+        function handleImageFile(file, uploadBox, inputElement, nameElement) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-preview';
+                uploadBox.innerHTML = '';
+                uploadBox.appendChild(img);
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.textContent = 'Click to replace image';
+                uploadBox.appendChild(overlay);
+                uploadBox.appendChild(inputElement);
+                if (nameElement) {
+                    nameElement.textContent = file.name;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Handle modal image upload with drag and drop
+        if (imageUploadBox) {
+            imageUploadBox.addEventListener('click', () => {
+                imageInput.click();
+            });
+
+            // Drag and drop functionality for modal image upload
+            imageUploadBox.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                imageUploadBox.classList.add('drag-over');
+            });
+
+            imageUploadBox.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                imageUploadBox.classList.remove('drag-over');
+            });
+
+            imageUploadBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                imageUploadBox.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.type.startsWith('image/')) {
+                        handleImageFile(file, imageUploadBox, imageInput, imageName);
+                    } else {
+                        alert('Please drop an image file (JPEG or PNG)');
+                    }
+                }
+            });
+
+            imageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    handleImageFile(file, imageUploadBox, imageInput, imageName);
+                }
+            });
+        }
 
         // Handle inline save button
         inlineSaveButton.addEventListener('click', async function() {
