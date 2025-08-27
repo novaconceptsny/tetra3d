@@ -36,7 +36,7 @@
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->role }}</td>
                             <td>
-                                @if($user->company?->name === 'My workspace')
+                                @if($user->company?->name === 'My Workspace')
                                     {{ $user->company->name }}_{{ str_pad($user->company->id, 2, '0', STR_PAD_LEFT) }}
                                 @else
                                     {{ $user->company?->name }}
