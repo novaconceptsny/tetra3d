@@ -78,18 +78,24 @@ class RegisterController extends Controller
         
         if (!$companyId) {
             // Check if company already exists by name (case-insensitive)
-            $existingCompany = Company::whereRaw('LOWER(name) = ?', [strtolower($data['company_name'])])->first();
+            // $existingCompany = Company::whereRaw('LOWER(name) = ?', [strtolower($data['company_name'])])->first();
             
-            if ($existingCompany) {
-                // Use existing company
-                $companyId = $existingCompany->id;
-            } else {
-                // Create new company if it doesn't exist
-                $company = Company::create([
-                    'name' => $data['company_name']
-                ]);
-                $companyId = $company->id;
-            }
+            // if ($existingCompany) {
+            //     // Use existing company
+            //     $companyId = $existingCompany->id;
+            // } else {
+            //     // Create new company if it doesn't exist
+            //     $company = Company::create([
+            //         'name' => $data['company_name']
+            //     ]);
+            //     $companyId = $company->id;
+            // }
+
+            // Create new company if it doesn't exist
+            $company = Company::create([
+                'name' => $data['company_name']
+            ]);
+            $companyId = $company->id;
         }
 
         // Generate verification code
