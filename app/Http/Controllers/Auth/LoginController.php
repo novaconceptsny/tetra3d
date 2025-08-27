@@ -60,6 +60,12 @@ class LoginController extends Controller
                 if ($parsedUrl['host'] === $currentHost) {
                     return redirect($redirectUrl);
                 }
+            } else {
+                // Handle relative URLs (not full URLs)
+                $redirectUrl = ltrim($redirectUrl, '/');
+                if (!empty($redirectUrl)) {
+                    return redirect('/' . $redirectUrl);
+                }
             }
         }
 

@@ -56,7 +56,7 @@ class TourController extends Controller
 
         // else, we check auth (unless it's a shared preview)
         if (! auth()->check() && !$isSharedPreview) {
-            return redirect()->route('login', ['redirect' => request()->url()]);
+            return redirect()->route('login', ['redirect' => request()->fullUrl()]);
         }
 
         $spot_id = request('spot_id');
