@@ -253,6 +253,9 @@ function handleAddCompany() {
     var selectedCompanyNames = select.selectedOptions ? 
         Array.from(select.selectedOptions).map(option => option.text) : 
         [];
+    var selectedCompanyIds = select.selectedOptions ? 
+        Array.from(select.selectedOptions).map(option => option.value) : 
+        [];
     var tourId = document.getElementById('modalTourId').value;
 
     console.log(selectedCompanyNames);
@@ -266,7 +269,7 @@ function handleAddCompany() {
             "X-CSRF-TOKEN": "{{ csrf_token() }}"
         },
         body: JSON.stringify({
-            company_names: selectedCompanyNames,
+            company_ids: selectedCompanyIds,
             tour_id: tourId
         })
     })

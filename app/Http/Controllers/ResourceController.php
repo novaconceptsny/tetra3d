@@ -92,20 +92,15 @@ class ResourceController extends Controller
     {
         try {
             $request->validate([
-                'company_names' => 'array',
+                'company_ids'   => 'array',
                 'tour_id'       => 'required|exists:tours,id',
             ]);
 
             CompanyTour::where('tour_id', $request->tour_id)->delete();
 
-            foreach ($request->company_names as $companyName) {
-                // Find the company by name
-                $company = Company::where('name', $companyName)->first();
-
-                if (! $company) {
-                    // Optionally, you can skip or return an error
-                    continue;
-                }
+            foreach ($request->company_ids as $companyId) {
+                // Find the company by id
+                $company = Company::where('id', $companyId)->first();
 
                 CompanyTour::create([
                     'company_id' => $company->id,
