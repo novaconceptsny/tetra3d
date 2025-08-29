@@ -278,7 +278,8 @@ function handleAddCompany() {
         if (response.success) {
             console.log(response.templateTours);
             templateTours = response.templateTours;
-           closeAddCompanyModal();
+        //    closeAddCompanyModal();
+           window.location.reload();
         } else {
             console.error('Error:', response.error);
         }
