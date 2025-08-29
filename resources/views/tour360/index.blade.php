@@ -186,10 +186,8 @@
 
             <div class="mb-3 col-md-4">
                 <label class="form-label">Thumbnail</label>
-                <div class="image-upload-box mb-2" id="inlineImageUploadBox">
-                    <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
-                    <span>Click or drag & drop to add image</span>
-                    <div class="overlay">Click to replace image</div>
+                <div class="mb-2" id="inlineImageUploadBox">
+                    <input type="file" class="filepond" id="inlineImageInput" accept="image/jpeg, image/png">
                 </div>
                 <div class="image-name" id="inlineImageName"></div>
             </div>
@@ -217,10 +215,8 @@
                 <div class="mb-3">
                     <input type="text" class="form-control" id="projectNameInput" placeholder="Name">
                 </div>
-                <div class="image-upload-box mb-3" id="imageUploadBox">
-                    <input type="file" class="image-input" id="imageInput" accept="image/jpeg, image/png">
-                    <span>+ Image (or drag & drop)</span>
-                    <div class="overlay">Click to replace image</div>
+                <div class="mb-3" id="imageUploadBox">
+                    <input type="file" class="filepond" id="imageInput" accept="image/jpeg, image/png">
                 </div>
                 <div class="image-name" id="imageName"></div>
                 <button type="button" class="btn btn-save">Save</button>
@@ -256,6 +252,9 @@
 </div>
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css" rel="stylesheet">
 @endsection
 
 @section('styles')
@@ -328,11 +327,203 @@
             display: none !important;
         }
 
+        /* FilePond custom styles */
+        .filepond--root {
+            font-family: inherit;
+            border-radius: 8px;
+            border: 2px dashed #e0e0e0;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .filepond--root:hover {
+            border-color: #007bff;
+            background-color: #e3f2fd;
+        }
+
+        .filepond--root.filepond--drag-over {
+            border-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .filepond--panel-root {
+            background-color: transparent;
+        }
+
+        .filepond--drop-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .filepond--label-action {
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .filepond--item {
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .filepond--image-preview {
+            border-radius: 6px;
+        }
+
+        /* Responsive FilePond */
+        @media (max-width: 768px) {
+            .filepond--root {
+                font-size: 14px;
+            }
+            
+            .filepond--drop-label {
+                font-size: 12px;
+            }
+        }
+
+        /* FilePond container spacing */
+        #inlineImageUploadBox .filepond--root,
+        #imageUploadBox .filepond--root {
+            margin-bottom: 10px;
+        }
+
+        /* FilePond focus states */
+        .filepond--root:focus-within {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        /* Image editing styles */
+        .filepond--image-edit-editor {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .filepond--image-edit-editor-header {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .filepond--image-edit-editor-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .filepond--image-edit-editor-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filepond--image-edit-editor-control-label {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filepond--image-edit-editor-control-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            color: white;
+            padding: 8px 12px;
+            width: 100%;
+        }
+
+        .filepond--image-edit-editor-control-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .filepond--image-edit-editor-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .filepond--image-edit-editor-button {
+            background: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: background-color 0.2s ease;
+        }
+
+        .filepond--image-edit-editor-button:hover {
+            background: #0056b3;
+        }
+
+        .filepond--image-edit-editor-button.secondary {
+            background: #6c757d;
+        }
+
+        .filepond--image-edit-editor-button.secondary:hover {
+            background: #545b62;
+        }
+
+        /* Image edit button in FilePond item */
+        .filepond--image-edit-button {
+            background: rgba(0, 123, 255, 0.9);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 8px;
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            transition: background-color 0.2s ease;
+            z-index: 10;
+        }
+
+        .filepond--image-edit-button:hover {
+            background: rgba(0, 86, 179, 0.9);
+        }
+
+        /* Ensure the edit button is visible */
+        .filepond--item .filepond--image-edit-button {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        /* Style the edit button icon */
+        .filepond--image-edit-button::before {
+            content: "✏️";
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        /* Alternative icon using FontAwesome if available */
+        .filepond--image-edit-button .fa-edit,
+        .filepond--image-edit-button .fa-pencil {
+            font-size: 12px;
+            margin-right: 2px;
+        }
+
+        /* Existing image preview styles */
     </style>
 @endsection
 
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
     <script>
         const projectModal = document.getElementById('projectModal');
         const modalTitle = document.getElementById('projectModalLabel');
@@ -361,6 +552,246 @@
         const inlineImageInput = document.getElementById('inlineImageInput');
         const inlineImageName = document.getElementById('inlineImageName');
         const inlineSaveButton = document.getElementById('inlineSaveButton');
+
+        // Initialize FilePond
+        FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginImageEdit);
+        
+        // Debug: Check if plugins are loaded
+        console.log('FilePond plugins loaded:', {
+            imagePreview: typeof FilePondPluginImagePreview !== 'undefined',
+            fileValidateType: typeof FilePondPluginFileValidateType !== 'undefined',
+            imageEdit: typeof FilePondPluginImageEdit !== 'undefined'
+        });
+
+        // Test the image edit plugin directly
+        if (typeof FilePondPluginImageEdit !== 'undefined') {
+            console.log('Image Edit Plugin is available');
+            console.log('Plugin methods:', Object.getOwnPropertyNames(FilePondPluginImageEdit));
+        } else {
+            console.error('Image Edit Plugin is NOT loaded!');
+        }
+
+        // Initialize inline image upload
+        const inlinePond = FilePond.create(document.getElementById('inlineImageInput'), {
+            acceptedFileTypes: ['image/jpeg', 'image/png'],
+            maxFileSize: '5MB',
+            imagePreviewHeight: 170,
+            imageCropAspectRatio: '1:1',
+            imageResizeTargetWidth: 200,
+            imageResizeTargetHeight: 200,
+            styleItemPanelAspectRatio: 0.5,
+            styleLoadIndicatorPosition: 'center bottom',
+            styleProgressIndicatorPosition: 'right bottom',
+            styleButtonRemoveItemPosition: 'left bottom',
+            styleButtonProcessItemPosition: 'right bottom',
+            labelIdle: 'Drag & Drop your photo or <span class="filepond--label-action">Browse</span>',
+            labelFileProcessing: 'Uploading',
+            labelFileProcessingComplete: 'Upload complete',
+            labelTapToCancel: 'tap to cancel',
+            labelTapToRetry: 'tap to retry',
+            labelTapToUndo: 'tap to undo',
+            labelButtonRemoveItem: 'Remove',
+            labelButtonAbortItemLoad: 'Abort',
+            labelButtonAbortItemProcessing: 'Cancel',
+            labelButtonProcessItem: 'Upload',
+            labelMaxFileSize: 'File is too large',
+            labelMaxFileSizeExceeded: 'File is too large',
+            labelMaxFileSizeUnknown: 'File is too large',
+            labelFileTypeNotAllowed: 'File of invalid type',
+            fileValidateTypeLabelExpectedTypes: 'Expects {allTypes}',
+            fileValidateTypeLabelExpectedTypesMap: {
+                'image/jpeg': 'JPEG',
+                'image/png': 'PNG'
+            },
+            allowMultiple: false,
+            allowReplace: true,
+            instantUpload: false,
+            server: null,
+            // Enable image editing with proper configuration
+            allowImageEdit: true,
+            imageEditInstantEdit: false,
+            imageEditEditor: [
+                {
+                    name: 'crop',
+                    label: 'Crop',
+                    icon: 'crop',
+                    options: {
+                        aspectRatio: 1,
+                        minCropBoxWidth: 100,
+                        minCropBoxHeight: 100
+                    }
+                },
+                {
+                    name: 'rotate',
+                    label: 'Rotate',
+                    icon: 'rotate-right',
+                    options: {
+                        rotation: 0
+                    }
+                },
+                {
+                    name: 'filter',
+                    label: 'Filters',
+                    icon: 'magic',
+                    options: {
+                        brightness: 0,
+                        contrast: 0,
+                        saturation: 0,
+                        blur: 0
+                    }
+                }
+            ]
+        });
+
+        // Initialize modal image upload
+        const modalPond = FilePond.create(document.getElementById('imageInput'), {
+            acceptedFileTypes: ['image/jpeg', 'image/png'],
+            maxFileSize: '5MB',
+            imagePreviewHeight: 170,
+            imageCropAspectRatio: '1:1',
+            imageResizeTargetWidth: 200,
+            imageResizeTargetHeight: 200,
+            styleItemPanelAspectRatio: 0.5,
+            styleLoadIndicatorPosition: 'center bottom',
+            styleProgressIndicatorPosition: 'right bottom',
+            styleButtonRemoveItemPosition: 'left bottom',
+            styleButtonProcessItemPosition: 'right bottom',
+            labelIdle: 'Drag & Drop your photo or <span class="filepond--label-action">Browse</span>',
+            labelFileProcessing: 'Uploading',
+            labelFileProcessingComplete: 'Upload complete',
+            labelTapToCancel: 'tap to cancel',
+            labelTapToRetry: 'tap to retry',
+            labelTapToUndo: 'tap to undo',
+            labelButtonRemoveItem: 'Remove',
+            labelButtonAbortItemLoad: 'Abort',
+            labelButtonAbortItemProcessing: 'Cancel',
+            labelButtonProcessItem: 'Upload',
+            labelMaxFileSize: 'File is too large',
+            labelMaxFileSizeExceeded: 'File is too large',
+            labelMaxFileSizeUnknown: 'File is too large',
+            labelFileTypeNotAllowed: 'File of invalid type',
+            fileValidateTypeLabelExpectedTypes: 'Expects {allTypes}',
+            fileValidateTypeLabelExpectedTypesMap: {
+                'image/jpeg': 'JPEG',
+                'image/png': 'PNG'
+            },
+            allowMultiple: false,
+            allowReplace: true,
+            instantUpload: false,
+            server: null,
+            // Enable image editing with proper configuration
+            allowImageEdit: true,
+            imageEditInstantEdit: false,
+            imageEditEditor: [
+                {
+                    name: 'crop',
+                    label: 'Crop',
+                    icon: 'crop',
+                    options: {
+                        aspectRatio: 1,
+                        minCropBoxWidth: 100,
+                        minCropBoxHeight: 100
+                    }
+                },
+                {
+                    name: 'rotate',
+                    label: 'Rotate',
+                    icon: 'rotate-right',
+                    options: {
+                        rotation: 0
+                    }
+                },
+                {
+                    name: 'filter',
+                    label: 'Filters',
+                    icon: 'magic',
+                    options: {
+                        brightness: 0,
+                        contrast: 0,
+                        saturation: 0,
+                        blur: 0
+                    }
+                }
+            ]
+        });
+
+        // Add FilePond event listeners for better UX
+        inlinePond.on('addfile', (error, file) => {
+            if (error) {
+                console.error('Error adding file:', error);
+                return;
+            }
+            console.log('File added to inline pond:', file);
+            console.log('File type:', file.fileType);
+            console.log('File is image:', file.fileType.includes('image'));
+            
+            // Check if edit button is present
+            setTimeout(() => {
+                const editButton = document.querySelector('.filepond--image-edit-button');
+                console.log('Edit button found:', editButton);
+                if (editButton) {
+                    console.log('Edit button is visible:', editButton.style.display);
+                    console.log('Edit button opacity:', editButton.style.opacity);
+                }
+            }, 100);
+            
+            // Update image name display
+            if (inlineImageName) {
+                inlineImageName.textContent = file.filename;
+            }
+        });
+
+        inlinePond.on('removefile', () => {
+            // Clear image name display when file is removed
+            if (inlineImageName) {
+                inlineImageName.textContent = '';
+            }
+        });
+
+        modalPond.on('addfile', (error, file) => {
+            if (error) {
+                console.error('Error adding file:', error);
+                return;
+            }
+            // Update image name display
+            if (imageName) {
+                imageName.textContent = file.filename;
+            }
+        });
+
+        modalPond.on('removefile', () => {
+            // Clear image name display when file is removed
+            if (imageName) {
+                imageName.textContent = '';
+            }
+        });
+
+        // Image editing event listeners for inline pond
+        inlinePond.on('imageedit:edit', (file) => {
+            console.log('Image editing started:', file.filename);
+            // You can add loading indicators or other UI feedback here
+        });
+
+        inlinePond.on('imageedit:complete', (file) => {
+            console.log('Image editing completed:', file.filename);
+            // Update the image name to indicate it's been edited
+            if (inlineImageName) {
+                inlineImageName.textContent = file.filename + ' (edited)';
+            }
+        });
+
+        // Image editing event listeners for modal pond
+        modalPond.on('imageedit:edit', (file) => {
+            console.log('Modal image editing started:', file.filename);
+        });
+
+        modalPond.on('imageedit:complete', (file) => {
+            console.log('Modal image editing completed:', file.filename);
+            // Update the image name to indicate it's been edited
+            if (imageName) {
+                imageName.textContent = file.filename + ' (edited)';
+            }
+        });
 
         async function openCreateProject(companyId) {
             try {
@@ -404,6 +835,12 @@
         function closeCreateProject() {
             dashboardSection.style.display = 'block';
             createProjectSection.style.display = 'none';
+            
+            // Reset FilePond
+            inlinePond.removeFiles();
+            if (inlineImageName) {
+                inlineImageName.textContent = '';
+            }
         }
 
         function handleCreateProject() {
@@ -416,7 +853,7 @@
             const collections = $('#inlineCollections').val();
             const contributors = $('#inlineContributors').val();
             const unit = document.getElementById('inlineUnits').value;
-            const thumbnailFile = document.getElementById('inlineImageInput').files[0];
+            const thumbnailFile = inlinePond.getFile() ? inlinePond.getFile().file : null;
             const companyId = document.getElementById('createProjectSection').dataset.companyId;
 
             // Validate required fields
@@ -540,19 +977,15 @@
                     $('#inlineContributors').val(selectedContributors).trigger('change');
                 }
 
-                // If there's an existing thumbnail, show it
+                // Populate the image field with existing image
                 if (data.project.background_url) {
-                    const img = document.createElement('img');
-                    img.src = data.project.background_url;
-                    img.className = 'img-preview';
-                    inlineImageUploadBox.innerHTML = '';
-                    inlineImageUploadBox.appendChild(img);
-                    const overlay = document.createElement('div');
-                    overlay.className = 'overlay';
-                    overlay.textContent = 'Click to replace image';
-                    inlineImageUploadBox.appendChild(overlay);
-                    inlineImageUploadBox.appendChild(inlineImageInput);
-                    inlineImageInput.files[0] = data.project.background_url;
+                    // For FilePond, we need to add the existing image as a file
+                    // Since we can't directly set files, we'll show the image name
+                    if (inlineImageName) {
+                        inlineImageName.textContent = 'Current image: ' + data.project.background_url.split('/').pop();
+                    }
+                    // Note: FilePond doesn't support setting existing files directly
+                    // The user will need to re-upload if they want to change the image
                 }
 
                 // Update the save button to handle edit
@@ -576,7 +1009,7 @@
             const collections = $('#inlineCollections').val();
             const contributors = $('#inlineContributors').val();
             const unit = document.getElementById('inlineUnits').value;
-            const thumbnailFile = document.getElementById('inlineImageInput').files[0];
+            const thumbnailFile = inlinePond.getFile() ? inlinePond.getFile().file : null;
 
             // Validate required fields
             if (!name) {
@@ -657,104 +1090,9 @@
             });
         }
 
-        // Handle inline image upload with drag and drop
-        inlineImageUploadBox.addEventListener('click', () => {
-            inlineImageInput.click();
-        });
 
-        // Drag and drop functionality for inline image upload
-        inlineImageUploadBox.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            inlineImageUploadBox.classList.add('drag-over');
-        });
 
-        inlineImageUploadBox.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            inlineImageUploadBox.classList.remove('drag-over');
-        });
 
-        inlineImageUploadBox.addEventListener('drop', (e) => {
-            e.preventDefault();
-            inlineImageUploadBox.classList.remove('drag-over');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                const file = files[0];
-                if (file.type.startsWith('image/')) {
-                    handleImageFile(file, inlineImageUploadBox, inlineImageInput, inlineImageName);
-                } else {
-                    alert('Please drop an image file (JPEG or PNG)');
-                }
-            }
-        });
-
-        inlineImageInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                handleImageFile(file, inlineImageUploadBox, inlineImageInput, inlineImageName);
-            }
-        });
-
-        // Function to handle image file processing
-        function handleImageFile(file, uploadBox, inputElement, nameElement) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'img-preview';
-                uploadBox.innerHTML = '';
-                uploadBox.appendChild(img);
-                const overlay = document.createElement('div');
-                overlay.className = 'overlay';
-                overlay.textContent = 'Click to replace image';
-                uploadBox.appendChild(overlay);
-                uploadBox.appendChild(inputElement);
-                if (nameElement) {
-                    nameElement.textContent = file.name;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Handle modal image upload with drag and drop
-        if (imageUploadBox) {
-            imageUploadBox.addEventListener('click', () => {
-                imageInput.click();
-            });
-
-            // Drag and drop functionality for modal image upload
-            imageUploadBox.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                imageUploadBox.classList.add('drag-over');
-            });
-
-            imageUploadBox.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                imageUploadBox.classList.remove('drag-over');
-            });
-
-            imageUploadBox.addEventListener('drop', (e) => {
-                e.preventDefault();
-                imageUploadBox.classList.remove('drag-over');
-                
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    const file = files[0];
-                    if (file.type.startsWith('image/')) {
-                        handleImageFile(file, imageUploadBox, imageInput, imageName);
-                    } else {
-                        alert('Please drop an image file (JPEG or PNG)');
-                    }
-                }
-            });
-
-            imageInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    handleImageFile(file, imageUploadBox, imageInput, imageName);
-                }
-            });
-        }
 
         // Handle inline save button
         inlineSaveButton.addEventListener('click', async function() {
@@ -764,7 +1102,10 @@
             formData.append('collections', inlineCollections.value);
             formData.append('contributors', inlineContributors.value);
             formData.append('unit', inlineUnits.value);
-            formData.append('image', inlineImageInput.files[0]);
+            const imageFile = inlinePond.getFile() ? inlinePond.getFile().file : null;
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
 
             try {
                 const response = await fetch('/tour360/store', {
@@ -784,11 +1125,7 @@
                     inlineCollections.value = '';
                     inlineContributors.value = '';
                     inlineUnits.selectedIndex = 0;
-                    inlineImageUploadBox.innerHTML = `
-                        <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
-                        <span>Click to add image</span>
-                        <div class="overlay">Click to replace image</div>
-                    `;
+                    inlinePond.removeFiles();
                     inlineImageName.textContent = '';
 
                     // Refresh the page to show updated project
