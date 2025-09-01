@@ -77,7 +77,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/tour360/edit/{id}', 'edit')->name('tour360.edit');
         Route::post('/tour360/store', 'store')->name('tour360.store');
         Route::post('/tour360/update/{id}', 'update')->name('tour360.update');
-        Route::post('/tour360/destroy/{id}', 'destroy')->name('tour360.destroy');   
+        Route::post('/tour360/destroy/{id}', 'destroy')->name('tour360.destroy');
+        Route::post('/tour360/toggle-favorite/{id}', 'toggleFavorite')->name('tour360.toggle-favorite');
     });
 
     Route::controller(PhotoController::class)->group(function () {

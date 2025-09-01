@@ -18,9 +18,17 @@
                         <div class="row">
                             @if($favorites->count() > 0)
                                 @foreach($favorites as $favorite)
-                                    <div class="col-md-3 favourite-card">
+                                    <div class="col-md-3 favourite-card" data-favorite-id="{{ $favorite->id }}">
                                         <div class="bg-light rounded p-3">
-                                            <h4><i class="fas fa-star text-primary"></i> {{ $favorite->name }}</h4>
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h4 class="mb-0">
+                                                    <i class="fas fa-star text-primary favorite-star" 
+                                                       onclick="removeFavorite({{ $favorite->id }})" 
+                                                       title="Remove from favorites"
+                                                       style="cursor: pointer;"></i> 
+                                                    {{ $favorite->name }}
+                                                </h4>
+                                            </div>
                                             <span>{{ $favorite->assignedTour()->name }}</span>
                                             <div class="text-end mb-0 mt-3 d-flex justify-content-end">
                                                 <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter">
@@ -254,6 +262,37 @@
     </div>
 </div>
 
+<!-- Remove Favorite Confirmation Modal -->
+<div class="modal fade" id="removeFavoriteModal" tabindex="-1" aria-labelledby="removeFavoriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeFavoriteModalLabel">
+                    <i class="fas fa-star text-warning me-2"></i>
+                    Remove Favorite
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-4">
+                    <i class="fas fa-question-circle text-warning" style="font-size: 3rem;"></i>
+                </div>
+                <h6 class="mb-3">Remove from Favorites?</h6>
+                <p class="text-muted">Are you sure you want to remove this item from your favorites? This action cannot be undone.</p>
+                <div id="favoriteItemInfo" class="mt-3 p-3 bg-light rounded">
+                    <!-- Favorite item details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmRemoveFavoriteBtn">
+                    <i class="fas fa-star me-2"></i>Remove from Favorites
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
 <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
@@ -300,6 +339,16 @@
         /* Remove the static first-child styles since we'll apply them dynamically */
         .favourite-card {
             margin-bottom: 24px; /* space below each card */
+        }
+
+        /* Favorite star styling */
+        .favorite-star {
+            transition: all 0.2s ease;
+        }
+
+        .favorite-star:hover {
+            transform: scale(1.2);
+            color: #dc3545 !important;
         }
 
         /* Drag and drop styles for image upload */
@@ -1090,8 +1139,85 @@
             });
         }
 
+        let currentFavoriteId = null;
 
+        function removeFavorite(favoriteId) {
+            // Store the favorite ID for later use
+            currentFavoriteId = favoriteId;
+            
+            // Get the favorite card to extract information
+            const favoriteCard = document.querySelector(`[data-favorite-id="${favoriteId}"]`);
+            if (favoriteCard) {
+                const favoriteName = favoriteCard.querySelector('h4').textContent.trim();
+                const tourName = favoriteCard.querySelector('span').textContent.trim();
+                
+                // Populate the modal with favorite information
+                document.getElementById('favoriteItemInfo').innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-star text-primary me-3"></i>
+                        <div class="text-start">
+                            <strong>${favoriteName}</strong><br>
+                            <small class="text-muted">${tourName}</small>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Show the modal
+            const removeFavoriteModal = new bootstrap.Modal(document.getElementById('removeFavoriteModal'));
+            removeFavoriteModal.show();
+        }
 
+        // Handle confirm remove favorite button click
+        document.getElementById('confirmRemoveFavoriteBtn').addEventListener('click', function() {
+            if (!currentFavoriteId) return;
+            
+            const favoriteId = currentFavoriteId;
+            
+            fetch(`/tour360/toggle-favorite/${favoriteId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the favorite card from the DOM
+                    const favoriteCard = document.querySelector(`[data-favorite-id="${favoriteId}"]`);
+                    if (favoriteCard) {
+                        favoriteCard.remove();
+                    }
+                    
+                    // Check if there are any favorites left
+                    const remainingFavorites = document.querySelectorAll('.favourite-card');
+                    if (remainingFavorites.length === 0) {
+                        const favoritesContainer = document.getElementById('favoritesContainer');
+                        favoritesContainer.innerHTML = `
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="text-center">No favorites found.</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Hide the modal
+                    const removeFavoriteModal = bootstrap.Modal.getInstance(document.getElementById('removeFavoriteModal'));
+                    removeFavoriteModal.hide();
+                    
+                    // Reset the current favorite ID
+                    currentFavoriteId = null;
+                } else {
+                    alert(data.message || 'Failed to remove favorite');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the favorite');
+            });
+        });
 
 
         // Handle inline save button
@@ -1156,9 +1282,17 @@
                 }
 
                 const favoritesHtml = favorites.map(favorite => `
-                    <div class="col-md-3">
+                    <div class="col-md-3 favourite-card" data-favorite-id="${favorite.id}">
                         <div class="bg-light rounded p-3">
-                            <h4><i class="fas fa-star text-primary"></i> ${favorite.name}</h4>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-star text-primary favorite-star" 
+                                       onclick="removeFavorite(${favorite.id})" 
+                                       title="Remove from favorites"
+                                       style="cursor: pointer;"></i> 
+                                    ${favorite.name}
+                                </h4>
+                            </div>
                             <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
                             <div class="text-end mb-0 mt-3 d-flex justify-content-end">
                                 <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter">

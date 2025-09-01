@@ -273,4 +273,26 @@ class Tour360Controller extends Controller
             ], 500);
         }
     }
+
+    public function toggleFavorite($id)
+    {
+        try {
+            $layout = Layout::findOrFail($id);
+            
+            // Toggle the favorite status
+            $layout->is_favorite = !$layout->is_favorite;
+            $layout->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $layout->is_favorite ? 'Added to favorites' : 'Removed from favorites',
+                'is_favorite' => $layout->is_favorite,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to toggle favorite: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
