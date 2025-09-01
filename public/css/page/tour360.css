@@ -274,6 +274,10 @@ body {
 .project-stats {
     font-size: 0.875rem;
     color: #6c757d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .project-stats i {

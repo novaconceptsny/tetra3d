@@ -61,6 +61,20 @@
                             </div>
                             <div class="layout-section">
                                 <div class="row">
+                                    <!-- Create New Project Card - First in List -->
+                                    <div class="col-md-3 layout-item">
+                                        <div class="card bg-white card-layout">
+                                            <button
+                                                class="add-image-btn create-new-box"
+                                                onclick="openCreateProject({{ $company->id }})"
+                                            >
+                                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
+                                                <span class="add-image-text">Create New Project</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Existing Projects -->
                                     @if($company->projects->count() > 0)
                                         @foreach($company->projects as $project)
                                             <div class="col-md-3 layout-item">
@@ -76,31 +90,31 @@
                                                         <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                                     </div>
                                                     <div class="card-body">
-                                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
                                                             <p class="card-text mb-0">
-                                                                <span>{{ $project->name }}</span><br>
-                                                                <small>Created: {{ $project->created_at->format('F jS, Y') }}</small>
+                                                                <span>{{ $project->name }}</span>
                                                             </p>
-                                                            <div class="d-flex flex-column justify-content-end mb-2 gap-1">
-                                                                <div class="action-icons">
-                                                                    <button class="btn btn-link p-0 me-2" onclick="handleEditProject({{ $project->id }})">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </button>
-                                                                    <button class="btn btn-link p-0" onclick="handleDeleteProject({{ $project->id }})">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </div>
-
-                                                                <a href="javascript:void(0)" class="btn-enter"
-                                                                    onclick="handleEnterProject({{ $project->id }}, {{ $project->assignedTours()->count() }})"
-                                                                    >Enter
-                                                                </a>
+                                                            <div class="action-icons">
+                                                                <button class="btn btn-link p-0 me-2" onclick="handleEditProject({{ $project->id }})">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                                <button class="btn btn-link p-0" onclick="handleDeleteProject({{ $project->id }})">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                                            <div>
+                                                                <small>Created: {{ $project->created_at->format('F jS, Y') }}</small><br>
+                                                                <span  style="font-size: 0.875rem;">{{ $project->layouts_count ?? $project->layouts()->count() }} layouts</span>
+                                                            </div>
+                                                            <a href="javascript:void(0)" class="btn-enter" onclick="handleEnterProject({{ $project->id }}, {{ $project->assignedTours()->count() }})">Enter</a>
+                                                        </div>
                                                         <hr class="my-2">
-                                                        <div class="project-stats">
-                                                            <span class="me-3"><i class="fas fa-cube"></i> {{ $project->assignedTours()->count() ?? 0 }} Tours</span>
-                                                            <span class="me-3 contributors-count"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
+                                                        <div class="project-stats d-flex">
+                                                            <span><i class="fas fa-cube"></i> {{ $project->assignedTours()->count() ?? 0 }} Tours</span>
+                                                            <span class="contributors-count"><i class="fas fa-users"></i> {{ $project->contributors_count ?? 0 }} Contributors</span>
                                                             <span><i class="fas fa-folder"></i> {{ $project->artwork_collections_count ?? 0 }} Collections</span>
                                                         </div>
                                                     </div>
@@ -108,17 +122,6 @@
                                             </div>
                                         @endforeach
                                     @endif
-                                    <div class="col-md-3 layout-item">
-                                        <div class="card bg-white card-layout">
-                                            <button
-                                                class="add-image-btn create-new-box"
-                                                onclick="openCreateProject({{ $company->id }})"
-                                            >
-                                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                                <span class="add-image-text">Create New Project</span>
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -196,7 +199,7 @@
                 <button type="button" class="btn btn-primary mb-3" id="inlineSaveButton" style="width: 200px" onclick="handleCreateProject()">Create</button>
             </div>
             <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-primary" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px">Cancel</button>
+                <button type="button" class="btn btn-danger" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px">Cancel</button>
             </div>
         </div>
     </div>
@@ -284,17 +287,14 @@
         }
 
         .btn-enter {
-            display: flex;
-            /* width: 5px; */
-            align-items: center;
-            justify-content: center;
+            display: inline;
             background: transparent;
             color: #203DCE;
             padding: 0.5rem;
             text-decoration: none;
-            border: 1px solid #e0e0e0;
-            height: 32px;
-            transition: all 0.2s ease;
+            border: none;
+            height: auto;
+            transition: color 0.2s ease;
         }
 
         /* Remove the static first-child styles since we'll apply them dynamically */

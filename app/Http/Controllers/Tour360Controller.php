@@ -24,7 +24,7 @@ class Tour360Controller extends Controller
             // For super admin, get all companies with their projects
             $companies = Company::with(['projects' => function($query) {
                 $query->orderBy('created_at', 'desc')
-                      ->withCount(['tours', 'artworkCollections', 'contributors']);
+                      ->withCount(['tours', 'artworkCollections', 'contributors', 'layouts']);
             }])->get();
 
             $favorites = Layout::where('is_favorite', true)->get();
@@ -33,7 +33,7 @@ class Tour360Controller extends Controller
             $companies = Company::where('id', $user->company_id)
                 ->with(['projects' => function($query) {
                     $query->orderBy('created_at', 'desc')
-                          ->withCount(['tours', 'artworkCollections', 'contributors']);
+                          ->withCount(['tours', 'artworkCollections', 'contributors', 'layouts']);
                 }])
                 ->get();
             $company = Company::findOrFail($user->company_id);

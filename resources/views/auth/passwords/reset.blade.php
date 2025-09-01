@@ -9,7 +9,42 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"/>
     <!-- own css file  -->
     <link rel="stylesheet" href="{{ asset('redesign/css/style.css') }}"/>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
     @include('backend.includes.partial.favicon')
+    
+    <style>
+        .password-input-wrapper {
+            position: relative;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            font-size: 16px;
+            z-index: 10;
+        }
+        
+        .password-toggle-btn:hover {
+            color: #495057;
+        }
+        
+        .password-toggle-btn:focus {
+            outline: none;
+            color: #007bff;
+        }
+        
+        .password-input-wrapper .form-control {
+            padding-right: 40px;
+        }
+    </style>
 </head>
 <body class="login_body">
 
@@ -44,19 +79,29 @@
                         
                         <div class="form-group login-custum-form-group">
                             <label for="password">{{ __('New Password') }}</label>
-                            <input type="password" id="password" placeholder="New Password"
-                                   class="form-control @error('password') is-invalid @enderror" name="password"
-                                   required autocomplete="new-password"
-                            />
+                            <div class="password-input-wrapper position-relative">
+                                <input type="password" id="password" placeholder="New Password"
+                                       class="form-control @error('password') is-invalid @enderror" name="password"
+                                       required autocomplete="new-password"
+                                />
+                                <button type="button" class="password-toggle-btn position-absolute" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye" id="password-eye"></i>
+                                </button>
+                            </div>
                             <x-error field="password"/>
                         </div>
                         
                         <div class="form-group login-custum-form-group">
                             <label for="password-confirm">{{ __('Confirm New Password') }}</label>
-                            <input type="password" id="password-confirm" placeholder="Confirm New Password"
-                                   class="form-control" name="password_confirmation"
-                                   required autocomplete="new-password"
-                            />
+                            <div class="password-input-wrapper position-relative">
+                                <input type="password" id="password-confirm" placeholder="Confirm New Password"
+                                       class="form-control" name="password_confirmation"
+                                       required autocomplete="new-password"
+                                />
+                                <button type="button" class="password-toggle-btn position-absolute" onclick="togglePassword('password-confirm')">
+                                    <i class="fas fa-eye" id="password-confirm-eye"></i>
+                                </button>
+                            </div>
                         </div>
                         
                         <button type="submit" class="btn-login btn form-control">{{ __('Reset Password') }}</button>
@@ -87,5 +132,22 @@
 ></script>
 
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+
+<script>
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const eyeIcon = document.getElementById(inputId + '-eye');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+</script>
 </body>
 </html>
