@@ -282,14 +282,16 @@ class Tour360Controller extends Controller
         try {
             $layout = Layout::findOrFail($id);
             
-            // Toggle the favorite status
-            $layout->is_favorite = !$layout->is_favorite;
-            $layout->save();
+            // Use direct database update to avoid updating timestamps
+            $newFavoriteStatus = !$layout->is_favorite;
+            \DB::table('layouts')
+                ->where('id', $id)
+                ->update(['is_favorite' => $newFavoriteStatus]);
 
             return response()->json([
                 'success' => true,
-                'message' => $layout->is_favorite ? 'Added to favorites' : 'Removed from favorites',
-                'is_favorite' => $layout->is_favorite,
+                'message' => $newFavoriteStatus ? 'Added to favorites' : 'Removed from favorites',
+                'is_favorite' => $newFavoriteStatus,
             ]);
         } catch (\Exception $e) {
             return response()->json([

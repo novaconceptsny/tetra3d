@@ -57,9 +57,12 @@ class UpdatedTourSwitcher extends SlideOver
 
     public function toggleFavorite($layoutId)
     {
-        $layout              = Layout::findOrFail($layoutId);
-        $layout->is_favorite = ! $layout->is_favorite;
-        $layout->save();
+        $layout = Layout::findOrFail($layoutId);
+        
+        // Use direct database update to avoid updating timestamps
+        \DB::table('layouts')
+            ->where('id', $layoutId)
+            ->update(['is_favorite' => !$layout->is_favorite]);
 
         $user = auth()->user();
 
