@@ -29,6 +29,12 @@
                                                     {{ $favorite->name }}
                                                 </h4>
                                             </div>
+                                            <div class="mb-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-folder me-1"></i>
+                                                    {{ $favorite->project ? $favorite->project->name : 'No Project' }}
+                                                </small>
+                                            </div>
                                             <span>{{ $favorite->assignedTour()->name }}</span>
                                             <div class="text-end mb-0 mt-3 d-flex justify-content-end">
                                                 <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter">
@@ -1149,6 +1155,7 @@
             const favoriteCard = document.querySelector(`[data-favorite-id="${favoriteId}"]`);
             if (favoriteCard) {
                 const favoriteName = favoriteCard.querySelector('h4').textContent.trim();
+                const projectName = favoriteCard.querySelector('small.text-muted').textContent.trim();
                 const tourName = favoriteCard.querySelector('span').textContent.trim();
                 
                 // Populate the modal with favorite information
@@ -1157,6 +1164,7 @@
                         <i class="fas fa-star text-primary me-3"></i>
                         <div class="text-start">
                             <strong>${favoriteName}</strong><br>
+                            <small class="text-muted">${projectName}</small><br>
                             <small class="text-muted">${tourName}</small>
                         </div>
                     </div>
@@ -1292,6 +1300,12 @@
                                        style="cursor: pointer;"></i> 
                                     ${favorite.name}
                                 </h4>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-folder me-1"></i>
+                                    ${favorite.project ? favorite.project.name : 'No Project'}
+                                </small>
                             </div>
                             <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
                             <div class="text-end mb-0 mt-3 d-flex justify-content-end">
