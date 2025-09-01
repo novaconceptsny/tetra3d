@@ -39,6 +39,24 @@ body {
   display: inline-block;
 }
 
+/* Add spacing between favorite cards */
+.favourites-section .favourite-card {
+  margin-bottom: 20px;
+}
+
+.favourites-section .favourite-card .bg-light {
+  margin: 0 10px;
+}
+
+/* Ensure proper spacing in the grid */
+.favourites-section .row {
+  margin: 0 -10px;
+}
+
+.favourites-section .col-md-3 {
+  padding: 0 10px;
+}
+
 .projects-section .layout-section .card {
   height: 100%;
 }
@@ -186,7 +204,8 @@ body {
 }
 
 .layout-item .card .card-body {
-    height: 100px; /* Remaining height for the card body */
+    height: fit-content; /* Remaining height for the card body */
+    min-height: 170px;
 }
 
 .create-project-section {

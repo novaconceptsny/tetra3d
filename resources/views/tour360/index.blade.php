@@ -35,9 +35,9 @@
                                                     {{ $favorite->project ? $favorite->project->name : 'No Project' }}
                                                 </small>
                                             </div>
-                                            <span>{{ $favorite->assignedTour()->name }}</span>
-                                            <div class="text-end mb-0 mt-3 d-flex justify-content-end">
-                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <span>{{ $favorite->assignedTour()->name }}</span>
+                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter ms-2">
                                                     Enter
                                                 </a>
                                             </div>
@@ -118,12 +118,14 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <div class="mb-1">
                                                             <div>
                                                                 <small>Created: {{ $project->created_at->format('F jS, Y') }}</small><br>
-                                                                <span  style="font-size: 0.875rem;">{{ $project->layouts_count ?? $project->layouts()->count() }} layouts</span>
+                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                    <span style="font-size: 0.875rem;">{{ $project->layouts_count ?? $project->layouts()->count() }} layouts</span>
+                                                                    <a href="javascript:void(0)" class="btn-enter ms-2" onclick="handleEnterProject({{ $project->id }}, {{ $project->assignedTours()->count() }})">Enter</a>
+                                                                </div>
                                                             </div>
-                                                            <a href="javascript:void(0)" class="btn-enter" onclick="handleEnterProject({{ $project->id }}, {{ $project->assignedTours()->count() }})">Enter</a>
                                                         </div>
                                                         <hr class="my-2">
                                                         <div class="project-stats d-flex">
@@ -1307,9 +1309,9 @@
                                     ${favorite.project ? favorite.project.name : 'No Project'}
                                 </small>
                             </div>
-                            <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
-                            <div class="text-end mb-0 mt-3 d-flex justify-content-end">
-                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
+                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter ms-2">
                                     Enter
                                 </a>
                             </div>
