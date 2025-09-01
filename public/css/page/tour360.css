@@ -182,7 +182,6 @@ body {
 }
 
 .layout-item {
-  height: 350px;
   width: 400px;
 }
 
@@ -310,4 +309,11 @@ body {
 
 .card-body {
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.action-icons {
+  display: flex;
+  flex-wrap: nowrap;
 }

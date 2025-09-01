@@ -14,9 +14,9 @@
                                     <span class="input-group-text">
                                         <i class="fas fa-search"></i>
                                     </span>
-                                    <input type="text" 
-                                           class="form-control search-input global-search-input" 
-                                           placeholder="Search all layouts, tours, and projects..." 
+                                    <input type="text"
+                                           class="form-control search-input global-search-input"
+                                           placeholder="Search all layouts, tours, and projects..."
                                            id="globalSearchInput"
                                            style="min-width: 300px;">
                                     <button class="btn btn-outline-secondary" type="button" id="clearGlobalSearch">
@@ -30,12 +30,12 @@
                                     <label class="btn btn-outline-primary btn-sm" for="searchLayouts">
                                         <i class="fas fa-cube me-1"></i>Layouts
                                     </label>
-                                    
+
                                     <input type="checkbox" class="btn-check" id="searchTours" checked>
                                     <label class="btn btn-outline-primary btn-sm" for="searchTours">
                                         <i class="fas fa-map me-1"></i>Tours
                                     </label>
-                                    
+
                                     <input type="checkbox" class="btn-check" id="searchProjects" checked>
                                     <label class="btn btn-outline-primary btn-sm" for="searchProjects">
                                         <i class="fas fa-folder me-1"></i>Projects
@@ -74,9 +74,9 @@
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="text" 
-                                   class="form-control search-input" 
-                                   placeholder="Search favorites..." 
+                            <input type="text"
+                                   class="form-control search-input"
+                                   placeholder="Search favorites..."
                                    id="favoritesSearchInput"
                                    style="min-width: 250px;">
                         </div>
@@ -91,10 +91,10 @@
                                         <div class="bg-light rounded p-3">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
                                                 <h4 class="mb-0">
-                                                    <i class="fas fa-star text-primary favorite-star" 
-                                                       onclick="removeFavorite({{ $favorite->id }})" 
+                                                    <i class="fas fa-star text-primary favorite-star"
+                                                       onclick="removeFavorite({{ $favorite->id }})"
                                                        title="Remove from favorites"
-                                                       style="cursor: pointer;"></i> 
+                                                       style="cursor: pointer;"></i>
                                                     {{ $favorite->name }}
                                                 </h4>
                                             </div>
@@ -141,9 +141,9 @@
                                             <span class="input-group-text">
                                                 <i class="fas fa-search"></i>
                                             </span>
-                                            <input type="text" 
-                                                   class="form-control search-input" 
-                                                   placeholder="Search projects..." 
+                                            <input type="text"
+                                                   class="form-control search-input"
+                                                   placeholder="Search projects..."
                                                    data-company-id="{{ $company->id }}"
                                                    style="min-width: 250px;">
                                         </div>
@@ -170,7 +170,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Existing Projects -->
                                     @if($company->projects->count() > 0)
                                         @foreach($company->projects as $project)
@@ -187,7 +187,7 @@
                                                         <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                                     </div>
                                                     <div class="card-body">
-                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2 flex-grow-1">
                                                             <p class="card-text mb-0">
                                                                 <span>{{ $project->name }}</span>
                                                             </p>
@@ -516,7 +516,7 @@
             .filepond--root {
                 font-size: 14px;
             }
-            
+
             .filepond--drop-label {
                 font-size: 12px;
             }
@@ -715,13 +715,13 @@
             .search-container .input-group {
                 min-width: 200px;
             }
-            
+
             .d-flex.align-items-center.gap-3 {
                 flex-direction: column;
                 align-items: stretch !important;
                 gap: 1rem !important;
             }
-            
+
             .sort-dropdown {
                 align-self: flex-end;
             }
@@ -940,11 +940,11 @@
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .search-filters .btn-group {
                 justify-content: center;
             }
-            
+
             .global-search-input {
                 min-width: 250px;
             }
@@ -1028,7 +1028,7 @@
 
         // Initialize FilePond
         FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType, FilePondPluginImageEdit);
-        
+
         // Debug: Check if plugins are loaded
         console.log('FilePond plugins loaded:', {
             imagePreview: typeof FilePondPluginImagePreview !== 'undefined',
@@ -1197,7 +1197,7 @@
             console.log('File added to inline pond:', file);
             console.log('File type:', file.fileType);
             console.log('File is image:', file.fileType.includes('image'));
-            
+
             // Check if edit button is present
             setTimeout(() => {
                 const editButton = document.querySelector('.filepond--image-edit-button');
@@ -1207,7 +1207,7 @@
                     console.log('Edit button opacity:', editButton.style.opacity);
                 }
             }, 100);
-            
+
             // Update image name display
             if (inlineImageName) {
                 inlineImageName.textContent = file.filename;
@@ -1308,7 +1308,7 @@
         function closeCreateProject() {
             dashboardSection.style.display = 'block';
             createProjectSection.style.display = 'none';
-            
+
             // Reset FilePond
             inlinePond.removeFiles();
             if (inlineImageName) {
@@ -1547,7 +1547,7 @@
                 // Show the modal instead of alert
                 const noToursModal = new bootstrap.Modal(document.getElementById('noToursModal'));
                 noToursModal.show();
-                
+
                 // Set up the Edit Project button to edit the current project
                 document.getElementById('editProjectBtn').onclick = function() {
                     noToursModal.hide();
@@ -1555,10 +1555,10 @@
                 };
                 return;
             }
-            
+
             // If tours exist, proceed with the original Livewire dispatch
             Livewire.dispatch('slide-over.open', {
-                component: 'updated-tour-switcher', 
+                component: 'updated-tour-switcher',
                 arguments: {'project': projectId}
             });
         }
@@ -1568,14 +1568,14 @@
         function removeFavorite(favoriteId) {
             // Store the favorite ID for later use
             currentFavoriteId = favoriteId;
-            
+
             // Get the favorite card to extract information
             const favoriteCard = document.querySelector(`[data-favorite-id="${favoriteId}"]`);
             if (favoriteCard) {
                 const favoriteName = favoriteCard.querySelector('h4').textContent.trim();
                 const projectName = favoriteCard.querySelector('small.text-muted').textContent.trim();
                 const tourName = favoriteCard.querySelector('span').textContent.trim();
-                
+
                 // Populate the modal with favorite information
                 document.getElementById('favoriteItemInfo').innerHTML = `
                     <div class="d-flex align-items-center">
@@ -1588,7 +1588,7 @@
                     </div>
                 `;
             }
-            
+
             // Show the modal
             const removeFavoriteModal = new bootstrap.Modal(document.getElementById('removeFavoriteModal'));
             removeFavoriteModal.show();
@@ -1597,9 +1597,9 @@
         // Handle confirm remove favorite button click
         document.getElementById('confirmRemoveFavoriteBtn').addEventListener('click', function() {
             if (!currentFavoriteId) return;
-            
+
             const favoriteId = currentFavoriteId;
-            
+
             fetch(`/tour360/toggle-favorite/${favoriteId}`, {
                 method: 'POST',
                 headers: {
@@ -1615,7 +1615,7 @@
                     if (favoriteCard) {
                         favoriteCard.remove();
                     }
-                    
+
                     // Check if there are any favorites left
                     const remainingFavorites = document.querySelectorAll('.favourite-card');
                     if (remainingFavorites.length === 0) {
@@ -1628,11 +1628,11 @@
                             </div>
                         `;
                     }
-                    
+
                     // Hide the modal
                     const removeFavoriteModal = bootstrap.Modal.getInstance(document.getElementById('removeFavoriteModal'));
                     removeFavoriteModal.hide();
-                    
+
                     // Reset the current favorite ID
                     currentFavoriteId = null;
                 } else {
@@ -1694,7 +1694,7 @@
             Livewire.on('favoritesUpdated', (event) => {
                 const favoritesContainer = document.getElementById('favoritesContainer');
                 const favorites = event.favorites;
-                
+
                 console.log(favorites);
                 if (favorites.length === 0) {
                     favoritesContainer.innerHTML = `
@@ -1712,10 +1712,10 @@
                         <div class="bg-light rounded p-3">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h4 class="mb-0">
-                                    <i class="fas fa-star text-primary favorite-star" 
-                                       onclick="removeFavorite(${favorite.id})" 
+                                    <i class="fas fa-star text-primary favorite-star"
+                                       onclick="removeFavorite(${favorite.id})"
                                        title="Remove from favorites"
-                                       style="cursor: pointer;"></i> 
+                                       style="cursor: pointer;"></i>
                                     ${favorite.name}
                                 </h4>
                             </div>
@@ -1753,30 +1753,30 @@
         // Search functionality for project cards and favorites
         document.addEventListener('DOMContentLoaded', function() {
             const searchInputs = document.querySelectorAll('.search-input');
-            
+
             // Global search functionality
             const globalSearchInput = document.getElementById('globalSearchInput');
             const globalSearchResults = document.getElementById('globalSearchResults');
             const searchResultsContainer = document.getElementById('searchResultsContainer');
             const clearGlobalSearchBtn = document.getElementById('clearGlobalSearch');
-            
+
             // Search filters
             const searchLayoutsCheckbox = document.getElementById('searchLayouts');
             const searchToursCheckbox = document.getElementById('searchTours');
             const searchProjectsCheckbox = document.getElementById('searchProjects');
-            
+
             let searchTimeout;
-            
+
             // Global search function
             function performGlobalSearch(searchTerm) {
                 if (!searchTerm.trim()) {
                     globalSearchResults.style.display = 'none';
                     return;
                 }
-                
+
                 const results = [];
                 const term = searchTerm.toLowerCase().trim();
-                
+
                 // Search in favorites (layouts)
                 if (searchLayoutsCheckbox.checked) {
                     // Search through all layouts from server data
@@ -1786,16 +1786,16 @@
                         // Get tour name - we need to fetch it separately since it's not loaded
                         const tourName = layout.tour ? layout.tour.name : '';
                         const userName = layout.user ? `${layout.user.first_name} ${layout.user.last_name}` : '';
-                        
-                        if (layoutName.toLowerCase().includes(term) || 
-                            projectName.toLowerCase().includes(term) || 
+
+                        if (layoutName.toLowerCase().includes(term) ||
+                            projectName.toLowerCase().includes(term) ||
                             tourName.toLowerCase().includes(term) ||
                             userName.toLowerCase().includes(term)) {
-                            
+
                             // Check if this layout is in favorites (for star icon)
                             const isFavorite = layout.is_favorite;
                             const starIcon = isFavorite ? 'fas fa-star text-primary' : 'far fa-star text-muted';
-                            
+
                             results.push({
                                 type: 'layout',
                                 id: layout.id,
@@ -1809,7 +1809,7 @@
                         }
                     });
                 }
-                
+
                 // Search in projects
                 if (searchProjectsCheckbox.checked) {
                     const projectCards = document.querySelectorAll('.layout-item .card[data-project-id]');
@@ -1818,14 +1818,14 @@
                         const projectData = card.getAttribute('data-project-name') || '';
                         const projectUnits = card.getAttribute('data-project-units') || '';
                         const projectId = card.getAttribute('data-project-id');
-                        
-                        if (projectName.toLowerCase().includes(term) || 
-                            projectData.toLowerCase().includes(term) || 
+
+                        if (projectName.toLowerCase().includes(term) ||
+                            projectData.toLowerCase().includes(term) ||
                             projectUnits.toLowerCase().includes(term)) {
-                            
+
                             const enterBtn = card.querySelector('.btn-enter');
                             const tourCount = card.querySelector('.project-stats span:first-child')?.textContent || '';
-                            
+
                             results.push({
                                 type: 'project',
                                 id: projectId,
@@ -1837,7 +1837,7 @@
                         }
                     });
                 }
-                
+
                 // Search in tours (if available in the DOM)
                 if (searchToursCheckbox.checked) {
                     // Search through all tours from server data
@@ -1845,11 +1845,11 @@
                         const tourName = tour.name || '';
                         const companyName = tour.company ? tour.company.name : '';
                         const tourDescription = tour.description || '';
-                        
-                        if (tourName.toLowerCase().includes(term) || 
+
+                        if (tourName.toLowerCase().includes(term) ||
                             companyName.toLowerCase().includes(term) ||
                             tourDescription.toLowerCase().includes(term)) {
-                            
+
                             results.push({
                                 type: 'tour',
                                 id: tour.id,
@@ -1862,11 +1862,11 @@
                         }
                     });
                 }
-                
+
                 // Display results
                 displaySearchResults(results, searchTerm);
             }
-            
+
             // Display search results
             function displaySearchResults(results, searchTerm) {
                 if (results.length === 0) {
@@ -1881,7 +1881,7 @@
                     const resultsHtml = results.map(result => {
                         const highlightedTitle = highlightSearchTerm(result.title, searchTerm);
                         const highlightedSubtitle = highlightSearchTerm(result.subtitle, searchTerm);
-                        
+
                         // Handle different action types
                         let actionButton = '';
                         if (result.type === 'layout') {
@@ -1906,7 +1906,7 @@
                                 </div>
                             `;
                         }
-                        
+
                         return `
                             <div class="search-result-item" data-type="${result.type}" data-id="${result.id}">
                                 <div class="search-result-icon ${result.type}">
@@ -1920,20 +1920,20 @@
                             </div>
                         `;
                     }).join('');
-                    
+
                     searchResultsContainer.innerHTML = resultsHtml;
                 }
-                
+
                 globalSearchResults.style.display = 'block';
             }
-            
+
             // Highlight search terms
             function highlightSearchTerm(text, searchTerm) {
                 if (!searchTerm) return text;
                 const regex = new RegExp(`(${searchTerm})`, 'gi');
                 return text.replace(regex, '<span class="search-highlight">$1</span>');
             }
-            
+
             // Get icon for result type
             function getIconForType(type) {
                 switch (type) {
@@ -1943,24 +1943,24 @@
                     default: return 'fa-file';
                 }
             }
-            
+
             // Global search event listeners
             globalSearchInput.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
                 const searchTerm = this.value;
-                
+
                 searchTimeout = setTimeout(() => {
                     performGlobalSearch(searchTerm);
                 }, 300);
             });
-            
+
             // Clear global search
             clearGlobalSearchBtn.addEventListener('click', function() {
                 globalSearchInput.value = '';
                 globalSearchResults.style.display = 'none';
                 globalSearchInput.focus();
             });
-            
+
             // Search filter change events
             [searchLayoutsCheckbox, searchToursCheckbox, searchProjectsCheckbox].forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -1969,7 +1969,7 @@
                     }
                 });
             });
-            
+
             // Global keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 // Ctrl/Cmd + K to focus global search
@@ -1977,33 +1977,33 @@
                     e.preventDefault();
                     globalSearchInput.focus();
                 }
-                
+
                 // Escape to clear global search
                 if (e.key === 'Escape' && document.activeElement === globalSearchInput) {
                     globalSearchInput.value = '';
                     globalSearchResults.style.display = 'none';
                 }
             });
-            
+
             searchInputs.forEach(input => {
                 input.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase().trim();
-                    
+
                     // Handle favorites search
                     if (this.id === 'favoritesSearchInput') {
                         const favoritesSection = this.closest('.favourites-section');
                         const favoriteCards = favoritesSection.querySelectorAll('.favourite-card');
-                        
+
                         favoriteCards.forEach(card => {
                             const favoriteName = card.querySelector('h4')?.textContent.toLowerCase() || '';
                             const projectName = card.querySelector('small.text-muted')?.textContent.toLowerCase() || '';
                             const tourName = card.querySelector('span')?.textContent.toLowerCase() || '';
-                            
+
                             // Check if search term matches favorite name, project name, or tour name
-                            const matches = favoriteName.includes(searchTerm) || 
-                                          projectName.includes(searchTerm) || 
+                            const matches = favoriteName.includes(searchTerm) ||
+                                          projectName.includes(searchTerm) ||
                                           tourName.includes(searchTerm);
-                            
+
                             if (matches || searchTerm === '') {
                                 card.style.display = '';
                                 card.style.opacity = '1';
@@ -2012,11 +2012,11 @@
                                 card.style.opacity = '0';
                             }
                         });
-                        
+
                         // Show/hide "no results" message for favorites
                         const visibleFavorites = favoritesSection.querySelectorAll('.favourite-card:not([style*="display: none"])');
                         let noResultsMsg = favoritesSection.querySelector('.no-results-message');
-                        
+
                         if (searchTerm !== '' && visibleFavorites.length === 0) {
                             if (!noResultsMsg) {
                                 noResultsMsg = document.createElement('div');
@@ -2040,20 +2040,20 @@
                         const companyId = this.getAttribute('data-company-id');
                         const companySection = this.closest('.company-section');
                         const projectCards = companySection.querySelectorAll('.layout-item');
-                        
+
                         projectCards.forEach(card => {
                             const projectName = card.querySelector('.card-text span')?.textContent.toLowerCase() || '';
                             const projectData = card.querySelector('.card');
-                            
+
                             if (projectData) {
                                 const projectNameData = projectData.getAttribute('data-project-name')?.toLowerCase() || '';
                                 const projectUnits = projectData.getAttribute('data-project-units')?.toLowerCase() || '';
-                                
+
                                 // Check if search term matches project name, units, or any other relevant data
-                                const matches = projectName.includes(searchTerm) || 
-                                              projectNameData.includes(searchTerm) || 
+                                const matches = projectName.includes(searchTerm) ||
+                                              projectNameData.includes(searchTerm) ||
                                               projectUnits.includes(searchTerm);
-                                
+
                                 if (matches || searchTerm === '') {
                                     card.style.display = '';
                                     card.style.opacity = '1';
@@ -2063,11 +2063,11 @@
                                 }
                             }
                         });
-                        
+
                         // Show/hide "no results" message for projects
                         const visibleCards = companySection.querySelectorAll('.layout-item:not([style*="display: none"])');
                         let noResultsMsg = companySection.querySelector('.no-results-message');
-                        
+
                         if (searchTerm !== '' && visibleCards.length <= 1) { // 1 because "Create New Project" card is always visible
                             if (!noResultsMsg) {
                                 noResultsMsg = document.createElement('div');
@@ -2085,7 +2085,7 @@
                         }
                     }
                 });
-                
+
                 // Clear search when input is cleared
                 input.addEventListener('keyup', function(e) {
                     if (e.key === 'Escape') {
@@ -2110,7 +2110,7 @@
                         e.preventDefault();
                         this.focus();
                     }
-                    
+
                     // Enter to clear search if it has content
                     if (e.key === 'Enter' && this.value.trim() !== '') {
                         e.preventDefault();
@@ -2168,13 +2168,13 @@
                     } else {
                         starIcon.className = 'far fa-star text-muted';
                     }
-                    
+
                     // Update the layout data in allLayouts array
                     const layoutIndex = allLayouts.findIndex(layout => layout.id === layoutId);
                     if (layoutIndex !== -1) {
                         allLayouts[layoutIndex].is_favorite = data.is_favorite;
                     }
-                    
+
                     // Show feedback
                     console.log(data.message);
                 } else {

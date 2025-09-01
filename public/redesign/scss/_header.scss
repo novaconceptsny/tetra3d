@@ -84,7 +84,7 @@ header#header {
         position: relative;
       display: flex;
       align-items: center;
-      justify-content: space-evenly;
+      justify-content: space-between;
       width: 100%;
       padding: 0;
       .navbar-brand {
@@ -113,13 +113,11 @@ header#header {
       .navbar-collapse {
         display: flexbox;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
         height: 100% !important;
         .navbar-nav {
           &.link-nav{
-          //position: absolute !important;
-          //inset: 0 70px 0 120px !important;
-          //justify-content: center !important;
+          margin-left: 200px;
           }
           // display: flex !important;
           align-items: center !important;
@@ -333,7 +331,7 @@ header#header {
                   margin-left: -10px;
                 }
                 img{
-                  width: 39px !important;
+                  width: 50px !important;
                   height: 39px !important;
                   border-radius: 50% !important;
                 }
