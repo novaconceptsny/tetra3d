@@ -28,7 +28,15 @@ class Tour360Controller extends Controller
             }])->get();
 
             $favorites = Layout::where('is_favorite', true)
-                ->with('project')
+                ->with(['project', 'tour'])
+                ->get();
+                
+            // Get all layouts for super admin
+            $allLayouts = Layout::with(['project', 'user', 'tour'])
+                ->get();
+                
+            // Get all tours for super admin
+            $allTours = Tour::with(['company'])
                 ->get();
         } else {
             // For regular users, get only their company with its projects
@@ -46,12 +54,22 @@ class Tour360Controller extends Controller
             // Get favorite layouts for those users
             $favorites = Layout::where('is_favorite', true)
                 ->whereIn('user_id', $userIds)
-                ->with('project')
+                ->with(['project', 'tour'])
+                ->get();
+                
+            // Get all layouts for users in this company
+            $allLayouts = Layout::whereIn('user_id', $userIds)
+                ->with(['project', 'user', 'tour'])
+                ->get();
+                
+            // Get all tours for this company
+            $allTours = Tour::where('company_id', $company->id)
+                ->with(['company'])
                 ->get();
         }
 
 
-        return view('tour360.index', compact('companies', 'favorites'));
+        return view('tour360.index', compact('companies', 'favorites', 'allLayouts', 'allTours'));
     }
 
     public function create($companyId)

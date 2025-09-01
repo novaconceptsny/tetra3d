@@ -2,6 +2,61 @@
 
 @section('content')
 <div class="container">
+    <!-- Global Search Section -->
+    <div class="global-search-section mb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="search-container flex-grow-1 me-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control search-input global-search-input" 
+                                           placeholder="Search all layouts, tours, and projects..." 
+                                           id="globalSearchInput"
+                                           style="min-width: 300px;">
+                                    <button class="btn btn-outline-secondary" type="button" id="clearGlobalSearch">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="search-filters">
+                                <div class="btn-group" role="group">
+                                    <input type="checkbox" class="btn-check" id="searchLayouts" checked>
+                                    <label class="btn btn-outline-primary btn-sm" for="searchLayouts">
+                                        <i class="fas fa-cube me-1"></i>Layouts
+                                    </label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="searchTours" checked>
+                                    <label class="btn btn-outline-primary btn-sm" for="searchTours">
+                                        <i class="fas fa-map me-1"></i>Tours
+                                    </label>
+                                    
+                                    <input type="checkbox" class="btn-check" id="searchProjects" checked>
+                                    <label class="btn btn-outline-primary btn-sm" for="searchProjects">
+                                        <i class="fas fa-folder me-1"></i>Projects
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="search-results mt-3" id="globalSearchResults" style="display: none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="text-muted mb-2">Search Results</h6>
+                                    <div id="searchResultsContainer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="dashboard-section" class="row">
         <div class="col-12">
             <div class="favourites-section">
@@ -732,6 +787,199 @@
         .search-container:hover .search-input {
             border-color: #ced4da;
         }
+
+        /* Global Search Styles */
+        .global-search-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .global-search-input {
+            font-size: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .global-search-input:focus {
+            box-shadow: 0 0 0 0.3rem rgba(0, 123, 255, 0.25);
+            border-color: #007bff;
+        }
+
+        .search-filters .btn-group {
+            flex-wrap: nowrap;
+        }
+
+        .search-filters .btn {
+            border-radius: 6px;
+            margin: 0 2px;
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        .search-filters .btn-check:checked + .btn {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+
+        .search-filters .btn-check:not(:checked) + .btn:hover {
+            background-color: #e9ecef;
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        /* Search Results Styles */
+        .search-results {
+            border-top: 1px solid #e9ecef;
+            padding-top: 15px;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .search-result-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .search-result-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            color: white;
+        }
+
+        .search-result-icon.layout {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .search-result-icon.tour {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+        }
+
+        .search-result-icon.project {
+            background: linear-gradient(135deg, #fd7e14, #e83e8c);
+        }
+
+        .search-result-content {
+            flex: 1;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 2px;
+        }
+
+        .search-result-subtitle {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .search-result-action {
+            margin-left: 12px;
+        }
+
+        .search-result-action .btn {
+            font-size: 12px;
+            padding: 4px 12px;
+        }
+
+        /* Search highlighting */
+        .search-highlight {
+            background-color: #fff3cd;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        /* No results styling */
+        .no-search-results {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+
+        .no-search-results i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Search loading state */
+        .search-loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .search-loading .spinner-border {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        /* Responsive global search */
+        @media (max-width: 768px) {
+            .global-search-section .d-flex {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-filters .btn-group {
+                justify-content: center;
+            }
+            
+            .global-search-input {
+                min-width: 250px;
+            }
+        }
+
+        /* Search result star button styles */
+        .search-result-action .btn-outline-primary {
+            border-color: #dee2e6;
+            color: #6c757d;
+        }
+
+        .search-result-action .btn-outline-primary:hover {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .search-result-action .btn-outline-primary i.fas {
+            color: #007bff;
+        }
+
+        .search-result-action .btn-outline-primary i.far {
+            color: #6c757d;
+        }
+
+        /* Enhanced search result item spacing */
+        .search-result-item {
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .search-result-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 @endsection
 
@@ -753,6 +1001,14 @@
 
         const favoriteLayouts =  @json($favorites);
         console.log(favoriteLayouts);
+
+        // Add all layouts data for global search
+        const allLayouts = @json($allLayouts);
+        console.log('All layouts for search:', allLayouts);
+
+        // Add all tours data for global search
+        const allTours = @json($allTours);
+        console.log('All tours for search:', allTours);
 
         // Add references to dashboard and create project sections
         const dashboardSection = document.getElementById('dashboard-section');
@@ -1498,6 +1754,237 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInputs = document.querySelectorAll('.search-input');
             
+            // Global search functionality
+            const globalSearchInput = document.getElementById('globalSearchInput');
+            const globalSearchResults = document.getElementById('globalSearchResults');
+            const searchResultsContainer = document.getElementById('searchResultsContainer');
+            const clearGlobalSearchBtn = document.getElementById('clearGlobalSearch');
+            
+            // Search filters
+            const searchLayoutsCheckbox = document.getElementById('searchLayouts');
+            const searchToursCheckbox = document.getElementById('searchTours');
+            const searchProjectsCheckbox = document.getElementById('searchProjects');
+            
+            let searchTimeout;
+            
+            // Global search function
+            function performGlobalSearch(searchTerm) {
+                if (!searchTerm.trim()) {
+                    globalSearchResults.style.display = 'none';
+                    return;
+                }
+                
+                const results = [];
+                const term = searchTerm.toLowerCase().trim();
+                
+                // Search in favorites (layouts)
+                if (searchLayoutsCheckbox.checked) {
+                    // Search through all layouts from server data
+                    allLayouts.forEach(layout => {
+                        const layoutName = layout.name || '';
+                        const projectName = layout.project ? layout.project.name : '';
+                        // Get tour name - we need to fetch it separately since it's not loaded
+                        const tourName = layout.tour ? layout.tour.name : '';
+                        const userName = layout.user ? `${layout.user.first_name} ${layout.user.last_name}` : '';
+                        
+                        if (layoutName.toLowerCase().includes(term) || 
+                            projectName.toLowerCase().includes(term) || 
+                            tourName.toLowerCase().includes(term) ||
+                            userName.toLowerCase().includes(term)) {
+                            
+                            // Check if this layout is in favorites (for star icon)
+                            const isFavorite = layout.is_favorite;
+                            const starIcon = isFavorite ? 'fas fa-star text-primary' : 'far fa-star text-muted';
+                            
+                            results.push({
+                                type: 'layout',
+                                id: layout.id,
+                                title: layoutName,
+                                subtitle: `${projectName} • ${tourName} • ${userName}`,
+                                action: `window.location.href='/tours/${layout.tour_id}?layout_id=${layout.id}'`,
+                                element: null, // Not in DOM, so null
+                                isFavorite: isFavorite,
+                                starIcon: starIcon
+                            });
+                        }
+                    });
+                }
+                
+                // Search in projects
+                if (searchProjectsCheckbox.checked) {
+                    const projectCards = document.querySelectorAll('.layout-item .card[data-project-id]');
+                    projectCards.forEach(card => {
+                        const projectName = card.querySelector('.card-text span')?.textContent || '';
+                        const projectData = card.getAttribute('data-project-name') || '';
+                        const projectUnits = card.getAttribute('data-project-units') || '';
+                        const projectId = card.getAttribute('data-project-id');
+                        
+                        if (projectName.toLowerCase().includes(term) || 
+                            projectData.toLowerCase().includes(term) || 
+                            projectUnits.toLowerCase().includes(term)) {
+                            
+                            const enterBtn = card.querySelector('.btn-enter');
+                            const tourCount = card.querySelector('.project-stats span:first-child')?.textContent || '';
+                            
+                            results.push({
+                                type: 'project',
+                                id: projectId,
+                                title: projectName,
+                                subtitle: `${tourCount} • Created: ${card.querySelector('small')?.textContent || ''}`,
+                                action: enterBtn ? `handleEnterProject(${projectId}, ${tourCount.match(/\d+/)?.[0] || 0})` : '',
+                                element: card
+                            });
+                        }
+                    });
+                }
+                
+                // Search in tours (if available in the DOM)
+                if (searchToursCheckbox.checked) {
+                    // Search through all tours from server data
+                    allTours.forEach(tour => {
+                        const tourName = tour.name || '';
+                        const companyName = tour.company ? tour.company.name : '';
+                        const tourDescription = tour.description || '';
+                        
+                        if (tourName.toLowerCase().includes(term) || 
+                            companyName.toLowerCase().includes(term) ||
+                            tourDescription.toLowerCase().includes(term)) {
+                            
+                            results.push({
+                                type: 'tour',
+                                id: tour.id,
+                                title: tourName,
+                                subtitle: `${companyName} • ${tourDescription ? tourDescription.substring(0, 50) + '...' : 'No description'}`,
+                                action: `window.location.href='/tours/${tour.id}'`,
+                                element: null, // Not in DOM, so null
+                                companyName: companyName
+                            });
+                        }
+                    });
+                }
+                
+                // Display results
+                displaySearchResults(results, searchTerm);
+            }
+            
+            // Display search results
+            function displaySearchResults(results, searchTerm) {
+                if (results.length === 0) {
+                    searchResultsContainer.innerHTML = `
+                        <div class="no-search-results">
+                            <i class="fas fa-search"></i>
+                            <p>No results found for "${searchTerm}"</p>
+                            <small>Try adjusting your search terms or filters</small>
+                        </div>
+                    `;
+                } else {
+                    const resultsHtml = results.map(result => {
+                        const highlightedTitle = highlightSearchTerm(result.title, searchTerm);
+                        const highlightedSubtitle = highlightSearchTerm(result.subtitle, searchTerm);
+                        
+                        // Handle different action types
+                        let actionButton = '';
+                        if (result.type === 'layout') {
+                            // For layouts, show star icon and proper action
+                            actionButton = `
+                                <div class="search-result-action">
+                                    <button class="btn btn-outline-primary btn-sm me-2" onclick="toggleLayoutFavorite(${result.id}, this)">
+                                        <i class="${result.starIcon}"></i>
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="${result.action}">
+                                        <i class="fas fa-external-link-alt me-1"></i>Open
+                                    </button>
+                                </div>
+                            `;
+                        } else {
+                            // For other types, use the original action
+                            actionButton = `
+                                <div class="search-result-action">
+                                    <button class="btn btn-primary btn-sm" onclick="${result.action}">
+                                        <i class="fas fa-external-link-alt me-1"></i>Open
+                                    </button>
+                                </div>
+                            `;
+                        }
+                        
+                        return `
+                            <div class="search-result-item" data-type="${result.type}" data-id="${result.id}">
+                                <div class="search-result-icon ${result.type}">
+                                    <i class="fas ${getIconForType(result.type)}"></i>
+                                </div>
+                                <div class="search-result-content">
+                                    <div class="search-result-title">${highlightedTitle}</div>
+                                    <div class="search-result-subtitle">${highlightedSubtitle}</div>
+                                </div>
+                                ${actionButton}
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    searchResultsContainer.innerHTML = resultsHtml;
+                }
+                
+                globalSearchResults.style.display = 'block';
+            }
+            
+            // Highlight search terms
+            function highlightSearchTerm(text, searchTerm) {
+                if (!searchTerm) return text;
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                return text.replace(regex, '<span class="search-highlight">$1</span>');
+            }
+            
+            // Get icon for result type
+            function getIconForType(type) {
+                switch (type) {
+                    case 'layout': return 'fa-cube';
+                    case 'tour': return 'fa-map';
+                    case 'project': return 'fa-folder';
+                    default: return 'fa-file';
+                }
+            }
+            
+            // Global search event listeners
+            globalSearchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const searchTerm = this.value;
+                
+                searchTimeout = setTimeout(() => {
+                    performGlobalSearch(searchTerm);
+                }, 300);
+            });
+            
+            // Clear global search
+            clearGlobalSearchBtn.addEventListener('click', function() {
+                globalSearchInput.value = '';
+                globalSearchResults.style.display = 'none';
+                globalSearchInput.focus();
+            });
+            
+            // Search filter change events
+            [searchLayoutsCheckbox, searchToursCheckbox, searchProjectsCheckbox].forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (globalSearchInput.value.trim()) {
+                        performGlobalSearch(globalSearchInput.value);
+                    }
+                });
+            });
+            
+            // Global keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + K to focus global search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    globalSearchInput.focus();
+                }
+                
+                // Escape to clear global search
+                if (e.key === 'Escape' && document.activeElement === globalSearchInput) {
+                    globalSearchInput.value = '';
+                    globalSearchResults.style.display = 'none';
+                }
+            });
+            
             searchInputs.forEach(input => {
                 input.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase().trim();
@@ -1545,6 +2032,9 @@
                         } else if (noResultsMsg) {
                             noResultsMsg.remove();
                         }
+                    } else if (this.classList.contains('global-search-input')) {
+                        // Global search is handled separately
+                        return;
                     } else {
                         // Handle project cards search
                         const companyId = this.getAttribute('data-company-id');
@@ -1578,7 +2068,7 @@
                         const visibleCards = companySection.querySelectorAll('.layout-item:not([style*="display: none"])');
                         let noResultsMsg = companySection.querySelector('.no-results-message');
                         
-                        if (searchTerm !== '' && visibleCards.length === 0) { // 1 because "Create New Project" card is always visible
+                        if (searchTerm !== '' && visibleCards.length <= 1) { // 1 because "Create New Project" card is always visible
                             if (!noResultsMsg) {
                                 noResultsMsg = document.createElement('div');
                                 noResultsMsg.className = 'no-results-message col-12 text-center mt-3';
@@ -1635,7 +2125,7 @@
                 // Ctrl/Cmd + Shift + F to focus the first search input
                 if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F') {
                     e.preventDefault();
-                    const firstSearchInput = document.querySelector('.search-input');
+                    const firstSearchInput = document.querySelector('.search-input:not(.global-search-input)');
                     if (firstSearchInput) {
                         firstSearchInput.focus();
                     }
@@ -1659,5 +2149,41 @@
         });
         @endif
 
+        // Function to toggle layout favorite status from search results
+        function toggleLayoutFavorite(layoutId, buttonElement) {
+            fetch(`/tour360/toggle-favorite/${layoutId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the star icon in the search result
+                    const starIcon = buttonElement.querySelector('i');
+                    if (data.is_favorite) {
+                        starIcon.className = 'fas fa-star text-primary';
+                    } else {
+                        starIcon.className = 'far fa-star text-muted';
+                    }
+                    
+                    // Update the layout data in allLayouts array
+                    const layoutIndex = allLayouts.findIndex(layout => layout.id === layoutId);
+                    if (layoutIndex !== -1) {
+                        allLayouts[layoutIndex].is_favorite = data.is_favorite;
+                    }
+                    
+                    // Show feedback
+                    console.log(data.message);
+                } else {
+                    console.error('Failed to toggle favorite:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     </script>
 @endsection
