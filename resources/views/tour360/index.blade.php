@@ -5,13 +5,27 @@
     <div id="dashboard-section" class="row">
         <div class="col-12">
             <div class="favourites-section">
-                <div class="d-flex align-items-center mb-4">
-                    <h5 class="mb-4">Favourites</h5>
-                    @if(auth()->user() && auth()->user()->isSuperAdmin())
-                        <button id="toggleFavouritesBtn" class="btn btn-link ms-2 mb-4" title="Show/Hide Favourites" style="font-size: 1.2rem;">
-                            <i id="favouritesEyeIcon" class="fas fa-eye"></i>
-                        </button>
-                    @endif
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="d-flex align-items-center">
+                        <h5 class="mb-0">Favourites</h5>
+                        @if(auth()->user() && auth()->user()->isSuperAdmin())
+                            <button id="toggleFavouritesBtn" class="btn btn-link ms-2" title="Show/Hide Favourites" style="font-size: 1.2rem;">
+                                <i id="favouritesEyeIcon" class="fas fa-eye"></i>
+                            </button>
+                        @endif
+                    </div>
+                    <div class="search-container">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" 
+                                   class="form-control search-input" 
+                                   placeholder="Search favorites..." 
+                                   id="favoritesSearchInput"
+                                   style="min-width: 250px;">
+                        </div>
+                    </div>
                 </div>
                 <div id="favouritesSection">
                     <div class="favourite-items" id="favoritesContainer">
@@ -66,11 +80,25 @@
                                         {{ $company->name }}
                                     @endif
                                 </h5>
-                                <div class="sort-dropdown">
-                                    <select class="form-select">
-                                        <option>Recently added</option>
-                                        <!-- Add other sort options -->
-                                    </select>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="search-container">
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <input type="text" 
+                                                   class="form-control search-input" 
+                                                   placeholder="Search projects..." 
+                                                   data-company-id="{{ $company->id }}"
+                                                   style="min-width: 250px;">
+                                        </div>
+                                    </div>
+                                    <div class="sort-dropdown">
+                                        <select class="form-select">
+                                            <option>Recently added</option>
+                                            <!-- Add other sort options -->
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="layout-section">
@@ -572,6 +600,138 @@
         }
 
         /* Existing image preview styles */
+
+        /* Search functionality styles */
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-right: none;
+            color: #6c757d;
+        }
+
+        .search-input {
+            border-left: none;
+        }
+
+        .search-input:focus + .input-group-text,
+        .search-input:focus ~ .input-group-text {
+            border-color: #007bff;
+        }
+
+        /* Smooth transitions for search results */
+        .layout-item {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .layout-item[style*="display: none"] {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        /* No results message styling */
+        .no-results-message .alert {
+            border-radius: 8px;
+            border: 1px solid #bee5eb;
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .no-results-message .alert i {
+            color: #0c5460;
+        }
+
+        /* Responsive search container */
+        @media (max-width: 768px) {
+            .search-container .input-group {
+                min-width: 200px;
+            }
+            
+            .d-flex.align-items-center.gap-3 {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 1rem !important;
+            }
+            
+            .sort-dropdown {
+                align-self: flex-end;
+            }
+        }
+
+        /* Enhanced search input styling */
+        .search-input::placeholder {
+            color: #6c757d;
+            opacity: 0.7;
+        }
+
+        .search-input:focus::placeholder {
+            opacity: 0.5;
+        }
+
+        /* Search icon animation */
+        .search-container .input-group-text i {
+            transition: transform 0.2s ease;
+        }
+
+        .search-input:focus + .input-group-text i,
+        .search-input:focus ~ .input-group-text i {
+            transform: scale(1.1);
+            color: #007bff;
+        }
+
+        /* Loading state for search */
+        .search-input.searching {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23007bff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 35px;
+        }
+
+        /* Search results highlighting */
+        .search-highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        /* Smooth fade in/out for search results */
+        .layout-item,
+        .favourite-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .layout-item.hidden,
+        .favourite-card.hidden {
+            opacity: 0;
+            transform: scale(0.95) translateY(-10px);
+            pointer-events: none;
+        }
+
+        /* Search container hover effects */
+        .search-container:hover .input-group-text {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .search-container:hover .search-input {
+            border-color: #ced4da;
+        }
     </style>
 @endsection
 
@@ -1333,6 +1493,155 @@
             $('#inlineContributors').select2();
         });
 
+
+        // Search functionality for project cards and favorites
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = document.querySelectorAll('.search-input');
+            
+            searchInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    
+                    // Handle favorites search
+                    if (this.id === 'favoritesSearchInput') {
+                        const favoritesSection = this.closest('.favourites-section');
+                        const favoriteCards = favoritesSection.querySelectorAll('.favourite-card');
+                        
+                        favoriteCards.forEach(card => {
+                            const favoriteName = card.querySelector('h4')?.textContent.toLowerCase() || '';
+                            const projectName = card.querySelector('small.text-muted')?.textContent.toLowerCase() || '';
+                            const tourName = card.querySelector('span')?.textContent.toLowerCase() || '';
+                            
+                            // Check if search term matches favorite name, project name, or tour name
+                            const matches = favoriteName.includes(searchTerm) || 
+                                          projectName.includes(searchTerm) || 
+                                          tourName.includes(searchTerm);
+                            
+                            if (matches || searchTerm === '') {
+                                card.style.display = '';
+                                card.style.opacity = '1';
+                            } else {
+                                card.style.display = 'none';
+                                card.style.opacity = '0';
+                            }
+                        });
+                        
+                        // Show/hide "no results" message for favorites
+                        const visibleFavorites = favoritesSection.querySelectorAll('.favourite-card:not([style*="display: none"])');
+                        let noResultsMsg = favoritesSection.querySelector('.no-results-message');
+                        
+                        if (searchTerm !== '' && visibleFavorites.length === 0) {
+                            if (!noResultsMsg) {
+                                noResultsMsg = document.createElement('div');
+                                noResultsMsg.className = 'no-results-message col-12 text-center mt-3';
+                                noResultsMsg.innerHTML = `
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-search me-2"></i>
+                                        No favorites found matching "${searchTerm}"
+                                    </div>
+                                `;
+                                favoritesSection.querySelector('.favourite-items .row').appendChild(noResultsMsg);
+                            }
+                        } else if (noResultsMsg) {
+                            noResultsMsg.remove();
+                        }
+                    } else {
+                        // Handle project cards search
+                        const companyId = this.getAttribute('data-company-id');
+                        const companySection = this.closest('.company-section');
+                        const projectCards = companySection.querySelectorAll('.layout-item');
+                        
+                        projectCards.forEach(card => {
+                            const projectName = card.querySelector('.card-text span')?.textContent.toLowerCase() || '';
+                            const projectData = card.querySelector('.card');
+                            
+                            if (projectData) {
+                                const projectNameData = projectData.getAttribute('data-project-name')?.toLowerCase() || '';
+                                const projectUnits = projectData.getAttribute('data-project-units')?.toLowerCase() || '';
+                                
+                                // Check if search term matches project name, units, or any other relevant data
+                                const matches = projectName.includes(searchTerm) || 
+                                              projectNameData.includes(searchTerm) || 
+                                              projectUnits.includes(searchTerm);
+                                
+                                if (matches || searchTerm === '') {
+                                    card.style.display = '';
+                                    card.style.opacity = '1';
+                                } else {
+                                    card.style.display = 'none';
+                                    card.style.opacity = '0';
+                                }
+                            }
+                        });
+                        
+                        // Show/hide "no results" message for projects
+                        const visibleCards = companySection.querySelectorAll('.layout-item:not([style*="display: none"])');
+                        let noResultsMsg = companySection.querySelector('.no-results-message');
+                        
+                        if (searchTerm !== '' && visibleCards.length === 0) { // 1 because "Create New Project" card is always visible
+                            if (!noResultsMsg) {
+                                noResultsMsg = document.createElement('div');
+                                noResultsMsg.className = 'no-results-message col-12 text-center mt-3';
+                                noResultsMsg.innerHTML = `
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-search me-2"></i>
+                                        No projects found matching "${searchTerm}"
+                                    </div>
+                                `;
+                                companySection.querySelector('.layout-section .row').appendChild(noResultsMsg);
+                            }
+                        } else if (noResultsMsg) {
+                            noResultsMsg.remove();
+                        }
+                    }
+                });
+                
+                // Clear search when input is cleared
+                input.addEventListener('keyup', function(e) {
+                    if (e.key === 'Escape') {
+                        this.value = '';
+                        this.dispatchEvent(new Event('input'));
+                    }
+                });
+
+                // Add focus effects
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+
+                // Add keyboard shortcuts
+                input.addEventListener('keydown', function(e) {
+                    // Ctrl/Cmd + F to focus search
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                        e.preventDefault();
+                        this.focus();
+                    }
+                    
+                    // Enter to clear search if it has content
+                    if (e.key === 'Enter' && this.value.trim() !== '') {
+                        e.preventDefault();
+                        this.value = '';
+                        this.dispatchEvent(new Event('input'));
+                    }
+                });
+            });
+
+            // Add global keyboard shortcut for search
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + Shift + F to focus the first search input
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F') {
+                    e.preventDefault();
+                    const firstSearchInput = document.querySelector('.search-input');
+                    if (firstSearchInput) {
+                        firstSearchInput.focus();
+                    }
+                }
+            });
+        });
 
         @if(auth()->user() && auth()->user()->isSuperAdmin())
         document.getElementById('toggleFavouritesBtn').addEventListener('click', function() {
