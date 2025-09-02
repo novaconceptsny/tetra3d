@@ -62,7 +62,7 @@
                 @yield('breadcrumbs')
             </div>
 
-            <div class="navbar-nav menu-nav">
+            <div class="navbar-nav menu-nav applied-nav">
                 @yield('outside-menu')
                 <div class="nav-left-btn-div">
                     @yield('menu')
