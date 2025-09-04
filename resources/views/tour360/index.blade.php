@@ -941,6 +941,7 @@
             // Create a new CropArea instance for the target image
             const cropArea = new cropro.CropArea(targetImage);
 
+            cropArea.displayMode = 'popup';
             // Add an event listener to handle the cropped image data
             cropArea.addRenderEventListener((croppedImageDataUrl) => {
                 // Update the source of the target image with the cropped image
