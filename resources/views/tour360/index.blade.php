@@ -393,10 +393,77 @@
 
 @section('styles')
     <link href="{{ mix('css/page/tour360.css') }}" rel="stylesheet">
+    <style>
+        /* CroPro Integration Styles */
+        .img-preview {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .img-preview:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .image-upload-box .overlay {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .image-upload-box:hover .overlay {
+            opacity: 1;
+        }
+        
+        .overlay-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .overlay-actions .btn {
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            font-weight: 500;
+        }
+        
+        .overlay-actions .btn-primary {
+            background: rgba(0, 123, 255, 0.9);
+            color: white;
+        }
+        
+        .overlay-actions .btn-secondary {
+            background: rgba(108, 117, 125, 0.9);
+            color: white;
+        }
+        
+        .overlay-actions .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Ensure CroPro modal appears above other elements */
+        .cropro-modal {
+            z-index: 9999 !important;
+        }
+        
+        /* Style for the image upload box */
+        .image-upload-box {
+            position: relative;
+        }
+    </style>
 @endsection
 
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://unpkg.com/cropro/cropro.js"></script>
 
     <script>
         const projectModal = document.getElementById('projectModal');
@@ -619,14 +686,50 @@
                     const img = document.createElement('img');
                     img.src = data.project.background_url;
                     img.className = 'img-preview';
+                    img.style.cursor = 'pointer';
+                    img.title = 'Click to edit/crop image';
+                    
+                    // Add click event listener for CroPro editing
+                    img.addEventListener('click', function() {
+                        // Create a temporary file object for the existing image
+                        const tempFile = new File([''], 'existing-image.jpg', { type: 'image/jpeg' });
+                        showCropArea(this, inlineImageInput, tempFile);
+                    });
+                    
                     inlineImageUploadBox.innerHTML = '';
                     inlineImageUploadBox.appendChild(img);
+                    
+                    // Create overlay with edit and replace options
                     const overlay = document.createElement('div');
                     overlay.className = 'overlay';
-                    overlay.textContent = 'Click to replace image';
+                    overlay.innerHTML = `
+                        <div class="overlay-actions">
+                            <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
+                                <i class="fas fa-crop"></i> Edit
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary replace-btn">
+                                <i class="fas fa-upload"></i> Replace
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Add event listeners to the buttons
+                    const editBtn = overlay.querySelector('.edit-btn');
+                    const replaceBtn = overlay.querySelector('.replace-btn');
+                    
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const tempFile = new File([''], 'existing-image.jpg', { type: 'image/jpeg' });
+                        showCropArea(img, inlineImageInput, tempFile);
+                    });
+                    
+                    replaceBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        inlineImageInput.click();
+                    });
+                    
                     inlineImageUploadBox.appendChild(overlay);
                     inlineImageUploadBox.appendChild(inlineImageInput);
-                    inlineImageInput.files[0] = data.project.background_url;
                 }
 
                 // Update the save button to handle edit
@@ -733,7 +836,15 @@
 
         
         // Handle inline image upload with drag and drop
-        inlineImageUploadBox.addEventListener('click', () => {
+        inlineImageUploadBox.addEventListener('click', (e) => {
+            // Check if there's already an image displayed
+            const existingImg = inlineImageUploadBox.querySelector('.img-preview');
+            if (existingImg) {
+                // If there's an existing image, don't trigger file input
+                e.stopPropagation();
+                return;
+            }
+            // Only trigger file input if no image is present
             inlineImageInput.click();
         });
 
@@ -777,11 +888,45 @@
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.className = 'img-preview';
+                img.style.cursor = 'pointer';
+                img.title = 'Click to edit/crop image';
+                
+                // Add click event listener for CroPro editing
+                img.addEventListener('click', function() {
+                    showCropArea(this, inputElement, file);
+                });
+                
                 uploadBox.innerHTML = '';
                 uploadBox.appendChild(img);
+                
+                // Create overlay with edit and replace options
                 const overlay = document.createElement('div');
                 overlay.className = 'overlay';
-                overlay.textContent = 'Click to replace image';
+                overlay.innerHTML = `
+                    <div class="overlay-actions">
+                        <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
+                            <i class="fas fa-crop"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary replace-btn">
+                            <i class="fas fa-upload"></i> Replace
+                        </button>
+                    </div>
+                `;
+                
+                // Add event listeners to the buttons
+                const editBtn = overlay.querySelector('.edit-btn');
+                const replaceBtn = overlay.querySelector('.replace-btn');
+                
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showCropArea(img, inputElement, file);
+                });
+                
+                replaceBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    inputElement.click();
+                });
+                
                 uploadBox.appendChild(overlay);
                 uploadBox.appendChild(inputElement);
                 if (nameElement) {
@@ -791,9 +936,55 @@
             reader.readAsDataURL(file);
         }
 
+        // Function to show CroPro editing interface
+        function showCropArea(targetImage, inputElement, originalFile) {
+            // Create a new CropArea instance for the target image
+            const cropArea = new cropro.CropArea(targetImage);
+
+            // Add an event listener to handle the cropped image data
+            cropArea.addRenderEventListener((croppedImageDataUrl) => {
+                // Update the source of the target image with the cropped image
+                targetImage.src = croppedImageDataUrl;
+                
+                // Convert data URL back to file and update the input element
+                dataURLtoFile(croppedImageDataUrl, originalFile.name).then(croppedFile => {
+                    // Create a new FileList-like object
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(croppedFile);
+                    inputElement.files = dataTransfer.files;
+                });
+            });
+
+            // Display the cropping interface
+            cropArea.show();
+        }
+
+        // Helper function to convert data URL to File object
+        function dataURLtoFile(dataurl, filename) {
+            return new Promise((resolve) => {
+                const arr = dataurl.split(',');
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while(n--){
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                resolve(new File([u8arr], filename, {type:mime}));
+            });
+        }
+
         // Handle modal image upload with drag and drop
         if (imageUploadBox) {
-            imageUploadBox.addEventListener('click', () => {
+            imageUploadBox.addEventListener('click', (e) => {
+                // Check if there's already an image displayed
+                const existingImg = imageUploadBox.querySelector('.img-preview');
+                if (existingImg) {
+                    // If there's an existing image, don't trigger file input
+                    e.stopPropagation();
+                    return;
+                }
+                // Only trigger file input if no image is present
                 imageInput.click();
             });
 
