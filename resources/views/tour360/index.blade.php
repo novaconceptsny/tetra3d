@@ -942,6 +942,11 @@
             const cropArea = new cropro.CropArea(targetImage);
 
             cropArea.displayMode = 'popup';
+
+            cropArea.zoomToCropEnabled = false;
+            cropArea.aspectRatios = [
+            { horizontal: 2, vertical: 1 }, 
+            ];
             // Add an event listener to handle the cropped image data
             cropArea.addRenderEventListener((croppedImageDataUrl) => {
                 // Update the source of the target image with the cropped image
