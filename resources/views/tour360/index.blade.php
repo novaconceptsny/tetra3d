@@ -699,6 +699,12 @@
                     inlineImageUploadBox.innerHTML = '';
                     inlineImageUploadBox.appendChild(img);
                     
+                    // Create crop area overlay to show what will be cropped
+                    const cropOverlay = document.createElement('div');
+                    cropOverlay.className = 'crop-overlay';
+                    cropOverlay.innerHTML = '<div class="crop-area-rectangle"></div>';
+                    inlineImageUploadBox.appendChild(cropOverlay);
+                    
                     // Create overlay with edit and replace options
                     const overlay = document.createElement('div');
                     overlay.className = 'overlay';
@@ -891,47 +897,61 @@
                 img.style.cursor = 'pointer';
                 img.title = 'Click to edit/crop image';
                 
-                // Add click event listener for CroPro editing
-                img.addEventListener('click', function() {
-                    showCropArea(this, inputElement, file);
-                });
-                
-                uploadBox.innerHTML = '';
-                uploadBox.appendChild(img);
-                
-                // Create overlay with edit and replace options
-                const overlay = document.createElement('div');
-                overlay.className = 'overlay';
-                overlay.innerHTML = `
-                    <div class="overlay-actions">
-                        <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
-                            <i class="fas fa-crop"></i> Edit
-                        </button>
-                        <button type="button" class="btn btn-sm btn-secondary replace-btn">
-                            <i class="fas fa-upload"></i> Replace
-                        </button>
-                    </div>
-                `;
-                
-                // Add event listeners to the buttons
-                const editBtn = overlay.querySelector('.edit-btn');
-                const replaceBtn = overlay.querySelector('.replace-btn');
-                
-                editBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showCropArea(img, inputElement, file);
-                });
-                
-                replaceBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    inputElement.click();
-                });
-                
-                uploadBox.appendChild(overlay);
-                uploadBox.appendChild(inputElement);
-                if (nameElement) {
-                    nameElement.textContent = file.name;
-                }
+                // Wait for image to load to get dimensions
+                img.onload = function() {
+                    // get original image width
+                    // const originalImageWidth = this.naturalWidth;
+                    
+                    // Add click event listener for CroPro editing
+                    img.addEventListener('click', function() {
+                        showCropArea(this, inputElement, file);
+                    });
+                    
+                    uploadBox.innerHTML = '';
+                    uploadBox.appendChild(img);
+
+                    const containerWidth = document.getElementsByClassName('image-upload-box')[0].clientWidth;
+                    
+                    // Create crop area overlay to show what will be cropped
+                    const cropOverlay = document.createElement('div');
+                    cropOverlay.className = 'crop-overlay';
+                    cropOverlay.innerHTML = '<div class="crop-area-rectangle"><img src="' + e.target.result + '" style="width: ' + containerWidth + 'px;" alt="Click to edit/crop image" class="img-preview"></div>';
+                    uploadBox.appendChild(cropOverlay);
+                    
+                    // Create overlay with edit and replace options
+                    const overlay = document.createElement('div');
+                    overlay.className = 'overlay';
+                    overlay.innerHTML = `
+                        <div class="overlay-actions">
+                            <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
+                                <i class="fas fa-crop"></i> Edit
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary replace-btn">
+                                <i class="fas fa-upload"></i> Replace
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Add event listeners to the buttons
+                    const editBtn = overlay.querySelector('.edit-btn');
+                    const replaceBtn = overlay.querySelector('.replace-btn');
+                    
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showCropArea(img, inputElement, file);
+                    });
+                    
+                    replaceBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        inputElement.click();
+                    });
+                    
+                    uploadBox.appendChild(overlay);
+                    uploadBox.appendChild(inputElement);
+                    if (nameElement) {
+                        nameElement.textContent = file.name;
+                    }
+                };
             };
             reader.readAsDataURL(file);
         }
