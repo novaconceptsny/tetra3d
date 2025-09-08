@@ -183,7 +183,7 @@
                                                     data-project-collections="{{ json_encode($project->artworkCollections->pluck('id')) }}"
                                                     data-project-contributors="{{ json_encode($project->contributors->pluck('id')) }}"
                                                 >
-                                                    <div class="rounded img-home p-2 d-flex justify-content-center align-items-center" style="background-color: lightgrey;">
+                                                    <div class="rounded img-home p-2 d-flex justify-content-center align-items-center" >
                                                         <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                                     </div>
                                                     <div class="card-body">
@@ -502,8 +502,52 @@
         const inlineImageName = document.getElementById('inlineImageName');
         const inlineSaveButton = document.getElementById('inlineSaveButton');
 
+        function clearCreateProjectForm() {
+            // Clear all form fields
+            document.getElementById('inlineProjectNameInput').value = '';
+            document.getElementById('inlineCompanyInput').value = '';
+            document.getElementById('inlineUnits').value = 'metric';
+            
+            // Clear Select2 dropdowns
+            $('#inlineTourSelect').val(null).trigger('change');
+            $('#inlineCollections').val(null).trigger('change');
+            $('#inlineContributors').val(null).trigger('change');
+            
+            // Reset image upload
+            document.getElementById('inlineImageInput').value = '';
+            document.getElementById('inlineImageName').textContent = '';
+            
+            // Reset image upload box to original state
+            const inlineImageUploadBox = document.getElementById('inlineImageUploadBox');
+            inlineImageUploadBox.innerHTML = `
+                <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
+                <span>Click or drag & drop to add image</span>
+                <div class="overlay">Click to replace image</div>
+            `;
+            
+            // Re-attach event listeners to the new file input
+            const newImageInput = inlineImageUploadBox.querySelector('#inlineImageInput');
+            newImageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    handleImageFile(file, inlineImageUploadBox, newImageInput, document.getElementById('inlineImageName'));
+                }
+            });
+            
+            // Reset save button text and onclick handler
+            const saveButton = document.getElementById('inlineSaveButton');
+            saveButton.textContent = 'Create';
+            saveButton.onclick = handleCreateProject;
+            
+            // Reset modal title
+            document.querySelector('.create-project-section .modal-title').textContent = 'Add new project';
+        }
+
         async function openCreateProject(companyId) {
             try {
+                // Clear form first to ensure fresh start
+                clearCreateProjectForm();
+                
                 // Fetch data from the create endpoint
                 const response = await fetch(`/tour360/create/${companyId}`);
                 const data = await response.json();
@@ -542,9 +586,12 @@
         }
 
         function closeCreateProject() {
+            // Clear the form
+            clearCreateProjectForm();
+            
+            // Hide the form and show dashboard
             dashboardSection.style.display = 'block';
             createProjectSection.style.display = 'none';
-
         }
 
         function handleCreateProject() {
@@ -1206,6 +1253,11 @@
             $('#inlineTourSelect').select2();
             $('#inlineCollections').select2();
             $('#inlineContributors').select2();
+            
+            // Add event listener for the close button (X) in the form header
+            document.querySelector('.close-create-section').addEventListener('click', function() {
+                closeCreateProject();
+            });
         });
 
 
