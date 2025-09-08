@@ -183,7 +183,7 @@
                                                     data-project-collections="{{ json_encode($project->artworkCollections->pluck('id')) }}"
                                                     data-project-contributors="{{ json_encode($project->contributors->pluck('id')) }}"
                                                 >
-                                                    <div class="rounded img-home p-2">
+                                                    <div class="rounded img-home p-2 d-flex justify-content-center align-items-center" style="background-color: lightgrey;">
                                                         <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                                     </div>
                                                     <div class="card-body">

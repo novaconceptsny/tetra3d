@@ -197,7 +197,7 @@ body {
 }
 
 .layout-item .card .img-home img {
-    width: 100%;
+    width: auto;
     height: 100%;
     object-fit: cover; /* This ensures images cover the area without distortion */
 }
