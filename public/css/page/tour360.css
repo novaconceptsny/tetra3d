@@ -199,7 +199,7 @@ body {
 .layout-item .card .img-home img {
     width: auto;
     height: 100%;
-    object-fit: cover; /* This ensures images cover the area without distortion */
+    /* object-fit: cover; */
 }
 
 .layout-item .card .card-body {
@@ -242,7 +242,7 @@ body {
   max-height: 200px;
   object-fit: contain;
   cursor: pointer;
-  width: 100%;
+  /* width: 100%; */
   max-width: none;
   height: auto;
 }
