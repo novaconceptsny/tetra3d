@@ -738,6 +738,7 @@
                     
                     
                     inlineImageUploadBox.innerHTML = '';
+                    inlineImageUploadBox.style.backgroundColor = 'grey';
                     inlineImageUploadBox.appendChild(img);
                     
                     // Create overlay with edit and replace options
@@ -935,6 +936,7 @@
                 
                 
                 uploadBox.innerHTML = '';
+                uploadBox.style.backgroundColor = 'grey';
                 uploadBox.appendChild(img);
                 
                 // Create overlay with edit and replace options
