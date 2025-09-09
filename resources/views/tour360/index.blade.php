@@ -735,43 +735,17 @@
                     img.className = 'img-preview';
                     img.style.cursor = 'pointer';
                     img.title = 'Click to edit/crop image';
+                    img.crossOrigin = 'anonymous';
                     
-                    
-                    inlineImageUploadBox.innerHTML = '';
-                    inlineImageUploadBox.style.backgroundColor = 'grey';
-                    inlineImageUploadBox.appendChild(img);
-                    
-                    // Create overlay with edit and replace options
-                    const overlay = document.createElement('div');
-                    overlay.className = 'overlay';
-                    overlay.innerHTML = `
-                        <div class="overlay-actions">
-                            <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
-                                <i class="fas fa-crop"></i> Edit
-                            </button>
-                            <button type="button" class="btn btn-sm btn-secondary replace-btn">
-                                <i class="fas fa-upload"></i> Replace
-                            </button>
-                        </div>
-                    `;
-                    
-                    // Add event listeners to the buttons
-                    const editBtn = overlay.querySelector('.edit-btn');
-                    const replaceBtn = overlay.querySelector('.replace-btn');
-                    
-                    editBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const tempFile = new File([''], 'existing-image.jpg', { type: 'image/jpeg' });
-                        showCropArea(img, inlineImageInput, tempFile);
-                    });
-                    
-                    replaceBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        inlineImageInput.click();
-                    });
-                    
-                    inlineImageUploadBox.appendChild(overlay);
-                    inlineImageUploadBox.appendChild(inlineImageInput);
+                    // Wait for image to load to get dimensions
+                    img.onload = () => {
+                        inlineImageUploadBox.innerHTML = '';
+                        inlineImageUploadBox.style.backgroundColor = 'grey';
+                        inlineImageUploadBox.appendChild(img);
+                        
+                        // Create crop preview for existing image
+                        createCropPreview(inlineImageUploadBox, img, inlineImageInput, null, inlineImageName);
+                    };
                 }
 
                 // Update the save button to handle edit
@@ -934,47 +908,117 @@
                 img.title = 'Click to edit/crop image';
                 img.crossOrigin = 'anonymous';
                 
-                
-                uploadBox.innerHTML = '';
-                uploadBox.style.backgroundColor = 'grey';
-                uploadBox.appendChild(img);
-                
-                // Create overlay with edit and replace options
-                const overlay = document.createElement('div');
-                overlay.className = 'overlay';
-                overlay.innerHTML = `
-                    <div class="overlay-actions">
-                        <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
-                            <i class="fas fa-crop"></i> Edit
-                        </button>
-                        <button type="button" class="btn btn-sm btn-secondary replace-btn">
-                            <i class="fas fa-upload"></i> Replace
-                        </button>
-                    </div>
-                `;
-                
-                // Add event listeners to the buttons
-                const editBtn = overlay.querySelector('.edit-btn');
-                const replaceBtn = overlay.querySelector('.replace-btn');
-                
-                editBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showCropArea(img, inputElement, file);
-                });
-                
-                replaceBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    inputElement.click();
-                });
-                
-                uploadBox.appendChild(overlay);
-                uploadBox.appendChild(inputElement);
-                if (nameElement) {
-                    nameElement.textContent = file.name;
-                }
+                // Wait for image to load to get dimensions
+                img.onload = () => {
+                    uploadBox.innerHTML = '';
+                    uploadBox.style.backgroundColor = 'grey';
+                    uploadBox.appendChild(img);
+                    
+                    // Create crop preview overlay immediately
+                    createCropPreview(uploadBox, img, inputElement, file, nameElement);
+                };
             };
             reader.readAsDataURL(file);
         }
+
+        // Function to create crop preview overlay
+        function createCropPreview(uploadBox, img, inputElement, file, nameElement) {
+            // Create the crop overlay
+            const cropOverlay = document.createElement('div');
+            cropOverlay.className = 'crop-overlay';
+            
+            // Create the crop area rectangle
+            const cropArea = document.createElement('div');
+            cropArea.className = 'crop-area-rectangle';
+            
+            // Calculate crop area dimensions based on the actual image size
+            const uploadBoxRect = uploadBox.getBoundingClientRect();
+            const imgRect = img.getBoundingClientRect();
+            
+            // Get the actual displayed image dimensions
+            const cropWidth = imgRect.width;
+            const cropHeight = cropWidth / 2; // 2:1 aspect ratio
+            
+            cropArea.style.width = cropWidth + 'px';
+            cropArea.style.height = cropHeight + 'px';
+            
+            // Create a copy of the image for the crop area
+            const cropImg = document.createElement('img');
+            cropImg.src = img.src;
+            cropImg.style.width = '100%';
+            cropImg.style.height = '100%';
+            cropImg.style.objectFit = 'cover';
+            
+            cropArea.appendChild(cropImg);
+            cropOverlay.appendChild(cropArea);
+            
+            // Create action overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            
+            // Different button set based on whether we have a file or not
+            const buttonHtml = `
+                <div class="overlay-actions">
+                    <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
+                        <i class="fas fa-crop"></i> Edit
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary replace-btn">
+                        <i class="fas fa-upload"></i> Replace
+                    </button>
+                </div>
+            ` ;
+            
+            overlay.innerHTML = buttonHtml;
+            
+            // Add event listeners to the buttons
+            const editBtn = overlay.querySelector('.edit-btn');
+            const replaceBtn = overlay.querySelector('.replace-btn');
+            
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (file) {
+                    showCropArea(img, inputElement, file);
+                } else {
+                    // For existing images, create a temporary file
+                    const tempFile = new File([''], 'existing-image.jpg', { type: 'image/jpeg' });
+                    showCropArea(img, inputElement, tempFile);
+                }
+            });
+            
+            
+            replaceBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                inputElement.click();
+            });
+            
+            uploadBox.appendChild(cropOverlay);
+            uploadBox.appendChild(overlay);
+            uploadBox.appendChild(inputElement);
+            
+            if (nameElement && file) {
+                nameElement.textContent = file.name;
+            }
+            
+            // Add resize observer to recalculate crop area if image size changes
+            if (window.ResizeObserver) {
+                const resizeObserver = new ResizeObserver(() => {
+                    // Recalculate crop area dimensions
+                    const newUploadBoxRect = uploadBox.getBoundingClientRect();
+                    const newImgRect = img.getBoundingClientRect();
+                    
+                    const newCropWidth = newImgRect.width;
+
+                    const newCropHeight = newCropWidth / 2;
+                    
+                    cropArea.style.width = newCropWidth + 'px';
+                    cropArea.style.height = newCropHeight + 'px';
+                });
+                
+                resizeObserver.observe(uploadBox);
+                resizeObserver.observe(img);
+            }
+        }
+
 
           // Function to show CroPro editing interface
           function showCropArea(targetImage, inputElement, originalFile) {
