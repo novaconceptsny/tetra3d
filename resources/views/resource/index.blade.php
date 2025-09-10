@@ -55,8 +55,8 @@
                 <div style="position: relative;">
                     <img
                         src="{{ $gallery->getFirstMediaUrl('thumbnail') ?: asset('images/gallery_' . ($i > 1 ? 1 : ($i+1)) . '.png') }}"
-                        style="width:350px; border-radius:12px;"
-                        ondblclick="goToTour({{ $gallery->id }})"
+                        style="width:350px; border-radius:12px; cursor: pointer;"
+                        onclick="goToTour({{ $gallery->id }})"
                     >
                     <!-- Plus Button -->
                     <button
