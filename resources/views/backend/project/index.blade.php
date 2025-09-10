@@ -34,10 +34,10 @@
                         <tr>
                             <td>{{ $project->name }}</td>
                             <td>
-                                @if(user()->isAdmin() && $project->company->name === 'My Workspace')
+                                @if(user()->isAdmin() &&  $project->company != null && $project->company->name === 'My Workspace')
                                     {{ $project->company->name }}_{{ str_pad($project->company->id, 2, '0', STR_PAD_LEFT) }}
                                 @else
-                                    {{ $project->company->name }}
+                                    {{ $project->company ? $project->company->name : '-' }}
                                 @endif
                             </td>
                             <td>
