@@ -570,6 +570,9 @@ class CanvasManager {
     placeSelectedImage(artSelection, topPos = this.boundingBox.top, leftPos = this.boundingBox.left) {
         let imgUrl = artSelection.imgUrl;
 
+        // Generate unique instance ID for each placement
+        const uniqueInstanceId = `${artSelection.artworkId}_${Math.random().toString(36).substr(2, 9)}`;
+
         fabric.Image.fromURL(imgUrl, function (myImg) {
             if (myImg._element == null) {
                 alert("Image could not be loaded...");
@@ -578,7 +581,8 @@ class CanvasManager {
             let img1 = myImg.set({
                 originX: "left",
                 originY: "top",
-                id: artSelection.artworkId,
+                id: uniqueInstanceId, // Use unique instance ID
+                originalArtworkId: artSelection.artworkId, // Store original artwork ID
                 top: topPos,
                 left: leftPos,
                 angle: 0,
@@ -605,11 +609,24 @@ class CanvasManager {
             this.artworkCanvas.add(img1);
             this.artworkCanvas.renderAll();
 
+            // Create a unique art selection instance with the unique ID
+            const uniqueArtSelection = new ArtSelection({
+                title: artSelection.title,
+                imgUrl: artSelection.imgUrl,
+                artworkId: artSelection.artworkId,
+                scale: artSelection.scale,
+                uniqueInstanceId: uniqueInstanceId
+            });
+            uniqueArtSelection.setTopPosition(topPos);
+            uniqueArtSelection.setLeftPosition(leftPos);
+            uniqueArtSelection.setCropData(artSelection.cropData);
+            uniqueArtSelection.setOverrideScale(artSelection.overrideScale);
+            
+            this.canvasState.assignedArtwork.push(uniqueArtSelection);
+
         }.bind(this), {
             crossOrigin: 'anonymous'
         });
-
-        this.canvasState.assignedArtwork.push(artSelection);
     }
 
     handleDeleteKeyOnArtwork(key) {
@@ -627,15 +644,8 @@ class CanvasManager {
     }
 
     isAlreadySelected(artId) {
-        let canvasObjects = this.artworkCanvas.getObjects();
-        for (let i = 1; i < canvasObjects.length; i++) {
-            let presentId = canvasObjects[i].id;
-            if (artId === presentId) {
-                this.artworkCanvas.setActiveObject(canvasObjects[i]);
-                this.artworkCanvas.renderAll();
-                return true;
-            }
-        }
+        // This method is no longer needed since we now allow multiple instances
+        // of the same artwork. Each placement gets a unique instance ID.
         return false;
     }
 
@@ -654,7 +664,15 @@ class CanvasManager {
                 this.guides = this.guides.filter(guide => guide.line !== obj);
             }
             this.artworkCanvas.remove(obj);
-            this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => art.getArtworkId() !== obj.id);
+            // Remove by unique instance ID instead of artwork ID
+            this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => {
+                // For new instances, check against the unique ID
+                if (art.uniqueInstanceId) {
+                    return art.uniqueInstanceId !== obj.id;
+                }
+                // For legacy instances, check against artwork ID
+                return art.getArtworkId() !== obj.id;
+            });
         });
 
         this.removeBtn.hide();
@@ -781,15 +799,27 @@ class CanvasManager {
         const latestDeserialized = this.canvasState.assignedArtwork.map(this.deserializeArtSelection);
 
         this.canvasState.modifiedVersion.removedArtwork = this.canvasState.assignedArtwork.filter(
-            obj1 => !latestDeserialized.some(obj2 => obj2.getArtworkId() === obj1.getArtworkId())
+            obj1 => !latestDeserialized.some(obj2 => {
+                // Compare by unique instance ID if available, otherwise by artwork ID
+                return (obj1.uniqueInstanceId && obj1.uniqueInstanceId === obj2.uniqueInstanceId) ||
+                       (!obj1.uniqueInstanceId && obj2.getArtworkId() === obj1.getArtworkId());
+            })
         );
 
         this.canvasState.modifiedVersion.addedArtwork = latestDeserialized.filter(
-            obj1 => !this.canvasState.assignedArtwork.some(obj2 => obj2.getArtworkId() === obj1.getArtworkId())
+            obj1 => !this.canvasState.assignedArtwork.some(obj2 => {
+                // Compare by unique instance ID if available, otherwise by artwork ID
+                return (obj1.uniqueInstanceId && obj1.uniqueInstanceId === obj2.uniqueInstanceId) ||
+                       (!obj1.uniqueInstanceId && obj2.getArtworkId() === obj1.getArtworkId());
+            })
         );
 
         this.canvasState.assignedArtwork.forEach(obj1 => {
-            const obj2 = latestDeserialized.find(item => item.getArtworkId() === obj1.getArtworkId());
+            const obj2 = latestDeserialized.find(item => {
+                // Compare by unique instance ID if available, otherwise by artwork ID
+                return (obj1.uniqueInstanceId && obj1.uniqueInstanceId === item.uniqueInstanceId) ||
+                       (!obj1.uniqueInstanceId && item.getArtworkId() === obj1.getArtworkId());
+            });
 
             if (obj2 &&
                 (
@@ -927,6 +957,7 @@ class CanvasManager {
         imageProperties['imgUrl'] = art['imgUrl'];
         imageProperties['artworkId'] = art['artworkId'];
         imageProperties['scale'] = art['scale'];
+        imageProperties['uniqueInstanceId'] = art['uniqueInstanceId'];
 
         return new ArtSelection(
             imageProperties,
@@ -942,7 +973,9 @@ class CanvasManager {
 
         let propertize = (art) => {
             for (let i = 1; i < assignedArt.length; i++) {
-                if (art.getArtworkId() === assignedArt[i].id) {
+                // Check both unique instance ID and legacy artwork ID
+                if (art.uniqueInstanceId === assignedArt[i].id || 
+                    art.getArtworkId() === assignedArt[i].id) {
                     art.setTopPosition(parseInt(assignedArt[i].top * reverseScale));
                     art.setLeftPosition(parseInt(assignedArt[i].left * reverseScale));
                     return art;
@@ -1345,6 +1378,9 @@ class CanvasManager {
     addWarpedArtwork(imgData, dropX = null, dropY = null) {
         const { imgUrl, artworkId } = imgData;
         
+        // Generate unique instance ID for warped artwork
+        const uniqueInstanceId = `${artworkId}_${Math.random().toString(36).substr(2, 9)}`;
+        
         // Clean up existing matrices
         if (this.dstMat) this.dstMat.delete();
         if (this.M) this.M.delete();
@@ -1380,11 +1416,11 @@ class CanvasManager {
 
         // Load the image and apply transformation
         fabric.Image.fromURL(imgUrl, (img) => {
-            this.updateTransformedArtwork(img, this.M, bounds, artworkId);
+            this.updateTransformedArtwork(img, this.M, bounds, artworkId, uniqueInstanceId);
         }, { crossOrigin: 'anonymous' });
     }
 
-    updateTransformedArtwork(fabricImage, transformMatrix, bounds, artworkId) {
+    updateTransformedArtwork(fabricImage, transformMatrix, bounds, artworkId, uniqueInstanceId) {
         try {
             if (!fabricImage || !transformMatrix) {
                 console.error('Missing required parameters');
@@ -1429,7 +1465,8 @@ class CanvasManager {
             // Create new Fabric image from warped result
             fabric.Image.fromURL(tempCanvas.toDataURL(), (warpedImage) => {
                 warpedImage.set({
-                    id: artworkId,
+                    id: uniqueInstanceId, // Use unique instance ID
+                    originalArtworkId: artworkId, // Store original artwork ID
                     left: this.initialWarpPosition.x,
                     top: this.initialWarpPosition.y,
                     selectable: true,

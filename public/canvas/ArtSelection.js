@@ -8,6 +8,7 @@ class ArtSelection {
         this.leftPosition = leftPosition;
         this.overrideScale = overrideScale;
         this.cropData = cropData;
+        this.uniqueInstanceId = imgData['uniqueInstanceId'] ?? null; // Add unique instance ID support
         if (cropData === "null") {
             this.cropData = null;
         }
@@ -24,6 +25,10 @@ class ArtSelection {
 
     getArtworkId() {
         return this.artworkId;
+    }
+
+    getUniqueInstanceId() {
+        return this.uniqueInstanceId;
     }
 
     getTopPosition() {
@@ -71,6 +76,10 @@ class ArtSelection {
         this.artworkId = artworkId;
     }
 
+    setUniqueInstanceId(uniqueInstanceId) {
+        this.uniqueInstanceId = uniqueInstanceId;
+    }
+
     setOverrideScale(overrideScale) {
         this.overrideScale = overrideScale;
     }
@@ -84,7 +93,8 @@ class ArtSelection {
             leftPosition: this.leftPosition,
             topPosition: this.topPosition,
             cropData: this.cropData,
-            overrideScale: this.overrideScale
+            overrideScale: this.overrideScale,
+            uniqueInstanceId: this.uniqueInstanceId
         };
     }
 }
