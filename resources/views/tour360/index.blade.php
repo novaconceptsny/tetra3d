@@ -458,6 +458,13 @@
         .image-upload-box {
             position: relative;
         }
+        
+        /* Hide search and filter bars */
+        .company-section .search-container,
+        .company-section .sort-dropdown,
+        .favourites-section .search-container {
+            display: none !important;
+        }
     </style>
 @endsection
 
