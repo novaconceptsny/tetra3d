@@ -555,6 +555,12 @@
                 // Clear form first to ensure fresh start
                 clearCreateProjectForm();
                 
+                // Hide the global search section
+                const globalSearchSection = document.querySelector('.global-search-section');
+                if (globalSearchSection) {
+                    globalSearchSection.style.display = 'none';
+                }
+                
                 // Fetch data from the create endpoint
                 const response = await fetch(`/tour360/create/${companyId}`);
                 const data = await response.json();
@@ -595,6 +601,12 @@
         function closeCreateProject() {
             // Clear the form
             clearCreateProjectForm();
+            
+            // Show the global search section
+            const globalSearchSection = document.querySelector('.global-search-section');
+            if (globalSearchSection) {
+                globalSearchSection.style.display = 'block';
+            }
             
             // Hide the form and show dashboard
             dashboardSection.style.display = 'block';
@@ -648,6 +660,11 @@
             .then(data => {
                 if (data.success) {
                     alert('Project created successfully!');
+                    // Show the global search section before reloading
+                    const globalSearchSection = document.querySelector('.global-search-section');
+                    if (globalSearchSection) {
+                        globalSearchSection.style.display = 'block';
+                    }
                     window.location.reload(); // Refresh page to show new project
                 } else {
                     alert(data.message || 'Failed to create project');
@@ -701,6 +718,12 @@
                 return response.json();
             })
             .then(data => {
+                // Hide the global search section
+                const globalSearchSection = document.querySelector('.global-search-section');
+                if (globalSearchSection) {
+                    globalSearchSection.style.display = 'none';
+                }
+                
                 // Show the create project section (we'll reuse it for editing)
                 dashboardSection.style.display = 'none';
                 createProjectSection.style.display = 'block';
@@ -810,6 +833,11 @@
             .then(data => {
                 if (data.success) {
                     alert('Project updated successfully!');
+                    // Show the global search section before reloading
+                    const globalSearchSection = document.querySelector('.global-search-section');
+                    if (globalSearchSection) {
+                        globalSearchSection.style.display = 'block';
+                    }
                     window.location.reload(); // Refresh page to show updated project
                 } else {
                     alert(data.message || 'Failed to update project');
