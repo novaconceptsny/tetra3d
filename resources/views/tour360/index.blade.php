@@ -465,6 +465,11 @@
         .favourites-section .search-container {
             display: none !important;
         }
+
+        .__cropro_  {
+            position: fixed !important;
+        }
+
     </style>
 @endsection
 
