@@ -42,6 +42,9 @@ class CanvasManager {
             },
             recentSelection: null,
         };
+        
+        // Track artwork counts for badge display
+        this.artworkCounts = new Map(); // artworkId -> count
         this.artworkCanvas = new fabric.Canvas(this.canvasId, {
             enableRetinaScaling: true,
             skipOffscreen: false,
@@ -157,6 +160,12 @@ class CanvasManager {
 
         this.registerArtworkSelectionEvent(this.photoEditable);
         this.registerCanvasUpdateEvent();
+        
+        // Initialize artwork counts from existing assigned artworks
+        this.initializeArtworkCounts();
+        
+        // Make refreshArtworkBadges globally available
+        window.refreshArtworkBadges = () => this.refreshArtworkBadges();
 
         // Add guide-related initialization
         this.initializeGuides();
@@ -623,6 +632,9 @@ class CanvasManager {
             uniqueArtSelection.setOverrideScale(artSelection.overrideScale);
             
             this.canvasState.assignedArtwork.push(uniqueArtSelection);
+            
+            // Update artwork count
+            this.incrementArtworkCount(artSelection.artworkId);
 
         }.bind(this), {
             crossOrigin: 'anonymous'
@@ -664,6 +676,10 @@ class CanvasManager {
                 this.guides = this.guides.filter(guide => guide.line !== obj);
             }
             this.artworkCanvas.remove(obj);
+            
+            // Get artwork ID before removing from assignedArtwork
+            const artworkId = obj.originalArtworkId || obj.id;
+            
             // Remove by unique instance ID instead of artwork ID
             this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => {
                 // For new instances, check against the unique ID
@@ -673,6 +689,9 @@ class CanvasManager {
                 // For legacy instances, check against artwork ID
                 return art.getArtworkId() !== obj.id;
             });
+            
+            // Update artwork count
+            this.decrementArtworkCount(artworkId);
         });
 
         this.removeBtn.hide();
@@ -687,6 +706,10 @@ class CanvasManager {
                 this.artworkCanvas.remove(obj)
             });
         this.canvasState.assignedArtwork = [];
+        
+        // Clear all artwork counts and update badges
+        this.artworkCounts.clear();
+        this.updateArtworkBadges();
     }
 
     saveNewVersion(event) {
@@ -1507,6 +1530,9 @@ class CanvasManager {
                 this.artworkCanvas.add(warpedImage);
                 this.artworkCanvas.setActiveObject(warpedImage);
                 this.artworkCanvas.renderAll();
+                
+                // Update artwork count for warped artwork
+                this.incrementArtworkCount(artworkId);
 
                 // Clean up
                 tempCanvas.remove();
@@ -1623,6 +1649,72 @@ class CanvasManager {
         button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Area`;
         
         this.artworkCanvas.renderAll();
+    }
+
+    // Initialize artwork counts from existing assigned artworks
+    initializeArtworkCounts() {
+        this.artworkCounts.clear();
+        this.canvasState.assignedArtwork.forEach(art => {
+            const artworkId = art.getArtworkId();
+            const currentCount = this.artworkCounts.get(artworkId) || 0;
+            this.artworkCounts.set(artworkId, currentCount + 1);
+        });
+        this.updateArtworkBadges();
+    }
+
+    // Update artwork count when artwork is added
+    incrementArtworkCount(artworkId) {
+        const currentCount = this.artworkCounts.get(artworkId) || 0;
+        this.artworkCounts.set(artworkId, currentCount + 1);
+        this.updateArtworkBadges();
+    }
+
+    // Update artwork count when artwork is removed
+    decrementArtworkCount(artworkId) {
+        const currentCount = this.artworkCounts.get(artworkId) || 0;
+        if (currentCount > 0) {
+            this.artworkCounts.set(artworkId, currentCount - 1);
+            this.updateArtworkBadges();
+        }
+    }
+
+    // Update the badge display for all artwork items
+    updateArtworkBadges() {
+        // Find all artwork elements in the sidebar
+        const artworkElements = document.querySelectorAll('.artwork-img');
+        
+        artworkElements.forEach(element => {
+            const artworkId = element.dataset.artworkId;
+            const count = this.artworkCounts.get(artworkId) || 0;
+            
+            // Remove existing badge if it exists
+            const existingBadge = element.querySelector('.artwork-count-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            // Add badge if count > 0
+            if (count > 0) {
+                const badge = document.createElement('div');
+                badge.className = 'artwork-count-badge';
+                badge.textContent = count;
+                element.style.position = 'relative';
+                element.appendChild(badge);
+            }
+        });
+    }
+
+    // Method to refresh badges when artwork list is updated (e.g., after search/filter)
+    refreshArtworkBadges() {
+        // Use a small delay to ensure DOM is updated
+        setTimeout(() => {
+            this.updateArtworkBadges();
+        }, 100);
+    }
+
+    // Public method to get artwork count for a specific artwork
+    getArtworkCount(artworkId) {
+        return this.artworkCounts.get(artworkId) || 0;
     }
 }
 

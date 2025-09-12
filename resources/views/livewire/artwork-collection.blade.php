@@ -58,7 +58,66 @@
     .artwork-img:hover .card {
         border-color: #007bff;
     }
+    
+    /* Count badge styling */
+    .artwork-count-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background-color: #e91e63;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: all 0.2s ease;
+    }
+    
+    .artwork-img {
+        position: relative;
+    }
+    
+    .artwork-count-badge:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
 </style>
+
+<script>
+    // Listen for Livewire updates to refresh artwork badges
+    document.addEventListener('livewire:updated', function() {
+        if (typeof window.refreshArtworkBadges === 'function') {
+            window.refreshArtworkBadges();
+        }
+    });
+    
+    // Also listen for DOM changes in the artwork list
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && 
+                mutation.target.classList && 
+                mutation.target.classList.contains('card-row')) {
+                if (typeof window.refreshArtworkBadges === 'function') {
+                    window.refreshArtworkBadges();
+                }
+            }
+        });
+    });
+    
+    // Start observing when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        const cardRow = document.querySelector('.card-row');
+        if (cardRow) {
+            observer.observe(cardRow, { childList: true, subtree: true });
+        }
+    });
+</script>
 
 <div class="col-3 side-col" :class="{ 'd-none': sidebar === 'comments' }">
     <x-loader/>
