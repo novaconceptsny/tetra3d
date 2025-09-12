@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\CompanyTour;
+use App\Models\ProjectTour;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 
@@ -108,6 +109,15 @@ class ResourceController extends Controller
                 ]);
             }
 
+            // Remove projects that have the tour_id but don't belong to the company_ids
+            ProjectTour::where('tour_id', $request->tour_id)
+                ->whereNotIn('project_id', function($query) use ($request) {
+                    $query->select('id')
+                        ->from('projects')
+                        ->whereIn('company_id', $request->company_ids);
+                })
+                ->delete();
+
             $templateTours = $this->getTemplateTours();
 
             return response()->json(['success' => true, 'templateTours' => $templateTours]);
@@ -124,8 +134,18 @@ class ResourceController extends Controller
                 'tour_id' => 'required|exists:tours,id'
             ]);
 
+            $user = auth()->user();
+
             // Delete related records from company_tours table
             CompanyTour::where('tour_id', $request->tour_id)->delete();
+
+            ProjectTour::where('tour_id', $request->tour_id)
+            ->whereIn('project_id', function($query) use ($user) {
+                $query->select('id')
+                    ->from('projects')
+                    ->where('company_id', $user->company_id);
+            })
+            ->delete();
 
             // Get updated template tours
             $templateTours = $this->getTemplateTours();
