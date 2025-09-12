@@ -166,6 +166,9 @@ class CanvasManager {
         
         // Make refreshArtworkBadges globally available
         window.refreshArtworkBadges = () => this.refreshArtworkBadges();
+        
+        // Wait for artwork list to be loaded and then refresh badges
+        this.waitForArtworkListAndRefresh();
 
         // Add guide-related initialization
         this.initializeGuides();
@@ -634,7 +637,7 @@ class CanvasManager {
             this.canvasState.assignedArtwork.push(uniqueArtSelection);
             
             // Update artwork count
-            this.incrementArtworkCount(artSelection.artworkId);
+            this.incrementArtworkCount(parseInt(artSelection.artworkId));
 
         }.bind(this), {
             crossOrigin: 'anonymous'
@@ -678,7 +681,7 @@ class CanvasManager {
             this.artworkCanvas.remove(obj);
             
             // Get artwork ID before removing from assignedArtwork
-            const artworkId = obj.originalArtworkId || obj.id;
+            const artworkId = parseInt(obj.originalArtworkId || obj.id);
             
             // Remove by unique instance ID instead of artwork ID
             this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => {
@@ -1532,7 +1535,7 @@ class CanvasManager {
                 this.artworkCanvas.renderAll();
                 
                 // Update artwork count for warped artwork
-                this.incrementArtworkCount(artworkId);
+                this.incrementArtworkCount(parseInt(artworkId));
 
                 // Clean up
                 tempCanvas.remove();
@@ -1655,7 +1658,7 @@ class CanvasManager {
     initializeArtworkCounts() {
         this.artworkCounts.clear();
         this.canvasState.assignedArtwork.forEach(art => {
-            const artworkId = art.getArtworkId();
+            const artworkId = parseInt(art.getArtworkId());
             const currentCount = this.artworkCounts.get(artworkId) || 0;
             this.artworkCounts.set(artworkId, currentCount + 1);
         });
@@ -1664,16 +1667,18 @@ class CanvasManager {
 
     // Update artwork count when artwork is added
     incrementArtworkCount(artworkId) {
-        const currentCount = this.artworkCounts.get(artworkId) || 0;
-        this.artworkCounts.set(artworkId, currentCount + 1);
+        const id = parseInt(artworkId);
+        const currentCount = this.artworkCounts.get(id) || 0;
+        this.artworkCounts.set(id, currentCount + 1);
         this.updateArtworkBadges();
     }
 
     // Update artwork count when artwork is removed
     decrementArtworkCount(artworkId) {
-        const currentCount = this.artworkCounts.get(artworkId) || 0;
+        const id = parseInt(artworkId);
+        const currentCount = this.artworkCounts.get(id) || 0;
         if (currentCount > 0) {
-            this.artworkCounts.set(artworkId, currentCount - 1);
+            this.artworkCounts.set(id, currentCount - 1);
             this.updateArtworkBadges();
         }
     }
@@ -1684,8 +1689,13 @@ class CanvasManager {
         const artworkElements = document.querySelectorAll('.artwork-img');
         
         artworkElements.forEach(element => {
-            const artworkId = element.dataset.artworkId;
+            const artworkId = parseInt(element.dataset.artworkId);
             const count = this.artworkCounts.get(artworkId) || 0;
+            
+            // Debug logging
+            if (count > 0) {
+                console.log(`Artwork ${artworkId}: count = ${count}`);
+            }
             
             // Remove existing badge if it exists
             const existingBadge = element.querySelector('.artwork-count-badge');
@@ -1714,7 +1724,32 @@ class CanvasManager {
 
     // Public method to get artwork count for a specific artwork
     getArtworkCount(artworkId) {
-        return this.artworkCounts.get(artworkId) || 0;
+        const id = parseInt(artworkId);
+        return this.artworkCounts.get(id) || 0;
+    }
+
+    // Wait for artwork list to be loaded and then refresh badges
+    waitForArtworkListAndRefresh() {
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait time
+        
+        const checkForArtworkList = () => {
+            const artworkElements = document.querySelectorAll('.artwork-img');
+            if (artworkElements.length > 0) {
+                // Artwork list is loaded, refresh badges
+                this.updateArtworkBadges();
+                console.log('Artwork badges initialized on page load');
+            } else if (attempts < maxAttempts) {
+                // Artwork list not ready yet, check again in 100ms
+                attempts++;
+                setTimeout(checkForArtworkList, 100);
+            } else {
+                console.warn('Artwork list not found after maximum attempts');
+            }
+        };
+        
+        // Start checking after a short delay to allow Livewire to load
+        setTimeout(checkForArtworkList, 500);
     }
 }
 

@@ -97,6 +97,15 @@
         }
     });
     
+    // Listen for Livewire component initialization
+    document.addEventListener('livewire:init', function() {
+        if (typeof window.refreshArtworkBadges === 'function') {
+            setTimeout(() => {
+                window.refreshArtworkBadges();
+            }, 300);
+        }
+    });
+    
     // Also listen for DOM changes in the artwork list
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
@@ -115,6 +124,13 @@
         const cardRow = document.querySelector('.card-row');
         if (cardRow) {
             observer.observe(cardRow, { childList: true, subtree: true });
+        }
+        
+        // Refresh badges when artwork collection is loaded
+        if (typeof window.refreshArtworkBadges === 'function') {
+            setTimeout(() => {
+                window.refreshArtworkBadges();
+            }, 200);
         }
     });
 </script>
