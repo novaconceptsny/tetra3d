@@ -52,13 +52,31 @@ class LoginController extends Controller
         if ($request->has('redirect')) {
             $redirectUrl = $request->get('redirect');
             
-            // Validate that the redirect URL is safe (same domain)
+            // Validate that the redirect URL is safe
             if (filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
                 $parsedUrl = parse_url($redirectUrl);
                 $currentHost = parse_url(config('app.url'), PHP_URL_HOST);
                 
+                // Allow redirects to the same domain
                 if ($parsedUrl['host'] === $currentHost) {
                     return redirect($redirectUrl);
+                }
+                
+                // For cross-environment compatibility, check if the redirect URL
+                // contains a valid path that can be reconstructed for the current domain
+                if (isset($parsedUrl['path']) && !empty($parsedUrl['path'])) {
+                    // Extract the path and query parameters
+                    $path = $parsedUrl['path'];
+                    $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+                    $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+                    
+                    // Reconstruct the URL for the current domain
+                    $reconstructedUrl = config('app.url') . $path . $query . $fragment;
+                    
+                    // Validate the reconstructed URL is safe
+                    if (filter_var($reconstructedUrl, FILTER_VALIDATE_URL)) {
+                        return redirect($reconstructedUrl);
+                    }
                 }
             } else {
                 // Handle relative URLs (not full URLs)
