@@ -38,7 +38,7 @@
         @php($sidebar = request('sidebar', 'editor'))
         <div class="row" x-data="{sidebar: @js($sidebar) }">
             <livewire:comments :commentable="$selectedSurfaceState" />
-            <livewire:artwork-collection :project="$project" />
+            @include('livewire.artwork-collection', ['project' => $project])
 
             @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
             <div class="col-9 main-col position-relative"
