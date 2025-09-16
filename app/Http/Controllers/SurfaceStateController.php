@@ -1,29 +1,26 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
-use App\Models\Artwork;
 use App\Models\Layout;
 use App\Models\Project;
 use App\Models\Spot;
 use App\Models\Surface;
-use App\Models\SurfaceState;
 use App\Models\SurfaceInfo;
+use App\Models\SurfaceState;
 use Illuminate\Http\Request;
 
 class SurfaceStateController extends Controller
 {
     public function show(Surface $surface)
     {
-        $layout = Layout::findOrFail(request('layout_id'));
+        $layout  = Layout::findOrFail(request('layout_id'));
         $project = Project::findOrFail($layout->project_id);
 
         $surface->load([
             'states' => fn($query) => $query->forLayout($layout->id),
             'states.artworks.media',
             'states.comments.user',
-            'states.likes.user'
+            'states.likes.user',
         ]);
 
         if ($spot_id = request('spot_id')) {
@@ -32,8 +29,7 @@ class SurfaceStateController extends Controller
             $spot = $surface->tour->spots->first();
         }
 
-
-        $referer = str(request()->headers->get('referer'))->before('?');
+        $referer      = str(request()->headers->get('referer'))->before('?');
         $versions_url = str(
             route('tours.surfaces', $spot->tour_id)
         )->before('?');
@@ -44,52 +40,51 @@ class SurfaceStateController extends Controller
         );
 
         $selectedSurfaceState = null;
-        $create_new_state = request('new');
+        $create_new_state     = request('new');
 
         if ($surface_state_id = request('surface_state_id')) {
             $selectedSurfaceState = SurfaceState::findOrFail($surface_state_id);
         }
 
-        if (!$create_new_state && !$surface_state_id) {
+        if (! $create_new_state && ! $surface_state_id) {
             $selectedSurfaceState = $surface->getCurrentState($layout->id);
         }
 
         $surface->background_url = $surface->getFirstMediaUrl('background');
 
-
-        $data = array();
-        $data['project'] = $project;
-        $data['layout'] = $layout;
-        $data['tour'] = $surface->tour;
-        $data['spot'] = $spot;
-        $data['surface'] = $surface;
-        $data['return_to_versions'] = $return_to_versions;
-        $data['selectedSurfaceState'] = $selectedSurfaceState;
+        $data                          = [];
+        $data['project']               = $project;
+        $data['layout']                = $layout;
+        $data['tour']                  = $surface->tour;
+        $data['spot']                  = $spot;
+        $data['surface']               = $surface;
+        $data['return_to_versions']    = $return_to_versions;
+        $data['selectedSurfaceState']  = $selectedSurfaceState;
         $data['currentSurfaceStateId'] = $surface->getCurrentState($layout->id)?->id;
 
-        $data['navEnabled'] = false;
+        $data['navEnabled']  = false;
         $data['navbarLight'] = true;
 
-        $canvases = array();
 
-        if (!$surface->states->count() || $create_new_state) {
+        $canvases = [];
+
+        if (! $surface->states->count() || $create_new_state) {
             $newState = new SurfaceState();
 
             // initialize new state
-            if (!$surface->states->count()) {
-                $newState->user_id = auth()->id();
-                $newState->layout_id = $layout->id;
+            if (! $surface->states->count()) {
+                $newState->user_id    = auth()->id();
+                $newState->layout_id  = $layout->id;
                 $newState->surface_id = $surface->id;
-                $newState->name = 'Version 1';
+                $newState->name       = 'Version 1';
                 $newState->save();
 
                 $data['currentSurfaceStateId'] = $newState->id;
-                $data['selectedSurfaceState'] = $newState;
+                $data['selectedSurfaceState']  = $newState;
             }
 
             $surface->states[] = $newState;
         }
-
 
         foreach ($surface->states as $surfaceState) {
 
@@ -99,23 +94,24 @@ class SurfaceStateController extends Controller
             });
 
             $canvases[$surfaceState->id ?? 'new'] = [
-                'canvasId' => "artwork_canvas_" . ($surfaceState->id ?? 'new'),
-                'surface' => $surface->only([
+                'canvasId'            => "artwork_canvas_" . ($surfaceState->id ?? 'new'),
+                'surface'             => $surface->only([
                     'id',
                     'name',
                     'background_url',
-                    'data'
+                    'data',
                 ]),
-                'assignedArtworks' => $assignedArtworks,
-                'surfaceStateId' => $surfaceState?->id,
-                'userId' => auth()->id(),
-                'spotId' => $spot->id,
-                'latestState' => $surfaceState ? $surfaceState->canvas : [],
-                'layoutId' => $layout->id,
-                'updateEndpoint' => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
-                'hlookat' => request('hlookat', $spot->xml->view['hlookat']),
-                'vlookat' => request('vlookat', $spot->xml->view['vlookat']),
-                'surfaceStateName' => $surfaceState->name ?? 'Untitled',
+                'assignedArtworks'    => $assignedArtworks,
+                'surfaceStateId'      => $surfaceState?->id,
+                'userId'              => auth()->id(),
+                'spotId'              => $spot->id,
+                'latestState'         => $surfaceState ? $surfaceState->canvas : [],
+                'layoutId'            => $layout->id,
+                'updateEndpoint'      => route('surfaces.update', [$surface, 'return_to_versions' => $return_to_versions]),
+                'hlookat'             => request('hlookat', $spot->xml->view['hlookat']),
+                'vlookat'             => request('vlookat', $spot->xml->view['vlookat']),
+                'surfaceStateName'    => $surfaceState->name ?? 'Untitled',
+                'layoutArtworkCounts' => $layout->getArtworkCounts(),
             ];
         }
 
@@ -132,7 +128,7 @@ class SurfaceStateController extends Controller
         $layout = Layout::findOrFail(request('layout_id'));
 
         $request->validate([
-            'layout_id' => 'required',
+            'layout_id'        => 'required',
             'assigned_artwork' => 'required',
         ]);
 
@@ -141,12 +137,12 @@ class SurfaceStateController extends Controller
 
         $initial_artworks = json_decode($request->assigned_artwork, true);
 
-        $assigned_artworks = array();
+        $assigned_artworks = [];
 
-        $boundingBoxWidth = $surface->data["bounding_box_width"];
+        $boundingBoxWidth  = $surface->data["bounding_box_width"];
         $boundingBoxHeight = $surface->data["bounding_box_height"];
-        $boundingBoxTop = $surface->data["bounding_box_top"];
-        $boundingBoxLeft = $surface->data["bounding_box_left"];
+        $boundingBoxTop    = $surface->data["bounding_box_top"];
+        $boundingBoxLeft   = $surface->data["bounding_box_left"];
 
         // Fetch surface information using surface_id
         $surfaceInfo = SurfaceInfo::where('surface_id', $surface->id)->first();
@@ -172,8 +168,8 @@ class SurfaceStateController extends Controller
                 // Convert string values in $normal to numbers
                 $normal = array_map('floatval', $normal);
 
-                $planeWidth = $surfaceInfo->width;                         // Width in meters
-                $planeHeight = $surfaceInfo->height;                       // Length in meters
+                $planeWidth  = $surfaceInfo->width;  // Width in meters
+                $planeHeight = $surfaceInfo->height; // Length in meters
 
                 // Calculate the target position in 3D space
                 $xDistance = ($artwork['leftPosition'] - $boundingBoxLeft) / $boundingBoxWidth * $planeWidth;
@@ -189,31 +185,31 @@ class SurfaceStateController extends Controller
                 $targetPosition = [
                     'x' => $topLeftCorner['x'] + ($normal['x'] * $offset) + ($normal['z'] * $xDistance),
                     'y' => $topLeftCorner['y'] - $yDistance, // y is always subtracted as it's the vertical offset
-                    'z' => $topLeftCorner['z'] + ($normal['z'] * $offset) - ($normal['x'] * $xDistance)
+                    'z' => $topLeftCorner['z'] + ($normal['z'] * $offset) - ($normal['x'] * $xDistance),
                 ];
 
-                $assigned_artworks[] = array(
-                    'artwork_id' => $artwork['artworkId'],
-                    'top_position' => $artwork['topPosition'],
-                    'left_position' => $artwork['leftPosition'],
-                    'crop_data' => $artwork['cropData'],
+                $assigned_artworks[] = [
+                    'artwork_id'     => $artwork['artworkId'],
+                    'top_position'   => $artwork['topPosition'],
+                    'left_position'  => $artwork['leftPosition'],
+                    'crop_data'      => $artwork['cropData'],
                     'override_scale' => $artwork['overrideScale'],
 
-                    'position_x' => $targetPosition['x'],
-                    'position_y' => $targetPosition['y'],
-                    'position_z' => $targetPosition['z'],
-                    'rotation_x' => $targetRotation['x'],
-                    'rotation_y' => $targetRotation['y'],
-                    'rotation_z' => $targetRotation['z'],
-                );
+                    'position_x'     => $targetPosition['x'],
+                    'position_y'     => $targetPosition['y'],
+                    'position_z'     => $targetPosition['z'],
+                    'rotation_x'     => $targetRotation['x'],
+                    'rotation_y'     => $targetRotation['y'],
+                    'rotation_z'     => $targetRotation['z'],
+                ];
             } else {
-                $assigned_artworks[] = array(
-                    'artwork_id' => $artwork['artworkId'],
-                    'top_position' => $artwork['topPosition'],
-                    'left_position' => $artwork['leftPosition'],
-                    'crop_data' => $artwork['cropData'],
+                $assigned_artworks[] = [
+                    'artwork_id'     => $artwork['artworkId'],
+                    'top_position'   => $artwork['topPosition'],
+                    'left_position'  => $artwork['leftPosition'],
+                    'crop_data'      => $artwork['cropData'],
                     'override_scale' => $artwork['overrideScale'],
-                );
+                ];
             }
 
         }
@@ -229,7 +225,7 @@ class SurfaceStateController extends Controller
         $state->setAsActive();
 
         // Only save screenshots if there are assigned artworks
-        if (!empty($assigned_artworks)) {
+        if (! empty($assigned_artworks)) {
             $state->addMediaFromBase64(resizeBase64Image(
                 $request->thumbnail,
                 $request->reverseScale
@@ -274,10 +270,10 @@ class SurfaceStateController extends Controller
 
         return redirect()->route($route, [
             $surface->tour,
-            'spot_id' => $request->spot_id,
+            'spot_id'   => $request->spot_id,
             'layout_id' => $request->layout_id,
-            'hlookat' => $request->hlookat,
-            'vlookat' => $request->vlookat,
+            'hlookat'   => $request->hlookat,
+            'vlookat'   => $request->vlookat,
         ])->with('success', 'Surface updated');
     }
 
@@ -318,8 +314,8 @@ class SurfaceStateController extends Controller
         Surface::destroy($id);
 
         return [
-            'status' => true,
-            'message' => 'Delete Success!'
+            'status'  => true,
+            'message' => 'Delete Success!',
         ];
     }
 

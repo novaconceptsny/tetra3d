@@ -43,8 +43,9 @@ class CanvasManager {
             recentSelection: null,
         };
         
-        // Track artwork counts for badge display
+        // Track artwork counts for badge display - now using layout-wide counts
         this.artworkCounts = new Map(); // artworkId -> count
+        this.layoutArtworkCounts = data.layoutArtworkCounts || {}; // Layout-wide counts from backend
         this.artworkCanvas = new fabric.Canvas(this.canvasId, {
             enableRetinaScaling: true,
             skipOffscreen: false,
@@ -305,6 +306,8 @@ class CanvasManager {
                 // For non-photo editable surfaces, create regular artwork selection
                 let newSelection = new ArtSelection(artworkData);
                 this.placeSelectedImage(newSelection, dropY, dropX);
+                // Update artwork count
+                this.incrementArtworkCount(parseInt(newSelection.artworkId));
                 this.unsavedChanges = true;
                 this.toggleRemoveButton();
                 
@@ -403,6 +406,7 @@ class CanvasManager {
             if (!photoEditable) {
                 let newSelection = this.newArtworkSelection(target);
                 this.placeSelectedImage(newSelection);
+                this.incrementArtworkCount(parseInt(newSelection.artworkId));
                 this.unsavedChanges = true;
                 this.toggleRemoveButton();
             } else {
@@ -635,9 +639,6 @@ class CanvasManager {
             uniqueArtSelection.setOverrideScale(artSelection.overrideScale);
             
             this.canvasState.assignedArtwork.push(uniqueArtSelection);
-            
-            // Update artwork count
-            this.incrementArtworkCount(parseInt(artSelection.artworkId));
 
         }.bind(this), {
             crossOrigin: 'anonymous'
@@ -712,7 +713,11 @@ class CanvasManager {
         
         // Clear all artwork counts and update badges
         this.artworkCounts.clear();
-        this.updateArtworkBadges();
+        
+        // Reset layout-wide counts to original values (excluding current surface)
+        // This is a simplified approach - in a real scenario, you might want to 
+        // recalculate from the backend
+        this.initializeArtworkCounts();
     }
 
     saveNewVersion(event) {
@@ -1443,6 +1448,8 @@ class CanvasManager {
         // Load the image and apply transformation
         fabric.Image.fromURL(imgUrl, (img) => {
             this.updateTransformedArtwork(img, this.M, bounds, artworkId, uniqueInstanceId);
+            // Update artwork count for warped artwork
+            this.incrementArtworkCount(parseInt(artworkId));
         }, { crossOrigin: 'anonymous' });
     }
 
@@ -1533,9 +1540,6 @@ class CanvasManager {
                 this.artworkCanvas.add(warpedImage);
                 this.artworkCanvas.setActiveObject(warpedImage);
                 this.artworkCanvas.renderAll();
-                
-                // Update artwork count for warped artwork
-                this.incrementArtworkCount(parseInt(artworkId));
 
                 // Clean up
                 tempCanvas.remove();
@@ -1654,14 +1658,18 @@ class CanvasManager {
         this.artworkCanvas.renderAll();
     }
 
-    // Initialize artwork counts from existing assigned artworks
+    // Initialize artwork counts from layout-wide counts
     initializeArtworkCounts() {
         this.artworkCounts.clear();
-        this.canvasState.assignedArtwork.forEach(art => {
-            const artworkId = parseInt(art.getArtworkId());
-            const currentCount = this.artworkCounts.get(artworkId) || 0;
-            this.artworkCounts.set(artworkId, currentCount + 1);
+        
+        // Use layout-wide counts from backend
+        Object.entries(this.layoutArtworkCounts).forEach(([artworkId, count]) => {
+            this.artworkCounts.set(parseInt(artworkId), count);
         });
+        
+        console.log('Layout artwork counts initialized:', this.layoutArtworkCounts);
+        console.log('Canvas artwork counts:', Object.fromEntries(this.artworkCounts));
+        
         this.updateArtworkBadges();
     }
 
@@ -1670,6 +1678,12 @@ class CanvasManager {
         const id = parseInt(artworkId);
         const currentCount = this.artworkCounts.get(id) || 0;
         this.artworkCounts.set(id, currentCount + 1);
+        
+        // Also update the layout-wide counts for consistency
+        this.layoutArtworkCounts[id] = (this.layoutArtworkCounts[id] || 0) + 1;
+        
+        console.log(`Incremented artwork ${id}: canvas count = ${this.artworkCounts.get(id)}, layout count = ${this.layoutArtworkCounts[id]}`);
+        
         this.updateArtworkBadges();
     }
 
@@ -1679,6 +1693,14 @@ class CanvasManager {
         const currentCount = this.artworkCounts.get(id) || 0;
         if (currentCount > 0) {
             this.artworkCounts.set(id, currentCount - 1);
+            
+            // Also update the layout-wide counts for consistency
+            if (this.layoutArtworkCounts[id] > 0) {
+                this.layoutArtworkCounts[id] = this.layoutArtworkCounts[id] - 1;
+            }
+            
+            console.log(`Decremented artwork ${id}: canvas count = ${this.artworkCounts.get(id)}, layout count = ${this.layoutArtworkCounts[id]}`);
+            
             this.updateArtworkBadges();
         }
     }
