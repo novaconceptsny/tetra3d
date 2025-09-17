@@ -11,8 +11,8 @@
 
     <x-menu-item :visible="false" text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self" />
     <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal" />
-    <x-menu-item target="_self" text="Share" icon="fal fa-share-nodes" :visible="$layout"
-        onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})" />
+    <x-menu-item target="_blank" text="Share" icon="fal fa-share-nodes" :visible="$layout"
+        :route="route('share.index', ['layout_id' => request('layout_id')])" />
     <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')" />
 </div>
 @endsection

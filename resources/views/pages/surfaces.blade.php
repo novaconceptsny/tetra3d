@@ -8,8 +8,8 @@
     />
     <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal"/>
     <x-menu-item
-        onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
-        text="Share" icon="fal fa-share-nodes" :visible="$layout" target="_self"
+        :route="route('share.index', ['layout_id' => request('layout_id')])"
+        text="Share" icon="fal fa-share-nodes" :visible="$layout" target="_blank"
     />
     <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"/>
     </div>
