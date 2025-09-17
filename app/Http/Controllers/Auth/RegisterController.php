@@ -96,6 +96,11 @@ class RegisterController extends Controller
                 'name' => $data['company_name']
             ]);
             $companyId = $company->id;
+
+            if($company->name === 'My Workspace') {
+                $company->name = $company->name . '_' . str_pad($company->id, 2, '0', STR_PAD_LEFT);
+                $company->save();
+            }
         }
 
         // Generate verification code

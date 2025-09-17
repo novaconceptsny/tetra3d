@@ -129,8 +129,8 @@
                         <div class="company-section mb-5">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5>
-                                    @if(user()->isAdmin() && $company->name === 'My Workspace')
-                                        {{ $company->name }}_{{ str_pad($company->id, 2, '0', STR_PAD_LEFT) }}
+                                    @if(str_contains($company->name, 'My Workspace'))
+                                        My workspace
                                     @else
                                         {{ $company->name }}
                                     @endif
