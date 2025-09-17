@@ -18,6 +18,7 @@ class CanvasManager {
         this.surfaceData = this.surface.data;
         this.latestState = data.latestState;
         this.photoEditable = data.photoEditable || false;
+        this.projectUnit = data.projectUnit || 'imperial';
 
         this.canvasApi = new CanvasApi({
             updateEndpoint: data.updateEndpoint,
@@ -1061,14 +1062,21 @@ class CanvasManager {
     }
 
     pixelsToFeetInches(pixels) {
-        // Convert pixels to feet/inches based on your canvas's actual width
+        // Convert pixels to feet/inches or cm based on project unit
         const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
         const totalInches = pixels * inchesPerPixel;
 
-        const feet = Math.floor(totalInches / 12);
-        const inches = Math.round(totalInches % 12);
+        if (this.projectUnit === 'metric') {
+            // Convert to centimeters
+            const totalCm = totalInches * 2.54;
+            return `${Math.round(totalCm * 10) / 10} cm`;
+        } else {
+            // Imperial units (feet/inches)
+            const feet = Math.floor(totalInches / 12);
+            const inches = Math.round(totalInches % 12);
 
-        return feet > 0 ? `${feet}'${inches}"` : `${inches}"`;
+            return feet > 0 ? `${feet}'${inches}"` : `${inches}"`;
+        }
     }
 
     createGuide(isHorizontal) {
@@ -1114,7 +1122,9 @@ class CanvasManager {
             visible: true
         });
 
-        labelA = new fabric.Textbox('0', {
+        const initialText = this.projectUnit === 'metric' ? '0 cm' : '0"';
+        
+        labelA = new fabric.Textbox(initialText, {
             fontSize: 12,
             fill: isHorizontal ? '#FF4444' : '#4444FF',
             backgroundColor: 'white',
@@ -1134,7 +1144,7 @@ class CanvasManager {
             cursorColor: 'black'
         });
 
-        labelB = new fabric.Textbox('0', {
+        labelB = new fabric.Textbox(initialText, {
             fontSize: 12,
             fill: isHorizontal ? '#FF4444' : '#4444FF',
             backgroundColor: 'white',
@@ -1315,7 +1325,10 @@ class CanvasManager {
         const pixels = this.feetInchesToPixels(value);
 
         if (pixels === null) {
-            console.warn('Invalid measurement format. Use format like "5\'6\"" or "5\'" or "6\""');
+            const expectedFormat = this.projectUnit === 'metric' 
+                ? 'Use format like "15.5 cm" or "15.5cm"' 
+                : 'Use format like "5\'6\"" or "5\'" or "6\""';
+            console.warn(`Invalid measurement format. ${expectedFormat}`);
             this.updateGuide(guideLine);
             return;
         }
@@ -1376,19 +1389,33 @@ class CanvasManager {
     }
 
     feetInchesToPixels(value) {
-        // Accept input in format: "5'6"" or "5'" or "6""
-        const regex = /^(?:(\d+)')?(?:(\d+)")?$/;
-        const match = value.trim().match(regex);
+        if (this.projectUnit === 'metric') {
+            // Accept input in format: "15.5 cm" or "15.5cm" or "15.5"
+            const regex = /^(\d+(?:\.\d+)?)\s*cm?$/i;
+            const match = value.trim().match(regex);
 
-        if (!match) return null;
+            if (!match) return null;
 
-        const feet = parseInt(match[1] || 0);
-        const inches = parseInt(match[2] || 0);
+            const cm = parseFloat(match[1]);
+            const inches = cm / 2.54; // Convert cm to inches
+            const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
 
-        const totalInches = (feet * 12) + inches;
-        const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
+            return inches / inchesPerPixel;
+        } else {
+            // Imperial units - Accept input in format: "5'6"" or "5'" or "6""
+            const regex = /^(?:(\d+)')?(?:(\d+)")?$/;
+            const match = value.trim().match(regex);
 
-        return totalInches / inchesPerPixel;
+            if (!match) return null;
+
+            const feet = parseInt(match[1] || 0);
+            const inches = parseInt(match[2] || 0);
+
+            const totalInches = (feet * 12) + inches;
+            const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
+
+            return totalInches / inchesPerPixel;
+        }
     }
 
     toggleGuides() {

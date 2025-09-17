@@ -26,9 +26,16 @@ class ArtworkController extends Controller
 
         $artworks = $query->with('media')->paginate($perPage, ['*'], 'page', $page);
         $collections = $project->artworkCollections;
+        $projectUnit = $project->unit ?? 'imperial';
+
+        // Transform artworks to include converted dimensions
+        $artworksData = $artworks->items();
+        foreach ($artworksData as $artwork) {
+            $artwork->converted_dimensions = $artwork->getConvertedDimensions($projectUnit);
+        }
 
         return response()->json([
-            'artworks' => $artworks->items(),
+            'artworks' => $artworksData,
             'pagination' => [
                 'current_page' => $artworks->currentPage(),
                 'last_page' => $artworks->lastPage(),
@@ -39,7 +46,7 @@ class ArtworkController extends Controller
                 'has_more_pages' => $artworks->hasMorePages(),
             ],
             'collections' => $collections,
-            'project_unit' => $project->unit ?? 'imperial'
+            'project_unit' => $projectUnit
         ]);
     }
 }

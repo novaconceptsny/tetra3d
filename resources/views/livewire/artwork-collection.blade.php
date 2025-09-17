@@ -224,7 +224,7 @@
                 ? artwork.media[0].original_url 
                 : artwork.image_url || '/placeholder.jpg';
             
-            const dimensions = this.getConvertedDimensions(artwork);
+            const dimensions = artwork.converted_dimensions || '';
             
             return `
                 <div class="col-12 mb-3 card-col">
@@ -310,17 +310,6 @@
             }
         }
 
-        getConvertedDimensions(artwork) {
-            // This is a simplified version - you might want to implement the full logic
-            if (artwork.data && artwork.data.height_inch && artwork.data.width_inch) {
-                return `${artwork.data.height_inch} x ${artwork.data.width_inch}x1 inches`;
-            }
-            if (artwork.original_value && artwork.original_value.height && artwork.original_value.width) {
-                const unit = artwork.original_value.unit === 'inch' ? 'inches' : 'cm';
-                return `${artwork.original_value.height} x ${artwork.original_value.width}x1 ${unit}`;
-            }
-            return '';
-        }
 
         generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

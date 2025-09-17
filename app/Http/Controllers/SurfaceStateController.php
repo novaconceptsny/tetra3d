@@ -112,6 +112,7 @@ class SurfaceStateController extends Controller
                 'vlookat'             => request('vlookat', $spot->xml->view['vlookat']),
                 'surfaceStateName'    => $surfaceState->name ?? 'Untitled',
                 'layoutArtworkCounts' => $layout->getArtworkCounts(),
+                'projectUnit'         => $project->unit ?? 'imperial',
             ];
         }
 
