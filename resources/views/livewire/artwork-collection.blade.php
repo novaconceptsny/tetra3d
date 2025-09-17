@@ -96,6 +96,83 @@
     
     .pagination {
         margin-bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2px;
+        background-color: #f8f9fa;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .pagination .page-item {
+        margin: 0;
+    }
+    
+    .pagination .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 12px;
+        margin: 0 2px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        background-color: #ffffff;
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        font-size: 14px;
+    }
+    
+    .pagination .page-link:hover {
+        background-color: #e9ecef;
+        border-color: #007bff;
+        color: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #ffffff;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+    }
+    
+    .pagination .page-item.disabled .page-link {
+        background-color: #ffffff;
+        border-color: #dee2e6;
+        color: #6c757d;
+        cursor: default;
+        pointer-events: none;
+    }
+    
+    .pagination .page-item.disabled .page-link:hover {
+        background-color: #ffffff;
+        border-color: #dee2e6;
+        color: #6c757d;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    /* Previous/Next button styling */
+    .pagination .page-link:first-child,
+    .pagination .page-link:last-child {
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    /* Ellipsis styling */
+    .pagination .page-item.disabled .page-link {
+        background-color: #ffffff;
+        border-color: #dee2e6;
+        color: #6c757d;
+        font-weight: 500;
     }
     
     .debug-info {
@@ -266,24 +343,75 @@
                 
                 // Previous button
                 if (pagination.current_page > 1) {
-                    paginationHtml += `<li class="page-item"><a class="page-link" href="?page=${pagination.current_page - 1}">Previous</a></li>`;
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="?page=${pagination.current_page - 1}">&lt;</a></li>`;
                 }
                 
-                // Page numbers
-                for (let i = 1; i <= pagination.last_page; i++) {
-                    const isActive = i === pagination.current_page ? 'active' : '';
-                    paginationHtml += `<li class="page-item ${isActive}"><a class="page-link" href="?page=${i}">${i}</a></li>`;
-                }
+                // Smart page numbers with ellipsis
+                const pages = this.generatePaginationPages(pagination.current_page, pagination.last_page);
+                pages.forEach(page => {
+                    if (page === '...') {
+                        paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                    } else {
+                        const isActive = page === pagination.current_page ? 'active' : '';
+                        paginationHtml += `<li class="page-item ${isActive}"><a class="page-link" href="?page=${page}">${page}</a></li>`;
+                    }
+                });
                 
                 // Next button
                 if (pagination.current_page < pagination.last_page) {
-                    paginationHtml += `<li class="page-item"><a class="page-link" href="?page=${pagination.current_page + 1}">Next</a></li>`;
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="?page=${pagination.current_page + 1}">&gt;</a></li>`;
                 }
                 
                 paginationHtml += '</ul></nav>';
             }
 
             paginationDiv.innerHTML = paginationHtml;
+        }
+
+        generatePaginationPages(currentPage, totalPages) {
+            const pages = [];
+            const maxVisiblePages = 7; // Adjust this to show more/fewer pages
+            
+            if (totalPages <= maxVisiblePages) {
+                // Show all pages if total is small
+                for (let i = 1; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+            } else {
+                // Always show first page
+                pages.push(1);
+                
+                if (currentPage <= 4) {
+                    // Near the beginning: 1, 2, 3, 4, 5, ..., last
+                    for (let i = 2; i <= Math.min(5, totalPages - 1); i++) {
+                        pages.push(i);
+                    }
+                    if (totalPages > 5) {
+                        pages.push('...');
+                    }
+                    if (totalPages > 1) {
+                        pages.push(totalPages);
+                    }
+                } else if (currentPage >= totalPages - 3) {
+                    // Near the end: 1, ..., last-4, last-3, last-2, last-1, last
+                    if (totalPages > 5) {
+                        pages.push('...');
+                    }
+                    for (let i = Math.max(2, totalPages - 4); i <= totalPages; i++) {
+                        pages.push(i);
+                    }
+                } else {
+                    // In the middle: 1, ..., current-1, current, current+1, ..., last
+                    pages.push('...');
+                    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                        pages.push(i);
+                    }
+                    pages.push('...');
+                    pages.push(totalPages);
+                }
+            }
+            
+            return pages;
         }
 
         renderCollections(collections) {
