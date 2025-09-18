@@ -279,10 +279,8 @@ class CanvasManager {
                 // Add visual feedback
                 artworkElement.classList.add('dragging');
                 
-                // Set drag image (optional - shows a preview while dragging)
-                if (artworkElement.querySelector('img')) {
-                    event.dataTransfer.setDragImage(artworkElement.querySelector('img'), 25, 25);
-                }
+                // Create a scaled drag image that matches the actual dropped size
+                this.createScaledDragImage(event, artworkElement, artworkData);
             }
         });
 
@@ -292,6 +290,39 @@ class CanvasManager {
                 artworkElement.classList.remove('dragging');
             }
         });
+    }
+
+    createScaledDragImage(event, artworkElement, artworkData) {
+        const imgElement = artworkElement.querySelector('img');
+        if (!imgElement) return;
+
+        // Create a temporary canvas to draw the scaled image
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Calculate the scale that will be applied when dropping
+        const scale = artworkData.scale || 96;
+        const overrideScale = null; // We don't have override scale during drag
+        
+        // Calculate the same scale that applyAdaptiveRescale will use
+        const a = imgElement.naturalWidth || imgElement.width;
+        const b = this.boundingBox.width;
+        const c = this.canvasState.actualWidthInch * scale;
+        const adaptedScale = a * (b / c);
+        
+        // Calculate the final dimensions
+        const finalWidth = adaptedScale;
+        const finalHeight = (imgElement.naturalHeight || imgElement.height) * (adaptedScale / a);
+        
+        // Set canvas size to match the final dimensions
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
+        
+        // Draw the scaled image
+        ctx.drawImage(imgElement, 0, 0, finalWidth, finalHeight);
+        
+        // Set the scaled canvas as the drag image
+        event.dataTransfer.setDragImage(canvas, finalWidth / 2, finalHeight / 2);
     }
 
     handleArtworkDrop(artworkData, dropX, dropY) {
