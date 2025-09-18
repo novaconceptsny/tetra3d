@@ -8,7 +8,7 @@ body {
   }
 }
 .enter-link {
-  color: #0066FF;
+  color: #099F9A;
   padding: 6px 20px;
   /* border-radius: 4px; */
   font-size: 14px;
@@ -19,7 +19,7 @@ body {
 }
 
 .enter-link:hover {
-  color: #0066FF;
+  color: #099F9A;
   text-decoration: none;
 }
 
@@ -348,7 +348,7 @@ body {
 .btn-enter {
     display: inline;
     background: transparent;
-    color: #203DCE;
+    color: #099F9A;
     padding: 0.5rem;
     text-decoration: none;
     border: none;
@@ -364,6 +364,7 @@ body {
 /* Favorite star styling */
 .favorite-star {
     transition: all 0.2s ease;
+    color: #099F9A !important;
 }
 
 .favorite-star:hover {
@@ -611,16 +612,21 @@ body {
 
 /* Global Search Styles */
 .global-search-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: #ffffff;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.search-card {
+    border: none !important;
 }
 
 .global-search-input {
     font-size: 16px;
     padding: 12px 16px;
     border-radius: 8px;
+    border: 1px solid #e0e0e0 !important;
 }
 
 .global-search-input:focus {
@@ -636,19 +642,28 @@ body {
     border-radius: 6px;
     margin: 0 2px;
     font-size: 12px;
-    padding: 6px 12px;
+    padding: 12px 16px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-filters .btn-check:checked + .btn {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #099F9A;
+    border-color: #099F9A;
     color: white;
+}
+
+.search-filters .btn-check:not(:checked) + .btn {
+    border-color: #099F9A;
+    color: #099F9A;
 }
 
 .search-filters .btn-check:not(:checked) + .btn:hover {
     background-color: #e9ecef;
-    border-color: #007bff;
-    color: #007bff;
+    border-color: #099F9A;
+    color: #099F9A;
 }
 
 /* Search Results Styles */

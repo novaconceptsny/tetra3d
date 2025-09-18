@@ -6,7 +6,7 @@
     <div class="global-search-section mb-4">
         <div class="row">
             <div class="col-12">
-                <div class="card">
+                <div class="card search-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="search-container flex-grow-1 me-3">
