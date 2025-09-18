@@ -979,7 +979,8 @@ main.login .inner-div .login-custum-form-group input {
   box-shadow: none;
   outline: none;
   border: 1px solid #BFBFBF;
-  border-radius: 0;
+  border-radius: 8px;
+  background-color: #E8F4FD;
 }
 
 main.login .inner-div .check-main {
@@ -1044,8 +1045,8 @@ main.login .inner-div .btn-login {
   font-weight: var(--light-font);
   line-height: 1.9;
   background: #ffffff;
-  border-radius: 0;
-  border: 1px solid #000;
+  border-radius: 8px;
+  border: 1px solid #BFBFBF;
   color: #222436;
   margin-bottom: 16px;
 }
