@@ -141,12 +141,12 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #6c757d;
+    color: #999999;
     cursor: pointer;
     padding: 8px;
     z-index: 10;
-    transition: all 0.2s ease;
-    border-radius: 4px;
+    transition: all 0.3s ease;
+    border-radius: 6px;
     font-size: 16px;
     min-width: 35px;
     height: 35px;
@@ -156,14 +156,14 @@
 }
 
 .password-toggle:hover {
-    color: #007bff;
-    background-color: rgba(0, 123, 255, 0.1);
+    color: #099F9A;
+    background-color: rgba(9, 159, 154, 0.1);
 }
 
 .password-toggle:focus {
     outline: none;
-    color: #007bff;
-    background-color: rgba(0, 123, 255, 0.1);
+    color: #099F9A;
+    background-color: rgba(9, 159, 154, 0.1);
 }
 
 .password-toggle:active {
@@ -172,6 +172,27 @@
 
 .password-input-wrapper .form-control {
     padding-right: 45px;
+    border: 1px solid #D3D3D3;
+    border-radius: 12px;
+    background-color: #F5F5F5;
+    color: #999999;
+    transition: all 0.3s ease;
+}
+
+.password-input-wrapper .form-control:focus {
+    border-color: #099F9A;
+    background-color: #ffffff;
+    color: #000000;
+    box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.2);
+}
+
+.password-input-wrapper .form-control::placeholder {
+    color: #999999;
+    font-weight: var(--light-font);
+}
+
+.password-input-wrapper .form-control:not(:placeholder-shown) {
+    color: #000000;
 }
 
 /* Ensure the icon is visible */
