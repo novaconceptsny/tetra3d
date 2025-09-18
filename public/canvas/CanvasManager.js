@@ -337,7 +337,7 @@ class CanvasManager {
             if (!this.photoEditable) {
                 // For non-photo editable surfaces, create regular artwork selection
                 let newSelection = new ArtSelection(artworkData);
-                this.placeSelectedImage(newSelection, dropY, dropX);
+                this.placeSelectedImage(newSelection, dropY, dropX, true); // Center on drop position
                 // Update artwork count
                 this.incrementArtworkCount(parseInt(newSelection.artworkId));
                 this.unsavedChanges = true;
@@ -615,7 +615,7 @@ class CanvasManager {
         image.scaleToWidth(adaptedScale, false);
     }
 
-    placeSelectedImage(artSelection, topPos = this.boundingBox.top, leftPos = this.boundingBox.left) {
+    placeSelectedImage(artSelection, topPos = this.boundingBox.top, leftPos = this.boundingBox.left, centerOnPosition = false) {
         let imgUrl = artSelection.imgUrl;
 
         // Generate unique instance ID for each placement
@@ -652,6 +652,18 @@ class CanvasManager {
             }
 
             this.applyAdaptiveRescale(img1, scale, overrideScale);
+
+            // If centering is requested, adjust position to center the image on the drop point
+            if (centerOnPosition) {
+                const finalWidth = img1.width * img1.scaleX;
+                const finalHeight = img1.height * img1.scaleY;
+                
+                // Adjust position to center the image on the drop point
+                img1.set({
+                    left: leftPos - (finalWidth / 2),
+                    top: topPos - (finalHeight / 2)
+                });
+            }
 
             img1.hasControls = false;
             this.artworkCanvas.add(img1);
