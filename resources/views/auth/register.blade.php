@@ -71,8 +71,9 @@
                                     class="form-control @error('password') is-invalid @enderror"
                                     name="password" id="password" type="password"
                                     required autocomplete="new-password"
+                                    oninput="handlePasswordInput('password')"
                                 >
-                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <button type="button" class="password-toggle @error('password') d-none @enderror" onclick="togglePassword('password')" id="password-toggle-btn">
                                     <i class="fas fa-eye" id="password-eye"></i>
                                 </button>
                             </div>
@@ -86,8 +87,9 @@
                                     class="form-control @error('password') is-invalid @enderror"
                                     name="password_confirmation" id="password-confirm" type="password"
                                     required autocomplete="new-password"
+                                    oninput="handlePasswordInput('password-confirm')"
                                 >
-                                <button type="button" class="password-toggle" onclick="togglePassword('password-confirm')">
+                                <button type="button" class="password-toggle @error('password') d-none @enderror" onclick="togglePassword('password-confirm')" id="password-confirm-toggle-btn">
                                     <i class="fas fa-eye" id="password-confirm-eye"></i>
                                 </button>
                             </div>
@@ -254,6 +256,40 @@ function togglePassword(inputId) {
         eyeIcon.classList.add('fa-eye');
     }
 }
+
+function handlePasswordInput(inputId) {
+    const input = document.getElementById(inputId);
+    const toggleBtn = document.getElementById(inputId + '-toggle-btn');
+    const errorElement = input.closest('.form-group').querySelector('.invalid-feedback');
+    
+    // Show toggle button when user starts typing
+    if (input.value.length > 0) {
+        toggleBtn.classList.remove('d-none');
+        // Remove error styling and hide error message
+        input.classList.remove('is-invalid');
+        if (errorElement) {
+            errorElement.style.display = 'none';
+        }
+    } else {
+        // Hide toggle button when input is empty
+        toggleBtn.classList.add('d-none');
+    }
+}
+
+// Initialize on page load - hide toggle buttons if there are errors
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('password-confirm');
+    
+    // Check if password field has error and hide toggle button accordingly
+    if (passwordInput.classList.contains('is-invalid')) {
+        document.getElementById('password-toggle-btn').classList.add('d-none');
+    }
+    
+    if (confirmPasswordInput.classList.contains('is-invalid')) {
+        document.getElementById('password-confirm-toggle-btn').classList.add('d-none');
+    }
+});
 </script>
 
 </body>
