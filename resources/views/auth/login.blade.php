@@ -74,7 +74,7 @@
                         <div class="text-center mt-3">
                             <p class="m-0">
                                 {{ __("Don't have an account?") }} 
-                                <a href="{{ route('register') }}" class="text-decoration-none fw-bold">
+                                <a href="{{ route('register') }}" class="text-decoration-none fw-bold" style="color: #099F9A;">
                                     {{ __('Sign up here') }}
                                 </a>
                             </p>

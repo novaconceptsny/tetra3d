@@ -103,7 +103,7 @@
                         <div class="mt-3 text-center">
                             <p class="m-0">
                                 {{ __('Already have an account?') }} 
-                                <a href="{{ route('login') }}" class="text-decoration-none fw-bold">
+                                <a href="{{ route('login') }}" class="text-decoration-none fw-bold" style="color: #099F9A;">
                                     {{ __('Sign in here') }}
                                 </a>
                             </p>

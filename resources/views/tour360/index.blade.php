@@ -64,7 +64,7 @@
                     <div class="d-flex align-items-center">
                         <h5 class="mb-0">Favourites</h5>
                         @if(auth()->user() && auth()->user()->isSuperAdmin())
-                            <button id="toggleFavouritesBtn" class="btn btn-link ms-2" title="Show/Hide Favourites" style="font-size: 1.2rem;">
+                            <button id="toggleFavouritesBtn" class="btn btn-link ms-2" title="Show/Hide Favourites" style="font-size: 1.2rem; color: #099F9A;">
                                 <i id="favouritesEyeIcon" class="fas fa-eye"></i>
                             </button>
                         @endif
