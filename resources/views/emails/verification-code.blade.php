@@ -21,7 +21,7 @@
             margin-bottom: 20px;
         }
         .verification-code {
-            background-color: #007bff;
+            background-color: #099F9A;
             color: white;
             padding: 15px;
             text-align: center;
