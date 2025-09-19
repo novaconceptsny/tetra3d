@@ -83,7 +83,7 @@
                             <div class="password-input-wrapper">
                                 <input
                                     placeholder="Confirm Password"
-                                    class="form-control"
+                                    class="form-control @error('password') is-invalid @enderror"
                                     name="password_confirmation" id="password-confirm" type="password"
                                     required autocomplete="new-password"
                                 >
@@ -91,6 +91,7 @@
                                     <i class="fas fa-eye" id="password-confirm-eye"></i>
                                 </button>
                             </div>
+                            <x-error field="password"/>
                         </div>
                         <button type="submit" class="btn-login btn form-control">Register</button>
                         
@@ -136,20 +137,20 @@
 
 .password-toggle {
     position: absolute;
-    right: 10px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     color: #999999;
     cursor: pointer;
-    padding: 8px;
+    padding: 6px;
     z-index: 10;
     transition: all 0.3s ease;
-    border-radius: 6px;
-    font-size: 16px;
-    min-width: 35px;
-    height: 35px;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,7 +172,7 @@
 }
 
 .password-input-wrapper .form-control {
-    padding-right: 45px;
+    padding-right: 50px;
     border: 1px solid #D3D3D3;
     border-radius: 12px;
     background-color: #F5F5F5;
@@ -198,10 +199,43 @@
 /* Ensure the icon is visible */
 .password-toggle i {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     text-align: center;
     line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.password-toggle:hover i {
+    opacity: 1;
+}
+
+/* Error message styling */
+.invalid-feedback {
+    display: block !important;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Ensure error messages are visible when validation fails */
+.was-validated .form-control:invalid ~ .invalid-feedback,
+.form-control.is-invalid ~ .invalid-feedback {
+    display: block !important;
+}
+
+/* Style for invalid input fields */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
 }
 </style>
 
