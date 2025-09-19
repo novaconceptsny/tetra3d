@@ -75,12 +75,12 @@
                         <form method="POST" action="{{ route('verification.resend') }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="email" value="{{ session('verification_email') ?? old('email') }}">
-                            <button type="submit" class="btn btn-link p-0">Resend Code</button>
+                            <button type="submit" class="btn btn-link p-0" style="color: #000; text-decoration: underline; text-decoration-color: #099F9A; text-underline-offset: 4px; font-size: 16px;">Resend Code</button>
                         </form>
                     </div>
 
                     <div class="mt-3 text-center">
-                        <a href="{{ route('login') }}" class="text-decoration-none">Back to Login</a>
+                        <a href="{{ route('login') }}" class="text-decoration-none" style="color: #099F9A;">Back to Login</a>
                     </div>
                 </div>
             </div>
