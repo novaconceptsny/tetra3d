@@ -109,7 +109,7 @@
                         <div class="text-center mt-3">
                             <p class="m-0">
                                 {{ __('Remember your password?') }} 
-                                <a href="{{ route('login') }}" class="text-decoration-none fw-bold">
+                                <a href="{{ route('login') }}" class="text-decoration-none fw-bold" style="color: #099F9A;">
                                     {{ __('Back to Login') }}
                                 </a>
                             </p>
