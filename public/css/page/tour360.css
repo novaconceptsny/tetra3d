@@ -256,7 +256,8 @@ body {
 
 .create-project-section {
   max-width: 90%;
-  margin: 0 auto;
+  margin: 20px auto;
+  padding: 20px 0px;
 }
 
 .create-project-section .card {
