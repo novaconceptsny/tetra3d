@@ -3544,29 +3544,32 @@ input#checkbox {
 }
 
 .c-btn-primary {
-  border: 1px solid #000 !important;
-  background-color: #fff !important;
-  border-radius: 0;
-  color: #222436 !important;
+  border: 1px solid #099F9A !important;
+  background-color: #099F9A !important;
+  border-radius: 8px;
+  color: #ffffff !important;
 }
 
 .c-btn-primary:hover,
 .c-btn-primary.active {
-  background-color: #222436 !important;
+  background-color: #077a75 !important;
+  border-color: #077a75 !important;
   color: #ffffff !important;
 }
 
 .tour-map-container .list-group-item {
   border: 1px solid #000 !important;
   background-color: #fff !important;
-  border-radius: 0;
+  border-radius: 8px;
   color: #222436 !important;
+  margin-bottom: 4px;
 }
 
 .tour-map-container .list-group-item:hover,
 .tour-map-container .list-group-item.active {
-  background-color: #222436 !important;
+  background-color: #099F9A !important;
   color: #ffffff !important;
+  border-color: #099F9A !important;
 }
 
 .modal-content {
