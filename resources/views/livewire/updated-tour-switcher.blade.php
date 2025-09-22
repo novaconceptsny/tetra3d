@@ -130,7 +130,7 @@
         }
         .layout-card-container {
             display: flex;
-            gap: 1rem;
+            gap: 2rem;
         }
         .layout-info-container {
             display: flex;
