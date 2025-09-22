@@ -57,10 +57,11 @@
         </div>
     </div>
 
-    <div id="dashboard-section" class="row">
-        <div class="col-12">
+    <!-- Favourites Section - Full Width -->
+    <div class="favourites-section-full-width">
+        <div class="container">
             <div class="favourites-section">
-                <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="d-flex align-items-center">
                         <h5 class="mb-0">Favourites</h5>
                         @if(auth()->user() && auth()->user()->isSuperAdmin())
@@ -87,9 +88,9 @@
                         <div class="row">
                             @if($favorites->count() > 0)
                                 @foreach($favorites as $favorite)
-                                    <div class="col-md-3 favourite-card" data-favorite-id="{{ $favorite->id }}">
-                                        <div class="bg-light rounded p-3">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="col-lg-2 col-md-3 col-sm-4 favourite-card" data-favorite-id="{{ $favorite->id }}">
+                                        <div class="bg-light rounded p-2">
+                                            <div class="d-flex justify-content-between align-items-start mb-1">
                                                 <h4 class="mb-0">
                                                     <i class="fas fa-star text-primary favorite-star"
                                                        onclick="removeFavorite({{ $favorite->id }})"
@@ -98,15 +99,15 @@
                                                     {{ $favorite->name }}
                                                 </h4>
                                             </div>
-                                            <div class="mb-2">
-                                                <small class="text-muted">
+                                            <div class="mb-1">
+                                                <small class="text-muted" style="font-size: 11px;">
                                                     <i class="fas fa-folder me-1"></i>
                                                     {{ $favorite->project ? $favorite->project->name : 'No Project' }}
                                                 </small>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between">
-                                                <span>{{ $favorite->assignedTour()->name }}</span>
-                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter ms-2">
+                                                <span style="font-size: 12px;">{{ $favorite->assignedTour()->name }}</span>
+                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter ms-1" style="font-size: 11px; padding: 2px 8px;">
                                                     Enter
                                                 </a>
                                             </div>
@@ -122,7 +123,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div id="dashboard-section" class="row">
+        <div class="col-12">
             <div class="projects-section">
                 @if($companies->count() > 0)
                     @foreach($companies as $company)
@@ -1300,9 +1305,9 @@
                 }
 
                 const favoritesHtml = favorites.map(favorite => `
-                    <div class="col-md-3 favourite-card" data-favorite-id="${favorite.id}">
-                        <div class="bg-light rounded p-3">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="col-lg-2 col-md-3 col-sm-4 favourite-card" data-favorite-id="${favorite.id}">
+                        <div class="bg-light rounded p-2">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
                                 <h4 class="mb-0">
                                     <i class="fas fa-star text-primary favorite-star"
                                        onclick="removeFavorite(${favorite.id})"
@@ -1311,15 +1316,15 @@
                                     ${favorite.name}
                                 </h4>
                             </div>
-                            <div class="mb-2">
-                                <small class="text-muted">
+                            <div class="mb-1">
+                                <small class="text-muted" style="font-size: 11px;">
                                     <i class="fas fa-folder me-1"></i>
                                     ${favorite.project ? favorite.project.name : 'No Project'}
                                 </small>
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
-                                <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
-                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter ms-2">
+                                <span style="font-size: 12px;">${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
+                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter ms-1" style="font-size: 11px; padding: 2px 8px;">
                                     Enter
                                 </a>
                             </div>

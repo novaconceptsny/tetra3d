@@ -23,16 +23,29 @@ body {
   text-decoration: none;
 }
 
-.favourites-section {
+/* Full width favourites section wrapper */
+.favourites-section-full-width {
   background: #fff;
   margin: 40px 0;
-  padding: 40px 20px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.favourites-section {
+  background: #fff;
+  margin: 0;
+  padding: 20px 20px;
 }
 .favourites-section h5 {
-  font-size: 24px;
+  font-size: 20px;
 }
 .favourites-section .favourite-items h4 {
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 1.3;
 }
 .favourites-section .favourite-items .enter-link {
   float: none;
@@ -41,20 +54,54 @@ body {
 
 /* Add spacing between favorite cards */
 .favourites-section .favourite-card {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .favourites-section .favourite-card .bg-light {
-  margin: 0 10px;
+  margin: 0 5px;
+  min-height: 100px;
+  padding: 8px !important;
 }
 
 /* Ensure proper spacing in the grid */
 .favourites-section .row {
-  margin: 0 -10px;
+  margin: 0 -5px;
 }
 
-.favourites-section .col-md-3 {
-  padding: 0 10px;
+.favourites-section .col-lg-2,
+.favourites-section .col-md-3,
+.favourites-section .col-sm-4 {
+  padding: 0 5px;
+}
+
+/* Responsive adjustments for favourite cards */
+@media (max-width: 991.98px) {
+  .favourites-section .col-lg-2 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .favourites-section .col-md-3 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  
+  .favourites-section .favourite-card .bg-light {
+    min-height: 100px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .favourites-section .col-sm-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .favourites-section .favourite-card .bg-light {
+    min-height: 80px;
+  }
 }
 
 .projects-section .layout-section .card {
