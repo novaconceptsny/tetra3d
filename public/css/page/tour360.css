@@ -485,8 +485,12 @@ body {
 
 .search-input {
     border-radius: 6px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e0e0e0 !important;
     transition: all 0.2s ease;
+}
+
+input[type=text].form-control:not(.login-custum-form-group input), select.form-control.search-input {
+    border: 1px solid #e0e0e0 !important;
 }
 
 .search-input:focus {

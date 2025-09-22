@@ -277,7 +277,7 @@
         }
         
         .light-grey-box:hover {
-            background-color: #e8e8e8;
+            background-color: #099F9A !important;
             color: #333;
         }
         
