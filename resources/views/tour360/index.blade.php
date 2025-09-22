@@ -573,6 +573,12 @@
                     globalSearchSection.style.display = 'none';
                 }
                 
+                // Hide the favourites section
+                const favouritesSection = document.querySelector('.favourites-section-full-width');
+                if (favouritesSection) {
+                    favouritesSection.style.display = 'none';
+                }
+                
                 // Fetch data from the create endpoint
                 const response = await fetch(`/tour360/create/${companyId}`);
                 const data = await response.json();
@@ -618,6 +624,12 @@
             const globalSearchSection = document.querySelector('.global-search-section');
             if (globalSearchSection) {
                 globalSearchSection.style.display = 'block';
+            }
+            
+            // Show the favourites section
+            const favouritesSection = document.querySelector('.favourites-section-full-width');
+            if (favouritesSection) {
+                favouritesSection.style.display = 'block';
             }
             
             // Hide the form and show dashboard
@@ -677,6 +689,11 @@
                     if (globalSearchSection) {
                         globalSearchSection.style.display = 'block';
                     }
+                    // Show the favourites section before reloading
+                    const favouritesSection = document.querySelector('.favourites-section-full-width');
+                    if (favouritesSection) {
+                        favouritesSection.style.display = 'block';
+                    }
                     window.location.reload(); // Refresh page to show new project
                 } else {
                     alert(data.message || 'Failed to create project');
@@ -734,6 +751,12 @@
                 const globalSearchSection = document.querySelector('.global-search-section');
                 if (globalSearchSection) {
                     globalSearchSection.style.display = 'none';
+                }
+                
+                // Hide the favourites section
+                const favouritesSection = document.querySelector('.favourites-section-full-width');
+                if (favouritesSection) {
+                    favouritesSection.style.display = 'none';
                 }
                 
                 // Show the create project section (we'll reuse it for editing)
@@ -849,6 +872,11 @@
                     const globalSearchSection = document.querySelector('.global-search-section');
                     if (globalSearchSection) {
                         globalSearchSection.style.display = 'block';
+                    }
+                    // Show the favourites section before reloading
+                    const favouritesSection = document.querySelector('.favourites-section-full-width');
+                    if (favouritesSection) {
+                        favouritesSection.style.display = 'block';
                     }
                     window.location.reload(); // Refresh page to show updated project
                 } else {
