@@ -25,7 +25,7 @@
         </button>
 
         @if($layout->id)
-        <button class="btn btn-sm rounded-0 delete-btn" type="button" wire:click="deleteLayout({{ $layout->id }})" style="background-color: #E24B4B; border-color: #E24B4B; color: white;">
+        <button class="btn btn-sm rounded delete-btn" type="button" wire:click="deleteLayout({{ $layout->id }})" style="background-color: #E24B4B; border-color: #E24B4B; color: white;">
             {{ __('Delete Layout') }}
         </button>
         @endif

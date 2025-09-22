@@ -303,7 +303,7 @@
 
             <div class="d-flex justify-content-end gap-3">
                 <div class="d-flex justify-content-center">
-                    <button type="button" class="btn mb-3" id="inlineSaveButton" style="width: 200px; background-color: #28a745; color: white; border: none;" onclick="handleCreateProject()">Create</button>
+                    <button type="button" class="btn mb-3" id="inlineSaveButton" style="width: 200px; background-color: #099F9A; color: white; border: none;" onclick="handleCreateProject()">Create</button>
                 </div>
                 <div class="d-flex justify-content-center">
                     <button type="button" class="btn mb-3" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px; background-color: #E24B4B; color: white; border: none;">Cancel</button>

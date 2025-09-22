@@ -10,10 +10,10 @@
     </div>
 
     <x-slot name="buttons">
-        <button class="btn btn-sm btn-outline-dark rounded-0" type="submit">
+        <button class="btn btn-sm rounded" type="submit" style="background-color: #099F9A; border-color: #099F9A; color: white;">
             {{ __('Duplicate Layout') }}
         </button>
-        <button class="btn btn-sm btn-outline-dark rounded-0" type="button" wire:modal="close">
+        <button class="btn btn-sm btn-outline-secondary rounded" type="button" wire:modal="close">
             {{ __('Cancel') }}
         </button>
     </x-slot>
