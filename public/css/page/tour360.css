@@ -892,3 +892,10 @@ input[type=text].form-control:not(.login-custum-form-group input), select.form-c
     background-color: #007bff !important;
     color: #fff !important;
 }
+
+/* Save button hover effect */
+.save-btn:hover {
+    background-color: #099F9A !important;
+    border-color: #099F9A !important;
+    color: #fff !important;
+}

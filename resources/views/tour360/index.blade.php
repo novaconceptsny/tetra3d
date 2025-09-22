@@ -246,14 +246,14 @@
                 <button type="button" class="btn-close close-create-section"></button>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 login-custum-form-group">
                 <label for="inlineCompanyInput" class="form-label">Company</label>
                 <input type="text" class="form-control" id="inlineCompanyInput" placeholder="Company" disabled>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 login-custum-form-group">
                 <label for="inlineProjectNameInput" class="form-label">Project Name</label>
-                <input type="text" class="form-control" id="inlineProjectNameInput" placeholder="Project">
+                <input type="text" class="form-control" id="inlineProjectNameInput" >
             </div>
 
             <div class="mb-3">
@@ -291,7 +291,7 @@
                 </select>
             </div>
 
-            <div class="mb-3 col-md-4">
+            <div class="mb-5 col-md-4">
                 <label class="form-label">Thumbnail</label>
                 <div class="image-upload-box mb-2" id="inlineImageUploadBox">
                     <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
@@ -301,11 +301,13 @@
                 <div class="image-name" id="inlineImageName"></div>
             </div>
 
-            <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-primary mb-3" id="inlineSaveButton" style="width: 200px" onclick="handleCreateProject()">Create</button>
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-danger" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px">Cancel</button>
+            <div class="d-flex justify-content-end gap-3">
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn mb-3" id="inlineSaveButton" style="width: 200px; background-color: #28a745; color: white; border: none;" onclick="handleCreateProject()">Create</button>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn mb-3" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px; background-color: #E24B4B; color: white; border: none;">Cancel</button>
+                </div>
             </div>
         </div>
     </div>

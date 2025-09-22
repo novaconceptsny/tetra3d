@@ -87,7 +87,7 @@
 
                         @forelse($project->artworkCollections as $collection)
                             <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}" target="_blank"
-                                class="col-btn rounded light-grey-box">{{ $collection->name }}</a>
+                                class="col-btn rounded light-grey-box" style="width : fit-content;">{{ $collection->name }}</a>
                         @empty
                             <span class="text-center d-block">{{ __('No collections') }}</span>
                         @endforelse

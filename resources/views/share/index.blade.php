@@ -460,6 +460,23 @@
         .loading-overlay.hidden {
             display: none;
         }
+
+        /* Custom highlight color for Save button */
+        #saveBtn {
+            background-color: #099F9A !important;
+            border-color: #099F9A !important;
+        }
+
+        #saveBtn:hover {
+            background-color: #088a85 !important;
+            border-color: #088a85 !important;
+        }
+
+        #saveBtn:focus {
+            background-color: #099F9A !important;
+            border-color: #099F9A !important;
+            box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25) !important;
+        }
     </style>
 @endsection
 

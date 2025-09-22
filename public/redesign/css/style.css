@@ -45,9 +45,12 @@
 }
 
 .sidebar-collection-btn-wrapper {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap : wrap;
   gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 :root {
@@ -3567,11 +3570,54 @@ input#checkbox {
 }
 
 .modal-content {
-  border-radius: 0 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
 }
 
 .wep-modal-content {
-  border-radius: 0 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Custom modal overlay styling */
+.modal-overlay {
+  backdrop-filter: blur(4px);
+}
+
+/* Form input styling */
+.form-control {
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #099F9A !important;
+  box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25) !important;
+  outline: none !important;
+}
+
+/* Button hover effects */
+.save-btn:hover {
+  background-color: #088a85 !important;
+  transform: translateY(-1px);
+}
+
+.delete-btn:hover {
+  background-color: #d43c3c !important;
+  transform: translateY(-1px);
+}
+
+/* Close button styling */
+.close-btn:hover {
+  color: #333 !important;
+  background-color: #f8f9fa;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 main section.view-3d {
