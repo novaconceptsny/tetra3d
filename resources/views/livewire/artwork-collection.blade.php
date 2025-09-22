@@ -1,34 +1,44 @@
 <style>
-    .artwork-img {
-        cursor: grab;
+    /* Artwork card styling to match the image design */
+    .artwork-card {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        height: 80px;
         transition: all 0.2s ease;
+        cursor: grab;
         user-select: none;
         position: relative;
     }
     
-    .artwork-img:hover {
+    .artwork-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-color: #099F9A;
     }
     
-    .artwork-img:active {
+    .artwork-card:active {
         cursor: grabbing;
     }
     
-    .artwork-img.dragging {
+    .artwork-card.dragging {
         opacity: 0.5;
         transform: scale(0.95);
         cursor: grabbing;
         z-index: 1000;
     }
     
-    .artwork-img.drag-over {
-        border: 2px dashed #007bff;
+    .artwork-card.drag-over {
+        border: 2px dashed #099F9A;
         background-color: rgba(0, 123, 255, 0.1);
     }
     
     /* Add a subtle indicator that items are draggable */
-    .artwork-img::before {
+    .artwork-card::before {
         content: '⋮⋮';
         position: absolute;
         top: 8px;
@@ -40,23 +50,60 @@
         transition: opacity 0.2s ease;
     }
     
-    .artwork-img:hover::before {
+    .artwork-card:hover::before {
         opacity: 1;
         color: #007bff;
     }
     
-    .artwork-img.dragging::before {
+    .artwork-card.dragging::before {
         opacity: 0;
     }
     
-    /* Improve card appearance */
-    .artwork-img .card {
-        border: 1px solid #dee2e6;
-        transition: all 0.2s ease;
+    .artwork-thumbnail {
+        width: 60px;
+        height: 60px;
+        margin-right: 12px;
+        flex-shrink: 0;
     }
     
-    .artwork-img:hover .card {
-        border-color: #007bff;
+    .thumbnail-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    
+    .artwork-details {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .artist-name {
+        font-size: 14px;
+        color: #495057;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .artwork-title {
+        font-size: 14px;
+        font-style: italic;
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .artwork-dimensions {
+        font-size: 14px;
+        color: #495057;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     /* Count badge styling */
@@ -304,8 +351,8 @@
             const dimensions = artwork.converted_dimensions || '';
             
             return `
-                <div class="col-12 mb-3 card-col">
-                    <div class="card mb-3 artwork-img"
+                <div class="col-12 mb-2 card-col">
+                    <div class="artwork-card artwork-img"
                          draggable="true"
                          data-img-url="${imageUrl}?uuid=${this.generateUUID()}"
                          data-title="${artwork.name}"
@@ -313,19 +360,13 @@
                          data-artwork-id="${artwork.id}"
                          data-scale="${artwork.data?.scale || 1}"
                     >
-                        <div class="row justify-content-center">
-                            <div class="col-md-4">
-                                <div class="card-img">
-                                    <img src="${imageUrl}" alt="card-img" class="img-fluid" />
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <div class="paragraph">${artwork.artist || ''}</div>
-                                    <div class="heading">${artwork.name || ''}</div>
-                                    <div class="dimensions">${dimensions}</div>
-                                </div>
-                            </div>
+                        <div class="artwork-thumbnail">
+                            <img src="${imageUrl}" alt="card-img" class="thumbnail-img" />
+                        </div>
+                        <div class="artwork-details">
+                            <div class="artist-name">${artwork.artist || ''}</div>
+                            <div class="artwork-title">${artwork.name || ''}</div>
+                            <div class="artwork-dimensions">${dimensions}</div>
                         </div>
                     </div>
                 </div>
