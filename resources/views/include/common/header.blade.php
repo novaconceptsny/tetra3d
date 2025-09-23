@@ -18,8 +18,9 @@
 {{--                <span>Tetra</span>--}}
 
             </a>
+            <!-- Mobile menu button -->
             <button
-                class="navbar-toggler"
+                class="navbar-toggler d-lg-none"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#navbarNav"

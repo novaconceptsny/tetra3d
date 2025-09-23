@@ -181,8 +181,6 @@ header#header nav .nav-container .navbar-collapse {
   display: flexbox;
   align-items: center;
   justify-content: center;
-  height: 100% !important;
-  padding-right: 156px;
 }
 
 header#header nav .nav-container .navbar-collapse .navbar-nav {
@@ -210,16 +208,6 @@ header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-lin
 
 header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-link.active {
   color: #222436;
-}
-
-header#header nav .nav-container .navbar-collapse .navbar-nav .nav-item .nav-link.active::before {
-  content: "";
-  width: 100%;
-  height: 2px;
-  position: absolute;
-  background-color: #222436;
-  top: 100%;
-  left: 0;
 }
 
 header#header nav .nav-container .navbar-collapse .navbar-nav a {
@@ -2970,11 +2958,11 @@ main section.editor .editor-view .row .side-col .card-div {
 }
 
 main section.editor .editor-view .row .side-col .card-div .card-row {
-  border: 1px solid #222436;
+  border: none;
   overflow-x: hidden;
   overflow-y: auto;
   height: 100%;
-  background-color: #ffffff;
+  background-color: #f5f5f5;
   padding: 10px 2px;
   cursor: pointer;
 }
@@ -3270,25 +3258,29 @@ main section.editor .editor-view .row .main-col .editor-actions .action i {
   flex-direction: row-reverse;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
-  background-color: #ffffff;
-  color: #000000;
+  padding: 4px 12px;
+  background-color: #f5f5f5;
+  color: #333333;
   font-family: var(--main-font-family);
   font-size: 14px;
   font-style: normal;
   font-weight: var(--light-font);
   line-height: normal;
-  border: 1px solid #000 !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 6px;
   text-decoration: none;
+  height: 36px;
+  justify-content: center;
 }
 
 .tabs-container .view-360:hover {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: #e8e8e8;
+  color: #000000;
+  border-color: #d0d0d0;
 }
 
 .tabs-container .view-360:hover img {
-  filter: invert(1);
+  filter: contrast(1.2);
 }
 
 .tabs-container .view-360 img {
@@ -3652,6 +3644,252 @@ select option {
 .btn-wrapper button:hover {
   background-color: #000 !important;
   color: #fff !important;
+}
+
+/* Mobile responsive styles for header and navigation */
+@media (max-width: 991.98px) {
+  /* Header mobile styles */
+  header#header {
+    padding: 0 15px;
+  }
+  
+  /* Navbar container mobile adjustments */
+  header#header nav .nav-container {
+    flex-wrap: wrap;
+    height: 64px;
+  }
+
+  header#header nav .nav-container .navbar-collapse .navbar-nav {
+    gap: 4px;
+    width: 100%;
+  }
+  
+  /* Mobile navbar toggler styling */
+  header#header nav .navbar-toggler {
+    border: none;
+    padding: 4px 8px;
+    background: transparent;
+    border-radius: 4px;
+  }
+  
+  header#header nav .navbar-toggler:focus {
+    box-shadow: none;
+  }
+  
+  header#header nav .navbar-toggler .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Mobile navbar collapse */
+  header#header nav .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid #C6C6C6;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px 15px;
+    z-index: 1000;
+  }
+  
+  /* Mobile navigation links */
+  header#header nav .navbar-collapse .navbar-nav {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  header#header nav .navbar-collapse .navbar-nav .nav-item {
+    width: 100%;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    margin-bottom: 4px;
+  }
+  
+  header#header nav .navbar-collapse .navbar-nav .nav-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  header#header nav .navbar-collapse .navbar-nav .nav-item .nav-link {
+    padding: 15px 20px;
+    font-size: 16px;
+    color: #222436;
+    text-align: left;
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  header#header nav .navbar-collapse .navbar-nav .nav-item .nav-link:hover {
+    background-color: #e3f2fd;
+    color: #099F9A;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  header#header nav .navbar-collapse .navbar-nav .nav-item .nav-link.active {
+    /* background-color: #1976d2; */
+    color: #ffffff;
+    font-weight: 600;
+  }
+  
+  /* Mobile menu navigation (right side) */
+  header#header nav .navbar-collapse .menu-nav {
+    position: static;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+  }
+  
+  /* Mobile search bar styling */
+  header#header nav .navbar-collapse .search-container {
+    margin: 15px 0;
+    padding: 0 5px;
+  }
+  
+  header#header nav .navbar-collapse .search-container .search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    font-size: 15px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+  }
+  
+  header#header nav .navbar-collapse .search-container .search-input:focus {
+    outline: none;
+    border-color: #1976d2;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  }
+  
+  header#header nav .navbar-collapse .search-container .search-input::placeholder {
+    color: #6c757d;
+    font-style: italic;
+  }
+  
+  /* Mobile profile section */
+  header#header nav .navbar-collapse .menu-nav .profile {
+    justify-content: flex-start;
+    margin-bottom: 15px;
+  }
+  
+  /* Mobile profile dropdown */
+  header#header nav .navbar-collapse .menu-nav .profile .dropdown ul.dropdown-menu {
+    position: static;
+    transform: none;
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid #f0f0f0;
+    margin-top: 10px;
+  }
+  
+  /* Mobile nav left buttons */
+  header#header nav .navbar-collapse .menu-nav .nav-left-btn-div {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  
+  header#header nav .navbar-collapse .menu-nav .nav-left-btn-div .nav-left-btn {
+    width: 100%;
+  }
+  
+  header#header nav .navbar-collapse .menu-nav .nav-left-btn-div .nav-left-btn .menu-btn {
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    border: 2px solid #e3f2fd;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: #ffffff;
+    color: #1976d2;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  header#header nav .navbar-collapse .menu-nav .nav-left-btn-div .nav-left-btn .menu-btn:hover {
+    background-color: #e3f2fd;
+    border-color: #1976d2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+  }
+  
+  header#header nav .navbar-collapse .menu-nav .nav-left-btn-div .nav-left-btn .menu-btn.active {
+    background-color: #1976d2;
+    border-color: #1976d2;
+    color: #ffffff;
+    font-weight: 600;
+  }
+}
+
+/* Additional mobile styles for smaller screens */
+@media (max-width: 576px) {
+  header#header {
+    padding: 0 10px;
+  }
+  
+  header#header nav .navbar-collapse {
+    padding: 15px 10px;
+  }
+  
+  header#header nav .navbar-collapse .navbar-nav .nav-item .nav-link {
+    font-size: 15px;
+    padding: 12px 0;
+  }
+  
+  /* Make logo smaller on very small screens */
+  header#header .navbar-brand img {
+    max-height: 35px;
+  }
+}
+
+/* Ensure navbar toggler is visible on mobile */
+@media (max-width: 991.98px) {
+  header#header nav .navbar-toggler {
+    display: block !important;
+  }
+  
+  /* Hide desktop menu items on mobile */
+  header#header nav .navbar-collapse .menu-nav.applied-nav {
+    display: none;
+  }
+  
+  /* Show mobile menu items */
+  header#header nav .navbar-collapse .menu-nav {
+    display: flex !important;
+  }
+}
+
+/* Desktop styles - hide mobile menu */
+@media (min-width: 992px) {
+  header#header nav .navbar-toggler {
+    display: none;
+  }
+  
+  header#header nav .navbar-collapse {
+    position: static;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+  
+  header#header nav .navbar-collapse .menu-nav.applied-nav {
+    display: flex !important;
+  }
 }
 
 /* Mobile responsive styles for login, register, and reset password pages */

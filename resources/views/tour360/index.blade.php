@@ -291,24 +291,29 @@
                 </select>
             </div>
 
-            <div class="mb-5 col-md-4">
-                <label class="form-label">Thumbnail</label>
-                <div class="image-upload-box mb-2" id="inlineImageUploadBox">
-                    <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
-                    <span>Click or drag & drop to add image</span>
-                    <div class="overlay">Click to replace image</div>
+            <div class="mb-3 col-md-4 d-flex justify-content-between align-items-end w-100">
+                <div>
+                    <label class="form-label">Thumbnail</label>
+                    <div class="image-upload-box mb-2" id="inlineImageUploadBox">
+                        <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
+                        <span>Click or drag & drop to add image</span>
+                        <div class="overlay">Click to replace image</div>
+                    </div>
+                    <div class="image-name" id="inlineImageName"></div>
                 </div>
-                <div class="image-name" id="inlineImageName"></div>
+
+                <div class="d-flex justify-content-end gap-3 mb-1">
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn mb-3" id="inlineSaveButton" style="width: 200px; background-color: #099F9A; color: white; border: none;" onclick="handleCreateProject()">Create</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn mb-3" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px; background-color: #E24B4B; color: white; border: none;">Cancel</button>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="d-flex justify-content-end gap-3">
-                <div class="d-flex justify-content-center">
-                    <button type="button" class="btn mb-3" id="inlineSaveButton" style="width: 200px; background-color: #099F9A; color: white; border: none;" onclick="handleCreateProject()">Create</button>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button type="button" class="btn mb-3" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px; background-color: #E24B4B; color: white; border: none;">Cancel</button>
-                </div>
-            </div>
+
         </div>
     </div>
 
@@ -1034,7 +1039,7 @@
             // Different button set based on whether we have a file or not
             const buttonHtml = `
                 <div class="overlay-actions">
-                    <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
+                    <button type="button" class="btn btn-sm btn-primary me-2 edit-btn" style ="background-color: #099F9A !important; color: white; ">
                         <i class="fas fa-crop"></i> Edit
                     </button>
                     <button type="button" class="btn btn-sm btn-secondary replace-btn">

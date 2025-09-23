@@ -493,6 +493,9 @@ class CanvasManager {
             scaleY: baseScale,
             centeredScaling: true,
         });
+        
+        // Add pale grey color overlay to the wall area
+        this.addWallColorOverlay();
     }
 
     setCanvasOverlay(imgUrl) {
@@ -507,6 +510,39 @@ class CanvasManager {
                 scaleY: 1.0,
             });
         };
+    }
+
+    addWallColorOverlay() {
+        // Create a pale grey color overlay for the wall area
+        // This covers the lower portion of the wall and extends to the floor
+        const wallOverlay = new fabric.Rect({
+            left: 0,
+            top: 0,
+            width: this.artworkCanvas.width,
+            height: this.artworkCanvas.height,
+            fill: 'rgba(200, 200, 200, 0.3)', // Pale grey with transparency
+            selectable: false,
+            evented: false,
+            hasControls: false,
+            hasBorders: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockRotation: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            excludeFromExport: false
+        });
+
+        // Add the overlay to the canvas
+        this.artworkCanvas.add(wallOverlay);
+        
+        // Move the overlay to the back so it's behind other elements but on top of background
+        this.artworkCanvas.sendToBack(wallOverlay);
+        
+        // Store reference for potential future modifications
+        this.wallColorOverlay = wallOverlay;
+        
+        this.artworkCanvas.renderAll();
     }
 
     getSelectionData(selectedElement) {
@@ -787,7 +823,8 @@ class CanvasManager {
         const button = document.getElementById('toggle-guides');
         if (button) {
             button.setAttribute('data-hidden', 'true');
-            button.innerHTML = '<i class="fal fa-eye"></i> Show Guides';
+            button.innerHTML = '<i class="fal fa-eye"></i>';
+            button.setAttribute('title', 'Show Guides');
         }
 
         if (!this.surfaceStateId) {
@@ -1132,11 +1169,6 @@ class CanvasManager {
 
         let line, labelA, labelB;
 
-        // Reset toggle button state to show all guides
-        const button = document.getElementById('toggle-guides');
-        button.setAttribute('data-hidden', 'false');
-        button.innerHTML = '<i class="fal fa-eye"></i> Hide Guides';
-
         // Make all existing guides visible
         this.guides.forEach(guide => {
             guide.line.visible = true;
@@ -1471,7 +1503,8 @@ class CanvasManager {
         });
 
         button.setAttribute('data-hidden', (isHidden).toString());
-        button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Guides`;
+        button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i>`;
+        button.setAttribute('title', `${isHidden ? 'Show' : 'Hide'} Guides`);
 
         this.artworkCanvas.renderAll();
     }

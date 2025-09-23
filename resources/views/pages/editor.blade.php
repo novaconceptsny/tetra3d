@@ -57,14 +57,14 @@
                     @endforeach
 
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide">
-                            <i class="fal fa-arrows-alt-h"></i> Add Horizontal Guide
+                        <button class="btn btn-outline-secondary btn-sm icon-button" id="add-horz-guide" title="Add Horizontal Guide">
+                            <i class="fal fa-arrows-alt-h"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-vert-guide">
-                            <i class="fal fa-arrows-alt-v"></i> Add Vertical Guide
+                        <button class="btn btn-outline-secondary btn-sm icon-button" id="add-vert-guide" title="Add Vertical Guide">
+                            <i class="fal fa-arrows-alt-v"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-guides" data-hidden="false">
-                            <i class="fal fa-eye"></i> Hide Guides
+                        <button class="btn btn-outline-secondary btn-sm icon-button" id="toggle-guides" data-hidden="false" title="Hide Guides">
+                            <i class="fal fa-eye"></i>
                         </button>
 
                         <x-menu-item 
@@ -162,8 +162,98 @@
 }
 
 .white-bg-button:hover {
-    background-color: black !important;
+    background-color: #099F9A !important;
     color: white !important;
-    border-color: black !important;
+    border-color: #099F9A !important;
+}
+
+/* Icon button styles */
+.icon-button {
+    background-color: white !important;
+    color: black !important;
+    height: 36px !important;
+    width: 36px !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: var(--light-font) !important;
+    line-height: normal !important;
+    text-decoration: none !important;
+    font-family: var(--main-font-family) !important;
+    box-shadow: none !important;
+    border: 1px solid #d3d3d3 !important;
+    border-radius: 0px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+}
+
+.icon-button:hover {
+    background-color: #099F9A !important;
+    color: white !important;
+    border-color: #099F9A !important;
+}
+
+/* Tooltip styles */
+.icon-button[title] {
+    position: relative;
+}
+
+.icon-button[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.icon-button[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+    z-index: 1000;
+    margin-bottom: -5px;
+}
+
+/* View 360 button hover styles */
+.view-360 {
+    background-color: white !important;
+    color: black !important;
+    height: 36px !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: var(--light-font) !important;
+    line-height: normal !important;
+    text-decoration: none !important;
+    font-family: var(--main-font-family) !important;
+    box-shadow: none !important;
+    border: 1px solid #d3d3d3 !important;
+    border-radius: 0px !important;
+    padding: 4px 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.view-360:hover {
+    background-color: #099F9A !important;
+    color: white !important;
+    border-color: #099F9A !important;
 }
 </style>

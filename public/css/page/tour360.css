@@ -548,9 +548,13 @@ input[type=text].form-control:not(.login-custum-form-group input), select.form-c
 
 .input-group-text {
     background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e0e0e0 !important;
     border-right: none;
     color: #6c757d;
+}
+
+.select2-container--default .select2-selection--multiple {
+  border: 1px solid #e0e0e0 !important;
 }
 
 .search-input {
