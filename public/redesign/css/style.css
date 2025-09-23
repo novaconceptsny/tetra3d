@@ -3654,4 +3654,65 @@ select option {
   color: #fff !important;
 }
 
+/* Mobile responsive styles for login, register, and reset password pages */
+@media (max-width: 991.98px) {
+  /* Hide the image section on mobile devices */
+  main.login .container-fluid .row .sec-col {
+    display: none !important;
+  }
+  
+  /* Make the form section take full width on mobile */
+  main.login .container-fluid .row .inner-div {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  
+  /* Remove borders and extend to full width on mobile */
+  main.login .inner-div {
+    border: none !important;
+    padding-inline: 20px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Make container fluid extend to full width */
+  main.login .container-fluid {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Make row extend to full width */
+  main.login .container-fluid .row {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Center the form content vertically */
+  main.login {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    padding: 20px !important;
+  }
+  
+  /* Adjust logo size for mobile */
+  main.login .inner-div .logo img {
+    width: 150px !important;
+  }
+  
+  /* Adjust heading size for mobile */
+  main.login .inner-div .login {
+    font-size: 35px !important;
+  }
+  
+  /* Adjust paragraph size for mobile */
+  main.login .inner-div p {
+    font-size: 16px !important;
+  }
+}
+
 /*# sourceMappingURL=style.css.map */
