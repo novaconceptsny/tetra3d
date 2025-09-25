@@ -37,13 +37,17 @@
                                                style="color: {{ $layout->is_favorite ? '#099F9A' : '' }};"></i>
                                         </div>
                                         <div class="layout-preview">
-                                            <img :src="$wire.tourImages['{{ $layout->assignedTour()->id }}']">
+                                            @if($layout->assignedTour())
+                                                <img :src="$wire.tourImages['{{ $layout->assignedTour()->id }}']">
+                                            @else
+                                                <div class="no-tour-placeholder">No Tour Assigned</div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="layout-info-container">
                                         <div class="layout-info">
                                                 <div class="layout-title">{{ $layout->name }}</div>
-                                                <div class="layout-meta">Tour: {{ $layout->assignedTour()->name }}</div>
+                                                <div class="layout-meta">Tour: {{ $layout->assignedTour() ? $layout->assignedTour()->name : 'No Tour Assigned' }}</div>
                                                 <div class="layout-meta">Modified: {{ $layout->updated_at->format('m/d/y') }}</div>
                                         </div>
                                         <div class="layout-actions">

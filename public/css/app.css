@@ -11286,3 +11286,33 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+
+/* Layout Form Modal - Rounded Edges */
+.layout-form-modal .modal-content {
+  border-radius: 15px !important;
+  overflow: hidden;
+}
+
+.layout-form-modal .modal-header {
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+}
+
+.layout-form-modal .modal-footer {
+  border-bottom-left-radius: 15px !important;
+  border-bottom-right-radius: 15px !important;
+}
+
+/* Layout Tour Switcher - No Tour Placeholder */
+.no-tour-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #f8f9fa;
+  color: #6c757d;
+  font-size: 12px;
+  border-radius: 4px;
+  text-align: center;
+  padding: 10px;
+}

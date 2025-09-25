@@ -1,4 +1,4 @@
-<x-wire-elements-pro::bootstrap.modal on-submit="submit">
+<x-wire-elements-pro::bootstrap.modal on-submit="submit" class="layout-form-modal">
     <x-slot name="title" class="fw-normal">{{ $heading }}</x-slot>
 
     <div class="row">
