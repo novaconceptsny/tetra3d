@@ -72,6 +72,17 @@
 @endsection
 
 @section('content')
+<!-- Landscape Orientation Prompt -->
+<div id="landscapePrompt" class="landscape-prompt">
+    <div class="landscape-prompt-icon">
+        <i class="fas fa-mobile-alt"></i>
+    </div>
+    <div class="landscape-prompt-title">Rotate Your Device</div>
+    <div class="landscape-prompt-message">
+        For the best experience, please rotate your device to landscape mode to view the tour.
+    </div>
+</div>
+
 <div style="height: calc(100vh - 52px);">
     <div class="h-100 position-relative">
         @if ($tracker)
@@ -984,6 +995,31 @@
                 window.location = @js(route('dashboard'));
             }
         });
+    });
+
+    // Landscape Orientation Prompt Functionality
+    function checkOrientation() {
+        const landscapePrompt = document.getElementById('landscapePrompt');
+        if (!landscapePrompt) return;
+
+        const isMobile = window.innerWidth <= 767;
+        const isPortrait = window.innerHeight > window.innerWidth;
+
+        if (isMobile && isPortrait) {
+            landscapePrompt.classList.remove('hidden');
+        } else {
+            landscapePrompt.classList.add('hidden');
+        }
+    }
+
+    // Check orientation on page load
+    document.addEventListener('DOMContentLoaded', checkOrientation);
+
+    // Check orientation on window resize and orientation change
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', () => {
+        // Add a small delay to ensure the orientation change is complete
+        setTimeout(checkOrientation, 100);
     });
 
 </script>
