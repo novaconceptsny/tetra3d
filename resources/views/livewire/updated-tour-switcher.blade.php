@@ -47,14 +47,14 @@
                                                 <div class="layout-meta">Modified: {{ $layout->updated_at->format('m/d/y') }}</div>
                                         </div>
                                         <div class="layout-actions">
-                                            <div class="d-flex justify-content-end" style="gap: 0.5px;">
-                                                <button class="btn btn-icon btn-sm" wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                            <div class="d-flex justify-content-end" style="gap: 0px;">
+                                                <button class="btn btn-icon btn-sm compact-btn" wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
                                                     <i class="fal fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-icon btn-sm" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
+                                                <button class="btn btn-icon btn-sm compact-btn" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
                                                     <i class="fa fa-copy"></i>
                                                 </button>
-                                                <button class="btn btn-icon btn-sm" type="button" wire:click="deleteLayout({{ $layout->id }})">
+                                                <button class="btn btn-icon btn-sm compact-btn" type="button" wire:click="deleteLayout({{ $layout->id }})">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
@@ -284,6 +284,12 @@
         /* Action button hover colors */
         .btn-icon:hover {
             color: #099F9A !important;
+        }
+        
+        /* Compact button styling for reduced padding */
+        .compact-btn {
+            padding: 0.25rem 0.25rem !important;
+            min-width: auto !important;
         }
         
         /* Hide contributors section */
