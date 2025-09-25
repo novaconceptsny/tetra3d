@@ -13,8 +13,12 @@ header#header {
     background: #fff;
   z-index: 5 !important;
   border-bottom: 1px solid #C6C6C6;
+  min-height: 50px; // Ensure consistent minimum height
+  
   nav.navbar-light {
     background-color: $white-color;
+    min-height: 50px; // Ensure consistent minimum height for light navbar
+    
     .navbar-collapse{
       .breadcrumb-div {
         display: flex;
@@ -87,6 +91,7 @@ header#header {
       justify-content: space-between;
       width: 100%;
       padding: 0;
+      min-height: 50px; // Ensure consistent minimum height for nav container
       .navbar-brand {
         padding: 0;
           display: flex;
@@ -115,6 +120,7 @@ header#header {
         align-items: center;
         justify-content: flex-start;
         height: 100% !important;
+        min-height: 50px; // Ensure consistent minimum height for navbar collapse
         .navbar-nav {
           &.link-nav{
           margin-left: 200px;
