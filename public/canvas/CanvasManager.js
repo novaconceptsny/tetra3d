@@ -296,33 +296,61 @@ class CanvasManager {
         const imgElement = artworkElement.querySelector('img');
         if (!imgElement) return;
 
-        // Create a temporary canvas to draw the scaled image
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
+        console.log('Creating scaled drag image for:', artworkData.title);
+        console.log('Original image dimensions:', imgElement.naturalWidth, 'x', imgElement.naturalHeight);
+
         // Calculate the scale that will be applied when dropping
         const scale = artworkData.scale || 96;
-        const overrideScale = null; // We don't have override scale during drag
         
-        // Calculate the same scale that applyAdaptiveRescale will use
+        // Use the same scaling logic as applyAdaptiveRescale
         const a = imgElement.naturalWidth || imgElement.width;
         const b = this.boundingBox.width;
         const c = this.canvasState.actualWidthInch * scale;
         const adaptedScale = a * (b / c);
         
-        // Calculate the final dimensions
+        // Calculate the final dimensions - this is the width the image will be scaled to
+        // The height is calculated to maintain aspect ratio
         const finalWidth = adaptedScale;
-        const finalHeight = (imgElement.naturalHeight || imgElement.height) * (adaptedScale / a);
+        const aspectRatio = (imgElement.naturalHeight || imgElement.height) / (imgElement.naturalWidth || imgElement.width);
+        const finalHeight = finalWidth * aspectRatio;
         
-        // Set canvas size to match the final dimensions
-        canvas.width = finalWidth;
-        canvas.height = finalHeight;
+        console.log('Calculated final dimensions:', finalWidth, 'x', finalHeight);
+        console.log('Aspect ratio:', aspectRatio);
         
-        // Draw the scaled image
-        ctx.drawImage(imgElement, 0, 0, finalWidth, finalHeight);
+        // Create a temporary div element to hold the scaled image
+        const dragImageDiv = document.createElement('div');
+        dragImageDiv.style.position = 'absolute';
+        dragImageDiv.style.top = '-1000px';
+        dragImageDiv.style.left = '-1000px';
+        dragImageDiv.style.width = finalWidth + 'px';
+        dragImageDiv.style.height = finalHeight + 'px';
+        dragImageDiv.style.overflow = 'hidden';
+        dragImageDiv.style.border = '2px solid #007bff';
+        dragImageDiv.style.borderRadius = '4px';
+        dragImageDiv.style.backgroundColor = 'white';
+        dragImageDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
         
-        // Set the scaled canvas as the drag image
-        event.dataTransfer.setDragImage(canvas, finalWidth / 2, finalHeight / 2);
+        // Create a new image element with the scaled dimensions
+        const scaledImg = document.createElement('img');
+        scaledImg.src = imgElement.src;
+        scaledImg.style.width = '100%';
+        scaledImg.style.height = '100%';
+        scaledImg.style.objectFit = 'contain';
+        
+        dragImageDiv.appendChild(scaledImg);
+        document.body.appendChild(dragImageDiv);
+        
+        // Set the scaled div as the drag image
+        event.dataTransfer.setDragImage(dragImageDiv, finalWidth / 2, finalHeight / 2);
+        
+        console.log('Drag image set with div size:', finalWidth, 'x', finalHeight);
+        
+        // Clean up the temporary div after a short delay
+        setTimeout(() => {
+            if (dragImageDiv.parentNode) {
+                dragImageDiv.parentNode.removeChild(dragImageDiv);
+            }
+        }, 100);
     }
 
     handleArtworkDrop(artworkData, dropX, dropY) {
