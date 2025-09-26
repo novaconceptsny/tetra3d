@@ -248,7 +248,7 @@
             padding: 0.5rem;
             border-radius: 4px;
             text-decoration: none;
-            border: 1px solid #099F9A;
+            border: none;
             height: 32px;
             transition: all 0.2s ease;
         }
