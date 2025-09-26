@@ -234,6 +234,33 @@
         background: #f5f5f5 !important;
         padding: 0px !important;
     }
+    
+    /* Card div scrollbar styling */
+    .card-div {
+        /* Webkit browsers (Chrome, Safari, Edge) */
+        scrollbar-width: thin;
+        scrollbar-color: #F5F5F5 #F5F5F5;
+    }
+    
+    .card-div::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .card-div::-webkit-scrollbar-track {
+        background: #F5F5F5;
+        border-radius: 4px;
+    }
+    
+    .card-div::-webkit-scrollbar-thumb {
+        background: #F5F5F5;
+        border-radius: 4px;
+        border: 1px solid #E0E0E0;
+    }
+    
+    .card-div::-webkit-scrollbar-thumb:hover {
+        background: #E8E8E8;
+    }
 </style>
 
 <script>

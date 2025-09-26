@@ -170,7 +170,7 @@
 /* Icon button styles */
 .icon-button {
     background-color: white !important;
-    color: black !important;
+    color: #6c757d !important;
     height: 36px !important;
     width: 36px !important;
     font-size: 14px !important;
@@ -181,7 +181,7 @@
     font-family: var(--main-font-family) !important;
     box-shadow: none !important;
     border: 1px solid #d3d3d3 !important;
-    border-radius: 0px !important;
+    border-radius: 8px !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
@@ -232,7 +232,7 @@
 /* View 360 button hover styles */
 .view-360 {
     background-color: white !important;
-    color: black !important;
+    color: #6c757d !important;
     height: 36px !important;
     font-size: 14px !important;
     font-style: normal !important;
@@ -242,7 +242,7 @@
     font-family: var(--main-font-family) !important;
     box-shadow: none !important;
     border: 1px solid #d3d3d3 !important;
-    border-radius: 0px !important;
+    border-radius: 8px !important;
     padding: 4px 8px !important;
     display: flex !important;
     align-items: center !important;
