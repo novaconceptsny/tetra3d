@@ -1460,7 +1460,7 @@ main section.collection .main-intro .table-row .c-form .reset-btn {
 input[type=text].form-control:not(.login-custum-form-group input),
 select.form-control {
   border: 1px solid #000 !important;
-  border-radius: 0 !important;
+  border-radius: 8px !important;
   font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
   color: #000;
 }
