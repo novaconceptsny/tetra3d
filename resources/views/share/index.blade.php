@@ -198,7 +198,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="selectLayoutOkBtn" disabled>OK</button>
+        <button type="button" class="btn btn-primary" id="selectLayoutOkBtn" disabled style="background-color: #099F9A; border-color: #099F9A;">OK</button>
       </div>
     </div>
   </div>
@@ -267,8 +267,8 @@
         </form>
       </div>
       <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="saveEditBtn" onclick="handleEditSharedLayout()" style="background-color: #099F9A; border-color: #099F9A;">Save Changes</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="saveEditBtn" onclick="handleEditSharedLayout()">Save Changes</button>
       </div>
     </div>
   </div>
@@ -286,8 +286,8 @@
         <!-- Message will be set by JS -->
       </div>
       <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="confirmToggleOkBtn" style="background-color: #099F9A; border-color: #099F9A;">OK</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmToggleOkBtn">OK</button>
       </div>
     </div>
   </div>
@@ -305,8 +305,8 @@
         Are you sure you want to delete this shared layout? This action cannot be undone.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteOkBtn">Delete</button>
+      <button type="button" class="btn btn-primary" id="confirmDeleteOkBtn" style="background-color: #099F9A; border-color: #099F9A;">Yes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
       </div>
     </div>
   </div>
