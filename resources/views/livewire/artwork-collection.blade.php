@@ -227,6 +227,13 @@
         font-size: 0.8rem;
         color: #6c757d;
     }
+    
+    /* Top div styling */
+    .top-div {
+        height: 34px; /* Adjust this value as needed */
+        background: #f5f5f5 !important;
+        padding: 0px !important;
+    }
 </style>
 
 <script>
@@ -549,16 +556,16 @@
 <div class="col-3 side-col" :class="{ 'd-none': sidebar === 'comments' }">
     <x-loader/>
     <div class="top-div">
-        <div class="input-group">
+        <div class="input-group" >
             <span class="input-group-text bg-white border-end-0" id="basic-addon1">
                 <i class="fas fa-search fa-lg"></i>
             </span>
             {{--<button class="input-group-text p-3 bg-white border-0">
                 <x-svg.magnifying-glass size="small"/>
             </button>--}}
-            <input type="text" class="form-control form-control-md lead border-start-0" placeholder="Search" id="search-input"/>
+            <input type="text" class="form-control form-control-md lead border-start-0 h-100" placeholder="Search" id="search-input"/>
         </div>
-        <select class="form-select form-control all-btn" id="collection-select">
+        <select class="form-select form-control all-btn h-100" id="collection-select">
             <option value="">All</option>
             <!-- Collections will be loaded by JavaScript -->
         </select>

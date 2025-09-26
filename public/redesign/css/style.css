@@ -2875,13 +2875,14 @@ main section.editor .editor-view .row .side-col .top-div .input-group input:focu
   border: 1px solid #C6C6C6;
   outline: unset;
   box-shadow: unset;
+  height: 100% !important;
 }
 
 main section.editor .editor-view .row .side-col .top-div .all-btn {
   height: 100% !important;
   text-align: center;
   width: 50%;
-  padding: 8px 3px;
+  padding: 4px 3px;
   background: #ffffff;
   border: 1px solid #222436;
   border-radius: 0;
@@ -3037,8 +3038,10 @@ main section.editor .editor-view .row .side-col .pagination-div .pagination .pag
 }
 
 main section.editor .editor-view .row .side-col .pagination-div .pagination .page-item.active {
-  background: #222436;
+  background-color: #099F9A;
+  border-color: #099F9A;
   border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(9,159,154,0.3);
 }
 
 main section.editor .editor-view .row .side-col .pagination-div .pagination .page-item.active .page-link {
