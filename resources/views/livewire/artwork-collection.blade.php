@@ -230,9 +230,9 @@
     
     /* Top div styling */
     .top-div {
-        height: 34px; /* Adjust this value as needed */
+        height: 36px; /* Adjust this value as needed */
         background: #f5f5f5 !important;
-        padding: 0px !important;
+        padding-top: 1px !important;
     }
     
     /* Card div scrollbar styling */
