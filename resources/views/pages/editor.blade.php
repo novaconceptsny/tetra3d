@@ -195,39 +195,6 @@
     border-color: #099F9A !important;
 }
 
-/* Tooltip styles */
-.icon-button[title] {
-    position: relative;
-}
-
-.icon-button[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1000;
-    margin-bottom: 5px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.icon-button[title]:hover::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: #333;
-    z-index: 1000;
-    margin-bottom: -5px;
-}
 
 /* View 360 button hover styles */
 .view-360 {
