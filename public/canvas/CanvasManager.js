@@ -548,7 +548,7 @@ class CanvasManager {
             top: 0,
             width: this.artworkCanvas.width,
             height: this.artworkCanvas.height,
-            fill: 'rgba(200, 200, 200, 0.3)', // Pale grey with transparency
+            fill: 'rgba(245, 245, 245, 0.3)', // Pale grey with transparency
             selectable: false,
             evented: false,
             hasControls: false,
