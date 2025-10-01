@@ -27,7 +27,14 @@
                     <tbody class="list">
                     @forelse($companies as $company)
                         <tr>
-                            <td>{{ $company->name }}</td>
+                            <td>
+                                @if($company->name === 'My Workspace')
+                                    {{ $company->name }}_{{ str_pad($company->id, 2, '0', STR_PAD_LEFT) }}
+                                @else
+                                    {{ $company->name }}
+                                @endif
+                            </td>
+                            
                             <td>
                                 <x-backend::dropdown.container permission="update|delete" :permission_params="$company">
                                     @if($company->admin)

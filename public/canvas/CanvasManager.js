@@ -18,6 +18,7 @@ class CanvasManager {
         this.surfaceData = this.surface.data;
         this.latestState = data.latestState;
         this.photoEditable = data.photoEditable || false;
+        this.projectUnit = data.projectUnit || 'imperial';
 
         this.canvasApi = new CanvasApi({
             updateEndpoint: data.updateEndpoint,
@@ -42,6 +43,10 @@ class CanvasManager {
             },
             recentSelection: null,
         };
+        
+        // Track artwork counts for badge display - now using layout-wide counts
+        this.artworkCounts = new Map(); // artworkId -> count
+        this.layoutArtworkCounts = data.layoutArtworkCounts || {}; // Layout-wide counts from backend
         this.artworkCanvas = new fabric.Canvas(this.canvasId, {
             enableRetinaScaling: true,
             skipOffscreen: false,
@@ -157,6 +162,15 @@ class CanvasManager {
 
         this.registerArtworkSelectionEvent(this.photoEditable);
         this.registerCanvasUpdateEvent();
+        
+        // Initialize artwork counts from existing assigned artworks
+        this.initializeArtworkCounts();
+        
+        // Make refreshArtworkBadges globally available
+        window.refreshArtworkBadges = () => this.refreshArtworkBadges();
+        
+        // Wait for artwork list to be loaded and then refresh badges
+        this.waitForArtworkListAndRefresh();
 
         // Add guide-related initialization
         this.initializeGuides();
@@ -265,10 +279,8 @@ class CanvasManager {
                 // Add visual feedback
                 artworkElement.classList.add('dragging');
                 
-                // Set drag image (optional - shows a preview while dragging)
-                if (artworkElement.querySelector('img')) {
-                    event.dataTransfer.setDragImage(artworkElement.querySelector('img'), 25, 25);
-                }
+                // Create a scaled drag image that matches the actual dropped size
+                this.createScaledDragImage(event, artworkElement, artworkData);
             }
         });
 
@@ -278,6 +290,67 @@ class CanvasManager {
                 artworkElement.classList.remove('dragging');
             }
         });
+    }
+
+    createScaledDragImage(event, artworkElement, artworkData) {
+        const imgElement = artworkElement.querySelector('img');
+        if (!imgElement) return;
+
+        console.log('Creating scaled drag image for:', artworkData.title);
+        console.log('Original image dimensions:', imgElement.naturalWidth, 'x', imgElement.naturalHeight);
+
+        // Calculate the scale that will be applied when dropping
+        const scale = artworkData.scale || 96;
+        
+        // Use the same scaling logic as applyAdaptiveRescale
+        const a = imgElement.naturalWidth || imgElement.width;
+        const b = this.boundingBox.width;
+        const c = this.canvasState.actualWidthInch * scale;
+        const adaptedScale = a * (b / c);
+        
+        // Calculate the final dimensions - this is the width the image will be scaled to
+        // The height is calculated to maintain aspect ratio
+        const finalWidth = adaptedScale;
+        const aspectRatio = (imgElement.naturalHeight || imgElement.height) / (imgElement.naturalWidth || imgElement.width);
+        const finalHeight = finalWidth * aspectRatio;
+        
+        console.log('Calculated final dimensions:', finalWidth, 'x', finalHeight);
+        console.log('Aspect ratio:', aspectRatio);
+        
+        // Create a temporary div element to hold the scaled image
+        const dragImageDiv = document.createElement('div');
+        dragImageDiv.style.position = 'absolute';
+        dragImageDiv.style.top = '-1000px';
+        dragImageDiv.style.left = '-1000px';
+        dragImageDiv.style.width = finalWidth + 'px';
+        dragImageDiv.style.height = finalHeight + 'px';
+        dragImageDiv.style.overflow = 'hidden';
+        dragImageDiv.style.border = '2px solid #007bff';
+        dragImageDiv.style.borderRadius = '4px';
+        dragImageDiv.style.backgroundColor = 'white';
+        dragImageDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+        
+        // Create a new image element with the scaled dimensions
+        const scaledImg = document.createElement('img');
+        scaledImg.src = imgElement.src;
+        scaledImg.style.width = '100%';
+        scaledImg.style.height = '100%';
+        scaledImg.style.objectFit = 'contain';
+        
+        dragImageDiv.appendChild(scaledImg);
+        document.body.appendChild(dragImageDiv);
+        
+        // Set the scaled div as the drag image
+        event.dataTransfer.setDragImage(dragImageDiv, finalWidth / 2, finalHeight / 2);
+        
+        console.log('Drag image set with div size:', finalWidth, 'x', finalHeight);
+        
+        // Clean up the temporary div after a short delay
+        setTimeout(() => {
+            if (dragImageDiv.parentNode) {
+                dragImageDiv.parentNode.removeChild(dragImageDiv);
+            }
+        }, 100);
     }
 
     handleArtworkDrop(artworkData, dropX, dropY) {
@@ -292,7 +365,9 @@ class CanvasManager {
             if (!this.photoEditable) {
                 // For non-photo editable surfaces, create regular artwork selection
                 let newSelection = new ArtSelection(artworkData);
-                this.placeSelectedImage(newSelection, dropY, dropX);
+                this.placeSelectedImage(newSelection, dropY, dropX, true); // Center on drop position
+                // Update artwork count
+                this.incrementArtworkCount(parseInt(newSelection.artworkId));
                 this.unsavedChanges = true;
                 this.toggleRemoveButton();
                 
@@ -391,6 +466,7 @@ class CanvasManager {
             if (!photoEditable) {
                 let newSelection = this.newArtworkSelection(target);
                 this.placeSelectedImage(newSelection);
+                this.incrementArtworkCount(parseInt(newSelection.artworkId));
                 this.unsavedChanges = true;
                 this.toggleRemoveButton();
             } else {
@@ -445,6 +521,9 @@ class CanvasManager {
             scaleY: baseScale,
             centeredScaling: true,
         });
+        
+        // Add pale grey color overlay to the wall area
+        this.addWallColorOverlay();
     }
 
     setCanvasOverlay(imgUrl) {
@@ -459,6 +538,39 @@ class CanvasManager {
                 scaleY: 1.0,
             });
         };
+    }
+
+    addWallColorOverlay() {
+        // Create a pale grey color overlay for the wall area
+        // This covers the lower portion of the wall and extends to the floor
+        const wallOverlay = new fabric.Rect({
+            left: 0,
+            top: 0,
+            width: this.artworkCanvas.width,
+            height: this.artworkCanvas.height,
+            fill: 'rgba(245, 245, 245, 0.3)', // Pale grey with transparency
+            selectable: false,
+            evented: false,
+            hasControls: false,
+            hasBorders: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockRotation: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            excludeFromExport: false
+        });
+
+        // Add the overlay to the canvas
+        this.artworkCanvas.add(wallOverlay);
+        
+        // Move the overlay to the back so it's behind other elements but on top of background
+        this.artworkCanvas.sendToBack(wallOverlay);
+        
+        // Store reference for potential future modifications
+        this.wallColorOverlay = wallOverlay;
+        
+        this.artworkCanvas.renderAll();
     }
 
     getSelectionData(selectedElement) {
@@ -567,7 +679,7 @@ class CanvasManager {
         image.scaleToWidth(adaptedScale, false);
     }
 
-    placeSelectedImage(artSelection, topPos = this.boundingBox.top, leftPos = this.boundingBox.left) {
+    placeSelectedImage(artSelection, topPos = this.boundingBox.top, leftPos = this.boundingBox.left, centerOnPosition = false) {
         let imgUrl = artSelection.imgUrl;
 
         // Generate unique instance ID for each placement
@@ -604,6 +716,18 @@ class CanvasManager {
             }
 
             this.applyAdaptiveRescale(img1, scale, overrideScale);
+
+            // If centering is requested, adjust position to center the image on the drop point
+            if (centerOnPosition) {
+                const finalWidth = img1.width * img1.scaleX;
+                const finalHeight = img1.height * img1.scaleY;
+                
+                // Adjust position to center the image on the drop point
+                img1.set({
+                    left: leftPos - (finalWidth / 2),
+                    top: topPos - (finalHeight / 2)
+                });
+            }
 
             img1.hasControls = false;
             this.artworkCanvas.add(img1);
@@ -664,6 +788,10 @@ class CanvasManager {
                 this.guides = this.guides.filter(guide => guide.line !== obj);
             }
             this.artworkCanvas.remove(obj);
+            
+            // Get artwork ID before removing from assignedArtwork
+            const artworkId = parseInt(obj.originalArtworkId || obj.id);
+            
             // Remove by unique instance ID instead of artwork ID
             this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => {
                 // For new instances, check against the unique ID
@@ -673,6 +801,9 @@ class CanvasManager {
                 // For legacy instances, check against artwork ID
                 return art.getArtworkId() !== obj.id;
             });
+            
+            // Update artwork count
+            this.decrementArtworkCount(artworkId);
         });
 
         this.removeBtn.hide();
@@ -687,6 +818,14 @@ class CanvasManager {
                 this.artworkCanvas.remove(obj)
             });
         this.canvasState.assignedArtwork = [];
+        
+        // Clear all artwork counts and update badges
+        this.artworkCounts.clear();
+        
+        // Reset layout-wide counts to original values (excluding current surface)
+        // This is a simplified approach - in a real scenario, you might want to 
+        // recalculate from the backend
+        this.initializeArtworkCounts();
     }
 
     saveNewVersion(event) {
@@ -712,7 +851,8 @@ class CanvasManager {
         const button = document.getElementById('toggle-guides');
         if (button) {
             button.setAttribute('data-hidden', 'true');
-            button.innerHTML = '<i class="fal fa-eye"></i> Show Guides';
+            button.innerHTML = '<i class="fal fa-eye"></i>';
+            button.setAttribute('title', 'Show Guides');
         }
 
         if (!this.surfaceStateId) {
@@ -1030,14 +1170,21 @@ class CanvasManager {
     }
 
     pixelsToFeetInches(pixels) {
-        // Convert pixels to feet/inches based on your canvas's actual width
+        // Convert pixels to feet/inches or cm based on project unit
         const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
         const totalInches = pixels * inchesPerPixel;
 
-        const feet = Math.floor(totalInches / 12);
-        const inches = Math.round(totalInches % 12);
+        if (this.projectUnit === 'metric') {
+            // Convert to centimeters
+            const totalCm = totalInches * 2.54;
+            return `${Math.round(totalCm * 10) / 10} cm`;
+        } else {
+            // Imperial units (feet/inches)
+            const feet = Math.floor(totalInches / 12);
+            const inches = Math.round(totalInches % 12);
 
-        return feet > 0 ? `${feet}'${inches}"` : `${inches}"`;
+            return feet > 0 ? `${feet}'${inches}"` : `${inches}"`;
+        }
     }
 
     createGuide(isHorizontal) {
@@ -1049,11 +1196,6 @@ class CanvasManager {
         const boundingBoxLeft = this.surfaceData['bounding_box_left'] * this.baseScale;
 
         let line, labelA, labelB;
-
-        // Reset toggle button state to show all guides
-        const button = document.getElementById('toggle-guides');
-        button.setAttribute('data-hidden', 'false');
-        button.innerHTML = '<i class="fal fa-eye"></i> Hide Guides';
 
         // Make all existing guides visible
         this.guides.forEach(guide => {
@@ -1083,7 +1225,9 @@ class CanvasManager {
             visible: true
         });
 
-        labelA = new fabric.Textbox('0', {
+        const initialText = this.projectUnit === 'metric' ? '0 cm' : '0"';
+        
+        labelA = new fabric.Textbox(initialText, {
             fontSize: 12,
             fill: isHorizontal ? '#FF4444' : '#4444FF',
             backgroundColor: 'white',
@@ -1103,7 +1247,7 @@ class CanvasManager {
             cursorColor: 'black'
         });
 
-        labelB = new fabric.Textbox('0', {
+        labelB = new fabric.Textbox(initialText, {
             fontSize: 12,
             fill: isHorizontal ? '#FF4444' : '#4444FF',
             backgroundColor: 'white',
@@ -1284,7 +1428,10 @@ class CanvasManager {
         const pixels = this.feetInchesToPixels(value);
 
         if (pixels === null) {
-            console.warn('Invalid measurement format. Use format like "5\'6\"" or "5\'" or "6\""');
+            const expectedFormat = this.projectUnit === 'metric' 
+                ? 'Use format like "15.5 cm" or "15.5cm"' 
+                : 'Use format like "5\'6\"" or "5\'" or "6\""';
+            console.warn(`Invalid measurement format. ${expectedFormat}`);
             this.updateGuide(guideLine);
             return;
         }
@@ -1345,19 +1492,33 @@ class CanvasManager {
     }
 
     feetInchesToPixels(value) {
-        // Accept input in format: "5'6"" or "5'" or "6""
-        const regex = /^(?:(\d+)')?(?:(\d+)")?$/;
-        const match = value.trim().match(regex);
+        if (this.projectUnit === 'metric') {
+            // Accept input in format: "15.5 cm" or "15.5cm" or "15.5"
+            const regex = /^(\d+(?:\.\d+)?)\s*cm?$/i;
+            const match = value.trim().match(regex);
 
-        if (!match) return null;
+            if (!match) return null;
 
-        const feet = parseInt(match[1] || 0);
-        const inches = parseInt(match[2] || 0);
+            const cm = parseFloat(match[1]);
+            const inches = cm / 2.54; // Convert cm to inches
+            const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
 
-        const totalInches = (feet * 12) + inches;
-        const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
+            return inches / inchesPerPixel;
+        } else {
+            // Imperial units - Accept input in format: "5'6"" or "5'" or "6""
+            const regex = /^(?:(\d+)')?(?:(\d+)")?$/;
+            const match = value.trim().match(regex);
 
-        return totalInches / inchesPerPixel;
+            if (!match) return null;
+
+            const feet = parseInt(match[1] || 0);
+            const inches = parseInt(match[2] || 0);
+
+            const totalInches = (feet * 12) + inches;
+            const inchesPerPixel = this.canvasState.actualWidthInch / this.boundingBox.width;
+
+            return totalInches / inchesPerPixel;
+        }
     }
 
     toggleGuides() {
@@ -1370,7 +1531,8 @@ class CanvasManager {
         });
 
         button.setAttribute('data-hidden', (isHidden).toString());
-        button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Guides`;
+        button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i>`;
+        button.setAttribute('title', `${isHidden ? 'Show' : 'Hide'} Guides`);
 
         this.artworkCanvas.renderAll();
     }
@@ -1417,6 +1579,8 @@ class CanvasManager {
         // Load the image and apply transformation
         fabric.Image.fromURL(imgUrl, (img) => {
             this.updateTransformedArtwork(img, this.M, bounds, artworkId, uniqueInstanceId);
+            // Update artwork count for warped artwork
+            this.incrementArtworkCount(parseInt(artworkId));
         }, { crossOrigin: 'anonymous' });
     }
 
@@ -1623,6 +1787,122 @@ class CanvasManager {
         button.innerHTML = `<i class="fal fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show' : 'Hide'} Area`;
         
         this.artworkCanvas.renderAll();
+    }
+
+    // Initialize artwork counts from layout-wide counts
+    initializeArtworkCounts() {
+        this.artworkCounts.clear();
+        
+        // Use layout-wide counts from backend
+        Object.entries(this.layoutArtworkCounts).forEach(([artworkId, count]) => {
+            this.artworkCounts.set(parseInt(artworkId), count);
+        });
+        
+        console.log('Layout artwork counts initialized:', this.layoutArtworkCounts);
+        console.log('Canvas artwork counts:', Object.fromEntries(this.artworkCounts));
+        
+        this.updateArtworkBadges();
+    }
+
+    // Update artwork count when artwork is added
+    incrementArtworkCount(artworkId) {
+        const id = parseInt(artworkId);
+        const currentCount = this.artworkCounts.get(id) || 0;
+        this.artworkCounts.set(id, currentCount + 1);
+        
+        // Also update the layout-wide counts for consistency
+        this.layoutArtworkCounts[id] = (this.layoutArtworkCounts[id] || 0) + 1;
+        
+        console.log(`Incremented artwork ${id}: canvas count = ${this.artworkCounts.get(id)}, layout count = ${this.layoutArtworkCounts[id]}`);
+        
+        this.updateArtworkBadges();
+    }
+
+    // Update artwork count when artwork is removed
+    decrementArtworkCount(artworkId) {
+        const id = parseInt(artworkId);
+        const currentCount = this.artworkCounts.get(id) || 0;
+        if (currentCount > 0) {
+            this.artworkCounts.set(id, currentCount - 1);
+            
+            // Also update the layout-wide counts for consistency
+            if (this.layoutArtworkCounts[id] > 0) {
+                this.layoutArtworkCounts[id] = this.layoutArtworkCounts[id] - 1;
+            }
+            
+            console.log(`Decremented artwork ${id}: canvas count = ${this.artworkCounts.get(id)}, layout count = ${this.layoutArtworkCounts[id]}`);
+            
+            this.updateArtworkBadges();
+        }
+    }
+
+    // Update the badge display for all artwork items
+    updateArtworkBadges() {
+        // Find all artwork elements in the sidebar
+        const artworkElements = document.querySelectorAll('.artwork-img');
+        
+        artworkElements.forEach(element => {
+            const artworkId = parseInt(element.dataset.artworkId);
+            const count = this.artworkCounts.get(artworkId) || 0;
+            
+            // Debug logging
+            if (count > 0) {
+                console.log(`Artwork ${artworkId}: count = ${count}`);
+            }
+            
+            // Remove existing badge if it exists
+            const existingBadge = element.querySelector('.artwork-count-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            // Add badge if count > 0
+            if (count > 0) {
+                const badge = document.createElement('div');
+                badge.className = 'artwork-count-badge';
+                badge.textContent = count;
+                element.style.position = 'relative';
+                element.appendChild(badge);
+            }
+        });
+    }
+
+    // Method to refresh badges when artwork list is updated (e.g., after search/filter)
+    refreshArtworkBadges() {
+        // Use a small delay to ensure DOM is updated
+        setTimeout(() => {
+            this.updateArtworkBadges();
+        }, 100);
+    }
+
+    // Public method to get artwork count for a specific artwork
+    getArtworkCount(artworkId) {
+        const id = parseInt(artworkId);
+        return this.artworkCounts.get(id) || 0;
+    }
+
+    // Wait for artwork list to be loaded and then refresh badges
+    waitForArtworkListAndRefresh() {
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait time
+        
+        const checkForArtworkList = () => {
+            const artworkElements = document.querySelectorAll('.artwork-img');
+            if (artworkElements.length > 0) {
+                // Artwork list is loaded, refresh badges
+                this.updateArtworkBadges();
+                console.log('Artwork badges initialized on page load');
+            } else if (attempts < maxAttempts) {
+                // Artwork list not ready yet, check again in 100ms
+                attempts++;
+                setTimeout(checkForArtworkList, 100);
+            } else {
+                console.warn('Artwork list not found after maximum attempts');
+            }
+        };
+        
+        // Start checking after a short delay to allow Livewire to load
+        setTimeout(checkForArtworkList, 500);
     }
 }
 

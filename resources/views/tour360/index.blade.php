@@ -6,7 +6,7 @@
     <div class="global-search-section mb-4">
         <div class="row">
             <div class="col-12">
-                <div class="card">
+                <div class="card search-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="search-container flex-grow-1 me-3">
@@ -57,14 +57,15 @@
         </div>
     </div>
 
-    <div id="dashboard-section" class="row">
-        <div class="col-12">
+    <!-- Favourites Section - Full Width -->
+    <div class="favourites-section-full-width">
+        <div class="container">
             <div class="favourites-section">
-                <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="d-flex align-items-center">
                         <h5 class="mb-0">Favourites</h5>
                         @if(auth()->user() && auth()->user()->isSuperAdmin())
-                            <button id="toggleFavouritesBtn" class="btn btn-link ms-2" title="Show/Hide Favourites" style="font-size: 1.2rem;">
+                            <button id="toggleFavouritesBtn" class="btn btn-link ms-2" title="Show/Hide Favourites" style="font-size: 1.2rem; color: #099F9A;">
                                 <i id="favouritesEyeIcon" class="fas fa-eye"></i>
                             </button>
                         @endif
@@ -87,9 +88,9 @@
                         <div class="row">
                             @if($favorites->count() > 0)
                                 @foreach($favorites as $favorite)
-                                    <div class="col-md-3 favourite-card" data-favorite-id="{{ $favorite->id }}">
-                                        <div class="bg-light rounded p-3">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="col-lg-2 col-md-3 col-sm-4 favourite-card" data-favorite-id="{{ $favorite->id }}">
+                                        <div class="bg-light rounded p-2">
+                                            <div class="d-flex justify-content-between align-items-start mb-1">
                                                 <h4 class="mb-0">
                                                     <i class="fas fa-star text-primary favorite-star"
                                                        onclick="removeFavorite({{ $favorite->id }})"
@@ -98,15 +99,15 @@
                                                     {{ $favorite->name }}
                                                 </h4>
                                             </div>
-                                            <div class="mb-2">
-                                                <small class="text-muted">
+                                            <div class="mb-1">
+                                                <small class="text-muted" style="font-size: 11px;">
                                                     <i class="fas fa-folder me-1"></i>
                                                     {{ $favorite->project ? $favorite->project->name : 'No Project' }}
                                                 </small>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between">
-                                                <span>{{ $favorite->assignedTour()->name }}</span>
-                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter ms-2">
+                                                <span style="font-size: 12px;">{{ $favorite->assignedTour()->name }}</span>
+                                                <a href="{{ route('tours.show', [$favorite->tour_id, 'layout_id' => $favorite->id]) }}" class="btn-enter ms-1" style="font-size: 11px; padding: 2px 8px;">
                                                     Enter
                                                 </a>
                                             </div>
@@ -122,15 +123,19 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div id="dashboard-section" class="row">
+        <div class="col-12">
             <div class="projects-section">
                 @if($companies->count() > 0)
                     @foreach($companies as $company)
                         <div class="company-section mb-5">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5>
-                                    @if(user()->isAdmin() && $company->name === 'My Workspace')
-                                        {{ $company->name }}_{{ str_pad($company->id, 2, '0', STR_PAD_LEFT) }}
+                                    @if(str_contains($company->name, 'My Workspace'))
+                                        My workspace
                                     @else
                                         {{ $company->name }}
                                     @endif
@@ -241,14 +246,14 @@
                 <button type="button" class="btn-close close-create-section"></button>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 login-custum-form-group">
                 <label for="inlineCompanyInput" class="form-label">Company</label>
                 <input type="text" class="form-control" id="inlineCompanyInput" placeholder="Company" disabled>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 login-custum-form-group">
                 <label for="inlineProjectNameInput" class="form-label">Project Name</label>
-                <input type="text" class="form-control" id="inlineProjectNameInput" placeholder="Project">
+                <input type="text" class="form-control" id="inlineProjectNameInput" >
             </div>
 
             <div class="mb-3">
@@ -286,22 +291,29 @@
                 </select>
             </div>
 
-            <div class="mb-3 col-md-4">
-                <label class="form-label">Thumbnail</label>
-                <div class="image-upload-box mb-2" id="inlineImageUploadBox">
-                    <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
-                    <span>Click or drag & drop to add image</span>
-                    <div class="overlay">Click to replace image</div>
+            <div class="mb-3 col-md-4 d-flex justify-content-between align-items-end w-100">
+                <div>
+                    <label class="form-label">Thumbnail</label>
+                    <div class="image-upload-box mb-2" id="inlineImageUploadBox">
+                        <input type="file" class="image-input" id="inlineImageInput" accept="image/jpeg, image/png">
+                        <span>Click or drag & drop to add image</span>
+                        <div class="overlay">Click to replace image</div>
+                    </div>
+                    <div class="image-name" id="inlineImageName"></div>
                 </div>
-                <div class="image-name" id="inlineImageName"></div>
+
+                <div class="d-flex justify-content-end gap-3 mb-1">
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn mb-3" id="inlineSaveButton" style="width: 200px; background-color: #099F9A; color: white; border: none;" onclick="handleCreateProject()">Create</button>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn mb-3" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px; background-color: #E24B4B; color: white; border: none;">Cancel</button>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-primary mb-3" id="inlineSaveButton" style="width: 200px" onclick="handleCreateProject()">Create</button>
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-danger" id="inlineCancelButton" onclick="closeCreateProject()" style="width: 200px">Cancel</button>
-            </div>
+
         </div>
     </div>
 
@@ -465,6 +477,11 @@
         .favourites-section .search-container {
             display: none !important;
         }
+
+        .__cropro_  {
+            position: fixed !important;
+        }
+
     </style>
 @endsection
 
@@ -561,6 +578,12 @@
                     globalSearchSection.style.display = 'none';
                 }
                 
+                // Hide the favourites section
+                const favouritesSection = document.querySelector('.favourites-section-full-width');
+                if (favouritesSection) {
+                    favouritesSection.style.display = 'none';
+                }
+                
                 // Fetch data from the create endpoint
                 const response = await fetch(`/tour360/create/${companyId}`);
                 const data = await response.json();
@@ -606,6 +629,12 @@
             const globalSearchSection = document.querySelector('.global-search-section');
             if (globalSearchSection) {
                 globalSearchSection.style.display = 'block';
+            }
+            
+            // Show the favourites section
+            const favouritesSection = document.querySelector('.favourites-section-full-width');
+            if (favouritesSection) {
+                favouritesSection.style.display = 'block';
             }
             
             // Hide the form and show dashboard
@@ -665,6 +694,11 @@
                     if (globalSearchSection) {
                         globalSearchSection.style.display = 'block';
                     }
+                    // Show the favourites section before reloading
+                    const favouritesSection = document.querySelector('.favourites-section-full-width');
+                    if (favouritesSection) {
+                        favouritesSection.style.display = 'block';
+                    }
                     window.location.reload(); // Refresh page to show new project
                 } else {
                     alert(data.message || 'Failed to create project');
@@ -722,6 +756,12 @@
                 const globalSearchSection = document.querySelector('.global-search-section');
                 if (globalSearchSection) {
                     globalSearchSection.style.display = 'none';
+                }
+                
+                // Hide the favourites section
+                const favouritesSection = document.querySelector('.favourites-section-full-width');
+                if (favouritesSection) {
+                    favouritesSection.style.display = 'none';
                 }
                 
                 // Show the create project section (we'll reuse it for editing)
@@ -837,6 +877,11 @@
                     const globalSearchSection = document.querySelector('.global-search-section');
                     if (globalSearchSection) {
                         globalSearchSection.style.display = 'block';
+                    }
+                    // Show the favourites section before reloading
+                    const favouritesSection = document.querySelector('.favourites-section-full-width');
+                    if (favouritesSection) {
+                        favouritesSection.style.display = 'block';
                     }
                     window.location.reload(); // Refresh page to show updated project
                 } else {
@@ -994,7 +1039,7 @@
             // Different button set based on whether we have a file or not
             const buttonHtml = `
                 <div class="overlay-actions">
-                    <button type="button" class="btn btn-sm btn-primary me-2 edit-btn">
+                    <button type="button" class="btn btn-sm btn-primary me-2 edit-btn" style ="background-color: #099F9A !important; color: white; ">
                         <i class="fas fa-crop"></i> Edit
                     </button>
                     <button type="button" class="btn btn-sm btn-secondary replace-btn">
@@ -1295,9 +1340,9 @@
                 }
 
                 const favoritesHtml = favorites.map(favorite => `
-                    <div class="col-md-3 favourite-card" data-favorite-id="${favorite.id}">
-                        <div class="bg-light rounded p-3">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="col-lg-2 col-md-3 col-sm-4 favourite-card" data-favorite-id="${favorite.id}">
+                        <div class="bg-light rounded p-2">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
                                 <h4 class="mb-0">
                                     <i class="fas fa-star text-primary favorite-star"
                                        onclick="removeFavorite(${favorite.id})"
@@ -1306,15 +1351,15 @@
                                     ${favorite.name}
                                 </h4>
                             </div>
-                            <div class="mb-2">
-                                <small class="text-muted">
+                            <div class="mb-1">
+                                <small class="text-muted" style="font-size: 11px;">
                                     <i class="fas fa-folder me-1"></i>
                                     ${favorite.project ? favorite.project.name : 'No Project'}
                                 </small>
                             </div>
                             <div class="d-flex align-items-center justify-content-between">
-                                <span>${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
-                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter ms-2">
+                                <span style="font-size: 12px;">${favorite.tour ? favorite.tour.name : 'No Tour Assigned'}</span>
+                                <a href="/tours/${favorite.tour_id}?layout_id=${favorite.id}" class="btn-enter ms-1" style="font-size: 11px; padding: 2px 8px;">
                                     Enter
                                 </a>
                             </div>

@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('tours/{tour}', 'TourController@show')->name('tours.show')->withoutMiddleware(['auth']);
     Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
     Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
+    Route::get('projects/{project}/artworks', 'ArtworkController@getArtworks')->name('artworks.get');
     Route::post('artworks/destroy/{id}', 'ArtworksController@destroyCollection')->name('artworks.destroyCollection');
     Route::get('inventory', 'InventoryController@index')->name('inventory.index');
     Route::post('inventory/collections/add', 'InventoryController@addCollection')->name('inventory.collections.add');

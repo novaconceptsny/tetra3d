@@ -11,7 +11,7 @@
         <div class="d-flex">
             @include('backend.includes.datatable.search')
             <div class="me-1">
-                <select wire:model.live="selectedProject" class="form-control">
+                <select wire:model.live="selectedProject" class="form-control custom-select">
                     <option value="">All Projects</option>
                     @foreach($projects as $project)
                         <option value="{{$project->id}}">{{$project->name}}</option>
@@ -20,10 +20,9 @@
             </div>
 
             <div class="me-1">
-                <select wire:model.live="selectedTour" class="form-control">
-
+                <select wire:model.live="selectedTour" class="form-control custom-select">
+                    <option value="">All Tours</option>
                     @if (empty($selectedProject))
-                        <option value="">All Tours</option>
                         @foreach($tours as $tour)
                             <option value="{{$tour->id}}">{{$tour->name}}</option>
                         @endforeach

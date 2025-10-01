@@ -1,5 +1,6 @@
 body {
   background-color: #f9f9f9;
+  overflow-x: hidden;
 }
 
 @media (min-width: 1400px) {
@@ -8,7 +9,7 @@ body {
   }
 }
 .enter-link {
-  color: #0066FF;
+  color: #099F9A;
   padding: 6px 20px;
   /* border-radius: 4px; */
   font-size: 14px;
@@ -19,20 +20,34 @@ body {
 }
 
 .enter-link:hover {
-  color: #0066FF;
+  color: #099F9A;
   text-decoration: none;
+}
+
+/* Full width favourites section wrapper */
+.favourites-section-full-width {
+  background: #fff;
+  margin: 40px 0;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow-x: hidden;
 }
 
 .favourites-section {
   background: #fff;
-  margin: 40px 0;
-  padding: 40px 20px;
+  margin: 0;
+  padding: 20px 20px;
 }
 .favourites-section h5 {
-  font-size: 24px;
+  font-size: 20px;
 }
 .favourites-section .favourite-items h4 {
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 1.3;
 }
 .favourites-section .favourite-items .enter-link {
   float: none;
@@ -41,20 +56,54 @@ body {
 
 /* Add spacing between favorite cards */
 .favourites-section .favourite-card {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .favourites-section .favourite-card .bg-light {
-  margin: 0 10px;
+  margin: 0 5px;
+  min-height: 100px;
+  padding: 8px !important;
 }
 
 /* Ensure proper spacing in the grid */
 .favourites-section .row {
-  margin: 0 -10px;
+  margin: 0 -5px;
 }
 
-.favourites-section .col-md-3 {
-  padding: 0 10px;
+.favourites-section .col-lg-2,
+.favourites-section .col-md-3,
+.favourites-section .col-sm-4 {
+  padding: 0 5px;
+}
+
+/* Responsive adjustments for favourite cards */
+@media (max-width: 991.98px) {
+  .favourites-section .col-lg-2 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .favourites-section .col-md-3 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  
+  .favourites-section .favourite-card .bg-light {
+    min-height: 100px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .favourites-section .col-sm-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .favourites-section .favourite-card .bg-light {
+    min-height: 80px;
+  }
 }
 
 .projects-section .layout-section .card {
@@ -64,6 +113,7 @@ body {
   border: 1px dotted #ccc;
   align-items: center;
   justify-content: center;
+  height: 374.5px;
 }
 .projects-section .layout-section .add-image-btn {
   display: flex;
@@ -209,7 +259,8 @@ body {
 
 .create-project-section {
   max-width: 90%;
-  margin: 0 auto;
+  margin: 20px auto;
+  padding: 20px 0px;
 }
 
 .create-project-section .card {
@@ -348,7 +399,7 @@ body {
 .btn-enter {
     display: inline;
     background: transparent;
-    color: #203DCE;
+    color: #099F9A;
     padding: 0.5rem;
     text-decoration: none;
     border: none;
@@ -364,6 +415,7 @@ body {
 /* Favorite star styling */
 .favorite-star {
     transition: all 0.2s ease;
+    color: #099F9A !important;
 }
 
 .favorite-star:hover {
@@ -484,8 +536,13 @@ body {
 
 .search-input {
     border-radius: 6px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e0e0e0 !important;
     transition: all 0.2s ease;
+}
+
+input[type=text].form-control:not(.login-custum-form-group input), select.form-control.search-input {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 0px !important;
 }
 
 .search-input:focus {
@@ -495,9 +552,13 @@ body {
 
 .input-group-text {
     background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e0e0e0 !important;
     border-right: none;
     color: #6c757d;
+}
+
+.select2-container--default .select2-selection--multiple {
+  border: 1px solid #e0e0e0 !important;
 }
 
 .search-input {
@@ -611,21 +672,39 @@ body {
 
 /* Global Search Styles */
 .global-search-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: #ffffff;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
+.search-card {
+    border: none !important;
+}
+
 .global-search-input {
     font-size: 16px;
     padding: 12px 16px;
-    border-radius: 8px;
+    border: 1px solid #e0e0e0 !important;
 }
 
 .global-search-input:focus {
     box-shadow: 0 0 0 0.3rem rgba(0, 123, 255, 0.25);
     border-color: #007bff;
+}
+
+/* Clear button styling to match search input border */
+#clearGlobalSearch {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 0 !important;
+    background-color: white !important;
+    color: #6c757d !important;
+}
+
+#clearGlobalSearch:hover {
+    background-color: #f8f9fa !important;
+    border-color: #e0e0e0 !important;
+    color: #6c757d !important;
 }
 
 .search-filters .btn-group {
@@ -636,19 +715,28 @@ body {
     border-radius: 6px;
     margin: 0 2px;
     font-size: 12px;
-    padding: 6px 12px;
+    padding: 12px 16px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-filters .btn-check:checked + .btn {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #099F9A;
+    border-color: #099F9A;
     color: white;
+}
+
+.search-filters .btn-check:not(:checked) + .btn {
+    border-color: #099F9A;
+    color: #099F9A;
 }
 
 .search-filters .btn-check:not(:checked) + .btn:hover {
     background-color: #e9ecef;
-    border-color: #007bff;
-    color: #007bff;
+    border-color: #099F9A;
+    color: #099F9A;
 }
 
 /* Search Results Styles */
@@ -771,6 +859,97 @@ body {
     }
 }
 
+/* Mobile-specific search bar optimizations */
+@media (max-width: 576px) {
+    .global-search-section {
+        padding: 15px;
+        margin: 0 -15px;
+        border-radius: 0;
+    }
+
+    .global-search-section .d-flex {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
+    .search-container .input-group {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .global-search-input {
+        min-width: 250px !important;
+        width: 100%;
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 12px 16px;
+    }
+
+    .search-filters {
+        width: 100%;
+    }
+
+    .search-filters .btn-group {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .search-filters .btn {
+        flex: 0 0 auto;
+        font-size: 10px;
+        padding: 8px 12px;
+        height: 36px;
+        white-space: nowrap;
+        min-width: 0;
+        max-width: 80px;
+    }
+
+    .search-filters .btn i {
+        font-size: 9px;
+        margin-right: 3px;
+    }
+
+    /* Ensure proper touch targets */
+    .search-filters .btn-check + .btn {
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Adjust clear button for mobile - make it smaller and inline */
+    #clearGlobalSearch {
+        padding: 8px 12px;
+        height: 48px;
+        font-size: 14px;
+        min-width: 48px;
+        border-left: none;
+        border-radius: 0 6px 6px 0;
+    }
+
+    /* Make the input group more compact and ensure proper styling */
+    .search-container .input-group .input-group-text {
+        padding: 12px 16px;
+        border-radius: 6px 0 0 6px;
+    }
+
+    .search-container .input-group .global-search-input {
+        border-radius: 0;
+        border-right: none;
+    }
+
+    /* Ensure the input group maintains proper borders */
+    .search-container .input-group {
+        border-radius: 6px;
+        overflow: hidden;
+    }
+}
+
 /* Search result star button styles */
 .search-result-action .btn-outline-primary {
     border-color: #dee2e6;
@@ -824,5 +1003,12 @@ body {
 
 .btn-check:checked + .btn-outline-primary:hover {
     background-color: #007bff !important;
+    color: #fff !important;
+}
+
+/* Save button hover effect */
+.save-btn:hover {
+    background-color: #099F9A !important;
+    border-color: #099F9A !important;
     color: #fff !important;
 }

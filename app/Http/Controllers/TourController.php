@@ -68,7 +68,9 @@ class TourController extends Controller
             $layout  = Layout::findOrFail($layout_id);
             $project = Project::relevant()->findOrFail($layout->project_id);
         } else {
-            abort_if(! user()->isAdmin(), 404);
+            // Allow access to template galleries for all authenticated users
+            $isTemplateGallery = strpos($tour->name, 'Template Gallery') !== false;
+            abort_if(! user()->isAdmin() && !$isTemplateGallery, 404);
         }
 
         $spotQuery = Spot::query()

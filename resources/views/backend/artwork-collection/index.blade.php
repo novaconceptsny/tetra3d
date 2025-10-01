@@ -33,7 +33,7 @@
                     @forelse($collections as $collection)
                         <tr>
                             <td>
-                                @if(user()->isAdmin() && $collection->company->name === 'My Workspace')
+                                @if( $collection->company->name === 'My Workspace')
                                     {{ $collection->company->name }}_{{ str_pad($collection->company->id, 2, '0', STR_PAD_LEFT) }}
                                 @else
                                     {{ $collection->company->name }}

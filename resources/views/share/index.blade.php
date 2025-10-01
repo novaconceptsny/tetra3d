@@ -33,6 +33,16 @@
                                 <div id="thumbnailOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.1); display: none; align-items: center; justify-content: center;">
                                     <span style="color: #666; font-size: 14px;">Click to change image</span>
                                 </div>
+                                <!-- Loading overlay with circle progress bar -->
+                                <div id="thumbnailLoadingOverlay" class="loading-overlay hidden">
+                                    <div class="circle-progress">
+                                        <svg>
+                                            <circle class="background" cx="30" cy="30" r="25"></circle>
+                                            <circle class="progress" cx="30" cy="30" r="25" id="thumbnailProgressCircle"></circle>
+                                        </svg>
+                                        <div class="progress-text" id="thumbnailProgressText">0%</div>
+                                    </div>
+                                </div>
                             </div>
                             <!-- Title input (readonly, filled by selection) -->
                             <input type="text" class="form-control mb-2" placeholder="Title" id="selectedLayoutTitle" name="title" >
@@ -188,7 +198,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="selectLayoutOkBtn" disabled>OK</button>
+        <button type="button" class="btn btn-primary" id="selectLayoutOkBtn" disabled style="background-color: #099F9A !important; border-color: #099F9A !important;">OK</button>
       </div>
     </div>
   </div>
@@ -224,6 +234,16 @@
                 <div id="editThumbnailOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.1); display: none; align-items: center; justify-content: center;">
                     <span style="color: #666; font-size: 14px;">Click to change image</span>
                 </div>
+                <!-- Loading overlay with circle progress bar -->
+                <div id="editThumbnailLoadingOverlay" class="loading-overlay hidden">
+                    <div class="circle-progress">
+                        <svg>
+                            <circle class="background" cx="30" cy="30" r="25"></circle>
+                            <circle class="progress" cx="30" cy="30" r="25" id="editThumbnailProgressCircle"></circle>
+                        </svg>
+                        <div class="progress-text" id="editThumbnailProgressText">0%</div>
+                    </div>
+                </div>
             </div>
             <!-- Hidden file input for edit image upload -->
             <input type="file" id="editThumbnailFileInput" accept="image/*" style="display: none;">
@@ -247,8 +267,8 @@
         </form>
       </div>
       <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="saveEditBtn" onclick="handleEditSharedLayout()" style="background-color: #099F9A !important; border-color: #099F9A !important;">Save Changes</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="saveEditBtn" onclick="handleEditSharedLayout()">Save Changes</button>
       </div>
     </div>
   </div>
@@ -266,8 +286,8 @@
         <!-- Message will be set by JS -->
       </div>
       <div class="modal-footer">
+      <button type="button" class="btn btn-primary" id="confirmToggleOkBtn" style="background-color: #099F9A !important; border-color: #099F9A !important;">OK</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmToggleOkBtn">OK</button>
       </div>
     </div>
   </div>
@@ -285,8 +305,8 @@
         Are you sure you want to delete this shared layout? This action cannot be undone.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteOkBtn">Delete</button>
+      <button type="button" class="btn btn-primary" id="confirmDeleteOkBtn" style="background-color: #099F9A !important; border-color: #099F9A !important;">Yes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
       </div>
     </div>
   </div>
@@ -387,6 +407,76 @@
             border-radius: 6px;
             transition: opacity 0.3s ease;
         }
+
+        /* Circle Progress Bar Styles */
+        .circle-progress {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto;
+        }
+
+        .circle-progress svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circle-progress circle {
+            fill: none;
+            stroke-width: 4;
+        }
+
+        .circle-progress .background {
+            stroke: #e0e0e0;
+        }
+
+        .circle-progress .progress {
+            stroke: #007bff;
+            stroke-linecap: round;
+            stroke-dasharray: 157; /* 2 * π * 25 (radius) */
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+
+        .circle-progress .progress-text {
+            display: none;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        /* Custom highlight color for Save button */
+        #saveBtn {
+            background-color: #099F9A !important;
+            border-color: #099F9A !important;
+        }
+
+        #saveBtn:hover {
+            background-color: #088a85 !important;
+            border-color: #088a85 !important;
+        }
+
+        #saveBtn:focus {
+            background-color: #099F9A !important;
+            border-color: #099F9A !important;
+            box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25) !important;
+        }
     </style>
 @endsection
 
@@ -394,6 +484,62 @@
 <script>
 // Pass layouts data to JavaScript
 var layoutsData = @json($layouts->groupBy('project_id'));
+
+// Pass prefill data to JavaScript
+var prefillData = @json($prefillData);
+
+// Circle Progress Bar Functions
+function showProgressBar(overlayId, progressCircleId, progressTextId) {
+    const overlay = document.getElementById(overlayId);
+    const progressCircle = document.getElementById(progressCircleId);
+    const progressText = document.getElementById(progressTextId);
+    
+    if (overlay && progressCircle && progressText) {
+        overlay.classList.remove('hidden');
+        animateProgress(progressCircle, progressText, 0, 100, 2000); // 2 seconds animation
+    }
+}
+
+function hideProgressBar(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+}
+
+function animateProgress(circle, textElement, start, end, duration) {
+    const startTime = performance.now();
+    const circumference = 2 * Math.PI * 25; // radius = 25
+    const range = end - start;
+    
+    function updateProgress(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentValue = start + (range * progress);
+        
+        // Update circle progress
+        const offset = circumference - (currentValue / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateProgress);
+        }
+    }
+    
+    requestAnimationFrame(updateProgress);
+}
+
+// Simulate loading for prefill data
+function simulateDataLoading() {
+    if (prefillData && prefillData.layout_id) {
+        showProgressBar('thumbnailLoadingOverlay', 'thumbnailProgressCircle', 'thumbnailProgressText');
+        
+        // Simulate loading time for prefill data
+        setTimeout(() => {
+            hideProgressBar('thumbnailLoadingOverlay');
+        }, 2000);
+    }
+}
 
 // Global functions that need to be accessible from onclick attributes
 function showEditModal(element) {
@@ -452,6 +598,9 @@ function handleEditSharedLayout() {
         alert('Title is required.');
         return;
     }
+
+    // Show progress bar
+    showProgressBar('editThumbnailLoadingOverlay', 'editThumbnailProgressCircle', 'editThumbnailProgressText');
 
     // Disable save button to prevent double submission
     var saveBtn = document.getElementById('saveEditBtn');
@@ -516,11 +665,13 @@ function handleEditSharedLayout() {
             window.location.reload();
         } else {
             alert('Error: ' + (data.message || 'Something went wrong'));
+            hideProgressBar('editThumbnailLoadingOverlay');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         alert('An error occurred while updating the shared layout.');
+        hideProgressBar('editThumbnailLoadingOverlay');
     })
     .finally(() => {
         // Re-enable save button
@@ -722,6 +873,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Show progress bar
+        showProgressBar('thumbnailLoadingOverlay', 'thumbnailProgressCircle', 'thumbnailProgressText');
+
         // Disable save button to prevent double submission
         var saveBtn = document.getElementById('saveBtn');
         saveBtn.disabled = true;
@@ -768,11 +922,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.reload();
             } else {
                 alert('Error: ' + (data.message || 'Something went wrong'));
+                hideProgressBar('thumbnailLoadingOverlay');
             }
         })
         .catch(error => {
             console.error('Error:', error);
             alert('An error occurred while saving.');
+            hideProgressBar('thumbnailLoadingOverlay');
         })
         .finally(() => {
             // Re-enable save button
@@ -977,6 +1133,27 @@ document.addEventListener('DOMContentLoaded', function() {
         // Focus on the project select element when modal opens
         projectSelect.focus();
     });
+
+    // Auto-open modal and pre-fill form if prefillData is available
+    if (prefillData && prefillData.layout_id) {
+        // Show progress bar for prefill data loading
+        simulateDataLoading();
+        
+        // Set the form fields with prefill data
+        document.getElementById('selectedLayoutId').value = prefillData.layout_id;
+        document.getElementById('selectedLayoutTitle').value = prefillData.layout_name;
+        
+        // Set thumbnail if available
+        if (prefillData.thumbnail_url && prefillData.thumbnail_url.trim() !== '') {
+            document.getElementById('selectedThumbnailUrl').value = prefillData.thumbnail_url;
+            var img = document.getElementById('selectedThumbnail');
+            var placeholder = document.getElementById('thumbnailPlaceholder');
+            img.src = prefillData.thumbnail_url;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+
+    }
 });
 </script>
 @endsection

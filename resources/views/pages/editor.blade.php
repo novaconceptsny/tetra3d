@@ -11,8 +11,8 @@
 
     <x-menu-item :visible="false" text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self" />
     <x-menu-item text="Map" icon="fal fa-map-marked-alt" data-bs-toggle="modal" data-bs-target="#tourMapModal" />
-    <x-menu-item target="_self" text="Share" icon="fal fa-share-nodes" :visible="$layout"
-        onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})" />
+    <x-menu-item target="_blank" text="Share" icon="fal fa-share-nodes" :visible="$layout"
+        :route="route('share.index', ['layout_id' => request('layout_id')])" />
     <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')" />
 </div>
 @endsection
@@ -38,7 +38,7 @@
         @php($sidebar = request('sidebar', 'editor'))
         <div class="row" x-data="{sidebar: @js($sidebar) }">
             <livewire:comments :commentable="$selectedSurfaceState" />
-            <livewire:artwork-collection :project="$project" />
+            @include('livewire.artwork-collection', ['project' => $project])
 
             @php($canvasId = $selectedSurfaceState ? $selectedSurfaceState->id : 'new')
             <div class="col-9 main-col position-relative"
@@ -57,14 +57,14 @@
                     @endforeach
 
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-horz-guide">
-                            <i class="fal fa-arrows-alt-h"></i> Add Horizontal Guide
+                        <button class="btn btn-outline-secondary btn-sm icon-button" id="add-horz-guide" title="Add Horizontal Guide">
+                            <i class="fal fa-arrows-alt-h"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="add-vert-guide">
-                            <i class="fal fa-arrows-alt-v"></i> Add Vertical Guide
+                        <button class="btn btn-outline-secondary btn-sm icon-button" id="add-vert-guide" title="Add Vertical Guide">
+                            <i class="fal fa-arrows-alt-v"></i>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm white-bg-button" id="toggle-guides" data-hidden="false">
-                            <i class="fal fa-eye"></i> Hide Guides
+                        <button class="btn btn-outline-secondary btn-sm icon-button" id="toggle-guides" data-hidden="false" title="Hide Guides">
+                            <i class="fal fa-eye"></i>
                         </button>
 
                         <x-menu-item 
@@ -162,8 +162,65 @@
 }
 
 .white-bg-button:hover {
-    background-color: black !important;
+    background-color: #099F9A !important;
     color: white !important;
-    border-color: black !important;
+    border-color: #099F9A !important;
+}
+
+/* Icon button styles */
+.icon-button {
+    background-color: white !important;
+    color: #6c757d !important;
+    height: 36px !important;
+    width: 36px !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: var(--light-font) !important;
+    line-height: normal !important;
+    text-decoration: none !important;
+    font-family: var(--main-font-family) !important;
+    box-shadow: none !important;
+    border: 1px solid #d3d3d3 !important;
+    border-radius: 8px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+}
+
+.icon-button:hover {
+    background-color: #099F9A !important;
+    color: white !important;
+    border-color: #099F9A !important;
+}
+
+
+/* View 360 button hover styles */
+.view-360 {
+    background-color: white !important;
+    color: #6c757d !important;
+    height: 36px !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: var(--light-font) !important;
+    line-height: normal !important;
+    text-decoration: none !important;
+    font-family: var(--main-font-family) !important;
+    box-shadow: none !important;
+    border: 1px solid #d3d3d3 !important;
+    border-radius: 8px !important;
+    padding: 4px 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.view-360:hover {
+    background-color: #099F9A !important;
+    color: white !important;
+    border-color: #099F9A !important;
 }
 </style>

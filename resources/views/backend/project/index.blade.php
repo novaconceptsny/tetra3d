@@ -34,7 +34,7 @@
                         <tr>
                             <td>{{ $project->name }}</td>
                             <td>
-                                @if(user()->isAdmin() &&  $project->company != null && $project->company->name === 'My Workspace')
+                                @if($project->company != null && $project->company->name === 'My Workspace')
                                     {{ $project->company->name }}_{{ str_pad($project->company->id, 2, '0', STR_PAD_LEFT) }}
                                 @else
                                     {{ $project->company ? $project->company->name : '-' }}

@@ -71,8 +71,9 @@
                                     class="form-control @error('password') is-invalid @enderror"
                                     name="password" id="password" type="password"
                                     required autocomplete="new-password"
+                                    oninput="handlePasswordInput('password')"
                                 >
-                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <button type="button" class="password-toggle @error('password') d-none @enderror" onclick="togglePassword('password')" id="password-toggle-btn">
                                     <i class="fas fa-eye" id="password-eye"></i>
                                 </button>
                             </div>
@@ -83,14 +84,16 @@
                             <div class="password-input-wrapper">
                                 <input
                                     placeholder="Confirm Password"
-                                    class="form-control"
+                                    class="form-control @error('password') is-invalid @enderror"
                                     name="password_confirmation" id="password-confirm" type="password"
                                     required autocomplete="new-password"
+                                    oninput="handlePasswordInput('password-confirm')"
                                 >
-                                <button type="button" class="password-toggle" onclick="togglePassword('password-confirm')">
+                                <button type="button" class="password-toggle @error('password') d-none @enderror" onclick="togglePassword('password-confirm')" id="password-confirm-toggle-btn">
                                     <i class="fas fa-eye" id="password-confirm-eye"></i>
                                 </button>
                             </div>
+                            <x-error field="password"/>
                         </div>
                         <button type="submit" class="btn-login btn form-control">Register</button>
                         
@@ -103,7 +106,7 @@
                         <div class="mt-3 text-center">
                             <p class="m-0">
                                 {{ __('Already have an account?') }} 
-                                <a href="{{ route('login') }}" class="text-decoration-none fw-bold">
+                                <a href="{{ route('login') }}" class="text-decoration-none fw-bold" style="color: #099F9A;">
                                     {{ __('Sign in here') }}
                                 </a>
                             </p>
@@ -136,34 +139,34 @@
 
 .password-toggle {
     position: absolute;
-    right: 10px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #6c757d;
+    color: #999999;
     cursor: pointer;
-    padding: 8px;
+    padding: 6px;
     z-index: 10;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     border-radius: 4px;
-    font-size: 16px;
-    min-width: 35px;
-    height: 35px;
+    font-size: 14px;
+    min-width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .password-toggle:hover {
-    color: #007bff;
-    background-color: rgba(0, 123, 255, 0.1);
+    color: #099F9A;
+    background-color: rgba(9, 159, 154, 0.1);
 }
 
 .password-toggle:focus {
     outline: none;
-    color: #007bff;
-    background-color: rgba(0, 123, 255, 0.1);
+    color: #099F9A;
+    background-color: rgba(9, 159, 154, 0.1);
 }
 
 .password-toggle:active {
@@ -171,16 +174,70 @@
 }
 
 .password-input-wrapper .form-control {
-    padding-right: 45px;
+    padding-right: 50px;
+    border: 1px solid #D3D3D3;
+    border-radius: 12px;
+    background-color: #F5F5F5;
+    color: #999999;
+    transition: all 0.3s ease;
+}
+
+.password-input-wrapper .form-control:focus {
+    border-color: #099F9A;
+    background-color: #ffffff;
+    color: #000000;
+    box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.2);
+}
+
+.password-input-wrapper .form-control::placeholder {
+    color: #999999;
+    font-weight: var(--light-font);
+}
+
+.password-input-wrapper .form-control:not(:placeholder-shown) {
+    color: #000000;
 }
 
 /* Ensure the icon is visible */
 .password-toggle i {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     text-align: center;
     line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.password-toggle:hover i {
+    opacity: 1;
+}
+
+/* Error message styling */
+.invalid-feedback {
+    display: block !important;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Ensure error messages are visible when validation fails */
+.was-validated .form-control:invalid ~ .invalid-feedback,
+.form-control.is-invalid ~ .invalid-feedback {
+    display: block !important;
+}
+
+/* Style for invalid input fields */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
 }
 </style>
 
@@ -199,6 +256,40 @@ function togglePassword(inputId) {
         eyeIcon.classList.add('fa-eye');
     }
 }
+
+function handlePasswordInput(inputId) {
+    const input = document.getElementById(inputId);
+    const toggleBtn = document.getElementById(inputId + '-toggle-btn');
+    const errorElement = input.closest('.form-group').querySelector('.invalid-feedback');
+    
+    // Show toggle button when user starts typing
+    if (input.value.length > 0) {
+        toggleBtn.classList.remove('d-none');
+        // Remove error styling and hide error message
+        input.classList.remove('is-invalid');
+        if (errorElement) {
+            errorElement.style.display = 'none';
+        }
+    } else {
+        // Hide toggle button when input is empty
+        toggleBtn.classList.add('d-none');
+    }
+}
+
+// Initialize on page load - hide toggle buttons if there are errors
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('password-confirm');
+    
+    // Check if password field has error and hide toggle button accordingly
+    if (passwordInput.classList.contains('is-invalid')) {
+        document.getElementById('password-toggle-btn').classList.add('d-none');
+    }
+    
+    if (confirmPasswordInput.classList.contains('is-invalid')) {
+        document.getElementById('password-confirm-toggle-btn').classList.add('d-none');
+    }
+});
 </script>
 
 </body>

@@ -51,4 +51,39 @@ class Layout extends Model
     {
         return $this->hasMany(SurfaceState::class);
     }
+
+    /**
+     * Get artwork counts across all surfaces in this layout
+     * Returns an array with artwork_id as key and count as value
+     */
+    public function getArtworkCounts()
+    {
+        $counts = [];
+        
+        // Get all surface states for this layout
+        $surfaceStates = $this->surfaceStates()->with('artworks')->get();
+        
+        foreach ($surfaceStates as $surfaceState) {
+            foreach ($surfaceState->artworks as $artwork) {
+                $artworkId = $artwork->id;
+                if (!isset($counts[$artworkId])) {
+                    $counts[$artworkId] = 0;
+                }
+                $counts[$artworkId]++;
+            }
+        }
+        
+        return $counts;
+    }
+
+    /**
+     * Refresh artwork counts for this layout
+     * This method can be called after artwork changes to ensure counts are up to date
+     */
+    public function refreshArtworkCounts()
+    {
+        // This method can be used to trigger a refresh of artwork counts
+        // For now, it just returns the current counts
+        return $this->getArtworkCounts();
+    }
 }

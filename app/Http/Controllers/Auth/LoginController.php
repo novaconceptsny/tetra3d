@@ -51,12 +51,10 @@ class LoginController extends Controller
         // Check if there's a redirect parameter
         if ($request->has('redirect')) {
             $redirectUrl = $request->get('redirect');
-            
             // Validate that the redirect URL is safe (same domain)
             if (filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
                 $parsedUrl = parse_url($redirectUrl);
                 $currentHost = parse_url(config('app.url'), PHP_URL_HOST);
-                
                 if ($parsedUrl['host'] === $currentHost) {
                     return redirect($redirectUrl);
                 }

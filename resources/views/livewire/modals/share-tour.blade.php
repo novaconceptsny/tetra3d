@@ -36,7 +36,7 @@
             <button type="button" class="btn btn-sm btn-secondary c-btn-primary" wire:click="generateLink">{{ __('Generate Link') }}</button>
         @endif
 
-        <button class="btn btn-sm btn-primary c-btn-primary" type="button" wire:click="$dispatch('modal.close')">
+        <button class="btn btn-sm btn-secondary c-btn-secondary" type="button" wire:click="$dispatch('modal.close')">
             {{ __('Close') }}
         </button>
     </div>

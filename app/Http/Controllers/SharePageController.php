@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class SharePageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -40,9 +40,26 @@ class SharePageController extends Controller
             $layout->project_name = $layout->project ? $layout->project->name : 'N/A';
             return $layout;
         });
-        
 
-        return view('share.index', compact('sharedLayouts', 'layouts', 'projects'));
+        // Handle pre-fill data from URL parameters
+        $prefillData = null;
+        if ($request->has('layout_id')) {
+            $layout = Layout::with('project')->find($request->layout_id);
+            if ($layout) {
+                $assignedTour = $layout->assignedTour(); // This is a method call, not a relationship
+                $prefillData = [
+                    'layout_id' => $layout->id,
+                    'layout_name' => $layout->name,
+                    'tour_id' => $assignedTour ? $assignedTour->id : null,
+                    'tour_name' => $assignedTour ? $assignedTour->name : 'N/A',
+                    'project_id' => $layout->project ? $layout->project->id : null,
+                    'project_name' => $layout->project ? $layout->project->name : 'N/A',
+                    'thumbnail_url' => $assignedTour ? $assignedTour->getFirstMediaUrl('thumbnail') : '',
+                ];
+            }
+        }
+
+        return view('share.index', compact('sharedLayouts', 'layouts', 'projects', 'prefillData'));
     }
 
     public function store(Request $request)

@@ -22,7 +22,7 @@
                 <div class="mb-3" style ="margin-top: 40px">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="m-0">Layouts</h5>
+                            <h5 class="m-0 fw-normal">Layouts</h5>
                             <a href="#" class="new-layout-button" wire:modal="forms.layout-form, @js(['project' => $project->id])">+ New Layout</a>
 
 
@@ -32,27 +32,33 @@
                                 <div class="layout-card d-flex align-items-start">
                                     <div class="layout-card-container">
                                         <div class="layout-favorite">
-                                            <i class="fa{{ $layout->is_favorite ? 's' : 'r' }} fa-star layout-star" wire:click="toggleFavorite({{ $layout->id }})"></i>
+                                            <i class="fa{{ $layout->is_favorite ? 's' : 'r' }} fa-star layout-star" 
+                                               wire:click="toggleFavorite({{ $layout->id }})"
+                                               style="color: {{ $layout->is_favorite ? '#099F9A' : '' }};"></i>
                                         </div>
                                         <div class="layout-preview">
-                                            <img :src="$wire.tourImages['{{ $layout->assignedTour()->id }}']">
+                                            @if($layout->assignedTour())
+                                                <img :src="$wire.tourImages['{{ $layout->assignedTour()->id }}']">
+                                            @else
+                                                <div class="no-tour-placeholder">No Tour Assigned</div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="layout-info-container">
                                         <div class="layout-info">
                                                 <div class="layout-title">{{ $layout->name }}</div>
-                                                <div class="layout-meta">Tour: {{ $layout->assignedTour()->name }}</div>
+                                                <div class="layout-meta">Tour: {{ $layout->assignedTour() ? $layout->assignedTour()->name : 'No Tour Assigned' }}</div>
                                                 <div class="layout-meta">Modified: {{ $layout->updated_at->format('m/d/y') }}</div>
                                         </div>
                                         <div class="layout-actions">
-                                            <div class="d-flex justify-content-end gap-2">
-                                                <button class="btn btn-icon btn-sm" wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
+                                            <div class="d-flex justify-content-end" style="gap: 0px;">
+                                                <button class="btn btn-icon btn-sm compact-btn" wire:modal="forms.layout-form, @js(['project' => $project->id, 'layout' => $layout->id])">
                                                     <i class="fal fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-icon btn-sm" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
+                                                <button class="btn btn-icon btn-sm compact-btn" wire:modal="forms.duplicate, @js(['layout' => $layout->id])">
                                                     <i class="fa fa-copy"></i>
                                                 </button>
-                                                <button class="btn btn-icon btn-sm" type="button" wire:click="deleteLayout({{ $layout->id }})">
+                                                <button class="btn btn-icon btn-sm compact-btn" type="button" wire:click="deleteLayout({{ $layout->id }})">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
@@ -74,7 +80,7 @@
                 </div>
 
                 <div class="collection mt-5">
-                    <h5 class="d-flex align-items-center">
+                    <h5 class="d-flex align-items-center fw-normal">
                         <span>Collections</span>
                         <!-- @can('update', $project)
                             <a class="fs-6 ms-3" href="{{ route('backend.projects.edit', $project) }}" target="_blank"><i
@@ -85,7 +91,7 @@
 
                         @forelse($project->artworkCollections as $collection)
                             <a href="{{ route('artworks.index', ['collection_id' => $collection->id]) }}" target="_blank"
-                                class="col-btn">{{ $collection->name }}</a>
+                                class="col-btn rounded light-grey-box" style="width : fit-content;">{{ $collection->name }}</a>
                         @empty
                             <span class="text-center d-block">{{ __('No collections') }}</span>
                         @endforelse
@@ -128,7 +134,7 @@
         }
         .layout-card-container {
             display: flex;
-            gap: 1rem;
+            gap: 2rem;
         }
         .layout-info-container {
             display: flex;
@@ -158,7 +164,34 @@
         .layout-preview img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .layout-preview {
+                width: 100%;
+                max-width: 180px;
+                height: 100px;
+            }
+            
+            .layout-card-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .layout-info-container {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .layout-preview {
+                width: 100%;
+                max-width: 150px;
+                height: 80px;
+            }
         }
 
         .layout-star {
@@ -211,26 +244,58 @@
             align-items: center;
             justify-content: center;
             background: transparent;
-            color: #203DCE;
+            color: #099F9A;
             padding: 0.5rem;
             border-radius: 4px;
             text-decoration: none;
-            border: 1px solid #e0e0e0;
+            border: none;
             height: 32px;
             transition: all 0.2s ease;
         }
 
         .btn-enter:hover {
-            background: #f5f5f5;
-            color: #333;
+            background: #099F9A;
+            color: white;
         }
 
         .new-layout-button {
-            color: #4a90e2;
+            color: #099F9A;
             text-decoration: none;
             font-weight: 500;
         }
+        
+        .new-layout-button:hover {
+            color: #099F9A;
+        }
 
+        /* Collection box styling */
+        .light-grey-box {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .light-grey-box:hover {
+            background-color: #099F9A !important;
+            color: #333;
+        }
+        
+        /* Action button hover colors */
+        .btn-icon:hover {
+            color: #099F9A !important;
+        }
+        
+        /* Compact button styling for reduced padding */
+        .compact-btn {
+            padding: 0.25rem 0.25rem !important;
+            min-width: auto !important;
+        }
+        
         /* Hide contributors section */
         .contributor {
             display: none;

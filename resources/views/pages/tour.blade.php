@@ -48,8 +48,8 @@
             :route="route('tours.surfaces', Arr::except($parameters, 'tracker'))" />
     @endif -->
     <x-menu-item :visible="false" text="List View" icon="fal fa-clone" :route="route('tours.surfaces', $query_params)" target="_self" />
-    <x-menu-item :visible="$layout && !$tour_is_shared" target="_self"
-        onclick="Livewire.dispatch('modal.open', {component: 'modals.share-tour', arguments: {'layout': {{ request('layout_id') }} }})"
+    <x-menu-item :visible="$layout && !$tour_is_shared" target="_blank"
+        :route="route('share.index', ['layout_id' => $layout?->id])"
         text="Share" icon="fal fa-share-nodes" />
     <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"
         :visible="!$tour_is_shared" />
@@ -72,6 +72,17 @@
 @endsection
 
 @section('content')
+<!-- Landscape Orientation Prompt -->
+<div id="landscapePrompt" class="landscape-prompt">
+    <div class="landscape-prompt-icon">
+        <i class="fas fa-mobile-alt"></i>
+    </div>
+    <div class="landscape-prompt-title">Rotate Your Device</div>
+    <div class="landscape-prompt-message">
+        For the best experience, please rotate your device to landscape mode to view the tour.
+    </div>
+</div>
+
 <div style="height: calc(100vh - 52px);">
     <div class="h-100 position-relative">
         @if ($tracker)
@@ -97,7 +108,7 @@
 
 @if($project?->id && !$tour_is_shared)
     <button class="previous-btn" style="z-index: 39"
-        onclick="Livewire.dispatch('slide-over.open', {component: 'tour-switcher', arguments: {'project': {{$project?->id}} }})">
+        onclick="Livewire.dispatch('slide-over.open', {component: 'updated-tour-switcher', arguments: {'project': {{$project?->id}} }})">
         <i class="fas fa-chevron-left"></i>
     </button>
 @endif
@@ -984,6 +995,31 @@
                 window.location = @js(route('dashboard'));
             }
         });
+    });
+
+    // Landscape Orientation Prompt Functionality
+    function checkOrientation() {
+        const landscapePrompt = document.getElementById('landscapePrompt');
+        if (!landscapePrompt) return;
+
+        const isMobile = window.innerWidth <= 767;
+        const isPortrait = window.innerHeight > window.innerWidth;
+
+        if (isMobile && isPortrait) {
+            landscapePrompt.classList.remove('hidden');
+        } else {
+            landscapePrompt.classList.add('hidden');
+        }
+    }
+
+    // Check orientation on page load
+    document.addEventListener('DOMContentLoaded', checkOrientation);
+
+    // Check orientation on window resize and orientation change
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', () => {
+        // Add a small delay to ensure the orientation change is complete
+        setTimeout(checkOrientation, 100);
     });
 
 </script>

@@ -4,51 +4,75 @@
             <!-- Sidebar -->
             <div class="collections-sidebar" style="width: 280px; min-width: 220px; background: #f8f9fa; border-radius: 12px; margin-right: 24px;">
                 <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
-                    <h5>Collections</h5>
-                    <ul class="list-group" id="collectionsContainer">
-                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" id="addCollectionBtn">
-                            <button class="add-collection-btn" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()">
-                                <span class="icon-circle"><i class="fas fa-plus"></i></span>
-                                <span class="add-collection-text">Add Collection</span>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="mb-0">Collections</h5>
+                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()" style="width: 32px; height: 32px; border-radius: 50%; background: #007bff; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-plus text-white" style="font-size: 14px;"></i>
+                        </button>
+                    </div>
+                    <div class="collections-dropdown">
+                        <div class="dropdown w-100">
+                            <button class="btn btn-light w-100 d-flex align-items-center justify-content-between p-3 border rounded" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: #fff; border: 1px solid #dee2e6; min-height: 60px; box-shadow: none;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
+                                    <div class="text-start">
+                                        @if($selectedCollection)
+                                            @php
+                                                $selectedCollectionData = $collections->firstWhere('id', $selectedCollection);
+                                            @endphp
+                                            @if($selectedCollectionData)
+                                                <div class="fw-bold">{{ $selectedCollectionData->name }}</div>
+                                                <small class="text-muted">{{ $selectedCollectionData->artworks()->count() }} items</small>
+                                            @else
+                                                <div class="fw-bold">All Collections</div>
+                                                <small class="text-muted">3645 items</small>
+                                            @endif
+                                        @else
+                                            <div class="fw-bold">All Collections</div>
+                                            <small class="text-muted">3645 items</small>
+                                        @endif
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-down text-muted"></i>
                             </button>
-                        </li>
-                        @foreach($collections as $collection)
-                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks" data-id="${collection.id}">
-                            @if($collection->thumbnail_url)
-                                <img src="{{ $collection->thumbnail_url }}" alt="" width="40" class="me-2 rounded">
-                            @else
-                                <i class="fas fa-image collection-icon"></i>
-                            @endif
-                            <div class="collection-info">
-                                <span class="collection-name">{{ $collection->name }}</span>
-                                <span class="collection-items">{{ $collection->artworks()->count() }} items</span>
-                            </div>
-                            <div class="dropdown position-absolute top-0 end-0">
-                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v ms-auto"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        @endforeach
-                        <li class="list-group-item d-flex align-items-center border rounded p-2 mb-2" data-module="artworks">
-                            <i class="fas fa-image collection-icon"></i>
-                            <div class="collection-info">
-                                <span class="collection-name">All</span>
-                                <span class="collection-items">0  items</span>
-                            </div>
-                            <div class="dropdown position-absolute top-0 end-0">
-                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v ms-auto"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item delete-item" href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
+                            <ul class="dropdown-menu w-100" style="max-height: 500px; overflow-y: auto; min-height: 200px; border: 1px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '3645 items')" style="border-bottom: 1px solid #f8f9fa;">
+                                        <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
+                                        <div>
+                                            <div class="fw-bold">All Collections</div>
+                                            <small class="text-muted">3645 items</small>
+                                        </div>
+                                    </a>
+                                </li>
+                                @foreach($collections as $collection)
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}} items')" style="border-bottom: 1px solid #f8f9fa;">
+                                        @if($collection->thumbnail_url)
+                                            <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3 rounded" style="object-fit: cover;">
+                                        @else
+                                            <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
+                                        @endif
+                                        <div>
+                                            <div class="fw-bold">{{ $collection->name }}</div>
+                                            <small class="text-muted">{{ $collection->artworks()->count() }} items</small>
+                                        </div>
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    @if($selectedCollection)
+                        <div class="mt-2 d-flex justify-content-center gap-2">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="editCollection()" title="Edit Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-edit" style="font-size: 12px;"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteCollection()" title="Delete Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-trash" style="font-size: 12px;"></i>
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
             <!-- Main Content -->
@@ -1128,6 +1152,47 @@
 
     function handleOpenCollectionModal() {
         $('#addCollectionModal').modal('show');
+    }
+
+    function selectCollection(collectionId, collectionName, itemCount) {
+        // Update the Livewire model - this will automatically update the button display
+        @this.set('selectedCollection', collectionId);
+    }
+
+    function editCollection() {
+        const selectedCollectionId = @this.selectedCollection;
+        if (selectedCollectionId) {
+            // Find the collection data
+            const collection = allCollections.find(c => c.id == selectedCollectionId);
+            if (collection) {
+                // Populate the edit modal with collection data
+                document.getElementById('collectionName').value = collection.name;
+                document.getElementById('collectionCompany').value = collection.company_id || '';
+                // You can add more fields as needed
+                
+                // Show the edit modal
+                $('#addCollectionModal').modal('show');
+            }
+        }
+    }
+
+    function deleteCollection() {
+        const selectedCollectionId = @this.selectedCollection;
+        if (selectedCollectionId) {
+            if (confirm('Are you sure you want to delete this collection? This action cannot be undone.')) {
+                // Call Livewire method to delete collection
+                @this.call('deleteCollection', selectedCollectionId);
+                
+                // Reset to "All Collections" after deletion
+                @this.set('selectedCollection', '');
+            }
+        }
+    }
+
+    function updateCollectionDisplay() {
+        // This function is called when the select dropdown changes
+        // The Livewire model is already updated via wire:model.live
+        // You can add any additional display updates here if needed
     }
 
     document.getElementById('collectionThumbnail').addEventListener('change', function(event) {
