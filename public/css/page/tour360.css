@@ -113,6 +113,7 @@ body {
   border: 1px dotted #ccc;
   align-items: center;
   justify-content: center;
+  height: 374.5px;
 }
 .projects-section .layout-section .add-image-btn {
   display: flex;
@@ -855,6 +856,97 @@ input[type=text].form-control:not(.login-custum-form-group input), select.form-c
 
     .global-search-input {
         min-width: 250px;
+    }
+}
+
+/* Mobile-specific search bar optimizations */
+@media (max-width: 576px) {
+    .global-search-section {
+        padding: 15px;
+        margin: 0 -15px;
+        border-radius: 0;
+    }
+
+    .global-search-section .d-flex {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
+    .search-container .input-group {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .global-search-input {
+        min-width: 250px !important;
+        width: 100%;
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 12px 16px;
+    }
+
+    .search-filters {
+        width: 100%;
+    }
+
+    .search-filters .btn-group {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .search-filters .btn {
+        flex: 0 0 auto;
+        font-size: 10px;
+        padding: 8px 12px;
+        height: 36px;
+        white-space: nowrap;
+        min-width: 0;
+        max-width: 80px;
+    }
+
+    .search-filters .btn i {
+        font-size: 9px;
+        margin-right: 3px;
+    }
+
+    /* Ensure proper touch targets */
+    .search-filters .btn-check + .btn {
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Adjust clear button for mobile - make it smaller and inline */
+    #clearGlobalSearch {
+        padding: 8px 12px;
+        height: 48px;
+        font-size: 14px;
+        min-width: 48px;
+        border-left: none;
+        border-radius: 0 6px 6px 0;
+    }
+
+    /* Make the input group more compact and ensure proper styling */
+    .search-container .input-group .input-group-text {
+        padding: 12px 16px;
+        border-radius: 6px 0 0 6px;
+    }
+
+    .search-container .input-group .global-search-input {
+        border-radius: 0;
+        border-right: none;
+    }
+
+    /* Ensure the input group maintains proper borders */
+    .search-container .input-group {
+        border-radius: 6px;
+        overflow: hidden;
     }
 }
 
