@@ -1362,7 +1362,9 @@ main section.collection .main-intro .table-row .c-form select {
 
 main section.collection .main-intro .table-row .c-form select.form-control {
   font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
-  border: 1px solid #000000 !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 12px !important;
+  background-color: #f8f9fa !important;
 }
 
 main section.collection .main-intro .table-row .c-form .reset-btn {
@@ -1459,10 +1461,11 @@ main section.collection .main-intro .table-row .c-form .reset-btn {
 
 input[type=text].form-control:not(.login-custum-form-group input),
 select.form-control {
-  border: 1px solid #000 !important;
-  border-radius: 8px !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px  !important;
   font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
   color: #000;
+  background-color: #f8f9fa !important;
 }
 
 input[type=text].form-control:not(.login-custum-form-group input)::placeholder,
@@ -2424,14 +2427,23 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
 
 main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group input {
   padding: 18px 22px 14px 22px;
-  border: 1px solid #000;
+  border: 1px solid #e0e0e0;
   font-family: var(--main-font-family);
   font-style: normal;
   font-weight: var(--regular-font);
   font-size: 14px;
   line-height: 16px;
-  border-radius: 0;
+  border-radius: 12px;
   color: #000000;
+  background-color: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group input:focus {
+  border-color: #099F9A;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 0.1rem rgba(9, 159, 154, 0.25);
+  outline: none;
 }
 
 main section.profile .content-container .profile-row .edit-col .edit-profile form .custum-form-group .pic-button {
@@ -2543,13 +2555,22 @@ main section.profile .content-container .profile-row .edit-col .edit-profile for
 .custum-form-group input {
   width: 100%;
   padding: 18px 22px 14px 22px;
-  border: 1px solid #3c3b3c;
-  border-radius: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
   font-family: var(--main-font-family);
   font-style: normal;
   font-weight: var(--light-font);
   font-size: 14px;
   line-height: 16px;
+  background-color: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.custum-form-group input:focus {
+  border-color: #099F9A;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 0.1rem rgba(9, 159, 154, 0.25);
+  outline: none;
 }
 
 .custum-form-group input[type=submit],
@@ -2845,7 +2866,8 @@ main section.editor .editor-view .row .side-col .top-div .input-group {
 
 main section.editor .editor-view .row .side-col .top-div .input-group .input-group-text {
   border: 1px solid #d3d3d3;
-  border-radius: 8px 0 0 8px;
+  border-radius: 12px 0 0 12px;
+  background-color: #f8f9fa;
 }
 
 main section.editor .editor-view .row .side-col .top-div .input-group .input-group-text i {
@@ -2865,7 +2887,8 @@ main section.editor .editor-view .row .side-col .top-div .input-group input {
   padding-left: 0;
   border: 1px solid #d3d3d3 !important;
   border-left: none !important;
-  border-radius: 0 8px 8px 0 !important;
+  border-radius: 0 12px 12px 0 !important;
+  background-color: #f8f9fa !important;
 }
 
 main section.editor .editor-view .row .side-col .top-div .input-group input::placeholder {
@@ -2876,10 +2899,11 @@ main section.editor .editor-view .row .side-col .top-div .input-group input::pla
 }
 
 main section.editor .editor-view .row .side-col .top-div .input-group input:focus {
-  border: 1px solid #C6C6C6;
+  border: 1px solid #099F9A;
   outline: unset;
-  box-shadow: unset;
+  box-shadow: 0 0 0 0.1rem rgba(9, 159, 154, 0.25);
   height: 100% !important;
+  background-color: #ffffff !important;
 }
 
 main section.editor .editor-view .row .side-col .top-div .all-btn {
@@ -3601,12 +3625,16 @@ input#checkbox {
 /* Form input styling */
 .form-control {
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border-radius: 12px !important;
+  border: 1px solid #e0e0e0 !important;
+  background-color: #f8f9fa !important;
 }
 
 .form-control:focus {
   border-color: #099F9A !important;
   box-shadow: inset 0 0 0 0.1rem rgba(9, 159, 154, 0.25) !important;
   outline: none !important;
+  background-color: #ffffff !important;
 }
 
 /* Button hover effects */

@@ -47,7 +47,7 @@
                                 </div>
 
                                 <div class="update col-12">
-                                    <button class="btn" type="submit">Update</button>
+                                    <button class="btn" type="submit" style="background-color: #099F9A; border-color: #099F9A; color: #ffffff; " onmouseover="this.style.backgroundColor='#077A75'; this.style.borderColor='#077A75'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(9, 159, 154, 0.3)';" onmouseout="this.style.backgroundColor='#099F9A'; this.style.borderColor='#099F9A'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">Update</button>
                                 </div>
                             </div>
                         </form>
@@ -86,7 +86,7 @@
                             </div>
 
                             <div class="update col-12 form-group">
-                                <button class="btn" type="submit">
+                                <button class="btn" type="submit" style="background-color: #099F9A; border-color: #099F9A; color: #ffffff; " onmouseover="this.style.backgroundColor='#077A75'; this.style.borderColor='#077A75'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(9, 159, 154, 0.3)';" onmouseout="this.style.backgroundColor='#099F9A'; this.style.borderColor='#099F9A'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
                                     {{ __('Update') }}
                                 </button>
                             </div>

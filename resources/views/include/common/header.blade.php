@@ -73,7 +73,7 @@
                     @auth
                         <div class="nav-item dropdown">
                             <a class="dropdown-link nav-link text-white profile-menu-btn" href="#" id="navbarDropdown" role="button"
-                                data-bs-toggle="dropdown">
+                                data-bs-toggle="dropdown" style="padding: 0;">
                                 <img class="user-img-border" src="{{ user()->avatar_url }}"
                                         alt="{{ user()->name }}"/>
                             </a>
