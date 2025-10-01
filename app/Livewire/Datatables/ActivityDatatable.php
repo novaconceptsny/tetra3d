@@ -118,6 +118,7 @@ class ActivityDatatable extends BaseDatatable
     public function updatingSelectedProject()
     {
         $this->resetPage();
+        $this->selectedTour = ''; // Reset tour selection when project changes
     }
 
     public function updatingSelectedTour()
