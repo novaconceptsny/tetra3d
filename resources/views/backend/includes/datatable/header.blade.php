@@ -1,4 +1,4 @@
-<thead class="bg-200 text-900">
+<thead class="custom-table-header text-900">
 <tr class="dt-row">
     @if($bulkDeleteEnabled && user()->can('bulkUpdate', $model))
         <th></th>
