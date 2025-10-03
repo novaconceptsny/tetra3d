@@ -220,6 +220,9 @@ $(document).ready(function() {
         ajax: {
             url: '{{ route("inventory.data") }}',
             type: 'GET',
+            data: function(d) {
+                d.collection_id = window.selectedCollectionId || '';
+            },
             error: function(xhr, error, thrown) {
                 console.error('DataTables AJAX error:', error, thrown);
                 console.error('Response:', xhr.responseText);
@@ -372,6 +375,120 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Collection selection function
+    window.selectCollection = function(collectionId, collectionName, itemCount) {
+        window.selectedCollectionId = collectionId;
+        
+        // Update the dropdown button text
+        const dropdownButton = document.querySelector('.dropdown button');
+        const buttonContent = dropdownButton.querySelector('.text-start');
+        
+        if (collectionId) {
+            buttonContent.innerHTML = `
+                <div class="fw-bold">${collectionName}</div>
+                <small class="text-muted">${itemCount}</small>
+            `;
+        } else {
+            buttonContent.innerHTML = `
+                <div class="fw-bold">All Collections</div>
+                <small class="text-muted">${itemCount}</small>
+            `;
+        }
+        
+        // Reload the DataTable with the new filter
+        table.ajax.reload();
+        
+        // Show/hide edit/delete buttons
+        const editDeleteContainer = document.querySelector('.mt-2.d-flex.justify-content-center.gap-2');
+        if (editDeleteContainer) {
+            editDeleteContainer.style.display = collectionId ? 'flex' : 'none';
+        }
+    };
+
+    // Edit collection function
+    window.editCollection = function() {
+        const collectionId = window.selectedCollectionId;
+        if (!collectionId) {
+            alert('Please select a collection to edit.');
+            return;
+        }
+        
+        // Get collection data
+        const collectionData = @json($collections->keyBy('id'));
+        const collection = collectionData[collectionId];
+        
+        if (!collection) {
+            alert('Collection not found.');
+            return;
+        }
+        
+        // Show edit modal (you can implement this modal)
+        const newName = prompt('Enter new collection name:', collection.name);
+        if (newName && newName !== collection.name) {
+            // Update collection via AJAX
+            $.ajax({
+                url: `/inventory/collections/${collectionId}/edit`,
+                type: 'PUT',
+                data: {
+                    collection_name: newName,
+                    collection_company_name: '{{ auth()->check() && auth()->user()->company ? auth()->user()->company->name : "Unknown Company" }}',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Collection updated successfully!');
+                        location.reload(); // Reload to update the collections list
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error updating collection: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                }
+            });
+        }
+    };
+
+    // Delete collection function
+    window.deleteCollection = function() {
+        const collectionId = window.selectedCollectionId;
+        if (!collectionId) {
+            alert('Please select a collection to delete.');
+            return;
+        }
+        
+        // Get collection data
+        const collectionData = @json($collections->keyBy('id'));
+        const collection = collectionData[collectionId];
+        
+        if (!collection) {
+            alert('Collection not found.');
+            return;
+        }
+        
+        if (confirm(`Are you sure you want to delete the collection "${collection.name}"? This action cannot be undone.`)) {
+            // Delete collection via AJAX
+            $.ajax({
+                url: `/inventory/collections/${collectionId}/delete`,
+                type: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Collection deleted successfully!');
+                        location.reload(); // Reload to update the collections list
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error deleting collection: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                }
+            });
+        }
+    };
 });
 </script>
 @endsection
