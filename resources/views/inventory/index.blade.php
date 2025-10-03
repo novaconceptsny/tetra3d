@@ -87,6 +87,26 @@
                                     <x-loader/>
 
                                     <div class="card-body py-0">
+                                        <!-- Search and Controls -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="dataTables_length">
+                                                    <label for="tableLength" class="form-label">Show entries:</label>
+                                                    <select id="tableLength" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                                                        <option value="10">10</option>
+                                                        <option value="25" selected>25</option>
+                                                        <option value="50">50</option>
+                                                        <option value="100">100</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="dataTables_filter">
+                                                    <label for="tableSearch" class="form-label">Search:</label>
+                                                    <input type="search" id="tableSearch" class="form-control form-control-sm" placeholder="Search artworks..." style="width: auto; display: inline-block;">
+                                                </div>
+                                            </div>
+                                        </div>
                                         
                                         <div class="table-responsive">
                                             <table id="inventoryTable" class="table table-striped table-bordered" style="width:100%">
@@ -187,6 +207,20 @@
         font-size: inherit;
         font-family: inherit;
     }
+
+    /* DataTables processing indicator styling */
+    .dataTables_processing {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 20px;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 </style>
 @endsection
 
@@ -217,6 +251,8 @@ $(document).ready(function() {
 
     // Create DataTable instance
     var table = $('#inventoryTable').DataTable({
+        processing: true,
+        serverSide: true,
         ajax: {
             url: '{{ route("inventory.data") }}',
             type: 'GET',
@@ -296,7 +332,12 @@ $(document).ready(function() {
         ],
         order: [10, 'desc'], // Sort by created_at desc
         pageLength: 25,
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         responsive: true,
+        search: {
+            caseInsensitive: true
+        },
+        dom: 'rtip', // Hide default search and length controls, keep pagination
         initComplete: function(settings, json) {
             console.log('DataTable initialization complete');
             console.log('Data received:', json);
@@ -304,6 +345,16 @@ $(document).ready(function() {
     });
 
     console.log('DataTable created successfully');
+
+    // Custom search functionality
+    $('#tableSearch').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+
+    // Custom length functionality
+    $('#tableLength').on('change', function() {
+        table.page.len(parseInt(this.value)).draw();
+    });
 
     // Inline editing functionality
     $(document).on('click', '.editable-cell', function(e) {

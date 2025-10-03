@@ -26,6 +26,32 @@ class InventoryController extends Controller
 
     public function getData(Request $request)
     {
+        // DataTables server-side processing parameters
+        $draw = $request->input('draw');
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+        $searchValue = $request->input('search.value', '');
+        $orderColumn = $request->input('order.0.column', 10); // Default to created_at column
+        $orderDir = $request->input('order.0.dir', 'desc');
+        
+        // Column mapping for ordering
+        $columns = [
+            0 => 'id',           // Checkbox column
+            1 => 'image',        // Image column (not orderable)
+            2 => 'company',      // Company
+            3 => 'collection',   // Collection
+            4 => 'name',         // Name
+            5 => 'artist',       // Artist
+            6 => 'type',         // Type
+            7 => 'height',       // Height
+            8 => 'width',        // Width
+            9 => 'unit',         // Unit
+            10 => 'created_at'   // Created
+        ];
+        
+        $orderBy = $columns[$orderColumn] ?? 'created_at';
+        
+        // Base query
         $query = Artwork::with('collection', 'company')
             ->select(['id', 'name', 'artist', 'type', 'data', 'original_unit', 'original_value', 'artwork_collection_id', 'company_id', 'created_at']);
         
@@ -34,29 +60,63 @@ class InventoryController extends Controller
             $query->where('artwork_collection_id', $request->collection_id);
         }
         
-        $artworks = $query->get()
-            ->map(function ($artwork) {
-                $data = $artwork->data ?? [];
-                $originalValue = $artwork->original_value ?? [];
-
-                return [
-                    'DT_RowId' => 'row_' . $artwork->id,
-                    'id' => $artwork->id,
-                    'image' => $artwork->image_url ?? '/images/placeholder.jpg',
-                    'company' => $artwork->company->name ?? '',
-                    'collection' => $artwork->collection->name ?? '',
-                    'name' => $artwork->name,
-                    'artist' => $artwork->artist,
-                    'type' => $artwork->type,
-                    'height' => $originalValue['height'] ?? '',
-                    'width' => $originalValue['width'] ?? '',
-                    'unit' => $originalValue['unit'] ?? 'cm',
-                    'created_at' => $artwork->created_at->format('Y-m-d'),
-                ];
+        // Apply search filter
+        if (!empty($searchValue)) {
+            $query->where(function($q) use ($searchValue) {
+                $q->where('name', 'like', "%{$searchValue}%")
+                  ->orWhere('artist', 'like', "%{$searchValue}%")
+                  ->orWhere('type', 'like', "%{$searchValue}%")
+                  ->orWhereHas('collection', function($subQuery) use ($searchValue) {
+                      $subQuery->where('name', 'like', "%{$searchValue}%");
+                  })
+                  ->orWhereHas('company', function($subQuery) use ($searchValue) {
+                      $subQuery->where('name', 'like', "%{$searchValue}%");
+                  });
             });
+        }
+        
+        // Get total records count (before pagination)
+        $totalRecords = $query->count();
+        
+        // Apply ordering
+        if ($orderBy === 'company') {
+            $query->join('companies', 'artworks.company_id', '=', 'companies.id')
+                  ->orderBy('companies.name', $orderDir);
+        } elseif ($orderBy === 'collection') {
+            $query->join('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
+                  ->orderBy('artwork_collections.name', $orderDir);
+        } else {
+            $query->orderBy($orderBy, $orderDir);
+        }
+        
+        // Apply pagination
+        $artworks = $query->skip($start)->take($length)->get();
+        
+        // Transform data for DataTables
+        $data = $artworks->map(function ($artwork) {
+            $originalValue = $artwork->original_value ?? [];
+
+            return [
+                'DT_RowId' => 'row_' . $artwork->id,
+                'id' => $artwork->id,
+                'image' => $artwork->image_url ?? '/images/placeholder.jpg',
+                'company' => $artwork->company->name ?? '',
+                'collection' => $artwork->collection->name ?? '',
+                'name' => $artwork->name,
+                'artist' => $artwork->artist,
+                'type' => $artwork->type,
+                'height' => $originalValue['height'] ?? '',
+                'width' => $originalValue['width'] ?? '',
+                'unit' => $originalValue['unit'] ?? 'cm',
+                'created_at' => $artwork->created_at->format('Y-m-d'),
+            ];
+        });
 
         return response()->json([
-            'data' => $artworks
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecords, // Same as total since we're not doing separate filtered count
+            'data' => $data
         ]);
     }
 
