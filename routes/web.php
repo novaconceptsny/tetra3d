@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('inventory/collections/{id}/edit', 'InventoryController@editCollection')->name('inventory.collections.edit');
     Route::delete('inventory/collections/{id}/delete', 'InventoryController@deleteCollection')->name('inventory.collections.delete');
     Route::post('inventory/artworks/bulk-delete', 'InventoryController@bulkDelete')->name('inventory.artworks.bulk-delete');
+    Route::post('inventory/bulk-update', 'InventoryController@bulkUpdate')->name('inventory.bulk-update');
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
     Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');
     Route::post('/profile/password', 'ProfileController@updatePassword')->name('profile.password.update');

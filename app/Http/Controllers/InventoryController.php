@@ -629,4 +629,110 @@ class InventoryController extends Controller
         }
         return response()->json(['success' => false], 400);
     }
+
+    public function bulkUpdate(Request $request)
+    {
+        try {
+            $ids = $request->input('ids', []);
+            
+            if (empty($ids)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No items selected for update'
+                ], 400);
+            }
+
+            $updateData = [];
+            $updatedCount = 0;
+
+            // Prepare update data based on what fields are provided
+            if ($request->has('name') && !empty($request->input('name'))) {
+                $updateData['name'] = $request->input('name');
+            }
+            
+            if ($request->has('artist') && !empty($request->input('artist'))) {
+                $updateData['artist'] = $request->input('artist');
+            }
+            
+            if ($request->has('type') && !empty($request->input('type'))) {
+                $updateData['type'] = $request->input('type');
+            }
+            
+            if ($request->has('description') && !empty($request->input('description'))) {
+                $updateData['description'] = $request->input('description');
+            }
+            
+            if ($request->has('collection') && !empty($request->input('collection'))) {
+                $updateData['artwork_collection_id'] = $request->input('collection');
+            }
+
+            // Handle dimensions update
+            $dimensionsUpdate = [];
+            if ($request->has('height') && !empty($request->input('height'))) {
+                $dimensionsUpdate['height'] = $request->input('height');
+            }
+            if ($request->has('width') && !empty($request->input('width'))) {
+                $dimensionsUpdate['width'] = $request->input('width');
+            }
+            if ($request->has('unit') && !empty($request->input('unit'))) {
+                $dimensionsUpdate['unit'] = $request->input('unit');
+            }
+
+            // Update artworks
+            foreach ($ids as $id) {
+                $artwork = Artwork::find($id);
+                if (!$artwork) {
+                    continue;
+                }
+
+                // Update basic fields
+                if (!empty($updateData)) {
+                    $artwork->update($updateData);
+                }
+
+                // Update dimensions if provided
+                if (!empty($dimensionsUpdate)) {
+                    $originalValue = $artwork->original_value ?? [];
+                    
+                    // Update dimensions
+                    if (isset($dimensionsUpdate['height'])) {
+                        $originalValue['height'] = $dimensionsUpdate['height'];
+                    }
+                    if (isset($dimensionsUpdate['width'])) {
+                        $originalValue['width'] = $dimensionsUpdate['width'];
+                    }
+                    if (isset($dimensionsUpdate['unit'])) {
+                        $originalValue['unit'] = $dimensionsUpdate['unit'];
+                    }
+                    
+                    $artwork->original_value = $originalValue;
+
+                    // Convert to inches for data column if unit is cm
+                    if (isset($originalValue['unit']) && $originalValue['unit'] === 'cm' && 
+                        !empty($originalValue['width']) && !empty($originalValue['height'])) {
+                        $artwork->data = [
+                            'width_inch' => round($originalValue['width'] / 2.54, 5),
+                            'height_inch' => round($originalValue['height'] / 2.54, 5)
+                        ];
+                    }
+                    
+                    $artwork->save();
+                }
+
+                $updatedCount++;
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully updated {$updatedCount} item(s)",
+                'updated_count' => $updatedCount
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating items: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

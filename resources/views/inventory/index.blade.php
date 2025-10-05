@@ -103,16 +103,39 @@
                                             <div class="col-md-6">
                                                 <div class="dataTables_filter">
                                                     <label for="tableSearch" class="form-label">Search:</label>
-                                                    <input type="search" id="tableSearch" class="form-control form-control-sm" placeholder="Search artworks..." style="width: auto; display: inline-block;">
+                                                    <div class="search-container d-flex align-items-center">
+                                                        <input type="search" id="tableSearch" class="form-control form-control-sm me-2" placeholder="Search..." style="flex: 1;">
+                                                        <div class="search-toggle-buttons">
+                                                            <button type="button" class="btn btn-sm search-toggle-btn active" data-type="artwork" id="artworkToggle">
+                                                                Artwork
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm search-toggle-btn" data-type="collections" id="collectionsToggle">
+                                                                Collections
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         
+                                        <!-- Bulk Edit Controls -->
+                                        <div id="bulkEditControls" class="mb-3" style="display: none;">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <button id="bulkEditBtn" class="btn btn-primary icon-button" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Edit Selected Items">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <span id="selectedCount" class="text-muted">0 items selected</span>
+                                            </div>
+                                        </div>
+
                                         <div class="table-responsive">
                                             <table id="inventoryTable" class="table table-striped table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
-                                                        <th></th>
+                                                        <th><input type="checkbox" id="selectAll" class="form-check-input"></th>
                                                         <th>Image</th>
                                                         <th>Company</th>
                                                         <th>Collection</th>
@@ -141,6 +164,81 @@
             </div>
         </div>
     </section>
+
+    <!-- Bulk Edit Modal -->
+    <div class="modal fade" id="bulkEditModal" tabindex="-1" aria-labelledby="bulkEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bulkEditModalLabel">Edit information for selected pieces</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bulkEditForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="bulkCollection" class="form-label">Collection</label>
+                                    <select class="form-select" id="bulkCollection" name="collection">
+                                        <option value="">-- Keep existing --</option>
+                                        @foreach($collections as $collection)
+                                            <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkArtist" class="form-label">Artist</label>
+                                    <input type="text" class="form-control" id="bulkArtist" name="artist" placeholder="Enter artist name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkHeight" class="form-label">Height</label>
+                                    <input type="number" class="form-control" id="bulkHeight" name="height" placeholder="Enter height">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkUnit" class="form-label">Unit</label>
+                                    <select class="form-select" id="bulkUnit" name="unit">
+                                        <option value="">-- Keep existing --</option>
+                                        <option value="cm">cm</option>
+                                        <option value="inch">inch</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="bulkTitle" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="bulkTitle" name="name" placeholder="Enter title">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="bulkDescription" name="description" rows="3" placeholder="Enter description"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkWidth" class="form-label">Width</label>
+                                    <input type="number" class="form-control" id="bulkWidth" name="width" placeholder="Enter width">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkType" class="form-label">Type</label>
+                                    <select class="form-select" id="bulkType" name="type">
+                                        <option value="">-- Keep existing --</option>
+                                        <option value="Painting">Painting</option>
+                                        <option value="Digital Art">Digital Art</option>
+                                        <option value="Sculpture">Sculpture</option>
+                                        <option value="Photography">Photography</option>
+                                        <option value="Drawing">Drawing</option>
+                                        <option value="Mixed Media">Mixed Media</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="bulkUpdateBtn">Update Selected Items</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -221,6 +319,155 @@
         z-index: 1000;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+
+    /* Bulk edit controls styling */
+    #bulkEditControls {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+    }
+
+    #bulkEditBtn {
+        background: #099F9A;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    #bulkEditBtn:hover {
+        background: #077a75;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(9, 159, 154, 0.3);
+    }
+
+    #selectedCount {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    /* Modal styling */
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    /* Checkbox styling */
+    .form-check-input:checked {
+        background-color: #099F9A;
+        border-color: #099F9A;
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
+    }
+
+    /* Search toggle buttons styling */
+    .search-container {
+        gap: 8px;
+    }
+
+    .search-toggle-buttons {
+        display: flex;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+        background: #fff;
+    }
+
+    .search-toggle-btn {
+        background: #fff;
+        border: none;
+        padding: 6px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #6c757d;
+        transition: all 0.2s ease;
+        border-radius: 0;
+        position: relative;
+    }
+
+    .search-toggle-btn:first-child {
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+    }
+
+    .search-toggle-btn:last-child {
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+
+    .search-toggle-btn:hover {
+        background: #f8f9fa;
+        color: #495057;
+    }
+
+    .search-toggle-btn.active {
+        background: #099F9A;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
+    }
+
+    .search-toggle-btn.active:hover {
+        background: #077a75;
+        color: #fff;
+    }
+
+    .search-toggle-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.25);
+    }
+
+    /* Icon button styling */
+    .icon-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: none;
+        background: #099F9A;
+        color: #fff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
+    }
+
+    .icon-button:hover {
+        background: #077a75;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(9, 159, 154, 0.3);
+        color: #fff;
+    }
+
+    .icon-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(9, 159, 154, 0.25);
+    }
+
+    .icon-button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
+    }
 </style>
 @endsection
 
@@ -258,6 +505,7 @@ $(document).ready(function() {
             type: 'GET',
             data: function(d) {
                 d.collection_id = window.selectedCollectionId || '';
+                d.search_type = currentSearchType || 'artwork';
             },
             error: function(xhr, error, thrown) {
                 console.error('DataTables AJAX error:', error, thrown);
@@ -270,7 +518,7 @@ $(document).ready(function() {
                 data: null,
                 orderable: false,
                 render: function(data, type, row) {
-                    return '<input type="checkbox" class="form-check-input">';
+                    return '<input type="checkbox" class="form-check-input row-checkbox" data-id="' + row.id + '">';
                 }
             },
             {
@@ -330,6 +578,7 @@ $(document).ready(function() {
                 }
             }
         ],
+
         order: [10, 'desc'], // Sort by created_at desc
         pageLength: 25,
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -346,14 +595,188 @@ $(document).ready(function() {
 
     console.log('DataTable created successfully');
 
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Search toggle functionality
+    var currentSearchType = 'artwork';
+    
+    $('.search-toggle-btn').on('click', function() {
+        var searchType = $(this).data('type');
+        
+        // Update active button
+        $('.search-toggle-btn').removeClass('active');
+        $(this).addClass('active');
+        
+        // Update current search type
+        currentSearchType = searchType;
+        
+        // Update search placeholder
+        var placeholder = searchType === 'artwork' ? 'Search artworks...' : 'Search collections...';
+        $('#tableSearch').attr('placeholder', placeholder);
+        
+        // Clear current search and reload table
+        $('#tableSearch').val('');
+        table.ajax.reload();
+        
+        console.log('Search type changed to:', searchType);
+    });
+
     // Custom search functionality
     $('#tableSearch').on('keyup', function() {
-        table.search(this.value).draw();
+        var searchValue = this.value;
+        
+        // Apply search based on current type
+        if (currentSearchType === 'artwork') {
+            // Search in artwork table
+            table.search(searchValue).draw();
+        } else {
+            // For collections, we might need to implement different logic
+            // For now, still search in the main table but could be extended
+            table.search(searchValue).draw();
+        }
     });
 
     // Custom length functionality
     $('#tableLength').on('change', function() {
         table.page.len(parseInt(this.value)).draw();
+    });
+
+    // Bulk edit functionality
+    var selectedRows = new Set();
+    var bulkEditControls = $('#bulkEditControls');
+    var bulkEditBtn = $('#bulkEditBtn');
+    var selectedCount = $('#selectedCount');
+    var bulkEditModal = $('#bulkEditModal');
+    var bulkUpdateBtn = $('#bulkUpdateBtn');
+    var selectAllCheckbox = $('#selectAll');
+
+    // Handle individual checkbox changes
+    $(document).on('change', '.row-checkbox', function() {
+        var rowId = $(this).data('id');
+        var isChecked = $(this).is(':checked');
+        
+        if (isChecked) {
+            selectedRows.add(rowId);
+        } else {
+            selectedRows.delete(rowId);
+        }
+        
+        updateBulkEditUI();
+        updateSelectAllState();
+    });
+
+    // Handle select all checkbox
+    selectAllCheckbox.on('change', function() {
+        var isChecked = $(this).is(':checked');
+        $('.row-checkbox').prop('checked', isChecked);
+        
+        if (isChecked) {
+            $('.row-checkbox').each(function() {
+                selectedRows.add($(this).data('id'));
+            });
+        } else {
+            selectedRows.clear();
+        }
+        
+        updateBulkEditUI();
+    });
+
+    // Update bulk edit UI visibility
+    function updateBulkEditUI() {
+        var count = selectedRows.size;
+        selectedCount.text(count + ' item' + (count !== 1 ? 's' : '') + ' selected');
+        
+        if (count > 0) {
+            bulkEditControls.show();
+            // Reinitialize tooltips for dynamically shown elements
+            var newTooltipTriggerList = [].slice.call(document.querySelectorAll('#bulkEditBtn[data-bs-toggle="tooltip"]'));
+            newTooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                // Dispose existing tooltip if any
+                var existingTooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+                if (existingTooltip) {
+                    existingTooltip.dispose();
+                }
+                // Create new tooltip
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        } else {
+            bulkEditControls.hide();
+        }
+    }
+
+    // Update select all checkbox state
+    function updateSelectAllState() {
+        var totalCheckboxes = $('.row-checkbox').length;
+        var checkedCheckboxes = $('.row-checkbox:checked').length;
+        
+        if (checkedCheckboxes === 0) {
+            selectAllCheckbox.prop('indeterminate', false).prop('checked', false);
+        } else if (checkedCheckboxes === totalCheckboxes) {
+            selectAllCheckbox.prop('indeterminate', false).prop('checked', true);
+        } else {
+            selectAllCheckbox.prop('indeterminate', true);
+        }
+    }
+
+    // Open bulk edit modal
+    bulkEditBtn.on('click', function() {
+        if (selectedRows.size === 0) {
+            alert('Please select at least one item to edit.');
+            return;
+        }
+        bulkEditModal.modal('show');
+    });
+
+    // Handle bulk update
+    bulkUpdateBtn.on('click', function() {
+        var formData = $('#bulkEditForm').serialize();
+        var selectedIds = Array.from(selectedRows);
+        
+        if (selectedIds.length === 0) {
+            alert('No items selected.');
+            return;
+        }
+
+        // Show loading state
+        bulkUpdateBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Updating...');
+
+        $.ajax({
+            url: '{{ route("inventory.bulk-update") }}',
+            type: 'POST',
+            data: {
+                ids: selectedIds,
+                _token: '{{ csrf_token() }}',
+                ...Object.fromEntries(new URLSearchParams(formData))
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Successfully updated ' + response.updated_count + ' item(s).');
+                    bulkEditModal.modal('hide');
+                    table.ajax.reload();
+                    selectedRows.clear();
+                    updateBulkEditUI();
+                    updateSelectAllState();
+                    $('#bulkEditForm')[0].reset();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Error updating items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+            },
+            complete: function() {
+                bulkUpdateBtn.prop('disabled', false).html('Update Selected Items');
+            }
+        });
+    });
+
+    // Clear selection when modal is closed
+    bulkEditModal.on('hidden.bs.modal', function() {
+        $('#bulkEditForm')[0].reset();
     });
 
     // Inline editing functionality
