@@ -18,6 +18,11 @@
                                     </div>
                                     <div class="collections-dropdown">
                                         <div class="dropdown w-100">
+                                            @php
+                                                $totalItems = $collections->sum(function($collection) {
+                                                    return $collection->artworks()->count();
+                                                });
+                                            @endphp
                                             <button class="btn btn-light w-100 d-flex align-items-center justify-content-between p-3 border rounded" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: #fff; border: 1px solid #dee2e6; min-height: 60px; box-shadow: none;">
                                                 <div class="d-flex align-items-center">
                                                     <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
@@ -31,11 +36,11 @@
                                                                 <small class="text-muted">{{ $selectedCollectionData->artworks()->count() }} items</small>
                                                             @else
                                                                 <div class="fw-bold">All Collections</div>
-                                                                <small class="text-muted">3645 items</small>
+                                                                <small class="text-muted">{{ $totalItems }} items</small>
                                                             @endif
                                                         @else
                                                             <div class="fw-bold">All Collections</div>
-                                                            <small class="text-muted">3645 items</small>
+                                                            <small class="text-muted">{{ $totalItems }} items</small>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -43,11 +48,11 @@
                                             </button>
                                             <ul class="dropdown-menu w-100" style="max-height: 500px; overflow-y: auto; min-height: 200px; border: 1px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                                                 <li>
-                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '3645 items')" style="border-bottom: 1px solid #f8f9fa;">
+                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '{{ $totalItems }} items')" style="border-bottom: 1px solid #f8f9fa;">
                                                         <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
                                                         <div>
                                                             <div class="fw-bold">All Collections</div>
-                                                            <small class="text-muted">3645 items</small>
+                                                            <small class="text-muted">{{ $totalItems }} items</small>
                                                         </div>
                                                     </a>
                                                 </li>
@@ -87,20 +92,9 @@
                                     <x-loader/>
 
                                     <div class="card-body py-0">
-                                        <!-- Search and Controls -->
+                                        <!-- Search Section -->
                                         <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <div class="dataTables_length">
-                                                    <label for="tableLength" class="form-label">Show entries:</label>
-                                                    <select id="tableLength" class="form-select form-select-sm" style="width: auto; display: inline-block;">
-                                                        <option value="10">10</option>
-                                                        <option value="25" selected>25</option>
-                                                        <option value="50">50</option>
-                                                        <option value="100">100</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="dataTables_filter">
                                                     <label for="tableSearch" class="form-label">Search:</label>
                                                     <div class="search-container d-flex align-items-center">
@@ -118,18 +112,57 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Bulk Edit Controls -->
-                                        <div id="bulkEditControls" class="mb-3" style="display: none;">
-                                            <div class="d-flex align-items-center gap-3">
-                                                <button id="bulkEditBtn" class="btn btn-primary icon-button" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
-                                                        title="Edit Selected Items">
-                                                    <i class="fas fa-edit"></i>
+                                        <!-- Add New Artwork Button - Top Left Position -->
+                                        <div class="d-flex align-items-center mb-3 gap-3">
+                                            <div class="dropdown" style="display: flex; align-items: center; gap: 8px;">
+                                                <label for="tableLength" class="form-label mb-0" style="font-size: 14px; color: #495057; font-weight: 500;">Show entries:</label>
+                                                <select id="tableLength" class="form-select form-select-sm" style="width: auto; min-width: 70px; border: 1px solid #dee2e6; border-radius: 6px; padding: 6px 12px; font-size: 14px; background: #ffffff;">
+                                                    <option value="10">10</option>
+                                                    <option value="25" selected>25</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <!-- Main Artwork Button -->
+                                                <button class="btn d-flex align-items-center gap-2" type="button" id="addArtworkBtn" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; border-radius: 8px 0 0 8px; padding: 4px 16px; font-weight: 500; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                                                    <i class="fas fa-plus" style="color: #495057;"></i>
+                                                    <span>Artwork</span>
                                                 </button>
-                                                <span id="selectedCount" class="text-muted">0 items selected</span>
+                                                
+                                                <!-- Dropdown Arrow Button -->
+                                                <div class="dropdown">
+                                                    <button class="btn dropdown-toggle" type="button" id="artworkDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="background: #ffffff; border: 1px solid #dee2e6; color: #495057; border-radius: 0 8px 8px 0; padding: 4px 12px; font-weight: 500; border-left: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="artworkDropdownBtn" style="border-radius: 8px; border: 1px solid #dee2e6; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); min-width: 160px;">
+                                                        <li><a class="dropdown-item" href="#" id="addMultipleArtworksBtn" style="padding: 4px 16px; color: #495057; text-decoration: none; display: flex; align-items: center; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
+                                                            <i class="fas fa-layer-group me-2" style="color: #6c757d;"></i>Add multiple
+                                                        </a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                                                                    <!-- Bulk Edit Controls -->
+                                            <div id="bulkEditControls" style="display: none;">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <button id="bulkEditBtn" class="btn btn-primary icon-button" 
+                                                            data-bs-toggle="tooltip" 
+                                                            data-bs-placement="top" 
+                                                            title="Edit Selected Items">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <span id="selectedCount" class="text-muted">0 items selected</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Show entries control moved here -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+
+                                            </div>
+                                        </div>
+                                        
+
 
                                         <div class="table-responsive">
                                             <table id="inventoryTable" class="table table-striped table-bordered" style="width:100%">
@@ -239,6 +272,75 @@
             </div>
         </div>
     </div>
+
+    <!-- Inline Editing Row Template (Hidden) -->
+    <template id="newArtworkRowTemplate">
+        <tr class="new-artwork-row" data-temp-id="">
+            <td>
+                <input type="checkbox" class="form-check-input">
+            </td>
+            <td>
+                <div class="drag-drop-area" style="width: 40px; height: 40px; border: 2px dashed #dee2e6; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f8f9fa;">
+                    <i class="fas fa-plus text-muted"></i>
+                </div>
+                <input type="file" class="image-upload-input" multiple accept="image/*" style="display: none;">
+            </td>
+            <td>
+                <select class="form-select form-select-sm collection-select" required>
+                    <option value="">Select company</option>
+                    @foreach($companies as $company)
+                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                    @endforeach
+                </select>
+            </td>
+            <td>
+                <select class="form-select form-select-sm collection-select" required>
+                    <option value="">Select collection</option>
+                    @foreach($collections as $collection)
+                        <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+                    @endforeach
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control form-control-sm title-input" placeholder="Enter title" required>
+            </td>
+            <td>
+                <input type="text" class="form-control form-control-sm artist-input" placeholder="Enter artist">
+            </td>
+            <!-- <td>
+                <textarea class="form-control form-control-sm description-input" rows="1" placeholder="Enter description"></textarea>
+            </td> -->
+            <td>
+                <select class="form-select form-select-sm type-select">
+                    <option value="">Select type</option>
+                    <option value="Painting">Painting</option>
+                    <option value="Sculpture">Sculpture</option>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm height-input" placeholder="Height" step="0.01">
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm width-input" placeholder="Width" step="0.01">
+            </td>
+            <td>
+                <select class="form-select form-select-sm unit-select">
+                    <option value="cm">cm</option>
+                    <option value="inch">inch</option>
+                </select>
+            </td>
+            <td>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-success btn-sm save-row-btn" title="Save">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm cancel-row-btn" title="Cancel">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </template>
 @endsection
 
 
@@ -325,8 +427,7 @@
         background: #f8f9fa;
         border: 1px solid #dee2e6;
         border-radius: 8px;
-        padding: 12px 16px;
-        margin-bottom: 16px;
+        padding: 0px;
         transition: all 0.3s ease;
     }
 
@@ -334,7 +435,7 @@
         background: #099F9A;
         border: none;
         border-radius: 6px;
-        padding: 8px 16px;
+        padding: 4px 16px;
         font-weight: 500;
         transition: all 0.3s ease;
     }
@@ -377,6 +478,11 @@
 
     .form-check-input:focus {
         box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
+    }
+
+    /* Pointer cursor for table checkboxes */
+    #inventoryTable input[type="checkbox"] {
+        cursor: pointer;
     }
 
     /* Search toggle buttons styling */
@@ -438,7 +544,7 @@
     /* Icon button styling */
     .icon-button {
         width: 40px;
-        height: 40px;
+        height: 34px;
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -467,6 +573,106 @@
     .icon-button:active {
         transform: translateY(0);
         box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
+    }
+
+    /* Inline editing row styles */
+    .new-artwork-row {
+        background-color: #f8f9fa !important;
+        border: 2px solid #099F9A !important;
+    }
+
+    .new-artwork-row td {
+        padding: 8px !important;
+        vertical-align: middle !important;
+    }
+
+    .drag-drop-area {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .drag-drop-area:hover {
+        border-color: #099F9A !important;
+        background-color: #e6f7f7 !important;
+    }
+
+    .drag-drop-area.drag-over {
+        border-color: #099F9A !important;
+        background-color: #e6f7f7 !important;
+        transform: scale(1.05);
+    }
+
+    .drag-drop-area.has-image {
+        border-style: solid !important;
+        border-color: #28a745 !important;
+        background-color: #d4edda !important;
+    }
+
+    .drag-drop-area img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .form-control-sm, .form-select-sm {
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .save-row-btn, .cancel-row-btn {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .save-row-btn {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .save-row-btn:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .cancel-row-btn {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .cancel-row-btn:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    /* Multiple image drop zone */
+    .multiple-drop-zone {
+        border: 2px dashed #099F9A;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background-color: #f8f9fa;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .multiple-drop-zone:hover {
+        background-color: #e6f7f7;
+        border-color: #077a75;
+    }
+
+    .multiple-drop-zone.drag-over {
+        background-color: #d4edda;
+        border-color: #28a745;
+        transform: scale(1.02);
+    }
+
+    .multiple-drop-zone.hidden {
+        display: none;
     }
 </style>
 @endsection
@@ -963,6 +1169,281 @@ $(document).ready(function() {
             });
         }
     };
+
+    // Inline row editing functionality
+    let newRowCounter = 0;
+    let pendingImages = [];
+
+    // Add single artwork row - main button click
+    $('#addArtworkBtn').on('click', function() {
+        addNewArtworkRow();
+    });
+
+    // Add multiple artwork rows
+    $('#addMultipleArtworksBtn').on('click', function(e) {
+        e.preventDefault();
+        addNewArtworkRow();
+        addNewArtworkRow();
+        showMultipleDropZone();
+    });
+
+
+    function addNewArtworkRow() {
+        const template = document.getElementById('newArtworkRowTemplate');
+        const newRow = template.content.cloneNode(true);
+        const tempId = 'temp_' + Date.now() + '_' + (++newRowCounter);
+        
+        newRow.querySelector('.new-artwork-row').setAttribute('data-temp-id', tempId);
+        
+        // Insert at the beginning of tbody
+        const tbody = document.querySelector('#inventoryTable tbody');
+        tbody.insertBefore(newRow, tbody.firstChild);
+        
+        // Initialize drag and drop for this row
+        initializeRowDragDrop(tempId);
+        
+        // Focus on title input
+        setTimeout(() => {
+            const titleInput = document.querySelector(`[data-temp-id="${tempId}"] .title-input`);
+            if (titleInput) titleInput.focus();
+        }, 100);
+    }
+
+    function showMultipleDropZone() {
+        // Create multiple drop zone if it doesn't exist
+        if (!document.getElementById('multipleDropZone')) {
+            const dropZone = document.createElement('div');
+            dropZone.id = 'multipleDropZone';
+            dropZone.className = 'multiple-drop-zone';
+            dropZone.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center">
+                    <i class="fas fa-cloud-upload-alt me-2" style="font-size: 24px; color: #099F9A;"></i>
+                    <div>
+                        <h6 class="mb-1">Drag and drop multiple images</h6>
+                        <small class="text-muted">Drop 2 or more images to auto-fill rows</small>
+                    </div>
+                </div>
+            `;
+            
+            // Insert before the table
+            const table = document.querySelector('#inventoryTable');
+            table.parentNode.insertBefore(dropZone, table);
+            
+            // Initialize multiple drop zone
+            initializeMultipleDropZone();
+        }
+    }
+
+    function initializeRowDragDrop(tempId) {
+        const row = document.querySelector(`[data-temp-id="${tempId}"]`);
+        const dropArea = row.querySelector('.drag-drop-area');
+        const fileInput = row.querySelector('.image-upload-input');
+        
+        // Click to upload
+        dropArea.addEventListener('click', () => fileInput.click());
+        
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            handleImageUpload(e.target.files, tempId);
+        });
+        
+        // Drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        dropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleImageUpload(files, tempId);
+        });
+    }
+
+    function initializeMultipleDropZone() {
+        const dropZone = document.getElementById('multipleDropZone');
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.multiple = true;
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        dropZone.appendChild(fileInput);
+        
+        // Click to upload
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            handleMultipleImageUpload(e.target.files);
+        });
+        
+        // Drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleMultipleImageUpload(files);
+        });
+    }
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function unhighlight(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleImageUpload(files, tempId) {
+        if (files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const row = document.querySelector(`[data-temp-id="${tempId}"]`);
+                const dropArea = row.querySelector('.drag-drop-area');
+                dropArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                dropArea.classList.add('has-image');
+                
+                // Auto-fill title from filename
+                const titleInput = row.querySelector('.title-input');
+                const filename = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+                titleInput.value = filename;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function handleMultipleImageUpload(files) {
+        if (files.length >= 2) {
+            const newRows = document.querySelectorAll('.new-artwork-row');
+            const fileArray = Array.from(files);
+            
+            fileArray.forEach((file, index) => {
+                if (index < newRows.length) {
+                    const row = newRows[index];
+                    const tempId = row.getAttribute('data-temp-id');
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const dropArea = row.querySelector('.drag-drop-area');
+                        dropArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                        dropArea.classList.add('has-image');
+                        
+                        // Auto-fill title from filename
+                        const titleInput = row.querySelector('.title-input');
+                        const filename = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+                        titleInput.value = filename;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Hide the multiple drop zone after processing
+            document.getElementById('multipleDropZone').classList.add('hidden');
+        }
+    }
+
+    // Save row functionality
+    $(document).on('click', '.save-row-btn', function() {
+        const row = $(this).closest('.new-artwork-row');
+        const tempId = row.attr('data-temp-id');
+        
+        // Collect form data
+        const formData = {
+            name: row.find('.title-input').val(),
+            artist: row.find('.artist-input').val(),
+            type: row.find('.type-select').val(),
+            artwork_collection_id: row.find('.collection-select').val(),
+            description: row.find('.description-input').val(),
+            height: row.find('.height-input').val(),
+            width: row.find('.width-input').val(),
+            unit: row.find('.unit-select').val(),
+            _token: '{{ csrf_token() }}'
+        };
+        
+        // Validate required fields
+        if (!formData.name || !formData.artwork_collection_id) {
+            alert('Please fill in required fields (Title and Collection)');
+            return;
+        }
+        
+        // Show loading state
+        const saveBtn = $(this);
+        saveBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+        
+        // Handle image upload if present
+        const fileInput = row.find('.image-upload-input')[0];
+        const formDataObj = new FormData();
+        
+        Object.keys(formData).forEach(key => {
+            formDataObj.append(key, formData[key]);
+        });
+        
+        if (fileInput.files.length > 0) {
+            formDataObj.append('image', fileInput.files[0]);
+        }
+        
+        $.ajax({
+            url: '{{ route("inventory.store") }}',
+            type: 'POST',
+            data: formDataObj,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    // Remove the new row
+                    row.remove();
+                    // Reload table
+                    table.ajax.reload();
+                    // Hide multiple drop zone if no more new rows
+                    if ($('.new-artwork-row').length === 0) {
+                        $('#multipleDropZone').remove();
+                    }
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Error adding artwork: ' + (xhr.responseJSON?.message || 'Unknown error'));
+            },
+            complete: function() {
+                saveBtn.prop('disabled', false).html('<i class="fas fa-check"></i>');
+            }
+        });
+    });
+
+    // Cancel row functionality
+    $(document).on('click', '.cancel-row-btn', function() {
+        const row = $(this).closest('.new-artwork-row');
+        row.remove();
+        
+        // Hide multiple drop zone if no more new rows
+        if ($('.new-artwork-row').length === 0) {
+            $('#multipleDropZone').remove();
+        }
+    });
 });
 </script>
 @endsection

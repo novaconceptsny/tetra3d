@@ -14,9 +14,10 @@ class InventoryController extends Controller
     {
         $inventory = Artwork::paginate(25);
         $collections = ArtworkCollection::latest('name')->get();
+        $companies = Company::latest('name')->get();
         $selectedCollection = $request->get('collection_id', '');
         
-        return view('inventory.index', compact('inventory', 'collections', 'selectedCollection'));
+        return view('inventory.index', compact('inventory', 'collections', 'selectedCollection', 'companies'));
     }
 
     public function datatable()
