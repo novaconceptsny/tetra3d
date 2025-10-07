@@ -140,6 +140,42 @@
                                                     </ul>
                                                 </div>
                                             </div>
+                                            
+                                            <!-- Right Side Action Buttons -->
+                                            <div class="d-flex align-items-center gap-2 ms-auto">
+                                                <!-- Copy/Duplicate Button -->
+                                                <button class="btn icon-button" type="button" id="copyArtworkBtn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Copy Selected Items">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                                
+                                                <!-- Sync/Transfer Button -->
+                                                <button class="btn icon-button" type="button" id="syncArtworkBtn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Sync/Transfer Items">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                </button>
+                                                
+                                                <!-- Upload Multiple Button -->
+                                                <button class="btn icon-button" type="button" id="uploadMultipleBtn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Upload Multiple Items">
+                                                    <i class="fas fa-upload" style="color: #495057;"></i>
+                                                </button>
+                                                
+                                                <!-- Delete Button -->
+                                                <button class="btn icon-button" type="button" id="deleteArtworkBtn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Delete Selected Items"
+                                                        style="background: #dc3545; color: #fff;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
                                                                                     <!-- Bulk Edit Controls -->
                                             <div id="bulkEditControls" style="display: none;">
                                                 <div class="d-flex align-items-center gap-3">
@@ -915,6 +951,66 @@
     .delete-row-btn:hover {
         background-color: #c82333;
         border-color: #bd2130;
+    }
+
+    /* Right side action buttons styling */
+    .ms-auto {
+        margin-left: auto !important;
+    }
+
+    /* Delete button specific styling */
+    #deleteArtworkBtn {
+        background: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: #fff !important;
+    }
+
+    #deleteArtworkBtn:hover {
+        background: #c82333 !important;
+        border-color: #bd2130 !important;
+        color: #fff !important;
+    }
+
+    /* Copy button styling */
+    #copyArtworkBtn {
+        background: #6c757d !important;
+        border-color: #6c757d !important;
+        color: #fff !important;
+    }
+
+    #copyArtworkBtn:hover {
+        background: #5a6268 !important;
+        border-color: #545b62 !important;
+        color: #fff !important;
+    }
+
+    /* Sync button styling */
+    #syncArtworkBtn {
+        background: #17a2b8 !important;
+        border-color: #17a2b8 !important;
+        color: #fff !important;
+    }
+
+    #syncArtworkBtn:hover {
+        background: #138496 !important;
+        border-color: #117a8b !important;
+        color: #fff !important;
+    }
+
+    /* Upload multiple button styling */
+    #uploadMultipleBtn {
+        background: #f8f9fa !important;
+        border: 1px solid #dee2e6 !important;
+        color: #495057 !important;
+        transition: all 0.3s ease;
+    }
+
+    #uploadMultipleBtn:hover {
+        background: #e9ecef !important;
+        border-color: #adb5bd !important;
+        color: #495057 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 </style>
 @endsection
@@ -1918,6 +2014,105 @@ $(document).ready(function() {
         
         // Update controls
         updateBulkNewItemControls();
+    });
+
+    // Copy/Duplicate functionality
+    $('#copyArtworkBtn').on('click', function() {
+        if (selectedRows.size === 0) {
+            alert('Please select at least one item to copy.');
+            return;
+        }
+        
+        if (confirm(`Are you sure you want to copy ${selectedRows.size} selected item(s)?`)) {
+            const selectedIds = Array.from(selectedRows);
+            
+            // Show loading state
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+            
+            $.ajax({
+                url: '{{ route("inventory.bulk-copy") }}',
+                type: 'POST',
+                data: {
+                    ids: selectedIds,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Successfully copied ' + response.copied_count + ' item(s).');
+                        table.ajax.reload();
+                        selectedRows.clear();
+                        updateBulkEditUI();
+                        updateSelectAllState();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error copying items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                },
+                complete: function() {
+                    $('#copyArtworkBtn').prop('disabled', false).html('<i class="fas fa-copy"></i>');
+                }
+            });
+        }
+    });
+
+    // Sync/Transfer functionality
+    $('#syncArtworkBtn').on('click', function() {
+        if (selectedRows.size === 0) {
+            alert('Please select at least one item to sync/transfer.');
+            return;
+        }
+        
+        // Show sync modal or implement sync logic
+        alert('Sync/Transfer functionality will be implemented here. Selected items: ' + selectedRows.size);
+    });
+
+    // Upload Multiple functionality
+    $('#uploadMultipleBtn').on('click', function() {
+        // This can trigger the same modal as the dropdown option
+        $('#addMultipleArtworksBtn').trigger('click');
+    });
+
+    // Delete functionality
+    $('#deleteArtworkBtn').on('click', function() {
+        if (selectedRows.size === 0) {
+            alert('Please select at least one item to delete.');
+            return;
+        }
+        
+        if (confirm(`Are you sure you want to delete ${selectedRows.size} selected item(s)? This action cannot be undone.`)) {
+            const selectedIds = Array.from(selectedRows);
+            
+            // Show loading state
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+            
+            $.ajax({
+                url: '{{ route("inventory.bulk-delete") }}',
+                type: 'POST',
+                data: {
+                    ids: selectedIds,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Successfully deleted ' + response.deleted_count + ' item(s).');
+                        table.ajax.reload();
+                        selectedRows.clear();
+                        updateBulkEditUI();
+                        updateSelectAllState();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error deleting items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                },
+                complete: function() {
+                    $('#deleteArtworkBtn').prop('disabled', false).html('<i class="fas fa-trash"></i>');
+                }
+            });
+        }
     });
 });
 </script>

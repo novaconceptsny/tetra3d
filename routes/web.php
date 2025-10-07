@@ -48,6 +48,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('inventory/editor', 'InventoryController@editor')->name('inventory.editor');
     Route::post('inventory', 'InventoryController@store')->name('inventory.store');
     Route::post('inventory/bulk-store', 'InventoryController@bulkStore')->name('inventory.bulk-store');
+    Route::post('inventory/bulk-copy', 'InventoryController@bulkCopy')->name('inventory.bulk-copy');
+    Route::post('inventory/bulk-delete', 'InventoryController@bulkDelete')->name('inventory.bulk-delete');
+    Route::post('inventory/bulk-update', 'InventoryController@bulkUpdate')->name('inventory.bulk-update');
     Route::put('inventory/{id}', 'InventoryController@update')->name('inventory.update');
     Route::delete('inventory/{id}', 'InventoryController@destroy')->name('inventory.destroy');
     
@@ -55,7 +58,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('inventory/collections/{id}/edit', 'InventoryController@editCollection')->name('inventory.collections.edit');
     Route::delete('inventory/collections/{id}/delete', 'InventoryController@deleteCollection')->name('inventory.collections.delete');
     Route::post('inventory/artworks/bulk-delete', 'InventoryController@bulkDelete')->name('inventory.artworks.bulk-delete');
-    Route::post('inventory/bulk-update', 'InventoryController@bulkUpdate')->name('inventory.bulk-update');
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
     Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');
     Route::post('/profile/password', 'ProfileController@updatePassword')->name('profile.password.update');

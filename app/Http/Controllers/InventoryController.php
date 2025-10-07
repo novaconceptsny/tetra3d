@@ -778,12 +778,130 @@ class InventoryController extends Controller
 
     public function bulkDelete(Request $request)
     {
-        $ids = $request->input('ids', []);
-        if (! empty($ids)) {
-            Artwork::whereIn('id', $ids)->delete();
-            return response()->json(['success' => true]);
+        try {
+            // Debug: Log the request data
+            \Log::info('Bulk delete request data:', $request->all());
+            
+            $ids = $request->input('ids', []);
+
+            if (empty($ids)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No items selected for deletion',
+                ], 400);
+            }
+
+            $deletedCount = 0;
+            $errors = [];
+            
+            foreach ($ids as $id) {
+                try {
+                    $artwork = Artwork::find($id);
+                    if ($artwork) {
+                        $artwork->delete();
+                        $deletedCount++;
+                    } else {
+                        $errors[] = "Artwork with ID {$id} not found";
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = "Error deleting artwork ID {$id}: " . $e->getMessage();
+                }
+            }
+
+            $response = [
+                'success' => true,
+                'message' => "Successfully deleted {$deletedCount} item(s)",
+                'deleted_count' => $deletedCount,
+            ];
+
+            if (!empty($errors)) {
+                $response['errors'] = $errors;
+            }
+
+            return response()->json($response);
+
+        } catch (\Exception $e) {
+            \Log::error('Bulk delete error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting items: ' . $e->getMessage(),
+            ], 500);
         }
-        return response()->json(['success' => false], 400);
+    }
+
+    public function bulkCopy(Request $request)
+    {
+        try {
+            $ids = $request->input('ids', []);
+
+            if (empty($ids)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No items selected for copying',
+                ], 400);
+            }
+
+            $copiedCount = 0;
+            $errors = [];
+
+            foreach ($ids as $id) {
+                try {
+                    $originalArtwork = Artwork::find($id);
+                    if (!$originalArtwork) {
+                        $errors[] = "Artwork with ID {$id} not found";
+                        continue;
+                    }
+
+                    // Create a copy of the artwork
+                    $newArtwork = new Artwork();
+                    $newArtwork->company_id = $originalArtwork->company_id;
+                    $newArtwork->artwork_collection_id = $originalArtwork->artwork_collection_id;
+                    $newArtwork->name = $originalArtwork->name . ' (Copy)';
+                    $newArtwork->artist = $originalArtwork->artist;
+                    $newArtwork->type = $originalArtwork->type;
+                    $newArtwork->description = $originalArtwork->description;
+                    $newArtwork->original_value = $originalArtwork->original_value;
+                    $newArtwork->data = $originalArtwork->data;
+                    $newArtwork->original_unit = $originalArtwork->original_unit;
+
+                    $newArtwork->save();
+
+                    // Copy media files if they exist
+                    if ($originalArtwork->hasMedia('image')) {
+                        $originalMedia = $originalArtwork->getFirstMedia('image');
+                        if ($originalMedia) {
+                            $newArtwork->addMediaFromUrl($originalMedia->getUrl())
+                                ->usingFileName('artwork_' . $newArtwork->id . '_' . time() . '.jpg')
+                                ->usingName($newArtwork->name)
+                                ->toMediaCollection('image');
+                        }
+                    }
+
+                    $copiedCount++;
+
+                } catch (\Exception $e) {
+                    $errors[] = "Error copying artwork ID {$id}: " . $e->getMessage();
+                }
+            }
+
+            $response = [
+                'success' => true,
+                'message' => "Successfully copied {$copiedCount} item(s)",
+                'copied_count' => $copiedCount,
+            ];
+
+            if (!empty($errors)) {
+                $response['errors'] = $errors;
+            }
+
+            return response()->json($response);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error copying items: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function bulkUpdate(Request $request)
