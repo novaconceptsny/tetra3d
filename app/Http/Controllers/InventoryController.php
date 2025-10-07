@@ -27,13 +27,14 @@ class InventoryController extends Controller
 
     public function getData(Request $request)
     {
-        // DataTables server-side processing parameters
-        $draw        = $request->input('draw');
-        $start       = $request->input('start', 0);
-        $length      = $request->input('length', 10);
-        $searchValue = $request->input('search.value', '');
-        $orderColumn = $request->input('order.0.column', user()->isSuperAdmin() ? 10 : 9); // Default to created_at column
-        $orderDir    = $request->input('order.0.dir', 'desc');
+        try {
+            // DataTables server-side processing parameters
+            $draw        = $request->input('draw');
+            $start       = $request->input('start', 0);
+            $length      = $request->input('length', 10);
+            $searchValue = $request->input('search.value', '');
+            $orderColumn = $request->input('order.0.column', user()->isSuperAdmin() ? 10 : 9); // Default to created_at column
+            $orderDir    = $request->input('order.0.dir', 'desc');
 
         // Column mapping for ordering
         $columns = [
@@ -70,19 +71,19 @@ class InventoryController extends Controller
 
         // Base query
         $query = Artwork::with('collection', 'company')
-            ->select(['id', 'name', 'artist', 'type', 'data', 'original_unit', 'original_value', 'artwork_collection_id', 'company_id', 'created_at']);
+            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
 
         // Filter by collection if provided
         if ($request->has('collection_id') && $request->collection_id) {
-            $query->where('artwork_collection_id', $request->collection_id);
+            $query->where('artworks.artwork_collection_id', $request->collection_id);
         }
 
         // Apply search filter
         if (! empty($searchValue)) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('name', 'like', "%{$searchValue}%")
-                    ->orWhere('artist', 'like', "%{$searchValue}%")
-                    ->orWhere('type', 'like', "%{$searchValue}%")
+                $q->where('artworks.name', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.artist', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.type', 'like', "%{$searchValue}%")
                     ->orWhereHas('collection', function ($subQuery) use ($searchValue) {
                         $subQuery->where('name', 'like', "%{$searchValue}%");
                     })
@@ -97,10 +98,10 @@ class InventoryController extends Controller
 
         // Apply ordering
         if ($orderBy === 'company') {
-            $query->join('companies', 'artworks.company_id', '=', 'companies.id')
+            $query->leftJoin('companies', 'artworks.company_id', '=', 'companies.id')
                 ->orderBy('companies.name', $orderDir);
         } elseif ($orderBy === 'collection') {
-            $query->join('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
+            $query->leftJoin('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
                 ->orderBy('artwork_collections.name', $orderDir);
         } else {
             $query->orderBy($orderBy, $orderDir);
@@ -140,6 +141,21 @@ class InventoryController extends Controller
             'recordsFiltered' => $totalRecords, // Same as total since we're not doing separate filtered count
             'data'            => $data,
         ]);
+        
+        } catch (\Exception $e) {
+            \Log::error('DataTables getData error: ' . $e->getMessage(), [
+                'request_data' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'draw'            => intval($request->input('draw', 1)),
+                'recordsTotal'    => 0,
+                'recordsFiltered' => 0,
+                'data'            => [],
+                'error'           => 'Error loading data: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function editor(Request $request)
