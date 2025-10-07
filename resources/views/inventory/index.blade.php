@@ -221,11 +221,6 @@
                             </div>
                         </div>
                         
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <h6 style="font-weight: 600; color: #495057; margin-bottom: 16px;">Edit information for selected pieces</h6>
-                            </div>
-                        </div>
                         
                         <div class="row">
                             <div class="col-md-6">
@@ -456,6 +451,18 @@
 
     .table td {
         vertical-align: middle;
+    }
+
+    /* Table header styling */
+    #inventoryTable thead th {
+        background-color: #099F9A !important;
+        color: white !important;
+        border-color: #077a75 !important;
+        font-weight: 600;
+    }
+
+    #inventoryTable thead th:hover {
+        background-color: #077a75 !important;
     }
 
     .artwork-image {
