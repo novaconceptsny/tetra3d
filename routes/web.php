@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('inventory/data', 'InventoryController@getData')->name('inventory.data');
     Route::post('inventory/editor', 'InventoryController@editor')->name('inventory.editor');
     Route::post('inventory', 'InventoryController@store')->name('inventory.store');
+    Route::post('inventory/bulk-store', 'InventoryController@bulkStore')->name('inventory.bulk-store');
     Route::put('inventory/{id}', 'InventoryController@update')->name('inventory.update');
     Route::delete('inventory/{id}', 'InventoryController@destroy')->name('inventory.destroy');
     

@@ -89,7 +89,6 @@
                             <!-- Main Content -->
                             <div class="flex-grow-1">
                                 <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
-                                    <x-loader/>
 
                                     <div class="card-body py-0">
                                         <!-- Search Section -->
@@ -153,16 +152,21 @@
                                                     <span id="selectedCount" class="text-muted">0 items selected</span>
                                                 </div>
                                             </div>
-                                        </div>
-                                        
-                                        <!-- Show entries control moved here -->
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
 
+                                                                                    <!-- Save All and Cancel All buttons for new items -->
+                                            <div id="bulkNewItemControls"  style="display: none;">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <button id="saveAllNewItemsBtn" class="btn btn-success" style="background: #28a745; border: none; border-radius: 6px; padding: 4px 16px; font-weight: 500;">
+                                                        <i class="fas fa-save me-2"></i>Save All
+                                                    </button>
+                                                    <button id="cancelAllNewItemsBtn" class="btn btn-danger" style="background: #dc3545; border: none; border-radius: 6px; padding: 4px 16px; font-weight: 500;">
+                                                        <i class="fas fa-times me-2"></i>Cancel All
+                                                    </button>
+                                                    <span id="newItemsCount" class="text-muted">0 new items</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        
-
+                                                          
 
                                         <div class="table-responsive">
                                             <table id="inventoryTable" class="table table-striped table-bordered" style="width:100%">
@@ -431,14 +435,9 @@
                 </select>
             </td>
             <td>
-                <div class="d-flex gap-1">
-                    <button class="btn btn-success btn-sm save-row-btn" title="Save">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm cancel-row-btn" title="Cancel">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+                <button class="btn btn-danger btn-sm delete-row-btn" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
             </td>
         </tr>
     </template>
@@ -847,6 +846,68 @@
     /* Modal backdrop styling */
     .modal-backdrop {
         background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Bulk new item controls styling */
+    #bulkNewItemControls {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0px 16px;
+        transition: all 0.3s ease;
+    }
+
+    #saveAllNewItemsBtn {
+        background: #28a745;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    #saveAllNewItemsBtn:hover {
+        background: #218838;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    }
+
+    #cancelAllNewItemsBtn {
+        background: #dc3545;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    #cancelAllNewItemsBtn:hover {
+        background: #c82333;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    #newItemsCount {
+        font-size: 14px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    /* Delete row button styling */
+    .delete-row-btn {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .delete-row-btn:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
     }
 </style>
 @endsection
@@ -1415,6 +1476,9 @@ $(document).ready(function() {
             const titleInput = document.querySelector(`[data-temp-id="${tempId}"] .title-input`);
             if (titleInput) titleInput.focus();
         }, 100);
+        
+        // Update bulk controls
+        updateBulkNewItemControls();
     }
 
     function addNewArtworkRowWithPrefill(prefillData, rowNumber) {
@@ -1495,6 +1559,9 @@ $(document).ready(function() {
                 if (titleInput) titleInput.focus();
             }, 100);
         }
+        
+        // Update bulk controls
+        updateBulkNewItemControls();
     }
 
     function showMultipleDropZone() {
@@ -1645,86 +1712,195 @@ $(document).ready(function() {
         }
     }
 
-    // Save row functionality
-    $(document).on('click', '.save-row-btn', function() {
-        const row = $(this).closest('.new-artwork-row');
-        const tempId = row.attr('data-temp-id');
+    // Bulk new item controls
+    var bulkNewItemControls = $('#bulkNewItemControls');
+    var saveAllBtn = $('#saveAllNewItemsBtn');
+    var cancelAllBtn = $('#cancelAllNewItemsBtn');
+    var newItemsCount = $('#newItemsCount');
+
+    // Update bulk new item controls visibility
+    function updateBulkNewItemControls() {
+        var count = $('.new-artwork-row').length;
+        newItemsCount.text(count + ' new item' + (count !== 1 ? 's' : ''));
         
-        // Collect form data
-        const formData = {
-            name: row.find('.title-input').val(),
-            artist: row.find('.artist-input').val(),
-            type: row.find('.type-select').val(),
-            artwork_collection_id: row.find('.collection-select').last().val(), // Get the last collection select (not company)
-            description: row.find('.description-input').val(),
-            height: row.find('.height-input').val(),
-            width: row.find('.width-input').val(),
-            unit: row.find('.unit-select').val(),
-            _token: '{{ csrf_token() }}'
-        };
-        
-        // Add company field if user is super admin
-        @if(auth()->user()->isSuperAdmin())
-        const companySelect = row.find('.company-select');
-        if (companySelect.length > 0) {
-            formData.company_id = companySelect.val();
+        if (count > 0) {
+            bulkNewItemControls.show();
+        } else {
+            bulkNewItemControls.hide();
         }
-        @endif
+    }
+
+    // Save All functionality
+    saveAllBtn.on('click', function() {
+        const newRows = $('.new-artwork-row');
+        if (newRows.length === 0) {
+            alert('No new items to save.');
+            return;
+        }
+
+        // Validate all rows first
+        let hasErrors = false;
+        newRows.each(function() {
+            const row = $(this);
+            const name = row.find('.title-input').val();
+            const collection = row.find('.collection-select').last().val();
+            
+            if (!name || !collection) {
+                hasErrors = true;
+                row.addClass('border-danger');
+            } else {
+                row.removeClass('border-danger');
+            }
+        });
+
+        if (hasErrors) {
+            alert('Please fill in required fields (Title and Collection) for all items.');
+            return;
+        }
+
+        // Show loading state
+        saveAllBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Saving...');
+
+        // Collect all form data with async image processing
+        const allFormData = [];
+        let processedCount = 0;
+        const totalRows = newRows.length;
         
-        
-        // Validate required fields
-        if (!formData.name || !formData.artwork_collection_id) {
-            alert('Please fill in required fields (Title and Collection)');
+        if (totalRows === 0) {
+            alert('No new items to save.');
             return;
         }
         
-        // Show loading state
-        const saveBtn = $(this);
-        saveBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
-        
-        // Handle image upload if present
-        const fileInput = row.find('.image-upload-input')[0];
-        const formDataObj = new FormData();
-        
-        Object.keys(formData).forEach(key => {
-            formDataObj.append(key, formData[key]);
-        });
-        
-        if (fileInput.files.length > 0) {
-            formDataObj.append('image', fileInput.files[0]);
-        }
-        
-        $.ajax({
-            url: '{{ route("inventory.store") }}',
-            type: 'POST',
-            data: formDataObj,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                if (response.success) {
-                    // Remove the new row
-                    row.remove();
-                    // Reload table
-                    table.ajax.reload();
-                    // Hide multiple drop zone if no more new rows
-                    if ($('.new-artwork-row').length === 0) {
-                        $('#multipleDropZone').remove();
+        newRows.each(function() {
+            const row = $(this);
+            const formData = {
+                name: row.find('.title-input').val(),
+                artist: row.find('.artist-input').val(),
+                type: row.find('.type-select').val(),
+                artwork_collection_id: row.find('.collection-select').last().val(),
+                description: row.find('.description-input').val(),
+                height: row.find('.height-input').val(),
+                width: row.find('.width-input').val(),
+                unit: row.find('.unit-select').val()
+            };
+            
+            // Add company field if user is super admin
+            @if(auth()->user()->isSuperAdmin())
+            const companySelect = row.find('.company-select');
+            if (companySelect.length > 0) {
+                formData.company_id = companySelect.val();
+            }
+            @endif
+            
+            // Handle image upload if present
+            const fileInput = row.find('.image-upload-input')[0];
+            const dropArea = row.find('.drag-drop-area');
+            
+            if (fileInput.files.length > 0) {
+                // Convert file to base64 data URL
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    formData.image = e.target.result;
+                    allFormData.push(formData);
+                    processedCount++;
+                    
+                    // When all rows are processed, send the data
+                    if (processedCount === totalRows) {
+                        sendBulkData();
                     }
-                } else {
-                    alert('Error: ' + response.message);
+                };
+                reader.readAsDataURL(file);
+            } else if (dropArea.find('img').length > 0) {
+                // If image is already displayed in drop area, get the src
+                const imgSrc = dropArea.find('img').attr('src');
+                if (imgSrc && imgSrc.startsWith('data:image')) {
+                    formData.image = imgSrc;
                 }
-            },
-            error: function(xhr) {
-                alert('Error adding artwork: ' + (xhr.responseJSON?.message || 'Unknown error'));
-            },
-            complete: function() {
-                saveBtn.prop('disabled', false).html('<i class="fas fa-check"></i>');
+                allFormData.push(formData);
+                processedCount++;
+                
+                // When all rows are processed, send the data
+                if (processedCount === totalRows) {
+                    sendBulkData();
+                }
+            } else {
+                // No image
+                allFormData.push(formData);
+                processedCount++;
+                
+                // When all rows are processed, send the data
+                if (processedCount === totalRows) {
+                    sendBulkData();
+                }
             }
         });
+        
+        function sendBulkData() {
+            // Send all data to bulk store endpoint
+            const formDataObj = new FormData();
+            
+            // Add CSRF token first
+            formDataObj.append('_token', '{{ csrf_token() }}');
+            
+            allFormData.forEach((data, index) => {
+                Object.keys(data).forEach(key => {
+                    if (key === 'image') {
+                        formDataObj.append(`items[${index}][image]`, data[key]);
+                    } else if (key !== '_token') { // Skip _token from individual items
+                        formDataObj.append(`items[${index}][${key}]`, data[key]);
+                    }
+                });
+            });
+
+            $.ajax({
+                url: '{{ route("inventory.bulk-store") }}',
+                type: 'POST',
+                data: formDataObj,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Successfully saved ' + response.saved_count + ' item(s).');
+                        // Remove all new rows
+                        $('.new-artwork-row').remove();
+                        // Reload table
+                        table.ajax.reload();
+                        // Hide multiple drop zone
+                        $('#multipleDropZone').remove();
+                        // Update controls
+                        updateBulkNewItemControls();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error saving items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                },
+                complete: function() {
+                    saveAllBtn.prop('disabled', false).html('<i class="fas fa-save me-2"></i>Save All');
+                }
+            });
+        }
     });
 
-    // Cancel row functionality
-    $(document).on('click', '.cancel-row-btn', function() {
+    // Cancel All functionality
+    cancelAllBtn.on('click', function() {
+        if (confirm('Are you sure you want to cancel all new items? This action cannot be undone.')) {
+            // Remove all new rows
+            $('.new-artwork-row').remove();
+            // Hide multiple drop zone
+            $('#multipleDropZone').remove();
+            // Update controls
+            updateBulkNewItemControls();
+        }
+    });
+
+    // Individual delete row functionality
+    $(document).on('click', '.delete-row-btn', function() {
         const row = $(this).closest('.new-artwork-row');
         row.remove();
         
@@ -1732,6 +1908,9 @@ $(document).ready(function() {
         if ($('.new-artwork-row').length === 0) {
             $('#multipleDropZone').remove();
         }
+        
+        // Update controls
+        updateBulkNewItemControls();
     });
 });
 </script>
