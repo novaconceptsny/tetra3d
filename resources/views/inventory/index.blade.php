@@ -170,7 +170,9 @@
                                                     <tr>
                                                         <th><input type="checkbox" id="selectAll" class="form-check-input"></th>
                                                         <th>Image</th>
+                                                        @if(auth()->user()->isSuperAdmin())
                                                         <th>Company</th>
+                                                        @endif
                                                         <th>Collection</th>
                                                         <th>Name</th>
                                                         <th>Artist</th>
@@ -285,6 +287,7 @@
                 </div>
                 <input type="file" class="image-upload-input" multiple accept="image/*" style="display: none;">
             </td>
+            @if(auth()->user()->isSuperAdmin())
             <td>
                 <select class="form-select form-select-sm collection-select" required>
                     <option value="">Select company</option>
@@ -293,6 +296,7 @@
                     @endforeach
                 </select>
             </td>
+            @endif
             <td>
                 <select class="form-select form-select-sm collection-select" required>
                     <option value="">Select collection</option>
@@ -735,9 +739,11 @@ $(document).ready(function() {
                 orderable: false,
                 searchable: false
             },
+            @if(auth()->user()->isSuperAdmin())
             {
                 data: 'company'
             },
+            @endif
             {
                 data: 'collection'
             },
@@ -785,7 +791,7 @@ $(document).ready(function() {
             }
         ],
 
-        order: [10, 'desc'], // Sort by created_at desc
+        order: [{{ auth()->user()->isSuperAdmin() ? '10' : '9' }}, 'desc'], // Sort by created_at desc
         pageLength: 25,
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         responsive: true,

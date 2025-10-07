@@ -32,14 +32,14 @@ class InventoryController extends Controller
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
         $searchValue = $request->input('search.value', '');
-        $orderColumn = $request->input('order.0.column', 10); // Default to created_at column
+        $orderColumn = $request->input('order.0.column', user()->isSuperAdmin() ? 10 : 9); // Default to created_at column
         $orderDir = $request->input('order.0.dir', 'desc');
         
         // Column mapping for ordering
         $columns = [
             0 => 'id',           // Checkbox column
             1 => 'image',        // Image column (not orderable)
-            2 => 'company',      // Company
+            2 => 'company',      // Company (only for super admin)
             3 => 'collection',   // Collection
             4 => 'name',         // Name
             5 => 'artist',       // Artist
@@ -49,6 +49,22 @@ class InventoryController extends Controller
             9 => 'unit',         // Unit
             10 => 'created_at'   // Created
         ];
+
+        // Adjust column mapping if user is not super admin
+        if (!user()->isSuperAdmin()) {
+            $columns = [
+                0 => 'id',           // Checkbox column
+                1 => 'image',        // Image column (not orderable)
+                2 => 'collection',   // Collection
+                3 => 'name',         // Name
+                4 => 'artist',       // Artist
+                5 => 'type',         // Type
+                6 => 'height',       // Height
+                7 => 'width',        // Width
+                8 => 'unit',         // Unit
+                9 => 'created_at'    // Created
+            ];
+        }
         
         $orderBy = $columns[$orderColumn] ?? 'created_at';
         
@@ -96,12 +112,10 @@ class InventoryController extends Controller
         // Transform data for DataTables
         $data = $artworks->map(function ($artwork) {
             $originalValue = $artwork->original_value ?? [];
-
-            return [
+            $rowData = [
                 'DT_RowId' => 'row_' . $artwork->id,
                 'id' => $artwork->id,
                 'image' => $artwork->image_url ?? '/images/placeholder.jpg',
-                'company' => $artwork->company->name ?? '',
                 'collection' => $artwork->collection->name ?? '',
                 'name' => $artwork->name,
                 'artist' => $artwork->artist,
@@ -111,6 +125,13 @@ class InventoryController extends Controller
                 'unit' => $originalValue['unit'] ?? 'cm',
                 'created_at' => $artwork->created_at->format('Y-m-d'),
             ];
+
+            // Only include company data for super admin users
+            if (user()->isSuperAdmin()) {
+                $rowData['company'] = $artwork->company->name ?? '';
+            }
+
+            return $rowData;
         });
 
         return response()->json([
@@ -174,21 +195,27 @@ class InventoryController extends Controller
 
         $artwork->save();
 
+        $rowData = [
+            'DT_RowId' => 'row_' . $artwork->id,
+            'id' => $artwork->id,
+            'image' => $artwork->image_url ?? '/images/placeholder.jpg',
+            'collection' => $artwork->collection->name ?? '',
+            'name' => $artwork->name,
+            'artist' => $artwork->artist,
+            'type' => $artwork->type,
+            'height' => $originalValue['height'] ?? '',
+            'width' => $originalValue['width'] ?? '',
+            'unit' => $originalValue['unit'] ?? 'cm',
+            'created_at' => $artwork->created_at->format('Y-m-d'),
+        ];
+
+        // Only include company data for super admin users
+        if (user()->isSuperAdmin()) {
+            $rowData['company'] = $artwork->company->name ?? '';
+        }
+
         return response()->json([
-            'data' => [[
-                'DT_RowId' => 'row_' . $artwork->id,
-                'id' => $artwork->id,
-                'image' => $artwork->image_url ?? '/images/placeholder.jpg',
-                'company' => $artwork->company->name ?? '',
-                'collection' => $artwork->collection->name ?? '',
-                'name' => $artwork->name,
-                'artist' => $artwork->artist,
-                'type' => $artwork->type,
-                'height' => $originalValue['height'] ?? '',
-                'width' => $originalValue['width'] ?? '',
-                'unit' => $originalValue['unit'] ?? 'cm',
-                'created_at' => $artwork->created_at->format('Y-m-d'),
-            ]]
+            'data' => [$rowData]
         ]);
     }
 
@@ -450,23 +477,29 @@ class InventoryController extends Controller
 
             $artwork->save();
 
+            $rowData = [
+                'DT_RowId' => 'row_' . $artwork->id,
+                'id' => $artwork->id,
+                'image' => $artwork->image_url ?? '/images/placeholder.jpg',
+                'collection' => $artwork->collection->name ?? '',
+                'name' => $artwork->name,
+                'artist' => $artwork->artist,
+                'type' => $artwork->type,
+                'height' => $artwork->original_value['height'] ?? '',
+                'width' => $artwork->original_value['width'] ?? '',
+                'unit' => $artwork->original_value['unit'] ?? 'cm',
+                'created_at' => $artwork->created_at->format('Y-m-d'),
+            ];
+
+            // Only include company data for super admin users
+            if (user()->isSuperAdmin()) {
+                $rowData['company'] = $artwork->company->name ?? '';
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Artwork created successfully',
-                'data' => [
-                    'DT_RowId' => 'row_' . $artwork->id,
-                    'id' => $artwork->id,
-                    'image' => $artwork->image_url ?? '/images/placeholder.jpg',
-                    'company' => $artwork->company->name ?? '',
-                    'collection' => $artwork->collection->name ?? '',
-                    'name' => $artwork->name,
-                    'artist' => $artwork->artist,
-                    'type' => $artwork->type,
-                    'height' => $artwork->original_value['height'] ?? '',
-                    'width' => $artwork->original_value['width'] ?? '',
-                    'unit' => $artwork->original_value['unit'] ?? 'cm',
-                    'created_at' => $artwork->created_at->format('Y-m-d'),
-                ]
+                'data' => $rowData
             ]);
         } catch (\Exception $e) {
             return response()->json([
