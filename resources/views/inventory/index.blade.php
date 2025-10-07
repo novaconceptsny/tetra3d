@@ -200,6 +200,103 @@
         </div>
     </section>
 
+    <!-- Multiple Artwork Upload Modal -->
+    <div class="modal fade" id="multipleArtworkModal" tabindex="-1" aria-labelledby="multipleArtworkModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 12px; border: 1px solid #e0e0e0;">
+                <div class="modal-header" style="background: #f8f9fa; border-bottom: 1px solid #dee2e6; border-radius: 12px 12px 0 0;">
+                    <h5 class="modal-title" id="multipleArtworkModalLabel" style="font-weight: 600; color: #495057;">Add Multiple Artworks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 24px;">
+                    <form id="multipleArtworkForm">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="numberOfRows" class="form-label" style="font-weight: 500; color: #495057;">Number of new rows</label>
+                                <input type="number" class="form-control" id="numberOfRows" name="number_of_rows" min="1" max="50" value="2" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 style="font-weight: 600; color: #495057; margin-bottom: 16px;">Edit information for selected pieces</h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                @if(auth()->user()->isSuperAdmin())
+                                <div class="mb-3">
+                                    <label for="prefillCompany" class="form-label" style="font-weight: 500; color: #495057;">Company</label>
+                                    <select class="form-select" id="prefillCompany" name="company" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        <option value="">Select company</option>
+                                        @foreach($companies as $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endif
+                                <div class="mb-3">
+                                    <label for="prefillCollection" class="form-label" style="font-weight: 500; color: #495057;">Collection</label>
+                                    <select class="form-select" id="prefillCollection" name="collection" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        <option value="">Select collection</option>
+                                        @foreach($collections as $collection)
+                                            <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="prefillArtist" class="form-label" style="font-weight: 500; color: #495057;">Artist</label>
+                                    <input type="text" class="form-control" id="prefillArtist" name="artist" placeholder="Enter artist name" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="prefillHeight" class="form-label" style="font-weight: 500; color: #495057;">Height</label>
+                                    <input type="number" class="form-control" id="prefillHeight" name="height" placeholder="Enter height" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="prefillUnit" class="form-label" style="font-weight: 500; color: #495057;">Unit</label>
+                                    <select class="form-select" id="prefillUnit" name="unit" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        <option value="cm">cm</option>
+                                        <option value="inch">inch</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="prefillTitle" class="form-label" style="font-weight: 500; color: #495057;">Title</label>
+                                    <input type="text" class="form-control" id="prefillTitle" name="title" placeholder="Enter title" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="prefillDescription" class="form-label" style="font-weight: 500; color: #495057;">Description</label>
+                                    <textarea class="form-control" id="prefillDescription" name="description" rows="3" placeholder="Enter description" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="prefillWidth" class="form-label" style="font-weight: 500; color: #495057;">Width</label>
+                                    <input type="number" class="form-control" id="prefillWidth" name="width" placeholder="Enter width" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="prefillType" class="form-label" style="font-weight: 500; color: #495057;">Type</label>
+                                    <select class="form-select" id="prefillType" name="type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        <option value="Painting">Painting</option>
+                                        <option value="Digital Art">Digital Art</option>
+                                        <option value="Sculpture">Sculpture</option>
+                                        <option value="Photography">Photography</option>
+                                        <option value="Drawing">Drawing</option>
+                                        <option value="Mixed Media">Mixed Media</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 16px 24px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background: #6c757d; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 500;">Cancel</button>
+                    <button type="button" class="btn btn-success" id="createMultipleBtn" style="background: #28a745; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 500;">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bulk Edit Modal -->
     <div class="modal fade" id="bulkEditModal" tabindex="-1" aria-labelledby="bulkEditModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -289,7 +386,7 @@
             </td>
             @if(auth()->user()->isSuperAdmin())
             <td>
-                <select class="form-select form-select-sm collection-select" required>
+                <select class="form-select form-select-sm company-select" required>
                     <option value="">Select company</option>
                     @foreach($companies as $company)
                         <option value="{{ $company->id }}">{{ $company->name }}</option>
@@ -677,6 +774,79 @@
 
     .multiple-drop-zone.hidden {
         display: none;
+    }
+
+    /* Multiple Artwork Modal Styling */
+    #multipleArtworkModal .modal-content {
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    #multipleArtworkModal .modal-header {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 12px 12px 0 0;
+    }
+
+    #multipleArtworkModal .modal-title {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    #multipleArtworkModal .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 6px;
+    }
+
+    #multipleArtworkModal .form-control,
+    #multipleArtworkModal .form-select {
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 14px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    #multipleArtworkModal .form-control:focus,
+    #multipleArtworkModal .form-select:focus {
+        border-color: #099F9A;
+        box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
+    }
+
+    #multipleArtworkModal .btn-success {
+        background: #28a745;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    #multipleArtworkModal .btn-success:hover {
+        background: #218838;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    }
+
+    #multipleArtworkModal .btn-secondary {
+        background: #6c757d;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    #multipleArtworkModal .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Modal backdrop styling */
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
     }
 </style>
 @endsection
@@ -1185,12 +1355,44 @@ $(document).ready(function() {
         addNewArtworkRow();
     });
 
-    // Add multiple artwork rows
+    // Add multiple artwork rows - show modal
     $('#addMultipleArtworksBtn').on('click', function(e) {
         e.preventDefault();
-        addNewArtworkRow();
-        addNewArtworkRow();
-        showMultipleDropZone();
+        $('#multipleArtworkModal').modal('show');
+    });
+
+    // Handle multiple artwork creation
+    $('#createMultipleBtn').on('click', function() {
+        const numberOfRows = parseInt($('#numberOfRows').val()) || 2;
+        const prefillData = {
+            collection: $('#prefillCollection').val(),
+            @if(auth()->user()->isSuperAdmin())
+            company: $('#prefillCompany').val(),
+            @endif
+            artist: $('#prefillArtist').val(),
+            height: $('#prefillHeight').val(),
+            width: $('#prefillWidth').val(),
+            unit: $('#prefillUnit').val(),
+            title: $('#prefillTitle').val(),
+            description: $('#prefillDescription').val(),
+            type: $('#prefillType').val()
+        };
+
+
+        // Create multiple rows with pre-filled data
+        for (let i = 0; i < numberOfRows; i++) {
+            addNewArtworkRowWithPrefill(prefillData, i + 1);
+        }
+
+        // Show multiple drop zone if more than 1 row
+        if (numberOfRows > 1) {
+            showMultipleDropZone();
+        }
+
+        // Close modal and reset form
+        $('#multipleArtworkModal').modal('hide');
+        $('#multipleArtworkForm')[0].reset();
+        $('#numberOfRows').val(2); // Reset to default
     });
 
 
@@ -1213,6 +1415,86 @@ $(document).ready(function() {
             const titleInput = document.querySelector(`[data-temp-id="${tempId}"] .title-input`);
             if (titleInput) titleInput.focus();
         }, 100);
+    }
+
+    function addNewArtworkRowWithPrefill(prefillData, rowNumber) {
+        const template = document.getElementById('newArtworkRowTemplate');
+        const newRow = template.content.cloneNode(true);
+        const tempId = 'temp_' + Date.now() + '_' + (++newRowCounter);
+        
+        newRow.querySelector('.new-artwork-row').setAttribute('data-temp-id', tempId);
+        
+        // Insert at the beginning of tbody
+        const tbody = document.querySelector('#inventoryTable tbody');
+        tbody.insertBefore(newRow, tbody.firstChild);
+        
+        // Pre-fill the form fields
+        const rowElement = document.querySelector(`[data-temp-id="${tempId}"]`);
+        
+        if (prefillData.collection) {
+            // Find the collection select (not the company select)
+            const collectionSelects = rowElement.querySelectorAll('.collection-select');
+            // The collection select is the last one (after company select if it exists)
+            const collectionSelect = collectionSelects[collectionSelects.length - 1];
+            if (collectionSelect) {
+                collectionSelect.value = prefillData.collection;
+            }
+        }
+        
+        // Handle company selection if user is super admin
+        @if(auth()->user()->isSuperAdmin())
+        if (prefillData.company) {
+            const companySelect = rowElement.querySelector('.company-select');
+            if (companySelect) {
+                companySelect.value = prefillData.company;
+            }
+        }
+        @endif
+        
+        if (prefillData.artist) {
+            const artistInput = rowElement.querySelector('.artist-input');
+            if (artistInput) artistInput.value = prefillData.artist;
+        }
+        
+        if (prefillData.height) {
+            const heightInput = rowElement.querySelector('.height-input');
+            if (heightInput) heightInput.value = prefillData.height;
+        }
+        
+        if (prefillData.width) {
+            const widthInput = rowElement.querySelector('.width-input');
+            if (widthInput) widthInput.value = prefillData.width;
+        }
+        
+        if (prefillData.unit) {
+            const unitSelect = rowElement.querySelector('.unit-select');
+            if (unitSelect) unitSelect.value = prefillData.unit;
+        }
+        
+        if (prefillData.title) {
+            const titleInput = rowElement.querySelector('.title-input');
+            if (titleInput) {
+                // If multiple rows, append row number to title
+                const titleValue = prefillData.title + (rowNumber > 1 ? ` ${rowNumber}` : '');
+                titleInput.value = titleValue;
+            }
+        }
+        
+        if (prefillData.type) {
+            const typeSelect = rowElement.querySelector('.type-select');
+            if (typeSelect) typeSelect.value = prefillData.type;
+        }
+        
+        // Initialize drag and drop for this row
+        initializeRowDragDrop(tempId);
+        
+        // Focus on title input for the first row
+        if (rowNumber === 1) {
+            setTimeout(() => {
+                const titleInput = document.querySelector(`[data-temp-id="${tempId}"] .title-input`);
+                if (titleInput) titleInput.focus();
+            }, 100);
+        }
     }
 
     function showMultipleDropZone() {
@@ -1333,10 +1615,6 @@ $(document).ready(function() {
                 dropArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
                 dropArea.classList.add('has-image');
                 
-                // Auto-fill title from filename
-                const titleInput = row.querySelector('.title-input');
-                const filename = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
-                titleInput.value = filename;
             };
             reader.readAsDataURL(file);
         }
@@ -1357,10 +1635,6 @@ $(document).ready(function() {
                         dropArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
                         dropArea.classList.add('has-image');
                         
-                        // Auto-fill title from filename
-                        const titleInput = row.querySelector('.title-input');
-                        const filename = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
-                        titleInput.value = filename;
                     };
                     reader.readAsDataURL(file);
                 }
@@ -1381,13 +1655,22 @@ $(document).ready(function() {
             name: row.find('.title-input').val(),
             artist: row.find('.artist-input').val(),
             type: row.find('.type-select').val(),
-            artwork_collection_id: row.find('.collection-select').val(),
+            artwork_collection_id: row.find('.collection-select').last().val(), // Get the last collection select (not company)
             description: row.find('.description-input').val(),
             height: row.find('.height-input').val(),
             width: row.find('.width-input').val(),
             unit: row.find('.unit-select').val(),
             _token: '{{ csrf_token() }}'
         };
+        
+        // Add company field if user is super admin
+        @if(auth()->user()->isSuperAdmin())
+        const companySelect = row.find('.company-select');
+        if (companySelect.length > 0) {
+            formData.company_id = companySelect.val();
+        }
+        @endif
+        
         
         // Validate required fields
         if (!formData.name || !formData.artwork_collection_id) {
