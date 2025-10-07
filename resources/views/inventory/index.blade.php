@@ -519,6 +519,9 @@
         color: white !important;
         border-color: #077a75 !important;
         font-weight: 600;
+        position: sticky; /* keep header fixed while scrolling */
+        top: 0;
+        z-index: 2; /* above rows */
     }
 
     #inventoryTable thead th:hover {
@@ -530,6 +533,18 @@
         height: 40px;
         object-fit: cover;
         border-radius: 6px;
+    }
+
+    /* Make only the table area scroll, keep header sticky */
+    .artworks-table .table-responsive {
+        max-height: 70vh; /* adjust as needed */
+        overflow-y: auto;
+    }
+
+    /* Avoid extra gap below when the container scrolls */
+    #inventoryTable {
+        margin-bottom: 0;
+        border-collapse: separate; /* helps with sticky header in some browsers */
     }
 
     /* DataTables Editor styles */
