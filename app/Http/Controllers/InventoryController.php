@@ -870,10 +870,22 @@ class InventoryController extends Controller
                     if ($originalArtwork->hasMedia('image')) {
                         $originalMedia = $originalArtwork->getFirstMedia('image');
                         if ($originalMedia) {
-                            $newArtwork->addMediaFromUrl($originalMedia->getUrl())
-                                ->usingFileName('artwork_' . $newArtwork->id . '_' . time() . '.jpg')
-                                ->usingName($newArtwork->name)
-                                ->toMediaCollection('image');
+                            // Prefer copying from the filesystem path to avoid URL/download issues
+                            $sourcePath = $originalMedia->getPath();
+                            if ($sourcePath && file_exists($sourcePath)) {
+                                $newArtwork->addMedia($sourcePath)
+                                    ->preservingOriginal()
+                                    ->usingName($newArtwork->name)
+                                    ->toMediaCollection('image');
+                            } else {
+                                // Fallback: try via URL if local path is unavailable (e.g., remote disks)
+                                $sourceUrl = $originalMedia->getUrl();
+                                if (!empty($sourceUrl)) {
+                                    $newArtwork->addMediaFromUrl($sourceUrl)
+                                        ->usingName($newArtwork->name)
+                                        ->toMediaCollection('image');
+                                }
+                            }
                         }
                     }
 

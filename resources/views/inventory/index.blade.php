@@ -141,41 +141,6 @@
                                                 </div>
                                             </div>
                                             
-                                            <!-- Right Side Action Buttons -->
-                                            <div class="d-flex align-items-center gap-2 ms-auto">
-                                                <!-- Copy/Duplicate Button -->
-                                                <button class="btn icon-button" type="button" id="copyArtworkBtn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
-                                                        title="Copy Selected Items">
-                                                    <i class="fas fa-copy"></i>
-                                                </button>
-                                                
-                                                <!-- Sync/Transfer Button -->
-                                                <button class="btn icon-button" type="button" id="syncArtworkBtn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
-                                                        title="Sync/Transfer Items">
-                                                    <i class="fas fa-exchange-alt"></i>
-                                                </button>
-                                                
-                                                <!-- Upload Multiple Button -->
-                                                <button class="btn icon-button" type="button" id="uploadMultipleBtn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
-                                                        title="Upload Multiple Items">
-                                                    <i class="fas fa-upload" style="color: #495057;"></i>
-                                                </button>
-                                                
-                                                <!-- Delete Button -->
-                                                <button class="btn icon-button" type="button" id="deleteArtworkBtn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
-                                                        title="Delete Selected Items"
-                                                        style="background: #dc3545; color: #fff;">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
                                                                                     <!-- Bulk Edit Controls -->
                                             <div id="bulkEditControls" style="display: none;">
                                                 <div class="d-flex align-items-center gap-3">
@@ -200,6 +165,42 @@
                                                     </button>
                                                     <span id="newItemsCount" class="text-muted">0 new items</span>
                                                 </div>
+                                            </div>
+
+                                                                                        <!-- Right Side Action Buttons -->
+                                                                                        <div class="d-flex align-items-center gap-2 ms-auto">
+                                                <!-- Copy/Duplicate Button -->
+                                                <button class="btn icon-button" type="button" id="duplicateArtworkBtn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Duplicate Selected Items">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                                
+                                                <!-- Sync/Transfer Button -->
+                                                <button class="btn icon-button" type="button" id="moveToCollection" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Move to Collection">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                </button>
+                                                
+                                                <!-- Upload Multiple Button -->
+                                                <button class="btn icon-button" type="button" id="uploadMultipleBtn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Upload Multiple Items">
+                                                    <i class="fas fa-upload" style="color: #495057;"></i>
+                                                </button>
+                                                
+                                                <!-- Delete Button -->
+                                                <button class="btn icon-button" type="button" id="deleteArtworkBtn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Delete Selected Items"
+                                                        style="background: #dc3545; color: #fff;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
                                                           
@@ -313,11 +314,7 @@
                                     <label for="prefillType" class="form-label" style="font-weight: 500; color: #495057;">Type</label>
                                     <select class="form-select" id="prefillType" name="type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
                                         <option value="Painting">Painting</option>
-                                        <option value="Digital Art">Digital Art</option>
                                         <option value="Sculpture">Sculpture</option>
-                                        <option value="Photography">Photography</option>
-                                        <option value="Drawing">Drawing</option>
-                                        <option value="Mixed Media">Mixed Media</option>
                                     </select>
                                 </div>
                             </div>
@@ -402,6 +399,33 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" id="bulkUpdateBtn">Update Selected Items</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move To Collection Modal -->
+    <div class="modal fade" id="moveToCollectionModal" tabindex="-1" aria-labelledby="moveToCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="moveToCollectionModalLabel">Move to Collection</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="moveCollectionSelect" class="form-label">Select Collection</label>
+                        <select class="form-select" id="moveCollectionSelect" name="collection">
+                            <option value="">Select collection</option>
+                            @foreach($collections as $collection)
+                                <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmMoveBtn">Move</button>
                 </div>
             </div>
         </div>
@@ -694,28 +718,28 @@
         justify-content: center;
         padding: 0;
         border: none;
-        background: #099F9A;
-        color: #fff;
+        background: transparent; /* transparent background like screenshot */
+        color: #343a40; /* neutral dark icon color */
         font-size: 16px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
+        transition: all 0.2s ease;
+        box-shadow: none;
     }
 
     .icon-button:hover {
-        background: #077a75;
+        background: rgba(0, 0, 0, 0.05); /* subtle hover background */
         transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(9, 159, 154, 0.3);
-        color: #fff;
+        box-shadow: none;
+        color: #111;
     }
 
     .icon-button:focus {
         outline: none;
-        box-shadow: 0 0 0 3px rgba(9, 159, 154, 0.25);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
     }
 
     .icon-button:active {
         transform: translateY(0);
-        box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
+        box-shadow: none;
     }
 
     /* Inline editing row styles */
@@ -958,59 +982,23 @@
         margin-left: auto !important;
     }
 
-    /* Delete button specific styling */
-    #deleteArtworkBtn {
-        background: #dc3545 !important;
-        border-color: #dc3545 !important;
-        color: #fff !important;
-    }
-
-    #deleteArtworkBtn:hover {
-        background: #c82333 !important;
-        border-color: #bd2130 !important;
-        color: #fff !important;
-    }
-
-    /* Copy button styling */
-    #copyArtworkBtn {
-        background: #6c757d !important;
-        border-color: #6c757d !important;
-        color: #fff !important;
-    }
-
-    #copyArtworkBtn:hover {
-        background: #5a6268 !important;
-        border-color: #545b62 !important;
-        color: #fff !important;
-    }
-
-    /* Sync button styling */
-    #syncArtworkBtn {
-        background: #17a2b8 !important;
-        border-color: #17a2b8 !important;
-        color: #fff !important;
-    }
-
-    #syncArtworkBtn:hover {
-        background: #138496 !important;
-        border-color: #117a8b !important;
-        color: #fff !important;
-    }
-
-    /* Upload multiple button styling */
+    /* Make all specific icon buttons transparent to match new style */
+    #deleteArtworkBtn,
+    #duplicateArtworkBtn,
+    #moveToCollection,
     #uploadMultipleBtn {
-        background: #f8f9fa !important;
-        border: 1px solid #dee2e6 !important;
-        color: #495057 !important;
-        transition: all 0.3s ease;
+        background: transparent !important;
+        border: none !important;
+        color: #343a40 !important;
+        box-shadow: none !important;
     }
 
+    #deleteArtworkBtn:hover,
+    #duplicateArtworkBtn:hover,
+    #moveToCollection:hover,
     #uploadMultipleBtn:hover {
-        background: #e9ecef !important;
-        border-color: #adb5bd !important;
-        color: #495057 !important;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        background: rgba(0, 0, 0, 0.05) !important;
+        color: #111 !important;
     }
 </style>
 @endsection
@@ -1141,10 +1129,13 @@ $(document).ready(function() {
 
     console.log('DataTable created successfully');
 
-    // Initialize Bootstrap tooltips
+    // Initialize Bootstrap tooltips and ensure they hide on mouseleave/blur
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+        var tip = bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl, { trigger: 'hover focus' });
+        tooltipTriggerEl.addEventListener('mouseleave', function() { tip.hide(); });
+        tooltipTriggerEl.addEventListener('blur', function() { tip.hide(); });
+        return tip;
     });
 
     // Search toggle functionality
@@ -1247,7 +1238,9 @@ $(document).ready(function() {
                     existingTooltip.dispose();
                 }
                 // Create new tooltip
-                new bootstrap.Tooltip(tooltipTriggerEl);
+                var tip = bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl, { trigger: 'hover focus' });
+                tooltipTriggerEl.addEventListener('mouseleave', function() { tip.hide(); });
+                tooltipTriggerEl.addEventListener('blur', function() { tip.hide(); });
             });
         } else {
             bulkEditControls.hide();
@@ -2017,13 +2010,13 @@ $(document).ready(function() {
     });
 
     // Copy/Duplicate functionality
-    $('#copyArtworkBtn').on('click', function() {
+    $('#duplicateArtworkBtn').on('click', function() {
         if (selectedRows.size === 0) {
-            alert('Please select at least one item to copy.');
+            alert('Please select at least one item to duplicate.');
             return;
         }
         
-        if (confirm(`Are you sure you want to copy ${selectedRows.size} selected item(s)?`)) {
+        if (confirm(`Are you sure you want to duplicate ${selectedRows.size} selected item(s)?`)) {
             const selectedIds = Array.from(selectedRows);
             
             // Show loading state
@@ -2038,7 +2031,7 @@ $(document).ready(function() {
                 },
                 success: function(response) {
                     if (response.success) {
-                        alert('Successfully copied ' + response.copied_count + ' item(s).');
+                        alert('Successfully duplicated ' + response.copied_count + ' item(s).');
                         table.ajax.reload();
                         selectedRows.clear();
                         updateBulkEditUI();
@@ -2048,24 +2041,66 @@ $(document).ready(function() {
                     }
                 },
                 error: function(xhr) {
-                    alert('Error copying items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    alert('Error duplicating items: ' + (xhr.responseJSON?.message || 'Unknown error'));
                 },
                 complete: function() {
-                    $('#copyArtworkBtn').prop('disabled', false).html('<i class="fas fa-copy"></i>');
+                    $('#duplicateArtworkBtn').prop('disabled', false).html('<i class="fas fa-copy"></i>');
                 }
             });
         }
     });
 
-    // Sync/Transfer functionality
-    $('#syncArtworkBtn').on('click', function() {
+    // Move to Collection - open modal
+    $('#moveToCollection').on('click', function() {
         if (selectedRows.size === 0) {
-            alert('Please select at least one item to sync/transfer.');
+            alert('Please select at least one item to move.');
             return;
         }
-        
-        // Show sync modal or implement sync logic
-        alert('Sync/Transfer functionality will be implemented here. Selected items: ' + selectedRows.size);
+        $('#moveCollectionSelect').val('');
+        $('#moveToCollectionModal').modal('show');
+    });
+
+    // Confirm move action
+    $('#confirmMoveBtn').on('click', function() {
+        var targetCollection = $('#moveCollectionSelect').val();
+        var selectedIds = Array.from(selectedRows);
+
+        if (!targetCollection) {
+            alert('Please select a collection to move to.');
+            return;
+        }
+
+        // Show loading state
+        var $btn = $('#confirmMoveBtn');
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Moving...');
+
+        $.ajax({
+            url: '{{ route("inventory.bulk-update") }}',
+            type: 'POST',
+            data: {
+                ids: selectedIds,
+                collection: targetCollection,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Successfully moved ' + response.updated_count + ' item(s).');
+                    $('#moveToCollectionModal').modal('hide');
+                    table.ajax.reload();
+                    selectedRows.clear();
+                    updateBulkEditUI();
+                    updateSelectAllState();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Error moving items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html('Move');
+            }
+        });
     });
 
     // Upload Multiple functionality
