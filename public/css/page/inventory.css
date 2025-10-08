@@ -840,3 +840,87 @@
     color: #dc3545;
     animation: countdownPulse 0.5s infinite;
 }
+
+.thumbnail-upload {
+    background: #f8f9fa;
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+    transition: background 0.2s;
+}
+.thumbnail-upload:hover {
+    background: #e9ecef;
+}
+
+/* Image upload box styles */
+.image-upload-box {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  background: #f8f9fa;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.image-upload-box:hover {
+  border-color: #007bff;
+}
+
+.image-upload-box .image-input {
+  display: none;
+}
+
+.image-upload-box img.img-preview {
+  max-height: 200px;
+  object-fit: contain;
+  cursor: pointer;
+  max-width: none;
+  height: auto;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.image-upload-box img.img-preview:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.image-upload-box .overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.3s ease;
+}
+
+.image-upload-box:hover .overlay {
+  display: flex;
+}
+
+.image-name {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.5rem;
+}
+
+/* Drag and drop styles for image upload */
+.image-upload-box.drag-over {
+    border: 2px dashed #007bff !important;
+    background-color: rgba(0, 123, 255, 0.1) !important;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}

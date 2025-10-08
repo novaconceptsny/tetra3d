@@ -25,24 +25,27 @@
                                             @endphp
                                             <button class="btn btn-light w-100 d-flex align-items-center justify-content-between p-3 border rounded" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: #fff; border: 1px solid #dee2e6; min-height: 60px; box-shadow: none;">
                                                 <div class="d-flex align-items-center">
-                                                    <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
-                                                    <div class="text-start">
-                                                        @if($selectedCollection)
-                                                            @php
-                                                                $selectedCollectionData = $collections->firstWhere('id', $selectedCollection);
-                                                            @endphp
-                                                            @if($selectedCollectionData)
-                                                                <div class="fw-bold">{{ $selectedCollectionData->name }}</div>
-                                                                <small class="text-muted">{{ $selectedCollectionData->artworks()->count() }} items</small>
-                                                            @else
-                                                                <div class="fw-bold">All Collections</div>
-                                                                <small class="text-muted">{{ $totalItems }} items</small>
-                                                            @endif
+                                                    @php
+                                                        $selectedCollectionData = $selectedCollection ? $collections->firstWhere('id', $selectedCollection) : null;
+                                                    @endphp
+                                                    
+                                                    @if($selectedCollectionData)
+                                                        @if($selectedCollectionData->thumbnail_url)
+                                                            <img src="{{ $selectedCollectionData->thumbnail_url }}" alt="{{ $selectedCollectionData->name }}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
                                                         @else
+                                                            <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
+                                                        @endif
+                                                        <div class="text-start">
+                                                            <div class="fw-bold">{{ $selectedCollectionData->name }}</div>
+                                                            <small class="text-muted">{{ $selectedCollectionData->artworks()->count() }} items</small>
+                                                        </div>
+                                                    @else
+                                                        <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
+                                                        <div class="text-start">
                                                             <div class="fw-bold">All Collections</div>
                                                             <small class="text-muted">{{ $totalItems }} items</small>
-                                                        @endif
-                                                    </div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 <i class="fas fa-chevron-down text-muted"></i>
                                             </button>
@@ -58,7 +61,7 @@
                                                 </li>
                                                 @foreach($collections as $collection)
                                                 <li>
-                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}} items')" style="border-bottom: 1px solid #f8f9fa;">
+                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}} items', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         @if($collection->thumbnail_url)
                                                             <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3 rounded" style="object-fit: cover;">
                                                         @else
@@ -428,12 +431,12 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Thumbnail</label>
-                            <div class="d-flex align-items-center">
-                                <label for="collectionThumbnail" class="thumbnail-upload border rounded d-flex flex-column align-items-center justify-content-center" style="width: 80px; height: 100px; cursor: pointer;">
-                                    <span id="thumbnailText">Click to add image</span>
-                                    <input type="file" id="collectionThumbnail" name="thumbnail" accept="image/*" style="display: none;">
-                                </label>
+                            <div class="image-upload-box mb-2" id="collectionImageUploadBox">
+                                <input type="file" class="image-input" id="collectionThumbnail" name="thumbnail" accept="image/*">
+                                <span>Click or drag & drop to add image</span>
+                                <div class="overlay">Click to replace image</div>
                             </div>
+                            <div class="image-name" id="collectionImageName"></div>
                         </div>
                     </form>
                 </div>
@@ -848,6 +851,8 @@
     const imageProgress = document.getElementById('image-progress');
     const imageFilename = document.getElementById('image-filename');
 
+    const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
+    
 
     let uploadedSpreadsheetData = null;
     let uploadedImageFiles = [];
@@ -2773,22 +2778,40 @@ $(document).ready(function() {
     });
 
     // Collection selection function
-    window.selectCollection = function(collectionId, collectionName, itemCount) {
+    window.selectCollection = function(collectionId, collectionName, itemCount, thumbnailUrl = null) {
         window.selectedCollectionId = collectionId;
 
-        // Update the dropdown button text
+        // Update the dropdown button content
         const dropdownButton = document.querySelector('.dropdown button');
-        const buttonContent = dropdownButton.querySelector('.text-start');
+        const imageContainer = dropdownButton.querySelector('.d-flex.align-items-center');
 
         if (collectionId) {
-            buttonContent.innerHTML = `
-                <div class="fw-bold">${collectionName}</div>
-                <small class="text-muted">${itemCount}</small>
-            `;
+            // Update the image and text for selected collection
+            if (thumbnailUrl) {
+                imageContainer.innerHTML = `
+                    <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
+                    <div class="text-start">
+                        <div class="fw-bold">${collectionName}</div>
+                        <small class="text-muted">${itemCount}</small>
+                    </div>
+                `;
+            } else {
+                imageContainer.innerHTML = `
+                    <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
+                    <div class="text-start">
+                        <div class="fw-bold">${collectionName}</div>
+                        <small class="text-muted">${itemCount}</small>
+                    </div>
+                `;
+            }
         } else {
-            buttonContent.innerHTML = `
-                <div class="fw-bold">All Collections</div>
-                <small class="text-muted">${itemCount}</small>
+            // Update for "All Collections"
+            imageContainer.innerHTML = `
+                <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
+                <div class="text-start">
+                    <div class="fw-bold">All Collections</div>
+                    <small class="text-muted">${itemCount}</small>
+                </div>
             `;
         }
 
@@ -3533,6 +3556,106 @@ $(document).ready(function() {
             });
         }
     });
+
+    // Image upload functionality for collection thumbnail
+    const collectionImageUploadBox = document.getElementById('collectionImageUploadBox');
+    const collectionThumbnail = document.getElementById('collectionThumbnail');
+    const collectionImageName = document.getElementById('collectionImageName');
+
+    if (collectionImageUploadBox && collectionThumbnail) {
+        // Handle click on upload box
+        collectionImageUploadBox.addEventListener('click', (e) => {
+            // Check if there's already an image displayed
+            // const existingImg = collectionImageUploadBox.querySelector('.img-preview');
+            // if (existingImg) {
+            //     // If there's an existing image, don't trigger file input
+            //     e.stopPropagation();
+            //     return;
+            // }
+            // Only trigger file input if no image is present
+            collectionThumbnail.click();
+        });
+
+        // Drag and drop functionality
+        collectionImageUploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            collectionImageUploadBox.classList.add('drag-over');
+        });
+
+        collectionImageUploadBox.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            collectionImageUploadBox.classList.remove('drag-over');
+        });
+
+        collectionImageUploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            collectionImageUploadBox.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    handleCollectionImageFile(file, collectionImageUploadBox, collectionThumbnail, collectionImageName);
+                } else {
+                    alert('Please drop an image file (JPEG or PNG)');
+                }
+            }
+        });
+
+        // Handle file input change
+        collectionThumbnail.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                handleCollectionImageFile(file, collectionImageUploadBox, collectionThumbnail, collectionImageName);
+            }
+        });
+    }
+
+    // Function to handle collection image file processing
+    function handleCollectionImageFile(file, uploadBox, inputElement, nameElement) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'img-preview';
+            img.style.cursor = 'pointer';
+            img.title = 'Click to replace image';
+            img.crossOrigin = 'anonymous';
+            
+            // Wait for image to load to get dimensions
+            img.onload = () => {
+                uploadBox.innerHTML = '';
+                uploadBox.style.backgroundColor = 'grey';
+                uploadBox.appendChild(img);
+                
+                // Re-add the file input and overlay
+                uploadBox.appendChild(inputElement);
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.textContent = 'Click to replace image';
+                uploadBox.appendChild(overlay);
+                
+                // Add click event to the preview image to trigger file input
+                img.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    inputElement.click();
+                });
+                
+                // Re-attach event listeners
+                inputElement.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        handleCollectionImageFile(file, uploadBox, inputElement, nameElement);
+                    }
+                });
+            };
+        };
+        reader.readAsDataURL(file);
+        
+        if (nameElement) {
+            nameElement.textContent = file.name;
+        }
+    }
 });
 </script>
 @endsection
