@@ -28,7 +28,7 @@
                                                     @php
                                                         $selectedCollectionData = $selectedCollection ? $collections->firstWhere('id', $selectedCollection) : null;
                                                     @endphp
-                                                    
+
                                                     @if($selectedCollectionData)
                                                         @if($selectedCollectionData->thumbnail_url)
                                                             <img src="{{ $selectedCollectionData->thumbnail_url }}" alt="{{ $selectedCollectionData->name }}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
@@ -77,16 +77,14 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    @if($selectedCollection)
-                                        <div class="mt-2 d-flex justify-content-center gap-2">
-                                            <button class="btn btn-outline-secondary btn-sm" onclick="editCollection()" title="Edit Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-edit" style="font-size: 12px;"></i>
-                                            </button>
-                                            <button class="btn btn-outline-danger btn-sm" onclick="deleteCollection()" title="Delete Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-trash" style="font-size: 12px;"></i>
-                                            </button>
-                                        </div>
-                                    @endif
+                                    <div class="mt-2 d-flex justify-content-center gap-2">
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="editCollection()" title="Edit Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-edit" style="font-size: 12px;"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteCollection()" title="Delete Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-trash" style="font-size: 12px;"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Main Content -->
@@ -712,7 +710,7 @@
         </tr>
     </template>
 
-    
+
     <!-- Submit Progress Modal -->
     <div class="modal fade" id="submitProgressModal" tabindex="-1" aria-labelledby="submitProgressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
@@ -745,7 +743,7 @@
                     <p id="pageUploadText">Do you want to upload the artworks on this page?</p>
                     <div class="alert alert-info">
                         <small>
-                            <strong>Note:</strong> You can upload artworks page by page. After each page is uploaded, 
+                            <strong>Note:</strong> You can upload artworks page by page. After each page is uploaded,
                             you'll be asked if you want to continue with the next page.
                         </small>
                     </div>
@@ -852,7 +850,7 @@
     const imageFilename = document.getElementById('image-filename');
 
     const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
-    
+
 
     let uploadedSpreadsheetData = null;
     let uploadedImageFiles = [];
@@ -874,7 +872,7 @@
     let currentCountdown = 10;
 
 
-    
+
     // Helper function to get property value from multiple possible property names
     function getProperty(obj, propertyNames) {
         for (let propName of propertyNames) {
@@ -1155,6 +1153,10 @@
         document.body.removeChild(link);
     }
 
+    // Global variable to track if we're in edit mode
+    let isEditMode = false;
+    let editingCollectionId = null;
+
     function handleSaveCollection() {
         const companySelect = document.getElementById('collectionCompany');
 
@@ -1170,12 +1172,24 @@
         const formData = new FormData();
         formData.append('collection_name', collectionName);
         formData.append('collection_company_name', companyName);
-        formData.append('collection_thumbnail', collectionThumbnail);
+        if (collectionThumbnail) {
+            formData.append('collection_thumbnail', collectionThumbnail);
+        }
+
+        // Debug logging
 
         const token = document.querySelector('meta[name="csrf-token"]').content;
 
-        fetch('/inventory/collections/add', {
-            method: 'POST',
+        // Determine the URL and method based on edit mode
+        const url = isEditMode ? `/inventory/collections/${editingCollectionId}/edit` : '/inventory/collections/add';
+
+        // Add _method field for Laravel to recognize PUT requests
+        if (isEditMode) {
+            formData.append('_method', 'PUT');
+        }
+
+        fetch(url, {
+            method: 'POST', // Always use POST for FormData, Laravel will handle the method via _method field
             headers: {
                 'X-CSRF-TOKEN': token,
                 'X-Requested-With': 'XMLHttpRequest'
@@ -1185,15 +1199,16 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Collection added successfully');
+                const message = isEditMode ? 'Collection updated successfully' : 'Collection added successfully';
+                alert(message);
                 window.location.reload();
             } else {
-                alert('Error: ' + (data.message || 'Could not add collection.'));
+                alert('Error: ' + (data.message || `Could not ${isEditMode ? 'update' : 'add'} collection.`));
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error adding collection.');
+            alert(`Error ${isEditMode ? 'updating' : 'adding'} collection.`);
         });
     }
 
@@ -2123,8 +2138,8 @@
             row.innerHTML = `
                 <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
                 <td>
-                    ${artwork.company ? 
-                        artwork.company : 
+                    ${artwork.company ?
+                        artwork.company :
                         `<select class="form-select artwork-company-select ${!masterCompanyDropdown || !masterCompanyDropdown.value ? 'empty-cell' : ''}">
                             <option value="">Select Company</option>
                             @foreach($companies as $company)
@@ -2345,7 +2360,7 @@ $(document).ready(function() {
             document.getElementById('masterCollectionStandalone'),
             document.getElementById('masterCollectionHeader')
         ];
-        
+
         masterCollectionDropdowns.forEach(dropdown => {
             if (dropdown) {
                 dropdown.addEventListener('change', function(event) {
@@ -2358,7 +2373,7 @@ $(document).ready(function() {
                                 collectionSelect.value = selectedCollectionId;
                             }
                         });
-                        
+
                         // Sync the other dropdown to the same value
                         masterCollectionDropdowns.forEach(otherDropdown => {
                             if (otherDropdown && otherDropdown !== dropdown) {
@@ -2378,28 +2393,28 @@ $(document).ready(function() {
                     const artworkRows = document.querySelectorAll('#artworkTableBody tr');
                     artworkRows.forEach(row => {
                         const unitSelect = row.querySelector('.artwork-unit-select');
-                        
+
                         if (unitSelect) {
                             const currentUnit = unitSelect.value;
                             unitSelect.value = selectedUnit;
-                            
+
                             // Convert values if both inputs exist and have values
                             const heightInput = row.querySelector('input[id="artwork-height"]');
                             const widthInput = row.querySelector('input[id="artwork-width"]');
-                            
+
                             if (heightInput && widthInput && heightInput.value && widthInput.value) {
                                 // const heightValue = parseFloat(heightInput.value);
                                 // const widthValue = parseFloat(widthInput.value);
-                                
+
                                 // // Convert height
                                 // const convertedHeight = convertUnit(heightValue, currentUnit, selectedUnit);
                                 // heightInput.value = convertedHeight;
-                                
+
                                 // // Convert width
                                 // const convertedWidth = convertUnit(widthValue, currentUnit, selectedUnit);
                                 // widthInput.value = convertedWidth;
                             }
-                            
+
                             // Update the previous unit for this row's unit select
                             unitSelect.dataset.previousUnit = selectedUnit;
                         }
@@ -2408,7 +2423,7 @@ $(document).ready(function() {
             });
         }
 
-        
+
     // Check if DataTables is available
     if (typeof $.fn.DataTable === 'undefined') {
         console.error('DataTables library not loaded!');
@@ -2825,49 +2840,78 @@ $(document).ready(function() {
         }
     };
 
-    // Edit collection function
+
+            // Edit collection function
     window.editCollection = function() {
-        const collectionId = window.selectedCollectionId;
-        if (!collectionId) {
-            alert('Please select a collection to edit.');
-            return;
-        }
-
-        // Get collection data
-        const collectionData = @json($collections->keyBy('id'));
-        const collection = collectionData[collectionId];
-
-        if (!collection) {
-            alert('Collection not found.');
-            return;
-        }
-
-        // Show edit modal (you can implement this modal)
-        const newName = prompt('Enter new collection name:', collection.name);
-        if (newName && newName !== collection.name) {
-            // Update collection via AJAX
-            $.ajax({
-                url: `/inventory/collections/${collectionId}/edit`,
-                type: 'PUT',
-                data: {
-                    collection_name: newName,
-                    collection_company_name: '{{ auth()->check() && auth()->user()->company ? auth()->user()->company->name : "Unknown Company" }}',
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        alert('Collection updated successfully!');
-                        location.reload(); // Reload to update the collections list
-                    } else {
-                        alert('Error: ' + response.message);
-                    }
-                },
-                error: function(xhr) {
-                    alert('Error updating collection: ' + (xhr.responseJSON?.message || 'Unknown error'));
+        const selectedCollectionId = window.selectedCollectionId;
+        if (selectedCollectionId) {
+            // Find the collection data
+            const collection = allCollections.find(c => c.id == selectedCollectionId);
+            if (collection) {
+                // Set edit mode
+                isEditMode = true;
+                editingCollectionId = selectedCollectionId;
+                
+                // Update modal title for editing
+                document.getElementById('addCollectionModalLabel').textContent = 'Edit Collection';
+                
+                // Change button text to "Update"
+                document.getElementById('saveCollectionBtn').textContent = 'Update';
+                
+                // Populate the edit modal with collection data
+                document.getElementById('collectionName').value = collection.name;
+                document.getElementById('collectionCompany').value = collection.company_id || '';
+                
+                // Show current thumbnail if it exists
+                if (collection.thumbnail_url) {
+                    const uploadBox = document.getElementById('collectionImageUploadBox');
+                    const img = document.createElement('img');
+                    img.src = collection.thumbnail_url;
+                    img.className = 'img-preview';
+                    img.style.cursor = 'pointer';
+                    img.title = 'Click to replace image';
+                    img.crossOrigin = 'anonymous';
+                    
+                    // Clear the upload box and show the current image
+                    uploadBox.innerHTML = '';
+                    uploadBox.style.backgroundColor = 'grey';
+                    uploadBox.appendChild(img);
+                    
+                    // Re-add the file input and overlay
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.className = 'image-input';
+                    fileInput.id = 'collectionThumbnail';
+                    fileInput.name = 'thumbnail';
+                    fileInput.accept = 'image/*';
+                    fileInput.style.display = 'none';
+                    uploadBox.appendChild(fileInput);
+                    
+                    const overlay = document.createElement('div');
+                    overlay.className = 'overlay';
+                    overlay.textContent = 'Click to replace image';
+                    uploadBox.appendChild(overlay);
+                    
+                    // Re-attach event listeners
+                    fileInput.addEventListener('change', (event) => {
+                        const file = event.target.files[0];
+                        if (file) {
+                            handleCollectionImageFile(file, uploadBox, fileInput, document.getElementById('collectionImageName'));
+                        }
+                    });
+                    
+                    // Add click event to the preview image
+                    img.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        fileInput.click();
+                    });
                 }
-            });
+
+                // Show the edit modal
+                $('#addCollectionModal').modal('show');
+            }
         }
-    };
+    }
 
     // Delete collection function
     window.deleteCollection = function() {
@@ -2960,6 +3004,41 @@ $(document).ready(function() {
 
 
     function handleOpenCollectionModal() {
+        // Reset edit mode
+        isEditMode = false;
+        editingCollectionId = null;
+        
+        // Reset modal title for adding new collection
+        document.getElementById('addCollectionModalLabel').textContent = 'Add new collection';
+        
+        // Reset button text to "Save"
+        document.getElementById('saveCollectionBtn').textContent = 'Save';
+        
+        // Reset form fields
+        document.getElementById('collectionName').value = '';
+        document.getElementById('collectionCompany').value = '';
+        
+        // Reset image upload box to original state
+        const uploadBox = document.getElementById('collectionImageUploadBox');
+        uploadBox.innerHTML = `
+            <input type="file" class="image-input" id="collectionThumbnail" name="thumbnail" accept="image/*">
+            <span>Click or drag & drop to add image</span>
+            <div class="overlay">Click to replace image</div>
+        `;
+        uploadBox.style.backgroundColor = '';
+        
+        // Clear image name
+        document.getElementById('collectionImageName').textContent = '';
+        
+        // Re-attach event listeners to the new file input
+        const newFileInput = uploadBox.querySelector('#collectionThumbnail');
+        newFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                handleCollectionImageFile(file, uploadBox, newFileInput, document.getElementById('collectionImageName'));
+            }
+        });
+        
         $('#addCollectionModal').modal('show');
     }
 
@@ -3590,7 +3669,7 @@ $(document).ready(function() {
         collectionImageUploadBox.addEventListener('drop', (e) => {
             e.preventDefault();
             collectionImageUploadBox.classList.remove('drag-over');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 const file = files[0];
@@ -3621,26 +3700,26 @@ $(document).ready(function() {
             img.style.cursor = 'pointer';
             img.title = 'Click to replace image';
             img.crossOrigin = 'anonymous';
-            
+
             // Wait for image to load to get dimensions
             img.onload = () => {
                 uploadBox.innerHTML = '';
                 uploadBox.style.backgroundColor = 'grey';
                 uploadBox.appendChild(img);
-                
+
                 // Re-add the file input and overlay
                 uploadBox.appendChild(inputElement);
                 const overlay = document.createElement('div');
                 overlay.className = 'overlay';
                 overlay.textContent = 'Click to replace image';
                 uploadBox.appendChild(overlay);
-                
+
                 // Add click event to the preview image to trigger file input
                 img.addEventListener('click', (e) => {
                     e.stopPropagation();
                     inputElement.click();
                 });
-                
+
                 // Re-attach event listeners
                 inputElement.addEventListener('change', (event) => {
                     const file = event.target.files[0];
@@ -3651,7 +3730,7 @@ $(document).ready(function() {
             };
         };
         reader.readAsDataURL(file);
-        
+
         if (nameElement) {
             nameElement.textContent = file.name;
         }
