@@ -110,7 +110,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Add New Artwork Button - Top Left Position -->
                                         <div class="d-flex align-items-center mb-3 gap-3">
                                             <div class="dropdown" style="display: flex; align-items: center; gap: 8px;">
@@ -128,7 +128,7 @@
                                                     <i class="fas fa-plus" style="color: #495057;"></i>
                                                     <span>Artwork</span>
                                                 </button>
-                                                
+
                                                 <!-- Dropdown Arrow Button -->
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle" type="button" id="artworkDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="background: #ffffff; border: 1px solid #dee2e6; color: #495057; border-radius: 0 8px 8px 0; padding: 4px 12px; font-weight: 500; border-left: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
@@ -140,13 +140,13 @@
                                                     </ul>
                                                 </div>
                                             </div>
-                                            
+
                                                                                     <!-- Bulk Edit Controls -->
                                             <div id="bulkEditControls" style="display: none;">
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <button id="bulkEditBtn" class="btn btn-primary icon-button" 
-                                                            data-bs-toggle="tooltip" 
-                                                            data-bs-placement="top" 
+                                                    <button id="bulkEditBtn" class="btn btn-primary icon-button"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
                                                             title="Edit Selected Items">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
@@ -170,40 +170,41 @@
                                                                                         <!-- Right Side Action Buttons -->
                                                                                         <div class="d-flex align-items-center gap-2 ms-auto">
                                                 <!-- Copy/Duplicate Button -->
-                                                <button class="btn icon-button" type="button" id="duplicateArtworkBtn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
+                                                <button class="btn icon-button" type="button" id="duplicateArtworkBtn"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
                                                         title="Duplicate Selected Items">
                                                     <i class="fas fa-copy"></i>
                                                 </button>
-                                                
+
                                                 <!-- Sync/Transfer Button -->
-                                                <button class="btn icon-button" type="button" id="moveToCollection" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
+                                                <button class="btn icon-button" type="button" id="moveToCollection"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
                                                         title="Move to Collection">
                                                     <i class="fas fa-exchange-alt"></i>
                                                 </button>
-                                                
+
                                                 <!-- Upload Multiple Button -->
-                                                <button class="btn icon-button" type="button" id="uploadMultipleBtn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
-                                                        title="Upload Multiple Items">
+                                                <button class="btn icon-button" type="button" id="uploadMultipleBtn"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Upload Multiple Items"
+                                                        onclick="handleOpenUploadArtworks()"> >
                                                     <i class="fas fa-upload" style="color: #495057;"></i>
                                                 </button>
-                                                
+
                                                 <!-- Delete Button -->
-                                                <button class="btn icon-button" type="button" id="deleteArtworkBtn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
+                                                <button class="btn icon-button" type="button" id="deleteArtworkBtn"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
                                                         title="Delete Selected Items"
                                                         style="background: #dc3545; color: #fff;">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                                          
+
 
                                         <div class="table-responsive">
                                             <table id="inventoryTable" class="table table-striped table-bordered" style="width:100%">
@@ -236,7 +237,164 @@
                             </div>
                         </div>
                     </div>
-                 </div>   
+
+                    <div id="upload-artwork-container" style="display: none;">
+                        <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+                            <div class="d-flex justify-content-start">
+                                <button class="btn btn-outline-secondary mb-3 d-flex align-items-center" onclick="backToCollections()" style="width: fit-content; background: transparent;">
+                                    <i class="fas fa-arrow-left me-2"></i> Back
+                                </button>
+                            </div>
+                            <div class="text-center mb-4">
+                                <button class="btn btn-primary" id="download-template-btn" onclick="downloadSpreadsheet()">Download spreadsheet template (.csv, .xlsx)</button>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Upload spreadsheet</label>
+                                    <div class="upload-box" id="spreadsheet-upload">
+                                        <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv, .xlsx, .xls file</span>
+                                        <div id="spreadsheet-progress" style="display: none;">
+                                            <div class="progress-container">
+                                                <div class="progress-bar-upload"></div>
+                                            </div>
+                                            <span class="progress-text">Uploading...</span>
+                                        </div>
+                                        <span id="spreadsheet-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                                        <input type="file" class="form-control-file" style="display:none;" id="spreadsheetInput" accept=".csv,.xlsx,.xls">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Upload image files</label>
+                                    <div class="upload-box" id="image-upload">
+                                        <span id="image-upload-text">Drag & drop a file here<br>or choose .png, .jpg, .jpeg files</span>
+                                        <div id="image-progress" style="display: none;">
+                                            <div class="progress-container">
+                                                <div class="progress-bar-upload"></div>
+                                            </div>
+                                            <span class="progress-text">Uploading...</span>
+                                        </div>
+                                        <span id="image-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                                        <input type="file" class="form-control-file" style="display:none;" id="imageInput" multiple accept=".png,.jpg,.jpeg">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mb-3">
+                                <button class="btn btn-warning" id="generate-artwork-btn" onclick="handleGenerateArtwork()" disabled>Generate Artwork</button>
+                            </div>
+                            <div id="artwork-progress-bar" style="display:none; margin-bottom: 20px;">
+                                <div style="width: 500px; margin: 0 auto; background: #eee; border-radius: 8px; height: 20px; position: relative;">
+                                    <div id="artwork-progress-bar-inner" class="artwork-progress-inner"></div>
+                                    <span id="artwork-progress-bar-label" class="artwork-progress-label">0/0 processed</span>
+                                </div>
+                            </div>
+
+
+                            <!-- Artworks Table -->
+                            <div class="table-responsive mb-3">
+                                <!-- Top Pagination Controls -->
+                                <div id="pagination-controls-top" style="display: none;" class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="pagination-info">
+                                            <span id="pagination-text-top">Page 1 of 1</span>
+                                            <span class="ms-3">(<span id="total-artworks-top">0</span> total artworks)</span>
+                                        </div>
+                                        <div class="pagination-buttons d-flex align-items-center">
+                                            <button class="btn btn-outline-secondary btn-sm" id="prev-page-btn-top" onclick="handlePrevPage()">
+                                                <i class="fas fa-chevron-left"></i> Previous
+                                            </button>
+                                            <div class="page-numbers ms-2 me-2" id="page-numbers-top">
+                                                <!-- Page numbers will be generated here -->
+                                            </div>
+                                            <button class="btn btn-outline-secondary btn-sm" id="next-page-btn-top" onclick="handleNextPage()">
+                                                Next <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <table class="table align-middle">
+                                    <thead style="background-color: #f8f9fa;">
+                                        <tr>
+                                            <th style="color: black; font-weight: 500;">Image</th>
+                                            <th style="color: black; font-weight: 500;">
+                                                Company
+                                                <select id="masterCompanyHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                                    <option value="">Select company</option>
+                                                    @foreach($companies as $company)
+                                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </th>
+                                            <th style="color: black; font-weight: 500;">
+                                            Collection
+                                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                                    @foreach($collections as $collection)
+                                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </th>
+                                            <th style="color: black; font-weight: 500;">Title</th>
+                                            <th style="color: black; font-weight: 500;">Artist</th>
+                                            <th style="color: black; font-weight: 500;">Height</th>
+                                            <th style="color: black; font-weight: 500;">Width</th>
+                                            <th style="color: black; font-weight: 500;">
+                                            Preferred unit
+                                                <select id="masterUnit" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                                    <option value="inch">Inch</option>
+                                                    <option value="cm">cm</option>
+                                                </select>
+                                            </th>
+                                            <th style="color: black; font-weight: 500;">Description</th>
+                                            <th style="color: black; font-weight: 500;">Type</th>
+                                            <th style="color: black; font-weight: 500;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="artworkTableBody">
+                                        <!-- Example row, repeat for each artwork -->
+                                        <!-- <tr>
+                                            <td><img src="..." style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                                            <td contenteditable="true">Indispensable exhibition</td>
+                                            <td contenteditable="true">Jaguar Attacking a Horse</td>
+                                            <td contenteditable="true">Anna Ovanesova</td>
+                                            <td contenteditable="true">45.6</td>
+                                            <td contenteditable="true">35.4</td>
+                                            <td contenteditable="true">Digital Art</td>
+                                            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                                        </tr> -->
+                                        <!-- More rows... -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination Controls -->
+                            <div id="pagination-controls" style="display: none;" class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="pagination-info">
+                                        <span id="pagination-text">Page 1 of 1</span>
+                                        <span class="ms-3">(<span id="total-artworks">0</span> total artworks)</span>
+                                    </div>
+                                    <div class="pagination-buttons d-flex align-items-center">
+                                        <button class="btn btn-outline-secondary btn-sm" id="prev-page-btn" onclick="handlePrevPage()">
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </button>
+                                        <div class="page-numbers ms-2 me-2" id="page-numbers">
+                                            <!-- Page numbers will be generated here -->
+                                        </div>
+                                        <button class="btn btn-outline-secondary btn-sm" id="next-page-btn" onclick="handleNextPage()">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex  align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
+                                <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
+                                <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </section>
@@ -286,7 +444,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Multiple Artwork Upload Modal -->
     <div class="modal fade" id="multipleArtworkModal" tabindex="-1" aria-labelledby="multipleArtworkModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -303,7 +461,7 @@
                                 <input type="number" class="form-control" id="numberOfRows" name="number_of_rows" min="1" max="50" value="2" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <div class="col-12">
                                 <h6 style="font-weight: 600; color: #495057; margin-bottom: 16px;">
@@ -312,7 +470,7 @@
                                 </h6>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 @if(auth()->user()->isSuperAdmin())
@@ -550,526 +708,122 @@
             </td>
         </tr>
     </template>
+
+    
+    <!-- Submit Progress Modal -->
+    <div class="modal fade" id="submitProgressModal" tabindex="-1" aria-labelledby="submitProgressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <h5 class="mb-3">Saving Artworks...</h5>
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="submitProgressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p class="text-muted mb-0" id="submitProgressText">Processing artwork data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Upload Confirmation Modal -->
+    <div class="modal fade" id="pageUploadModal" tabindex="-1" aria-labelledby="pageUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pageUploadModalLabel">Upload Artworks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="pageUploadText">Do you want to upload the artworks on this page?</p>
+                    <div class="alert alert-info">
+                        <small>
+                            <strong>Note:</strong> You can upload artworks page by page. After each page is uploaded, 
+                            you'll be asked if you want to continue with the next page.
+                        </small>
+                    </div>
+                    <div class="text-center mt-3">
+                        <div class="countdown-container">
+                            <span class="text-muted">Auto-submit in </span>
+                            <span id="countdown-timer" class="fw-bold text-primary">10</span>
+                            <span class="text-muted"> seconds</span>
+                        </div>
+                        <div class="progress mt-2" style="height: 4px;">
+                            <div class="progress-bar bg-primary" id="countdown-progress" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmPageUploadBtn">Yes, Upload This Page</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successModalLabel">
+                        <i class="fas fa-check-circle me-2"></i>Upload Successful
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 id="successModalTitle">Upload Completed!</h6>
+                    <p id="successModalMessage" class="text-muted mb-0"></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Continue Upload Confirmation Modal -->
+    <div class="modal fade" id="continueUploadModal" tabindex="-1" aria-labelledby="continueUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="continueUploadModalLabel">
+                        <i class="fas fa-question-circle me-2"></i>Continue Upload
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-arrow-right text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 id="continueUploadTitle">Continue with next page?</h6>
+                    <p id="continueUploadMessage" class="text-muted mb-0"></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Stop Here</button>
+                    <button type="button" class="btn btn-primary" id="continueUploadBtn">Yes, Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 @endsection
 
 
 @section('styles')
 <!-- DataTables CSS and JS -->
 <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/css/vendor/dataTables.bootstrap4.css') }}">
+<link href="{{ asset('css/page/inventory.css') }}" rel="stylesheet">
 
-<style>
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .table td {
-        vertical-align: middle;
-    }
-
-    /* Table header styling */
-    #inventoryTable thead th {
-        background-color: #099F9A !important;
-        color: white !important;
-        border-color: #077a75 !important;
-        font-weight: 600;
-        position: sticky; /* keep header fixed while scrolling */
-        top: 0;
-        z-index: 2; /* above rows */
-    }
-
-    #inventoryTable thead th:hover {
-        background-color: #077a75 !important;
-    }
-
-    .artwork-image {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 6px;
-    }
-
-    /* Make only the table area scroll, keep header sticky */
-    .artworks-table .table-responsive {
-        max-height: 70vh; /* adjust as needed */
-        overflow-y: auto;
-    }
-
-    /* Avoid extra gap below when the container scrolls */
-    #inventoryTable {
-        margin-bottom: 0;
-        border-collapse: separate; /* helps with sticky header in some browsers */
-    }
-
-    /* DataTables Editor styles */
-    .dt-editor-inline {
-        cursor: pointer;
-    }
-
-    .dt-editor-inline:hover {
-        background-color: #f8f9fa;
-    }
-
-    .editable-cell {
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-    }
-
-    .editable-cell:hover {
-        background-color: #f8f9fa;
-    }
-
-    .editable-cell.editing {
-        background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
-    }
-
-    .inline-edit-input {
-        width: 100%;
-        border: none;
-        background: transparent;
-        padding: 4px;
-        font-size: inherit;
-        font-family: inherit;
-    }
-
-    .inline-edit-select {
-        width: 100%;
-        border: none;
-        background: transparent;
-        padding: 4px;
-        font-size: inherit;
-        font-family: inherit;
-    }
-
-    /* DataTables processing indicator styling */
-    .dataTables_processing {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 20px;
-        z-index: 1000;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    /* Bulk edit controls styling */
-    #bulkEditControls {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 0px;
-        transition: all 0.3s ease;
-    }
-
-    #bulkEditBtn {
-        background: #099F9A;
-        border: none;
-        border-radius: 6px;
-        padding: 4px 16px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    #bulkEditBtn:hover {
-        background: #077a75;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(9, 159, 154, 0.3);
-    }
-
-    #selectedCount {
-        font-size: 14px;
-        color: #6c757d;
-        font-weight: 500;
-    }
-
-    /* Modal styling */
-    .modal-content {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    .modal-header {
-        background: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 12px 12px 0 0;
-    }
-
-    .modal-title {
-        font-weight: 600;
-        color: #495057;
-    }
-
-    /* Checkbox styling */
-    .form-check-input:checked {
-        background-color: #099F9A;
-        border-color: #099F9A;
-    }
-
-    .form-check-input:focus {
-        box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
-    }
-
-    /* Pointer cursor for table checkboxes */
-    #inventoryTable input[type="checkbox"] {
-        cursor: pointer;
-    }
-
-    /* Search toggle buttons styling */
-    .search-container {
-        gap: 8px;
-    }
-
-    .search-toggle-buttons {
-        display: flex;
-        border-radius: 6px;
-        overflow: hidden;
-        border: 1px solid #dee2e6;
-        background: #fff;
-    }
-
-    .search-toggle-btn {
-        background: #fff;
-        border: none;
-        padding: 6px 12px;
-        font-size: 14px;
-        font-weight: 500;
-        color: #6c757d;
-        transition: all 0.2s ease;
-        border-radius: 0;
-        position: relative;
-    }
-
-    .search-toggle-btn:first-child {
-        border-top-left-radius: 6px;
-        border-bottom-left-radius: 6px;
-    }
-
-    .search-toggle-btn:last-child {
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-    }
-
-    .search-toggle-btn:hover {
-        background: #f8f9fa;
-        color: #495057;
-    }
-
-    .search-toggle-btn.active {
-        background: #099F9A;
-        color: #fff;
-        box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
-    }
-
-    .search-toggle-btn.active:hover {
-        background: #077a75;
-        color: #fff;
-    }
-
-    .search-toggle-btn:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.25);
-    }
-
-    /* Icon button styling */
-    .icon-button {
-        width: 40px;
-        height: 34px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        border: none;
-        background: transparent; /* transparent background like screenshot */
-        color: #343a40; /* neutral dark icon color */
-        font-size: 16px;
-        transition: all 0.2s ease;
-        box-shadow: none;
-    }
-
-    .icon-button:hover {
-        background: rgba(0, 0, 0, 0.05); /* subtle hover background */
-        transform: translateY(-1px);
-        box-shadow: none;
-        color: #111;
-    }
-
-    .icon-button:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-    }
-
-    .icon-button:active {
-        transform: translateY(0);
-        box-shadow: none;
-    }
-
-    /* Inline editing row styles */
-    .new-artwork-row {
-        background-color: #f8f9fa !important;
-        border: 2px solid #099F9A !important;
-    }
-
-    .new-artwork-row td {
-        padding: 8px !important;
-        vertical-align: middle !important;
-    }
-
-    .drag-drop-area {
-        transition: all 0.3s ease;
-        position: relative;
-    }
-
-    .drag-drop-area:hover {
-        border-color: #099F9A !important;
-        background-color: #e6f7f7 !important;
-    }
-
-    .drag-drop-area.drag-over {
-        border-color: #099F9A !important;
-        background-color: #e6f7f7 !important;
-        transform: scale(1.05);
-    }
-
-    .drag-drop-area.has-image {
-        border-style: solid !important;
-        border-color: #28a745 !important;
-        background-color: #d4edda !important;
-    }
-
-    .drag-drop-area img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-
-    .form-control-sm, .form-select-sm {
-        font-size: 0.875rem;
-        padding: 0.25rem 0.5rem;
-    }
-
-    .save-row-btn, .cancel-row-btn {
-        width: 28px;
-        height: 28px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .save-row-btn {
-        background-color: #28a745;
-        border-color: #28a745;
-    }
-
-    .save-row-btn:hover {
-        background-color: #218838;
-        border-color: #1e7e34;
-    }
-
-    .cancel-row-btn {
-        background-color: #dc3545;
-        border-color: #dc3545;
-    }
-
-    .cancel-row-btn:hover {
-        background-color: #c82333;
-        border-color: #bd2130;
-    }
-
-    /* Multiple image drop zone */
-    .multiple-drop-zone {
-        border: 2px dashed #099F9A;
-        border-radius: 8px;
-        padding: 20px;
-        text-align: center;
-        background-color: #f8f9fa;
-        margin-bottom: 15px;
-        transition: all 0.3s ease;
-    }
-
-    .multiple-drop-zone:hover {
-        background-color: #e6f7f7;
-        border-color: #077a75;
-    }
-
-    .multiple-drop-zone.drag-over {
-        background-color: #d4edda;
-        border-color: #28a745;
-        transform: scale(1.02);
-    }
-
-    .multiple-drop-zone.hidden {
-        display: none;
-    }
-
-    /* Multiple Artwork Modal Styling */
-    #multipleArtworkModal .modal-content {
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    #multipleArtworkModal .modal-header {
-        background: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 12px 12px 0 0;
-    }
-
-    #multipleArtworkModal .modal-title {
-        font-weight: 600;
-        color: #495057;
-    }
-
-    #multipleArtworkModal .form-label {
-        font-weight: 500;
-        color: #495057;
-        margin-bottom: 6px;
-    }
-
-    #multipleArtworkModal .form-control,
-    #multipleArtworkModal .form-select {
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        padding: 8px 12px;
-        font-size: 14px;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    #multipleArtworkModal .form-control:focus,
-    #multipleArtworkModal .form-select:focus {
-        border-color: #099F9A;
-        box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
-    }
-
-    #multipleArtworkModal .btn-success {
-        background: #28a745;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    #multipleArtworkModal .btn-success:hover {
-        background: #218838;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
-    }
-
-    #multipleArtworkModal .btn-secondary {
-        background: #6c757d;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    #multipleArtworkModal .btn-secondary:hover {
-        background: #5a6268;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
-    }
-
-    /* Modal backdrop styling */
-    .modal-backdrop {
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    /* Bulk new item controls styling */
-    #bulkNewItemControls {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 0px 16px;
-        transition: all 0.3s ease;
-    }
-
-    #saveAllNewItemsBtn {
-        background: #28a745;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    #saveAllNewItemsBtn:hover {
-        background: #218838;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
-    }
-
-    #cancelAllNewItemsBtn {
-        background: #dc3545;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    #cancelAllNewItemsBtn:hover {
-        background: #c82333;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-    }
-
-    #newItemsCount {
-        font-size: 14px;
-        color: #6c757d;
-        font-weight: 500;
-    }
-
-    /* Delete row button styling */
-    .delete-row-btn {
-        width: 28px;
-        height: 28px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #dc3545;
-        border-color: #dc3545;
-    }
-
-    .delete-row-btn:hover {
-        background-color: #c82333;
-        border-color: #bd2130;
-    }
-
-    /* Right side action buttons styling */
-    .ms-auto {
-        margin-left: auto !important;
-    }
-
-    /* Make all specific icon buttons transparent to match new style */
-    #deleteArtworkBtn,
-    #duplicateArtworkBtn,
-    #moveToCollection,
-    #uploadMultipleBtn {
-        background: transparent !important;
-        border: none !important;
-        color: #343a40 !important;
-        box-shadow: none !important;
-    }
-
-    #deleteArtworkBtn:hover,
-    #duplicateArtworkBtn:hover,
-    #moveToCollection:hover,
-    #uploadMultipleBtn:hover {
-        background: rgba(0, 0, 0, 0.05) !important;
-        color: #111 !important;
-    }
-</style>
 @endsection
 
 
@@ -1078,18 +832,1578 @@
 <!-- Load DataTables libraries -->
 <script type="text/javascript" charset="utf8" src="{{ asset('backend/assets/js/vendor/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" charset="utf8" src="{{ asset('backend/assets/js/vendor/dataTables.bootstrap4.js') }}"></script>
-
-<!-- Verify DataTables is loaded -->
-<script>
-console.log('jQuery version:', $.fn.jquery);
-console.log('DataTables available:', typeof $.fn.DataTable !== 'undefined');
-console.log('DataTable available:', typeof DataTable !== 'undefined');
-</script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
 <script>
+
+    const allCollections = @json($collections);
+    const mainContainer = document.getElementById('show-collections-container');
+    const uploadContainer = document.getElementById('upload-artwork-container');
+
+    const spreadUploadText = document.getElementById('spreadsheet-upload-text');
+    const spreadProgress = document.getElementById('spreadsheet-progress');
+    const spreadFilename = document.getElementById('spreadsheet-filename');
+
+    const imageUploadText = document.getElementById('image-upload-text');
+    const imageProgress = document.getElementById('image-progress');
+    const imageFilename = document.getElementById('image-filename');
+
+
+    let uploadedSpreadsheetData = null;
+    let uploadedImageFiles = [];
+    let totalExpectedArtworks = 0;
+    let processedArtworks = 0;
+    let isProcessingArtworks = false;
+
+    // Pagination variables
+    let currentPage = 1;
+    let totalPages = 1;
+    let artworksPerPage = 100;
+    let allArtworksData = []; // Store all processed artwork data
+    let currentPageArtworks = []; // Store current page artwork data
+    let uploadedPages = new Set(); // Track which pages have been uploaded
+
+    // Auto-submit countdown variables
+    let countdownInterval = null;
+    let countdownTime = 10; // 10 seconds
+    let currentCountdown = 10;
+
+
+    
+    // Helper function to get property value from multiple possible property names
+    function getProperty(obj, propertyNames) {
+        for (let propName of propertyNames) {
+            if (obj[propName] !== undefined && obj[propName] !== null && obj[propName] !== '') {
+                return obj[propName];
+            }
+        }
+        return null;
+    }
+    // Find the "Add" button (the first .btn-light with title="Add")
+    function handleOpenUploadArtworks() {
+        mainContainer.style.display = 'none';
+        uploadContainer.style.display = 'block';
+    }
+
+    function backToCollections() {
+        uploadContainer.style.display = 'none';
+        mainContainer.style.display = 'block'; // or 'block' if flex doesn't work
+    }
+
+
+
+    // Function to check if submit button should be enabled
+    function updateSubmitButtonState() {
+        const submitBtn = document.getElementById('submit-artworks-btn');
+        const tbody = document.getElementById('artworkTableBody');
+        const hasEntries = tbody.children.length > 0;
+        const allProcessed = !isProcessingArtworks && processedArtworks >= totalExpectedArtworks;
+
+        // For paginated data, check if current page has been uploaded
+        const currentPageUploaded = uploadedPages.has(currentPage);
+
+        // Enable button only if we have entries, all processing is complete, and current page hasn't been uploaded
+        submitBtn.disabled = !hasEntries || !allProcessed || currentPageUploaded;
+
+        // Update button text based on upload status
+        if (currentPageUploaded) {
+            submitBtn.textContent = 'Page Uploaded';
+            submitBtn.classList.add('btn-secondary');
+            submitBtn.classList.remove('btn-success');
+        } else {
+            submitBtn.textContent = 'Submit';
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-success');
+        }
+    }
+
+    // Function to update generate artwork button state
+    function updateGenerateArtworkButtonState() {
+        const generateBtn = document.getElementById('generate-artwork-btn');
+        const hasSpreadsheet = uploadedSpreadsheetData && uploadedSpreadsheetData.length > 0;
+        const hasImages = uploadedImageFiles && uploadedImageFiles.length > 0;
+
+        generateBtn.disabled = !(hasSpreadsheet && hasImages);
+    }
+
+    // Find the "Add" button (the first .btn-light with title="Add")
+    function handleOpenUploadArtworks() {
+        mainContainer.style.display = 'none';
+        uploadContainer.style.display = 'block';
+        updateSubmitButtonState(); // Ensure submit button is disabled initially
+        updateGenerateArtworkButtonState(); // Ensure generate button is disabled initially
+    }
+
+    function backToCollections() {
+        uploadContainer.style.display = 'none';
+        mainContainer.style.display = 'block'; // or 'block' if flex doesn't work
+        resetSpreadsheetUpload();
+        resetImageUpload();
+        resetPagination(); // Reset pagination when going back
+        updateGenerateArtworkButtonState(); // Reset generate button state
+    }
+
+    function resetSpreadsheetUpload() {
+        // Reset upload box to initial state
+        spreadUploadText.style.display = 'block';
+        spreadProgress.style.display = 'none';
+        spreadFilename.style.display = 'none';
+        document.getElementById('spreadsheetInput').value = '';
+        uploadedSpreadsheetData = null;
+    }
+
+    function resetImageUpload() {
+        // Reset image upload box to initial state
+        imageUploadText.style.display = 'block';
+        imageProgress.style.display = 'none';
+        imageFilename.style.display = 'none';
+        document.getElementById('imageInput').value = '';
+        uploadedImageFiles = [];
+    }
+
+    // Click on upload box triggers file input
+    document.getElementById('spreadsheet-upload').onclick = () => document.getElementById('spreadsheetInput').click();
+    document.getElementById('image-upload').onclick = () => document.getElementById('imageInput').click();
+
+    // Add drag and drop functionality for spreadsheet upload
+    const spreadsheetUpload = document.getElementById('spreadsheet-upload');
+    const spreadsheetInput = document.getElementById('spreadsheetInput');
+
+    spreadsheetUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    spreadsheetUpload.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    spreadsheetUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            // Check if file type is valid
+            const validTypes = ['.csv', '.xlsx', '.xls'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (validTypes.includes(fileExtension)) {
+                // Set the file to the input
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                spreadsheetInput.files = dataTransfer.files;
+
+                // Trigger the change event
+                const event = new Event('change', { bubbles: true });
+                spreadsheetInput.dispatchEvent(event);
+            } else {
+                alert('Please select a valid file type (.csv, .xlsx, .xls)');
+            }
+        }
+    });
+
+    // Add drag and drop functionality for image upload
+    const imageUpload = document.getElementById('image-upload');
+    const imageInput = document.getElementById('imageInput');
+
+    imageUpload.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('dragover');
+    });
+
+    imageUpload.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+    });
+
+    imageUpload.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            // Check if all files are valid image types
+            const validTypes = ['.png', '.jpg', '.jpeg'];
+            const validFiles = Array.from(files).filter(file => {
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                return validTypes.includes(fileExtension);
+            });
+
+            if (validFiles.length === files.length) {
+                // Set the files to the input
+                const dataTransfer = new DataTransfer();
+                validFiles.forEach(file => dataTransfer.items.add(file));
+                imageInput.files = dataTransfer.files;
+
+                // Trigger the change event
+                const event = new Event('change', { bubbles: true });
+                imageInput.dispatchEvent(event);
+            } else {
+                alert('Please select valid image files (.png, .jpg, .jpeg)');
+            }
+        }
+    });
+
+    function downloadSpreadsheet() {
+        const data = [
+            ['Artwork upload spreadsheet'],
+            [],
+            ['Add required information for each piece of artwork'],
+            ["Ensure the 'Filename' fully matches the images filename"],
+            ['Upload completed spreadsheet to Tetra'],
+            [],
+            ['Filename', 'Company', 'Collection', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type']
+        ];
+
+        const rows = document.querySelectorAll('#artworkTableBody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 9) return;
+
+            const rowData = [];
+            const img = cells[0].querySelector('img');
+            rowData.push(img ? img.getAttribute('data-filename') || '' : '');
+
+            // 2. Collection
+            const collectionSelect = cells[2].querySelector('select');
+            rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
+
+            rowData.push(cells[3].textContent.trim());
+            rowData.push(cells[4].textContent.trim());
+            rowData.push(cells[5].querySelector('input').value);
+            rowData.push(cells[6].querySelector('input').value);
+            const unitSelect = cells[7].querySelector('select');
+            rowData.push(unitSelect ? unitSelect.value : '');
+
+            rowData.push(cells[7].textContent.trim());
+            rowData.push(cells[8].textContent.trim());
+
+            data.push(rowData);
+        });
+
+        // Download both formats
+        // downloadCSV(data);
+        downloadXLSX(data);
+    }
+
+    function downloadCSV(data) {
+        const worksheet = XLSX.utils.aoa_to_sheet(data, {
+            cellStyles: false,
+            sheetStubs: true
+        });
+
+        if (!worksheet['!merges']) worksheet['!merges'] = [];
+        worksheet['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 2, c: 0 }, e: { r: 2, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 3, c: 0 }, e: { r: 3, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } });
+
+        const csvContent = XLSX.utils.sheet_to_csv(worksheet);
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'artworks_template.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function downloadXLSX(data) {
+        const worksheet = XLSX.utils.aoa_to_sheet(data, {
+            cellStyles: false,
+            sheetStubs: true
+        });
+
+        if (!worksheet['!merges']) worksheet['!merges'] = [];
+        worksheet['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 2, c: 0 }, e: { r: 2, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 3, c: 0 }, e: { r: 3, c: 6 } });
+        worksheet['!merges'].push({ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } });
+
+        // Create workbook with the worksheet
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Artworks Template');
+
+        // Generate XLSX file
+        const xlsxContent = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+        const blob = new Blob([xlsxContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'artworks_template.xlsx');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function handleSaveCollection() {
+        const companySelect = document.getElementById('collectionCompany');
+
+        const collectionName = document.getElementById('collectionName').value;
+        const collectionThumbnail = document.getElementById('collectionThumbnail').files[0];
+        let companyName;
+        if (isSuperAdmin) {
+            companyName = companySelect.options[companySelect.selectedIndex].text;
+        } else {
+            companyName = companySelect.value;
+        }
+
+        const formData = new FormData();
+        formData.append('collection_name', collectionName);
+        formData.append('collection_company_name', companyName);
+        formData.append('collection_thumbnail', collectionThumbnail);
+
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('/inventory/collections/add', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Collection added successfully');
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Could not add collection.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding collection.');
+        });
+    }
+
+    // Add Artwork button (add a new editable row)
+    function handleAddRow() {
+        const tbody = document.getElementById('artworkTableBody');
+        const row = document.createElement('tr');
+        const uniqueId = 'artwork-image-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+        const masterUnitDropdown = document.getElementById('masterUnit');
+        const masterCollectionDropdown = document.getElementById('masterCollectionHeader') || document.getElementById('masterCollectionStandalone');
+        const masterCompanyDropdown = document.getElementById('masterCompanyHeader');
+
+        row.innerHTML = `
+            <td>
+                <div class="upload-box artwork-image-upload" style="width: 60px; height: 60px; min-height: 0; padding: 0; font-size: 12px; cursor: pointer;">
+                    <span class="artwork-image-upload-text">Select or drag file</span>
+                    <input type="file" accept=".png,.jpg,.jpeg" style="display:none;" id="${uniqueId}">
+                </div>
+            </td>
+            <td>
+                <select class="form-select artwork-company-select ${!masterCompanyDropdown || !masterCompanyDropdown.value ? 'empty-cell' : ''}">
+                    <option value="">Select Company</option>
+                    @foreach($companies as $company)
+                        <option value="{{$company->id}}" ${masterCompanyDropdown && masterCompanyDropdown.value == {{$company->id}} ? 'selected' : ''}>{{$company->name}}</option>
+                    @endforeach
+                </select>
+            </td>
+            <td>
+                <select class="form-select artwork-collection-select ${!masterCollectionDropdown || !masterCollectionDropdown.value ? 'empty-cell' : ''}">
+                    <option value="">Select Collection</option>
+                    @foreach($collections as $collection)
+                        <option value="{{$collection->id}}" ${masterCollectionDropdown && masterCollectionDropdown.value == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
+                    @endforeach
+                </select>
+            </td>
+            <td contenteditable="true" data-placeholder="Enter title..." class="empty-cell"></td>
+            <td contenteditable="true" data-placeholder="Enter artist name..." class="empty-cell"></td>
+            <td><input type="number" id="artwork-height" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
+            <td><input type="number" id="artwork-width" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
+            <td>
+                <select class="form-select artwork-unit-select" >
+                    <option value="inch" ${masterUnitDropdown.value === 'inch' ? 'selected' : ''}>inch</option>
+                    <option value="cm" ${masterUnitDropdown.value === 'cm' ? 'selected' : ''}>cm</option>
+                </select>
+            </td>
+            <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
+            <td contenteditable="true" data-placeholder="Enter artwork type..." class="empty-cell"></td>
+            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+        `;
+        row.querySelector('button').onclick = function() {
+            row.remove();
+            updateSubmitButtonState(); // Update state when row is removed
+        };
+        tbody.appendChild(row);
+
+        // Update submit button state after adding row
+        updateSubmitButtonState();
+        updateGenerateArtworkButtonState(); // Update generate button state after adding row
+
+        // --- Image upload logic for this row ---
+        const uploadBox = row.querySelector('.artwork-image-upload');
+        const fileInput = row.querySelector('input[type="file"]');
+        const uploadText = row.querySelector('.artwork-image-upload-text');
+
+        // Function to handle image selection and populate fields
+        function handleImageSelection(file) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                // Create image element to get dimensions
+                const img = new Image();
+                img.onload = function() {
+                    // Update the upload box with image preview
+                    uploadBox.innerHTML = `<img src="${ev.target.result}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" data-filename="${file.name}">`;
+
+                    // Populate title with filename (without extension)
+                    const titleCell = row.querySelector('td:nth-child(3)');
+                    const filenameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+                    titleCell.textContent = filenameWithoutExt;
+
+                    // Populate width and height fields
+                    const widthInput = row.querySelector('input[id="artwork-width"]');
+                    const heightInput = row.querySelector('input[id="artwork-height"]');
+
+                    // Convert pixels to inches (assuming 96 DPI for web images)
+                    const widthInInches = Math.round((img.width / 96) * 10) / 10;
+                    const heightInInches = Math.round((img.height / 96) * 10) / 10;
+
+                    widthInput.value = widthInInches;
+                    heightInput.value = heightInInches;
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Click upload box triggers file input
+        uploadBox.onclick = function(e) {
+            if (e.target === fileInput) return; // Don't double-trigger
+            fileInput.click();
+        };
+
+        // Drag & drop support
+        uploadBox.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+        uploadBox.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+        });
+        uploadBox.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleImageSelection(files[0]);
+            }
+        });
+
+        // File input change: show preview and populate fields
+        fileInput.addEventListener('change', function(e) {
+            const file = fileInput.files[0];
+            handleImageSelection(file);
+        });
+
+        // Add event listeners to remove empty-cell class when user interacts
+        const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
+        contentEditableCells.forEach(cell => {
+            cell.addEventListener('input', function() {
+                if (this.textContent.trim() !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+
+        const inputFields = row.querySelectorAll('input[type="number"]');
+        inputFields.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+
+        const selectFields = row.querySelectorAll('select');
+        selectFields.forEach(select => {
+            select.addEventListener('change', function() {
+                if (this.value !== '') {
+                    this.classList.remove('empty-cell');
+                } else {
+                    this.classList.add('empty-cell');
+                }
+            });
+        });
+
+        // Add unit change event listener for individual unit dropdowns
+        const unitSelect = row.querySelector('.artwork-unit-select');
+        if (unitSelect) {
+            // Set initial previous unit
+            unitSelect.dataset.previousUnit = unitSelect.value;
+
+            unitSelect.addEventListener('change', function() {
+             //   handleUnitChange(this);
+            });
+        }
+    }
+
+    function handleSubmitArtworks() {
+        // Check if we have pagination (large dataset)
+        if (allArtworksData.length > 0 && totalPages > 1) {
+            // Show page upload confirmation modal
+            showPageUploadConfirmation();
+        } else {
+            // Handle single page upload (existing logic)
+            uploadCurrentPageArtworks();
+        }
+    }
+
+    function showPageUploadConfirmation() {
+        const modal = new bootstrap.Modal(document.getElementById('pageUploadModal'));
+        const pageUploadText = document.getElementById('pageUploadText');
+        const confirmBtn = document.getElementById('confirmPageUploadBtn');
+
+        const startIndex = (currentPage - 1) * artworksPerPage;
+        const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
+        const pageSize = endIndex - startIndex;
+
+        pageUploadText.textContent = `Do you want to upload artworks ${startIndex + 1}-${endIndex} of page ${currentPage}?`;
+
+        // Update confirm button text
+        confirmBtn.textContent = `Yes, Upload ${pageSize} Artworks`;
+
+        // Reset countdown
+        currentCountdown = countdownTime;
+        updateCountdownDisplay();
+
+        // Set up confirm button click handler
+        confirmBtn.onclick = function() {
+            clearCountdown();
+            modal.hide();
+            uploadCurrentPageArtworks();
+        };
+
+        // Set up modal events
+        modal._element.addEventListener('hidden.bs.modal', function() {
+            clearCountdown();
+        });
+
+        // Start countdown
+        startCountdown(() => {
+            modal.hide();
+            uploadCurrentPageArtworks();
+        });
+
+        modal.show();
+    }
+
+    function startCountdown(callback) {
+        clearCountdown(); // Clear any existing countdown
+
+        countdownInterval = setInterval(() => {
+            currentCountdown--;
+            updateCountdownDisplay();
+
+            if (currentCountdown <= 0) {
+                clearCountdown();
+                if (callback) callback();
+            }
+        }, 1000);
+    }
+
+    function clearCountdown() {
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+        }
+    }
+
+    function updateCountdownDisplay() {
+        const timerElement = document.getElementById('countdown-timer');
+        const progressElement = document.getElementById('countdown-progress');
+
+        if (timerElement && progressElement) {
+            timerElement.textContent = currentCountdown;
+            const progressPercentage = (currentCountdown / countdownTime) * 100;
+            progressElement.style.width = progressPercentage + '%';
+
+            // Add visual urgency indicators
+            timerElement.classList.remove('warning', 'danger');
+            if (currentCountdown <= 3) {
+                timerElement.classList.add('danger');
+            } else if (currentCountdown <= 5) {
+                timerElement.classList.add('warning');
+            }
+        }
+    }
+
+    function uploadCurrentPageArtworks() {
+        const submitBtn = document.getElementById('submit-artworks-btn');
+        const originalText = submitBtn.innerHTML;
+
+        // Show loading state on button immediately
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+        submitBtn.disabled = true;
+
+        // Show progress modal immediately
+        const progressModal = new bootstrap.Modal(document.getElementById('submitProgressModal'));
+        progressModal.show();
+
+        // Use setTimeout to allow the modal to render first, then collect data
+        setTimeout(() => {
+            const tbody = document.getElementById('artworkTableBody');
+            const rows = tbody.querySelectorAll('tr');
+            const data = [];
+
+            // Update progress text immediately
+            const startIndex = (currentPage - 1) * artworksPerPage;
+            const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
+            document.getElementById('submitProgressText').textContent = `Preparing artworks ${startIndex + 1}-${endIndex} for upload...`;
+            document.getElementById('submitProgressBar').style.width = '25%';
+
+            // Collect all the data from current page
+            rows.forEach((row, index) => {
+                const cells = row.querySelectorAll('td');
+                const image = cells[0].querySelector('img');
+                const companySelect = cells[1].querySelector('select');
+                const collectionSelect = cells[2].querySelector('select');
+
+                const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
+                const companyName = companySelect.options[companySelect.selectedIndex].text;
+                const unitSelect = cells[7].querySelector('select');
+                const unitValue = unitSelect ? unitSelect.value : '';
+
+                const rowData = {
+                    collection_name: collectionName,
+                    company_name: companyName,
+                    title: cells[3].textContent.trim(),
+                    artist: cells[4].textContent.trim(),
+                    height: cells[5].querySelector('input').value,
+                    width: cells[6].querySelector('input').value,
+                    description: cells[8].textContent.trim(),
+                    type: cells[9].textContent.trim(),
+                    unit: unitValue,
+                };
+
+                if (image && image.src && image.src.startsWith('data:')) {
+                    // Send the base64 data directly
+                    rowData.image = image.src;
+                }
+
+                data.push(rowData);
+            });
+
+            // Create FormData and append artwork data
+            const formData = new FormData();
+            formData.append('artwork_data', JSON.stringify(data));
+
+            const token = document.querySelector('meta[name="csrf-token"]').content;
+
+            // Simulate progress updates
+            const progressInterval = setInterval(() => {
+                const currentWidth = parseInt(document.getElementById('submitProgressBar').style.width) || 25;
+                if (currentWidth < 90) {
+                    const newWidth = Math.min(currentWidth + Math.random() * 10, 90);
+                    document.getElementById('submitProgressBar').style.width = newWidth + '%';
+
+                    // Update progress text based on progress
+                    if (newWidth < 50) {
+                        document.getElementById('submitProgressText').textContent = 'Uploading artwork data...';
+                    } else if (newWidth < 75) {
+                        document.getElementById('submitProgressText').textContent = 'Processing artwork information...';
+                    } else {
+                        document.getElementById('submitProgressText').textContent = 'Finalizing artwork creation...';
+                    }
+                }
+            }, 500);
+
+            fetch('/inventory/artworks/add', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Clear progress interval
+                clearInterval(progressInterval);
+
+                // Complete the progress bar
+                document.getElementById('submitProgressBar').style.width = '100%';
+                document.getElementById('submitProgressText').textContent = 'Artworks saved successfully!';
+
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Hide modal after a short delay
+                setTimeout(() => {
+                    progressModal.hide();
+
+                    if (data.success) {
+                        if (data.created_count > 0) {
+                            // Mark current page as uploaded
+                            uploadedPages.add(currentPage);
+
+                            // Check if there are more pages to upload
+                            if (currentPage < totalPages) {
+                                // Ask if user wants to continue with next page
+                                showContinueUploadModal(data.created_count, currentPage, function() {
+                                    currentPage++;
+                                    displayCurrentPage();
+                                    updatePaginationControls();
+                                    showPageUploadConfirmation();
+                                });
+                            } else {
+                                // All pages uploaded
+                                showSuccessModal('Upload Completed!', `All ${allArtworksData.length} artworks have been uploaded successfully.`);
+                                // Optionally reload the page or reset
+                                window.location.reload();
+                            }
+                        } else {
+                            alert('No artworks were created. Please check the data and try again.');
+                        }
+                    } else {
+                        alert('Error: ' + (data.message || 'Could not add artwork.'));
+                    }
+                }, 1000);
+            })
+            .catch(error => {
+                // Clear progress interval
+                clearInterval(progressInterval);
+
+                // Reset button state on error
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Hide modal immediately on error
+                progressModal.hide();
+
+                console.error('Error:', error);
+                alert('Error saving artworks.');
+            });
+        }, 50); // Small delay to ensure modal renders first
+    }
+
+    // Remove row
+    document.querySelectorAll('#artworkTableBody .btn-danger').forEach(btn => {
+        btn.onclick = function() { btn.closest('tr').remove(); };
+    });
+
+
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+
+        // Show progress bar and hide upload text
+        imageUploadText.style.display = 'none';
+        imageProgress.style.display = 'block';
+        imageFilename.style.display = 'none';
+
+        // Simulate upload progress
+        const progressBar = imageProgress.querySelector('.progress-bar-upload');
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+
+                // Hide progress and show file count
+                setTimeout(() => {
+                    imageProgress.style.display = 'none';
+                    imageFilename.style.display = 'block';
+
+                    // Display file count with appropriate text
+                    const fileCount = files.length;
+                    const fileText = fileCount === 1 ? '1 image uploaded' : `${fileCount} images uploaded`;
+                    imageFilename.textContent = fileText;
+
+                    // Store the uploaded files
+                    uploadedImageFiles = files;
+                    updateGenerateArtworkButtonState(); // Update generate button state after image upload
+                }, 300);
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
+    });
+
+    // Add spreadsheet input event listener
+    document.getElementById('spreadsheetInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Show progress bar and hide upload text
+        spreadUploadText.style.display = 'none';
+        spreadProgress.style.display = 'block';
+        spreadFilename.style.display = 'none';
+
+        // Simulate upload progress
+        const progressBar = document.querySelector('.progress-bar-upload');
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+
+                // Hide progress and show filename
+                setTimeout(() => {
+                    spreadProgress.style.display = 'none';
+                    spreadFilename.style.display = 'block';
+                    spreadFilename.textContent = file.name;
+
+                    // Process the file
+                    processSpreadsheetFile(file);
+                }, 300);
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
+    });
+
+    function processSpreadsheetFile(file) {
+        const reader = new FileReader();
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        reader.onload = function(e) {
+            let rawData;
+
+            if (fileExtension === 'csv') {
+                // Handle CSV files
+                const csv = e.target.result;
+                const workbook = XLSX.read(csv, { type: 'string' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+                // Handle XLSX/XLS files
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                rawData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            } else {
+                alert('Unsupported file format. Please upload a .csv, .xlsx, or .xls file.');
+                return;
+            }
+
+            // Convert to array of objects
+            if (rawData.length > 1) { // Check if we have header and at least one data row
+
+                // Get the header row (first row)
+                const headers = rawData.find(row => row.length >=6 && row[0] === "Filename");
+
+                // Filter out empty rows and process data rows (skip header)
+                const filteredData = rawData.filter(row => row[0] !== "Filename" && row.length >= 6);
+                uploadedSpreadsheetData = [];
+
+                // Process each data row
+                filteredData.forEach(row => {
+                    if (row && row.length >= 6) {
+                        const artwork = {};
+
+                        // Map each column to its corresponding header
+                        headers.forEach((header, index) => {
+                            if (row[index] !== undefined) {
+                                // Clean up the header name and use it as property name
+                                const cleanHeader = header.toString().trim();
+                                artwork[cleanHeader] = row[index] ? row[index].toString() : '';
+                            }
+                        });
+
+                        // Only add if we have at least a filename
+                        if (artwork.Filename || artwork['ImageName'] || artwork['Image Name']) {
+                            uploadedSpreadsheetData.push(artwork);
+                        }
+                    }
+                });
+
+                updateGenerateArtworkButtonState(); // Update generate button state after processing spreadsheet
+            }
+        };
+
+        // Use appropriate read method based on file type
+        if (fileExtension === 'csv') {
+            reader.readAsText(file);
+        } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+            reader.readAsArrayBuffer(file);
+        }
+    }
+
+    function handleGenerateArtwork() {
+        // Hide the button and show the progress bar
+        document.getElementById('generate-artwork-btn').style.display = 'none';
+        const progressBar = document.getElementById('artwork-progress-bar');
+        progressBar.style.display = 'block';
+
+        // Calculate total artworks - only count unique filenames that have both spreadsheet data and images
+        let total = 0;
+
+        if (uploadedSpreadsheetData && uploadedSpreadsheetData.length > 0 && uploadedImageFiles.length > 0) {
+            // Get filenames from spreadsheet (now objects with Filename property)
+            const spreadsheetFilenames = uploadedSpreadsheetData.map(artwork =>
+                artwork.Filename || artwork['ImageName'] || artwork['Image Name']
+            ).filter(filename => filename);
+
+
+            // Get filenames from uploaded images
+            const imageFilenames = uploadedImageFiles.map(file => file.name);
+            // Count matches
+            total = spreadsheetFilenames.filter(filename =>
+                imageFilenames.some(imageName =>
+                    imageName.toLowerCase() === filename.toLowerCase() ||
+                    imageName.toLowerCase().replace(/\.[^/.]+$/, "") === filename.toLowerCase().replace(/\.[^/.]+$/, "")
+                )
+            ).length;
+        }
+
+        // Set processing state
+        totalExpectedArtworks = total;
+        processedArtworks = 0;
+        isProcessingArtworks = true;
+        updateSubmitButtonState();
+
+        // If nothing to add, just reset UI and return
+        if (total === 0) {
+            progressBar.style.display = 'none';
+            document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+            isProcessingArtworks = false;
+            updateSubmitButtonState();
+            alert('No matching files found. Please ensure spreadsheet filenames match uploaded image filenames.');
+            return;
+        }
+
+        let current = 0;
+        document.getElementById('artwork-progress-bar-inner').style.width = '0%';
+        document.getElementById('artwork-progress-bar-label').innerText = `0/${total} processed`;
+
+        // Simulate progress bar filling up over 1 second
+        let interval = setInterval(() => {
+            current++;
+            let percent = Math.round((current / total) * 100);
+            document.getElementById('artwork-progress-bar-inner').style.width = percent + '%';
+            document.getElementById('artwork-progress-bar-label').innerText = `${current}/${total} processed`;
+            if (current >= total) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    actuallyProcessAllArtworks();
+                    progressBar.style.display = 'none';
+                    document.getElementById('generate-artwork-btn').style.display = 'inline-block';
+                    isProcessingArtworks = false;
+                    updateSubmitButtonState();
+                }, 200);
+            }
+        }, 1000 / total);
+    }
+
+    function actuallyProcessAllArtworks() {
+        const tbody = document.getElementById('artworkTableBody');
+        tbody.innerHTML = ''; // Clear previous rows
+
+        if (!uploadedSpreadsheetData || uploadedSpreadsheetData.length === 0 || uploadedImageFiles.length === 0) {
+            processedArtworks = 0;
+            updateSubmitButtonState();
+            return;
+        }
+
+        // Create a map of image files by filename (without extension)
+        const imageFilesMap = new Map();
+        uploadedImageFiles.forEach(file => {
+            const filenameWithoutExt = file.name.toLowerCase().replace(/\.[^/.]+$/, "");
+            imageFilesMap.set(filenameWithoutExt, file);
+        });
+
+        let processedCount = 0;
+        const totalToProcess = uploadedSpreadsheetData.length;
+        allArtworksData = []; // Reset all artworks data
+
+        // Process spreadsheet data (now array of objects)
+        uploadedSpreadsheetData.forEach(artwork => {
+            const spreadsheetFilename = artwork.Filename || artwork['ImageName'] || artwork['Image Name'];
+            if (!spreadsheetFilename) {
+                processedCount++;
+                if (processedCount >= totalToProcess) {
+                    processedArtworks = processedCount;
+                    setupPagination();
+                }
+                return;
+            }
+
+            // Try to match filename (with and without extension)
+            const filenameWithoutExt = spreadsheetFilename.toLowerCase().replace(/\.[^/.]+$/, "");
+            const matchingImageFile = imageFilesMap.get(filenameWithoutExt);
+
+            if (matchingImageFile) {
+                // Create image preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const artworkData = {
+                        imageSrc: e.target.result,
+                        filename: spreadsheetFilename,
+                        collectionId: getCollectionIdByName(getProperty(artwork, ['Collection']) || ''),
+                        title: getProperty(artwork, ['title', 'Title']) || '',
+                        artist: getProperty(artwork, ['artist', 'Artist']) || '',
+                        height: getProperty(artwork, ['height', 'Height', 'Height (in)']) || '',
+                        width: getProperty(artwork, ['width', 'Width', 'Width (in)']) || '',
+                        unit: getProperty(artwork, ['unit', 'Unit']) || 'inch',
+                        description: getProperty(artwork, ['description', 'Description']) || '',
+                        type: getProperty(artwork, ['type', 'Type']) || 'Painting'
+                    };
+
+                    allArtworksData.push(artworkData);
+
+                    processedCount++;
+                    if (processedCount >= totalToProcess) {
+                        processedArtworks = processedCount;
+                        setupPagination();
+                    }
+                };
+                reader.readAsDataURL(matchingImageFile);
+            } else {
+                // No matching image found, but still count as processed
+                processedCount++;
+                if (processedCount >= totalToProcess) {
+                    processedArtworks = processedCount;
+                    setupPagination();
+                }
+            }
+        });
+    }
+
+    function setupPagination() {
+        if (allArtworksData.length === 0) {
+            hidePaginationControls();
+            return;
+        }
+
+        // Calculate total pages
+        totalPages = Math.ceil(allArtworksData.length / artworksPerPage);
+        currentPage = 1;
+
+        // Show pagination controls
+        showPaginationControls();
+
+        // Display first page
+        displayCurrentPage();
+
+        // Update submit button state
+        updateSubmitButtonState();
+    }
+
+    function getCollectionIdByName(collectionName) {
+        // Find collection ID by name from the collections data
+        const collection = allCollections.find(c => c.name === collectionName);
+        return collection ? collection.id : '';
+    }
+
+    function handleDeleteArtworks() {
+        // Collect selected IDs
+        const selectedCheckboxes = document.querySelectorAll('.bulk-select-checkbox:checked');
+
+        const selectedIds = Array.from(selectedCheckboxes)
+            .map(cb => cb.value);
+
+
+        if (selectedIds.length === 0) {
+            alert('No items selected for deletion.');
+            return;
+        }
+
+        // Send AJAX request (adjust URL as needed)
+        fetch('/inventory/artworks/bulk-delete', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ids: selectedIds }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Optionally: remove rows from DOM or reload
+                window.location.reload();
+            } else {
+                alert('Failed to delete artworks.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting artworks.');
+        });
+    }
+
+    // Pagination Functions
+    function handlePrevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            displayCurrentPage();
+            updatePaginationControls();
+        }
+    }
+
+    function handleNextPage() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayCurrentPage();
+            updatePaginationControls();
+        }
+    }
+
+    function updatePaginationControls() {
+        const prevBtn = document.getElementById('prev-page-btn');
+        const nextBtn = document.getElementById('next-page-btn');
+        const paginationText = document.getElementById('pagination-text');
+        const totalArtworks = document.getElementById('total-artworks');
+
+        // Top pagination controls
+        const prevBtnTop = document.getElementById('prev-page-btn-top');
+        const nextBtnTop = document.getElementById('next-page-btn-top');
+        const paginationTextTop = document.getElementById('pagination-text-top');
+        const totalArtworksTop = document.getElementById('total-artworks-top');
+
+        // Update both top and bottom controls
+        [prevBtn, prevBtnTop].forEach(btn => btn.disabled = currentPage === 1);
+        [nextBtn, nextBtnTop].forEach(btn => btn.disabled = currentPage === totalPages);
+        [paginationText, paginationTextTop].forEach(text => text.textContent = `Page ${currentPage} of ${totalPages}`);
+        [totalArtworks, totalArtworksTop].forEach(total => total.textContent = allArtworksData.length);
+
+        // Generate page number buttons for both top and bottom
+        generatePageNumbers();
+        generatePageNumbersTop();
+
+        // Update submit button state
+        updateSubmitButtonState();
+    }
+
+    function generatePageNumbers() {
+        const pageNumbersContainer = document.getElementById('page-numbers');
+        pageNumbersContainer.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const maxVisiblePages = 10; // Show max 10 page numbers
+        let startPage = 1;
+        let endPage = totalPages;
+
+        // Calculate which page numbers to show
+        if (totalPages > maxVisiblePages) {
+            if (currentPage <= 5) {
+                endPage = maxVisiblePages;
+            } else if (currentPage >= totalPages - 4) {
+                startPage = totalPages - maxVisiblePages + 1;
+            } else {
+                startPage = currentPage - 4;
+                endPage = currentPage + 5;
+            }
+        }
+
+        // Add first page and ellipsis if needed
+        if (startPage > 1) {
+            addPageButton(1, pageNumbersContainer);
+            if (startPage > 2) {
+                addEllipsis(pageNumbersContainer);
+            }
+        }
+
+        // Add page numbers
+        for (let i = startPage; i <= endPage; i++) {
+            addPageButton(i, pageNumbersContainer);
+        }
+
+        // Add last page and ellipsis if needed
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                addEllipsis(pageNumbersContainer);
+            }
+            addPageButton(totalPages, pageNumbersContainer);
+        }
+    }
+
+    function generatePageNumbersTop() {
+        const pageNumbersContainer = document.getElementById('page-numbers-top');
+        pageNumbersContainer.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const maxVisiblePages = 10; // Show max 10 page numbers
+        let startPage = 1;
+        let endPage = totalPages;
+
+        // Calculate which page numbers to show
+        if (totalPages > maxVisiblePages) {
+            if (currentPage <= 5) {
+                endPage = maxVisiblePages;
+            } else if (currentPage >= totalPages - 4) {
+                startPage = totalPages - maxVisiblePages + 1;
+            } else {
+                startPage = currentPage - 4;
+                endPage = currentPage + 5;
+            }
+        }
+
+        // Add first page and ellipsis if needed
+        if (startPage > 1) {
+            addPageButton(1, pageNumbersContainer);
+            if (startPage > 2) {
+                addEllipsis(pageNumbersContainer);
+            }
+        }
+
+        // Add page numbers
+        for (let i = startPage; i <= endPage; i++) {
+            addPageButton(i, pageNumbersContainer);
+        }
+
+        // Add last page and ellipsis if needed
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                addEllipsis(pageNumbersContainer);
+            }
+            addPageButton(totalPages, pageNumbersContainer);
+        }
+    }
+
+    function addPageButton(pageNum, container) {
+        const button = document.createElement('button');
+        button.className = `btn btn-sm page-number-btn ${pageNum === currentPage ? 'btn-primary' : 'btn-outline-secondary'}`;
+        button.textContent = pageNum;
+        button.onclick = () => handlePageClick(pageNum);
+        container.appendChild(button);
+    }
+
+    function addEllipsis(container) {
+        const span = document.createElement('span');
+        span.className = 'mx-2 text-muted';
+        span.textContent = '...';
+        container.appendChild(span);
+    }
+
+    function handlePageClick(pageNum) {
+        if (pageNum !== currentPage && pageNum >= 1 && pageNum <= totalPages) {
+            currentPage = pageNum;
+            displayCurrentPage();
+            updatePaginationControls();
+        }
+    }
+
+    function displayCurrentPage() {
+        const tbody = document.getElementById('artworkTableBody');
+        const masterCompanyDropdown = document.getElementById('masterCompanyHeader');
+        tbody.innerHTML = ''; // Clear current page
+
+        const startIndex = (currentPage - 1) * artworksPerPage;
+        const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
+        currentPageArtworks = allArtworksData.slice(startIndex, endIndex);
+
+        // Display current page artworks
+        currentPageArtworks.forEach(artwork => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                <td>
+                    ${artwork.company ? 
+                        artwork.company : 
+                        `<select class="form-select artwork-company-select ${!masterCompanyDropdown || !masterCompanyDropdown.value ? 'empty-cell' : ''}">
+                            <option value="">Select Company</option>
+                            @foreach($companies as $company)
+                                <option value="{{$company->id}}" ${masterCompanyDropdown && masterCompanyDropdown.value == {{$company->id}} ? 'selected' : ''}>{{$company->name}}</option>
+                            @endforeach
+                        </select>`
+                    }
+                </td>
+                <td >
+                    <select class="form-select artwork-collection-select">
+                        @foreach($collections as $collection)
+                            <option value="{{$collection->id}}" ${artwork.collectionId == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
+                <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
+                <td><input type="number" id="artwork-height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
+                <td><input type="number" id="artwork-width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
+                <td>
+                    <select class="form-select artwork-unit-select">
+                        <option value="inch" ${artwork.unit === 'inch' ? 'selected' : ''}>inch</option>
+                        <option value="cm" ${artwork.unit === 'cm' ? 'selected' : ''}>cm</option>
+                    </select>
+                </td>
+                <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.description ? 'empty-cell' : ''}">${artwork.description || ''}</td>
+                <td contenteditable="true" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
+                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+            `;
+            row.querySelector('button').onclick = function() {
+                row.remove();
+                updateSubmitButtonState();
+            };
+            tbody.appendChild(row);
+
+            // Add event listeners for empty-cell class
+            const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
+            contentEditableCells.forEach(cell => {
+                cell.addEventListener('input', function() {
+                    if (this.textContent.trim() !== '') {
+                        this.classList.remove('empty-cell');
+                    } else {
+                        this.classList.add('empty-cell');
+                    }
+                });
+            });
+
+            const inputFields = row.querySelectorAll('input[type="number"]');
+            inputFields.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value.trim() !== '') {
+                        this.classList.remove('empty-cell');
+                    } else {
+                        this.classList.add('empty-cell');
+                    }
+                });
+            });
+
+            const selectFields = row.querySelectorAll('select');
+            selectFields.forEach(select => {
+                select.addEventListener('change', function() {
+                    if (this.value !== '') {
+                        this.classList.remove('empty-cell');
+                    } else {
+                        this.classList.add('empty-cell');
+                    }
+                });
+            });
+
+            // Add unit change event listener for individual unit dropdowns
+            const unitSelect = row.querySelector('.artwork-unit-select');
+            if (unitSelect) {
+                // Set initial previous unit
+                unitSelect.dataset.previousUnit = unitSelect.value;
+
+                unitSelect.addEventListener('change', function() {
+                //    handleUnitChange(this);
+                });
+            }
+        });
+    }
+
+    function showPaginationControls() {
+        const paginationControls = document.getElementById('pagination-controls');
+        const paginationControlsTop = document.getElementById('pagination-controls-top');
+        paginationControls.style.display = 'block';
+        paginationControlsTop.style.display = 'block';
+        updatePaginationControls();
+    }
+
+    function hidePaginationControls() {
+        const paginationControls = document.getElementById('pagination-controls');
+        const paginationControlsTop = document.getElementById('pagination-controls-top');
+        paginationControls.style.display = 'none';
+        paginationControlsTop.style.display = 'none';
+    }
+
+    function resetPagination() {
+        currentPage = 1;
+        totalPages = 1;
+        allArtworksData = [];
+        currentPageArtworks = [];
+        uploadedPages.clear();
+        hidePaginationControls();
+    }
+
+    // Function to show success modal
+    function showSuccessModal(title, message) {
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        document.getElementById('successModalTitle').textContent = title;
+        document.getElementById('successModalMessage').textContent = message;
+        successModal.show();
+    }
+
+    // Function to show continue upload confirmation modal
+    function showContinueUploadModal(createdCount, currentPage, callback) {
+        const continueModal = new bootstrap.Modal(document.getElementById('continueUploadModal'));
+        document.getElementById('continueUploadTitle').textContent = 'Continue with next page?';
+        document.getElementById('continueUploadMessage').textContent = `Successfully uploaded ${createdCount} artworks from page ${currentPage}. Do you want to continue with page ${currentPage + 1}?`;
+
+        // Set up the continue button click handler
+        const continueBtn = document.getElementById('continueUploadBtn');
+        continueBtn.onclick = function() {
+            continueModal.hide();
+            if (callback) callback();
+        };
+
+        // Set up modal hidden event to handle "No" response
+        continueModal._element.addEventListener('hidden.bs.modal', function() {
+            // If modal is hidden without clicking continue, it means user chose "No"
+            // The callback won't be called, so we just show the success message
+          //  showSuccessModal('Upload Completed!', `${createdCount} artworks uploaded from page ${currentPage}.`);
+        });
+
+        continueModal.show();
+    }
+
+    // Unit conversion function
+    function convertUnit(value, fromUnit, toUnit) {
+        // First convert to inches (base unit)
+        let inchesValue;
+
+        switch (fromUnit) {
+            case 'inch':
+                inchesValue = value;
+                break;
+            case 'cm':
+                inchesValue = value / 2.54;
+                break;
+            case 'm':
+                inchesValue = value * 39.3701;
+                break;
+            default:
+                inchesValue = value; // Default to no conversion
+        }
+
+        // Then convert from inches to target unit
+        let result;
+        switch (toUnit) {
+            case 'inch':
+                result = inchesValue;
+                break;
+            case 'cm':
+                result = inchesValue * 2.54;
+                break;
+            case 'm':
+                result = inchesValue / 39.3701;
+                break;
+            default:
+                result = inchesValue;
+        }
+
+        // Round to 2 decimal places
+        return Math.round(result * 100) / 100;
+    }
+
+    // Function to handle individual unit dropdown changes
+    function handleUnitChange(unitSelect) {
+        const row = unitSelect.closest('tr');
+        const heightInput = row.querySelector('input[id="artwork-height"]');
+        const widthInput = row.querySelector('input[id="artwork-width"]');
+
+        if (heightInput && widthInput && heightInput.value && widthInput.value) {
+            const currentUnit = unitSelect.dataset.previousUnit || unitSelect.value;
+            const newUnit = unitSelect.value;
+
+            // Only convert if the unit actually changed
+            if (currentUnit !== newUnit) {
+                const heightValue = parseFloat(heightInput.value);
+                const widthValue = parseFloat(widthInput.value);
+
+                // Convert height
+                const convertedHeight = convertUnit(heightValue, currentUnit, newUnit);
+                heightInput.value = convertedHeight;
+
+                // Convert width
+                const convertedWidth = convertUnit(widthValue, currentUnit, newUnit);
+                widthInput.value = convertedWidth;
+            }
+
+            // Store the new unit as previous unit for next change
+            unitSelect.dataset.previousUnit = newUnit;
+        } else {
+            // If no values to convert, just update the previous unit
+            unitSelect.dataset.previousUnit = unitSelect.value;
+        }
+    }
+
+
+
+
 $(document).ready(function() {
     console.log('Initializing DataTable with inline editing');
 
+
+     // Handle both master collection dropdowns
+     const masterCollectionDropdowns = [
+            document.getElementById('masterCollectionStandalone'),
+            document.getElementById('masterCollectionHeader')
+        ];
+        
+        masterCollectionDropdowns.forEach(dropdown => {
+            if (dropdown) {
+                dropdown.addEventListener('change', function(event) {
+                    const selectedCollectionId = event.target.value;
+                    if (selectedCollectionId) {
+                        const artworkRows = document.querySelectorAll('#artworkTableBody tr');
+                        artworkRows.forEach(row => {
+                            const collectionSelect = row.querySelector('.artwork-collection-select');
+                            if (collectionSelect) {
+                                collectionSelect.value = selectedCollectionId;
+                            }
+                        });
+                        
+                        // Sync the other dropdown to the same value
+                        masterCollectionDropdowns.forEach(otherDropdown => {
+                            if (otherDropdown && otherDropdown !== dropdown) {
+                                otherDropdown.value = selectedCollectionId;
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        const masterUnitDropdown = document.getElementById('masterUnit');
+        if (masterUnitDropdown) {
+            masterUnitDropdown.addEventListener('change', function(event) {
+                const selectedUnit = event.target.value;
+                if (selectedUnit) {
+                    const artworkRows = document.querySelectorAll('#artworkTableBody tr');
+                    artworkRows.forEach(row => {
+                        const unitSelect = row.querySelector('.artwork-unit-select');
+                        
+                        if (unitSelect) {
+                            const currentUnit = unitSelect.value;
+                            unitSelect.value = selectedUnit;
+                            
+                            // Convert values if both inputs exist and have values
+                            const heightInput = row.querySelector('input[id="artwork-height"]');
+                            const widthInput = row.querySelector('input[id="artwork-width"]');
+                            
+                            if (heightInput && widthInput && heightInput.value && widthInput.value) {
+                                // const heightValue = parseFloat(heightInput.value);
+                                // const widthValue = parseFloat(widthInput.value);
+                                
+                                // // Convert height
+                                // const convertedHeight = convertUnit(heightValue, currentUnit, selectedUnit);
+                                // heightInput.value = convertedHeight;
+                                
+                                // // Convert width
+                                // const convertedWidth = convertUnit(widthValue, currentUnit, selectedUnit);
+                                // widthInput.value = convertedWidth;
+                            }
+                            
+                            // Update the previous unit for this row's unit select
+                            unitSelect.dataset.previousUnit = selectedUnit;
+                        }
+                    });
+                }
+            });
+        }
+
+        
     // Check if DataTables is available
     if (typeof $.fn.DataTable === 'undefined') {
         console.error('DataTables library not loaded!');
@@ -1209,32 +2523,32 @@ $(document).ready(function() {
 
     // Search toggle functionality
     var currentSearchType = 'artwork';
-    
+
     $('.search-toggle-btn').on('click', function() {
         var searchType = $(this).data('type');
-        
+
         // Update active button
         $('.search-toggle-btn').removeClass('active');
         $(this).addClass('active');
-        
+
         // Update current search type
         currentSearchType = searchType;
-        
+
         // Update search placeholder
         var placeholder = searchType === 'artwork' ? 'Search artworks...' : 'Search collections...';
         $('#tableSearch').attr('placeholder', placeholder);
-        
+
         // Clear current search and reload table
         $('#tableSearch').val('');
         table.ajax.reload();
-        
+
         console.log('Search type changed to:', searchType);
     });
 
     // Custom search functionality
     $('#tableSearch').on('keyup', function() {
         var searchValue = this.value;
-        
+
         // Apply search based on current type
         if (currentSearchType === 'artwork') {
             // Search in artwork table
@@ -1264,13 +2578,13 @@ $(document).ready(function() {
     $(document).on('change', '.row-checkbox', function() {
         var rowId = $(this).data('id');
         var isChecked = $(this).is(':checked');
-        
+
         if (isChecked) {
             selectedRows.add(rowId);
         } else {
             selectedRows.delete(rowId);
         }
-        
+
         updateBulkEditUI();
         updateSelectAllState();
     });
@@ -1279,7 +2593,7 @@ $(document).ready(function() {
     selectAllCheckbox.on('change', function() {
         var isChecked = $(this).is(':checked');
         $('.row-checkbox').prop('checked', isChecked);
-        
+
         if (isChecked) {
             $('.row-checkbox').each(function() {
                 selectedRows.add($(this).data('id'));
@@ -1287,7 +2601,7 @@ $(document).ready(function() {
         } else {
             selectedRows.clear();
         }
-        
+
         updateBulkEditUI();
     });
 
@@ -1295,7 +2609,7 @@ $(document).ready(function() {
     function updateBulkEditUI() {
         var count = selectedRows.size;
         selectedCount.text(count + ' item' + (count !== 1 ? 's' : '') + ' selected');
-        
+
         if (count > 0) {
             bulkEditControls.show();
             // Reinitialize tooltips for dynamically shown elements
@@ -1320,7 +2634,7 @@ $(document).ready(function() {
     function updateSelectAllState() {
         var totalCheckboxes = $('.row-checkbox').length;
         var checkedCheckboxes = $('.row-checkbox:checked').length;
-        
+
         if (checkedCheckboxes === 0) {
             selectAllCheckbox.prop('indeterminate', false).prop('checked', false);
         } else if (checkedCheckboxes === totalCheckboxes) {
@@ -1343,7 +2657,7 @@ $(document).ready(function() {
     bulkUpdateBtn.on('click', function() {
         var formData = $('#bulkEditForm').serialize();
         var selectedIds = Array.from(selectedRows);
-        
+
         if (selectedIds.length === 0) {
             alert('No items selected.');
             return;
@@ -1461,11 +2775,11 @@ $(document).ready(function() {
     // Collection selection function
     window.selectCollection = function(collectionId, collectionName, itemCount) {
         window.selectedCollectionId = collectionId;
-        
+
         // Update the dropdown button text
         const dropdownButton = document.querySelector('.dropdown button');
         const buttonContent = dropdownButton.querySelector('.text-start');
-        
+
         if (collectionId) {
             buttonContent.innerHTML = `
                 <div class="fw-bold">${collectionName}</div>
@@ -1477,10 +2791,10 @@ $(document).ready(function() {
                 <small class="text-muted">${itemCount}</small>
             `;
         }
-        
+
         // Reload the DataTable with the new filter
         table.ajax.reload();
-        
+
         // Show/hide edit/delete buttons
         const editDeleteContainer = document.querySelector('.mt-2.d-flex.justify-content-center.gap-2');
         if (editDeleteContainer) {
@@ -1495,16 +2809,16 @@ $(document).ready(function() {
             alert('Please select a collection to edit.');
             return;
         }
-        
+
         // Get collection data
         const collectionData = @json($collections->keyBy('id'));
         const collection = collectionData[collectionId];
-        
+
         if (!collection) {
             alert('Collection not found.');
             return;
         }
-        
+
         // Show edit modal (you can implement this modal)
         const newName = prompt('Enter new collection name:', collection.name);
         if (newName && newName !== collection.name) {
@@ -1539,16 +2853,16 @@ $(document).ready(function() {
             alert('Please select a collection to delete.');
             return;
         }
-        
+
         // Get collection data
         const collectionData = @json($collections->keyBy('id'));
         const collection = collectionData[collectionId];
-        
+
         if (!collection) {
             alert('Collection not found.');
             return;
         }
-        
+
         if (confirm(`Are you sure you want to delete the collection "${collection.name}"? This action cannot be undone.`)) {
             // Delete collection via AJAX
             $.ajax({
@@ -1626,26 +2940,28 @@ $(document).ready(function() {
         $('#addCollectionModal').modal('show');
     }
 
+
+
     function addNewArtworkRow() {
         const template = document.getElementById('newArtworkRowTemplate');
         const newRow = template.content.cloneNode(true);
         const tempId = 'temp_' + Date.now() + '_' + (++newRowCounter);
-        
+
         newRow.querySelector('.new-artwork-row').setAttribute('data-temp-id', tempId);
-        
+
         // Insert at the beginning of tbody
         const tbody = document.querySelector('#inventoryTable tbody');
         tbody.insertBefore(newRow, tbody.firstChild);
-        
+
         // Initialize drag and drop for this row
         initializeRowDragDrop(tempId);
-        
+
         // Focus on title input
         setTimeout(() => {
             const titleInput = document.querySelector(`[data-temp-id="${tempId}"] .title-input`);
             if (titleInput) titleInput.focus();
         }, 100);
-        
+
         // Update bulk controls
         updateBulkNewItemControls();
     }
@@ -1654,16 +2970,16 @@ $(document).ready(function() {
         const template = document.getElementById('newArtworkRowTemplate');
         const newRow = template.content.cloneNode(true);
         const tempId = 'temp_' + Date.now() + '_' + (++newRowCounter);
-        
+
         newRow.querySelector('.new-artwork-row').setAttribute('data-temp-id', tempId);
-        
+
         // Insert at the beginning of tbody
         const tbody = document.querySelector('#inventoryTable tbody');
         tbody.insertBefore(newRow, tbody.firstChild);
-        
+
         // Pre-fill the form fields
         const rowElement = document.querySelector(`[data-temp-id="${tempId}"]`);
-        
+
         if (prefillData.collection) {
             // Find the collection select (not the company select)
             const collectionSelects = rowElement.querySelectorAll('.collection-select');
@@ -1673,7 +2989,7 @@ $(document).ready(function() {
                 collectionSelect.value = prefillData.collection;
             }
         }
-        
+
         // Handle company selection if user is super admin
         @if(auth()->user()->isSuperAdmin())
         if (prefillData.company) {
@@ -1683,27 +2999,27 @@ $(document).ready(function() {
             }
         }
         @endif
-        
+
         if (prefillData.artist) {
             const artistInput = rowElement.querySelector('.artist-input');
             if (artistInput) artistInput.value = prefillData.artist;
         }
-        
+
         if (prefillData.height) {
             const heightInput = rowElement.querySelector('.height-input');
             if (heightInput) heightInput.value = prefillData.height;
         }
-        
+
         if (prefillData.width) {
             const widthInput = rowElement.querySelector('.width-input');
             if (widthInput) widthInput.value = prefillData.width;
         }
-        
+
         if (prefillData.unit) {
             const unitSelect = rowElement.querySelector('.unit-select');
             if (unitSelect) unitSelect.value = prefillData.unit;
         }
-        
+
         if (prefillData.title) {
             const titleInput = rowElement.querySelector('.title-input');
             if (titleInput) {
@@ -1712,15 +3028,15 @@ $(document).ready(function() {
                 titleInput.value = titleValue;
             }
         }
-        
+
         if (prefillData.type) {
             const typeSelect = rowElement.querySelector('.type-select');
             if (typeSelect) typeSelect.value = prefillData.type;
         }
-        
+
         // Initialize drag and drop for this row
         initializeRowDragDrop(tempId);
-        
+
         // Focus on title input for the first row
         if (rowNumber === 1) {
             setTimeout(() => {
@@ -1728,7 +3044,7 @@ $(document).ready(function() {
                 if (titleInput) titleInput.focus();
             }, 100);
         }
-        
+
         // Update bulk controls
         updateBulkNewItemControls();
     }
@@ -1748,11 +3064,11 @@ $(document).ready(function() {
                     </div>
                 </div>
             `;
-            
+
             // Insert before the table
             const table = document.querySelector('#inventoryTable');
             table.parentNode.insertBefore(dropZone, table);
-            
+
             // Initialize multiple drop zone
             initializeMultipleDropZone();
         }
@@ -1762,28 +3078,28 @@ $(document).ready(function() {
         const row = document.querySelector(`[data-temp-id="${tempId}"]`);
         const dropArea = row.querySelector('.drag-drop-area');
         const fileInput = row.querySelector('.image-upload-input');
-        
+
         // Click to upload
         dropArea.addEventListener('click', () => fileInput.click());
-        
+
         // File input change
         fileInput.addEventListener('change', (e) => {
             handleImageUpload(e.target.files, tempId);
         });
-        
+
         // Drag and drop events
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
         });
-        
+
         ['dragenter', 'dragover'].forEach(eventName => {
             dropArea.addEventListener(eventName, highlight, false);
         });
-        
+
         ['dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, unhighlight, false);
         });
-        
+
         dropArea.addEventListener('drop', (e) => {
             const dt = e.dataTransfer;
             const files = dt.files;
@@ -1799,28 +3115,28 @@ $(document).ready(function() {
         fileInput.accept = 'image/*';
         fileInput.style.display = 'none';
         dropZone.appendChild(fileInput);
-        
+
         // Click to upload
         dropZone.addEventListener('click', () => fileInput.click());
-        
+
         // File input change
         fileInput.addEventListener('change', (e) => {
             handleMultipleImageUpload(e.target.files);
         });
-        
+
         // Drag and drop events
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
         });
-        
+
         ['dragenter', 'dragover'].forEach(eventName => {
             dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
         });
-        
+
         ['dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
         });
-        
+
         dropZone.addEventListener('drop', (e) => {
             const dt = e.dataTransfer;
             const files = dt.files;
@@ -1850,7 +3166,7 @@ $(document).ready(function() {
                 const dropArea = row.querySelector('.drag-drop-area');
                 dropArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
                 dropArea.classList.add('has-image');
-                
+
             };
             reader.readAsDataURL(file);
         }
@@ -1860,7 +3176,7 @@ $(document).ready(function() {
         if (files.length >= 2) {
             const newRows = document.querySelectorAll('.new-artwork-row');
             const fileArray = Array.from(files);
-            
+
             fileArray.forEach((file, index) => {
                 if (index < newRows.length) {
                     const row = newRows[index];
@@ -1870,12 +3186,12 @@ $(document).ready(function() {
                         const dropArea = row.querySelector('.drag-drop-area');
                         dropArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
                         dropArea.classList.add('has-image');
-                        
+
                     };
                     reader.readAsDataURL(file);
                 }
             });
-            
+
             // Hide the multiple drop zone after processing
             document.getElementById('multipleDropZone').classList.add('hidden');
         }
@@ -1891,7 +3207,7 @@ $(document).ready(function() {
     function updateBulkNewItemControls() {
         var count = $('.new-artwork-row').length;
         newItemsCount.text(count + ' new item' + (count !== 1 ? 's' : ''));
-        
+
         if (count > 0) {
             bulkNewItemControls.show();
         } else {
@@ -1913,7 +3229,7 @@ $(document).ready(function() {
             const row = $(this);
             const name = row.find('.title-input').val();
             const collection = row.find('.collection-select').last().val();
-            
+
             if (!name || !collection) {
                 hasErrors = true;
                 row.addClass('border-danger');
@@ -1934,12 +3250,12 @@ $(document).ready(function() {
         const allFormData = [];
         let processedCount = 0;
         const totalRows = newRows.length;
-        
+
         if (totalRows === 0) {
             alert('No new items to save.');
             return;
         }
-        
+
         newRows.each(function() {
             const row = $(this);
             const formData = {
@@ -1952,7 +3268,7 @@ $(document).ready(function() {
                 width: row.find('.width-input').val(),
                 unit: row.find('.unit-select').val()
             };
-            
+
             // Add company field if user is super admin
             @if(auth()->user()->isSuperAdmin())
             const companySelect = row.find('.company-select');
@@ -1960,11 +3276,11 @@ $(document).ready(function() {
                 formData.company_id = companySelect.val();
             }
             @endif
-            
+
             // Handle image upload if present
             const fileInput = row.find('.image-upload-input')[0];
             const dropArea = row.find('.drag-drop-area');
-            
+
             if (fileInput.files.length > 0) {
                 // Convert file to base64 data URL
                 const file = fileInput.files[0];
@@ -1973,7 +3289,7 @@ $(document).ready(function() {
                     formData.image = e.target.result;
                     allFormData.push(formData);
                     processedCount++;
-                    
+
                     // When all rows are processed, send the data
                     if (processedCount === totalRows) {
                         sendBulkData();
@@ -1988,7 +3304,7 @@ $(document).ready(function() {
                 }
                 allFormData.push(formData);
                 processedCount++;
-                
+
                 // When all rows are processed, send the data
                 if (processedCount === totalRows) {
                     sendBulkData();
@@ -1997,21 +3313,21 @@ $(document).ready(function() {
                 // No image
                 allFormData.push(formData);
                 processedCount++;
-                
+
                 // When all rows are processed, send the data
                 if (processedCount === totalRows) {
                     sendBulkData();
                 }
             }
         });
-        
+
         function sendBulkData() {
             // Send all data to bulk store endpoint
             const formDataObj = new FormData();
-            
+
             // Add CSRF token first
             formDataObj.append('_token', '{{ csrf_token() }}');
-            
+
             allFormData.forEach((data, index) => {
                 Object.keys(data).forEach(key => {
                     if (key === 'image') {
@@ -2072,12 +3388,12 @@ $(document).ready(function() {
     $(document).on('click', '.delete-row-btn', function() {
         const row = $(this).closest('.new-artwork-row');
         row.remove();
-        
+
         // Hide multiple drop zone if no more new rows
         if ($('.new-artwork-row').length === 0) {
             $('#multipleDropZone').remove();
         }
-        
+
         // Update controls
         updateBulkNewItemControls();
     });
@@ -2088,13 +3404,13 @@ $(document).ready(function() {
             alert('Please select at least one item to duplicate.');
             return;
         }
-        
+
         if (confirm(`Are you sure you want to duplicate ${selectedRows.size} selected item(s)?`)) {
             const selectedIds = Array.from(selectedRows);
-            
+
             // Show loading state
             $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
-            
+
             $.ajax({
                 url: '{{ route("inventory.bulk-copy") }}',
                 type: 'POST',
@@ -2176,11 +3492,6 @@ $(document).ready(function() {
         });
     });
 
-    // Upload Multiple functionality
-    $('#uploadMultipleBtn').on('click', function() {
-        // This can trigger the same modal as the dropdown option
-        $('#addMultipleArtworksBtn').trigger('click');
-    });
 
     // Delete functionality
     $('#deleteArtworkBtn').on('click', function() {
@@ -2188,13 +3499,13 @@ $(document).ready(function() {
             alert('Please select at least one item to delete.');
             return;
         }
-        
+
         if (confirm(`Are you sure you want to delete ${selectedRows.size} selected item(s)? This action cannot be undone.`)) {
             const selectedIds = Array.from(selectedRows);
-            
+
             // Show loading state
             $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
-            
+
             $.ajax({
                 url: '{{ route("inventory.bulk-delete") }}',
                 type: 'POST',

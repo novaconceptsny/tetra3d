@@ -1,0 +1,842 @@
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Table header styling */
+#inventoryTable thead th {
+    background-color: #099F9A !important;
+    color: white !important;
+    border-color: #077a75 !important;
+    font-weight: 600;
+    position: sticky; /* keep header fixed while scrolling */
+    top: 0;
+    z-index: 2; /* above rows */
+}
+
+#inventoryTable thead th:hover {
+    background-color: #077a75 !important;
+}
+
+.artwork-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Make only the table area scroll, keep header sticky */
+.artworks-table .table-responsive {
+    max-height: 70vh; /* adjust as needed */
+    overflow-y: auto;
+}
+
+/* Avoid extra gap below when the container scrolls */
+#inventoryTable {
+    margin-bottom: 0;
+    border-collapse: separate; /* helps with sticky header in some browsers */
+}
+
+/* DataTables Editor styles */
+.dt-editor-inline {
+    cursor: pointer;
+}
+
+.dt-editor-inline:hover {
+    background-color: #f8f9fa;
+}
+
+.editable-cell {
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.editable-cell:hover {
+    background-color: #f8f9fa;
+}
+
+.editable-cell.editing {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+}
+
+.inline-edit-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 4px;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.inline-edit-select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 4px;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+/* DataTables processing indicator styling */
+.dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Bulk edit controls styling */
+#bulkEditControls {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0px;
+    transition: all 0.3s ease;
+}
+
+#bulkEditBtn {
+    background: transparent !important;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#bulkEditBtn:hover {
+    transform: translateY(-1px);
+}
+
+#selectedCount {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Checkbox styling */
+.form-check-input:checked {
+    background-color: #099F9A;
+    border-color: #099F9A;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
+}
+
+/* Pointer cursor for table checkboxes */
+#inventoryTable input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* Search toggle buttons styling */
+.search-container {
+    gap: 8px;
+}
+
+.search-toggle-buttons {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+    background: #fff;
+}
+
+.search-toggle-btn {
+    background: #fff;
+    border: none;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6c757d;
+    transition: all 0.2s ease;
+    border-radius: 0;
+    position: relative;
+}
+
+.search-toggle-btn:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.search-toggle-btn:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.search-toggle-btn:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.search-toggle-btn.active {
+    background: #099F9A;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2);
+}
+
+.search-toggle-btn.active:hover {
+    background: #077a75;
+    color: #fff;
+}
+
+.search-toggle-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.25);
+}
+
+/* Icon button styling */
+.icon-button {
+    width: 40px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent; /* transparent background like screenshot */
+    color: #343a40; /* neutral dark icon color */
+    font-size: 16px;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.icon-button:hover {
+    background: rgba(0, 0, 0, 0.05); /* subtle hover background */
+    transform: translateY(-1px);
+    box-shadow: none;
+    color: #111;
+}
+
+.icon-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.icon-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Inline editing row styles */
+.new-artwork-row {
+    background-color: #f8f9fa !important;
+    border: 2px solid #099F9A !important;
+}
+
+.new-artwork-row td {
+    padding: 8px !important;
+    vertical-align: middle !important;
+}
+
+.drag-drop-area {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.drag-drop-area:hover {
+    border-color: #099F9A !important;
+    background-color: #e6f7f7 !important;
+}
+
+.drag-drop-area.drag-over {
+    border-color: #099F9A !important;
+    background-color: #e6f7f7 !important;
+    transform: scale(1.05);
+}
+
+.drag-drop-area.has-image {
+    border-style: solid !important;
+    border-color: #28a745 !important;
+    background-color: #d4edda !important;
+}
+
+.drag-drop-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.form-control-sm, .form-select-sm {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.save-row-btn, .cancel-row-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.save-row-btn {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.save-row-btn:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.cancel-row-btn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.cancel-row-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Multiple image drop zone */
+.multiple-drop-zone {
+    border: 2px dashed #099F9A;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.multiple-drop-zone:hover {
+    background-color: #e6f7f7;
+    border-color: #077a75;
+}
+
+.multiple-drop-zone.drag-over {
+    background-color: #d4edda;
+    border-color: #28a745;
+    transform: scale(1.02);
+}
+
+.multiple-drop-zone.hidden {
+    display: none;
+}
+
+/* Multiple Artwork Modal Styling */
+#multipleArtworkModal .modal-content {
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+#multipleArtworkModal .modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0;
+}
+
+#multipleArtworkModal .modal-title {
+    font-weight: 600;
+    color: #495057;
+}
+
+#multipleArtworkModal .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+}
+
+#multipleArtworkModal .form-control,
+#multipleArtworkModal .form-select {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#multipleArtworkModal .form-control:focus,
+#multipleArtworkModal .form-select:focus {
+    border-color: #099F9A;
+    box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
+}
+
+#multipleArtworkModal .btn-success {
+    background: #28a745;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#multipleArtworkModal .btn-success:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+#multipleArtworkModal .btn-secondary {
+    background: #6c757d;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#multipleArtworkModal .btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Modal backdrop styling */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Bulk new item controls styling */
+#bulkNewItemControls {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0px 16px;
+    transition: all 0.3s ease;
+}
+
+#saveAllNewItemsBtn {
+    background: #28a745;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#saveAllNewItemsBtn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+#cancelAllNewItemsBtn {
+    background: #dc3545;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#cancelAllNewItemsBtn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+#newItemsCount {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Delete row button styling */
+.delete-row-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.delete-row-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Right side action buttons styling */
+.ms-auto {
+    margin-left: auto !important;
+}
+
+/* Make all specific icon buttons transparent to match new style */
+#deleteArtworkBtn,
+#duplicateArtworkBtn,
+#moveToCollection,
+#uploadMultipleBtn {
+    background: transparent !important;
+    border: none !important;
+    color: #343a40 !important;
+    box-shadow: none !important;
+}
+
+#deleteArtworkBtn:hover,
+#duplicateArtworkBtn:hover,
+#moveToCollection:hover,
+#uploadMultipleBtn:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #111 !important;
+}
+
+
+.upload-box {
+    border: 2px dashed #b0b8c1;
+    border-radius: 12px;
+    background: #f7f9fb;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    color: #6c757d;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+}
+.upload-box:hover {
+    border-color: #2453e3;
+    background: #e9f0fb;
+}
+.upload-box.dragover {
+    border-color: #007bff;
+    background: #f8f9fa;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+.upload-box input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    left: 0;
+    top: 0;
+}
+
+
+   
+.table td[contenteditable="true"] {
+    background: #f7f9fb;
+    border-radius: 4px;
+    outline: none;
+    min-width: 80px;
+}
+
+.table td[contenteditable="true"]:empty:before {
+    content: attr(data-placeholder);
+    color: #6c757d;
+    font-style: italic;
+}
+
+.table td[contenteditable="true"]:focus:empty:before {
+    color: #adb5bd;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Upload Progress Styles */
+.progress-container {
+    width: 200px;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px auto;
+}
+
+.progress-bar-upload {
+    height: 100%;
+    background: #28a745;
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.progress-text {
+    font-size: 14px;
+    color: #6c757d;
+    display: block;
+    margin-top: 5px;
+}
+
+#spreadsheet-filename {
+    font-size: 14px;
+    word-break: break-word;
+    max-width: 100%;
+    text-align: center;
+}
+
+.artwork-progress-label {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    color: #222;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+.artwork-progress-inner {
+    background: #28a745;
+    height: 100%;
+    width: 0%;
+    border-radius: 8px;
+    transition: width 0.3s ease;
+}
+
+/* Highlight empty cells */
+.empty-cell {
+    background-color: #ffe6e6 !important;
+    border: 1px solid #ffcccc !important;
+}
+
+.empty-cell:focus {
+    background-color: #ffe6e6 !important;
+    border: 1px solid #007bff !important;
+}
+
+/* Submit Progress Modal Styles */
+#submitProgressModal .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+#submitProgressModal .modal-body {
+    padding: 2rem;
+}
+
+#submitProgressModal .spinner-border {
+    color: #2453e3 !important;
+}
+
+#submitProgressModal .progress {
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#submitProgressModal .progress-bar {
+    background: linear-gradient(90deg, #2453e3, #4a6cf7);
+    border-radius: 10px;
+}
+
+#submitProgressModal h5 {
+    color: #333;
+    font-weight: 600;
+}
+
+#submitProgressModal p {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+#submitProgressModal[data-bs-backdrop="static"] {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Disabled submit button styles */
+#submit-artworks-btn:disabled {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#submit-artworks-btn:disabled:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+    opacity: 0.6;
+}
+
+/* Mouse down visual feedback for submit button */
+#submit-artworks-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#submit-artworks-btn.mouse-down {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+/* Disabled generate artwork button styles */
+#generate-artwork-btn:disabled {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#generate-artwork-btn:disabled:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+    opacity: 0.6;
+}
+
+    /* Pagination Controls Styles */
+#pagination-controls {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px 20px;
+    border: 1px solid #e9ecef;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.pagination-info span {
+    font-weight: 500;
+}
+
+.pagination-buttons .btn {
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+.pagination-buttons .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Uploaded page indicator */
+#submit-artworks-btn.btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+#submit-artworks-btn.btn-secondary:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+    opacity: 0.8;
+}
+
+/* Page number buttons */
+.page-number-btn {
+    margin: 0 2px;
+    min-width: 35px;
+    height: 35px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.page-number-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-number-btn.btn-primary {
+    background-color: #2453e3;
+    border-color: #2453e3;
+    color: white;
+}
+
+.page-number-btn.btn-primary:hover {
+    background-color: #1a3fa6;
+    border-color: #1a3fa6;
+    color: white;
+}
+
+.page-number-btn.btn-outline-secondary {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.page-number-btn.btn-outline-secondary:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
+/* Ellipsis styling */
+.page-numbers .text-muted {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+/* Countdown Timer Styles */
+.countdown-container {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+#countdown-timer {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2453e3;
+}
+
+#countdown-progress {
+    background: linear-gradient(90deg, #2453e3, #4a6cf7);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* Countdown animation for urgency */
+@keyframes countdownPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+#countdown-timer.warning {
+    color: #ffc107;
+    animation: countdownPulse 1s infinite;
+}
+
+#countdown-timer.danger {
+    color: #dc3545;
+    animation: countdownPulse 0.5s infinite;
+}
