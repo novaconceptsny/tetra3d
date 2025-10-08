@@ -241,6 +241,52 @@
         </div>
     </section>
 
+        <!-- Add Collection Modal -->
+        <div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered add-collection-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCollectionModalLabel">Add new collection</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCollectionForm">
+                        <div class="mb-3">
+                            <label for="collectionName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="collectionName" name="name" placeholder="Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="collectionCompany" class="form-label">Company</label>
+                            @if(auth()->user()->name === 'Super Admin')
+                            <select class="form-control rounded-0" id="collectionCompany" name="company">
+                                <option value="">Select Company</option>
+                                @foreach($companies as $company)
+                                    <option value="{{$company->id}}">{{$company->name}}</option>
+                                @endforeach
+                            </select>
+                            @else
+                                <input type="text" class="form-control" id="collectionCompany" placeholder="Company" disabled value="{{ user()->company->name }}">
+                            @endif
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Thumbnail</label>
+                            <div class="d-flex align-items-center">
+                                <label for="collectionThumbnail" class="thumbnail-upload border rounded d-flex flex-column align-items-center justify-content-center" style="width: 80px; height: 100px; cursor: pointer;">
+                                    <span id="thumbnailText">Click to add image</span>
+                                    <input type="file" id="collectionThumbnail" name="thumbnail" accept="image/*" style="display: none;">
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-save-collection" style="background-color: #099F9A; border-color: #099F9A; color: white;" id="saveCollectionBtn" onclick="handleSaveCollection()">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Multiple Artwork Upload Modal -->
     <div class="modal fade" id="multipleArtworkModal" tabindex="-1" aria-labelledby="multipleArtworkModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -258,6 +304,14 @@
                             </div>
                         </div>
                         
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 style="font-weight: 600; color: #495057; margin-bottom: 16px;">
+                                    Use the fields below to apply defaults to every new piece. Leave boxes blank to keep them empty.
+                                    Enter values here to pre-fill all added rows. Skip any field you don’t want filled.
+                                </h6>
+                            </div>
+                        </div>
                         
                         <div class="row">
                             <div class="col-md-6">
@@ -1567,6 +1621,10 @@ $(document).ready(function() {
         $('#numberOfRows').val(2); // Reset to default
     });
 
+
+    function handleOpenCollectionModal() {
+        $('#addCollectionModal').modal('show');
+    }
 
     function addNewArtworkRow() {
         const template = document.getElementById('newArtworkRowTemplate');
