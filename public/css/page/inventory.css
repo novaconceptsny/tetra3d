@@ -924,3 +924,28 @@
     transform: scale(1.02);
     transition: all 0.2s ease;
 }
+
+/* Reduce width of Name and Artist columns */
+#inventoryTable th:nth-child(4), /* Name column */
+#inventoryTable td:nth-child(4) { /* Name column data */
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
+}
+
+#inventoryTable th:nth-child(5), /* Artist column */
+#inventoryTable td:nth-child(5) { /* Artist column data */
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
+}
+
+/* For tables with Company column (when user is super admin) */
+#inventoryTable th:nth-child(5), /* Name column when Company is present */
+#inventoryTable td:nth-child(5),
+#inventoryTable th:nth-child(6), /* Artist column when Company is present */
+#inventoryTable td:nth-child(6) {
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
+}

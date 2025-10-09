@@ -41,7 +41,7 @@ class InventoryController extends Controller
             $start       = $request->input('start', 0);
             $length      = $request->input('length', 10);
             $searchValue = $request->input('search.value', '');
-            $orderColumn = $request->input('order.0.column', user()->isSuperAdmin() ? 10 : 9); // Default to created_at column
+            $orderColumn = $request->input('order.0.column', user()->isSuperAdmin() ? 10 : 9); // Default to description column
             $orderDir    = $request->input('order.0.dir', 'desc');
 
         // Column mapping for ordering
@@ -56,7 +56,7 @@ class InventoryController extends Controller
             7  => 'height',     // Height
             8  => 'width',      // Width
             9  => 'unit',       // Unit
-            10 => 'created_at', // Created
+            10 => 'description', // Description
         ];
 
         // Adjust column mapping if user is not super admin
@@ -71,7 +71,7 @@ class InventoryController extends Controller
                 6 => 'height',     // Height
                 7 => 'width',      // Width
                 8 => 'unit',       // Unit
-                9 => 'created_at', // Created
+                9 => 'description', // Description
             ];
         }
 
@@ -79,7 +79,7 @@ class InventoryController extends Controller
 
         // Base query
         $query = Artwork::with('collection', 'company')
-            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
+            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
 
         // Filter by collection if provided
         if ($request->has('collection_id') && $request->collection_id) {
@@ -132,6 +132,7 @@ class InventoryController extends Controller
                 'height'     => $originalValue['height'] ?? '',
                 'width'      => $originalValue['width'] ?? '',
                 'unit'       => $originalValue['unit'] ?? 'cm',
+                'description' => $artwork->description ?? '',
                 'created_at' => $artwork->created_at->format('Y-m-d'),
             ];
 
@@ -304,9 +305,10 @@ class InventoryController extends Controller
                 $model = \App\Models\SculptureModel::findOrFail($id);
             }
 
-            $model->name   = $request->input('name', $model->name);
-            $model->artist = $request->input('artist', $model->artist);
-            $model->type   = $request->input('type', $model->type);
+            $model->name        = $request->input('name', $model->name);
+            $model->artist      = $request->input('artist', $model->artist);
+            $model->type        = $request->input('type', $model->type);
+            $model->description = $request->input('description', $model->description);
             
             // Handle collection update
             if ($request->has('artwork_collection_id')) {

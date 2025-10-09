@@ -8,7 +8,7 @@
                     <div id="show-collections-container" style="display: block;">
                         <div class="d-flex">
                             <!-- Sidebar -->
-                            <div class="collections-sidebar" style="width: 280px; min-width: 220px; background: #f8f9fa; border-radius: 12px; margin-right: 24px;">
+                            <div class="collections-sidebar" style="width: 250px; min-width: 220px; background: #f8f9fa; border-radius: 12px; margin-right: 24px;">
                                 <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
                                     <div class="d-flex align-items-center justify-content-between mb-3">
                                         <h5 class="mb-0">Collections</h5>
@@ -223,7 +223,7 @@
                                                         <th>Height</th>
                                                         <th>Width</th>
                                                         <th>Unit</th>
-                                                        <th>Created</th>
+                                                        <th>Description</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -2570,14 +2570,14 @@ $(document).ready(function() {
                 }
             },
             {
-                data: 'created_at',
+                data: 'description',
                 render: function(data, type, row) {
-                    return data ? new Date(data).toLocaleDateString() : '';
+                    return `<span class="editable-cell" data-field="description" data-id="${row.id}">${data || ''}</span>`;
                 }
             }
         ],
 
-        order: [{{ auth()->user()->isSuperAdmin() ? '10' : '9' }}, 'desc'], // Sort by created_at desc
+        order: [{{ auth()->user()->isSuperAdmin() ? '10' : '9' }}, 'desc'], // Sort by description desc
         pageLength: 25,
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         responsive: true,
