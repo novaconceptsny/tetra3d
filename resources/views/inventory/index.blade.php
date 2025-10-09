@@ -2455,7 +2455,10 @@ $(document).ready(function() {
             },
             @endif
             {
-                data: 'collection'
+                data: 'collection',
+                render: function(data, type, row) {
+                    return `<span class="editable-cell" data-field="collection" data-id="${row.id}" data-type="collection-select">${data || ''}</span>`;
+                }
             },
             {
                 data: 'name',
@@ -2731,6 +2734,14 @@ $(document).ready(function() {
                 <option value="cm" ${currentValue === 'cm' ? 'selected' : ''}>cm</option>
                 <option value="inch" ${currentValue === 'inch' ? 'selected' : ''}>inch</option>
             </select>`);
+        } else if (type === 'collection-select') {
+            // Create select dropdown for collection field
+            let options = '<option value="">Select Collection</option>';
+            allCollections.forEach(function(collection) {
+                const isSelected = currentValue === collection.name ? 'selected' : '';
+                options += `<option value="${collection.id}" ${isSelected}>${collection.name}</option>`;
+            });
+            input = $(`<select class="inline-edit-select">${options}</select>`);
         } else {
             // Create input field
             const inputType = (field === 'height' || field === 'width') ? 'number' : 'text';
@@ -2749,17 +2760,37 @@ $(document).ready(function() {
             const newValue = $(this).val();
             console.log('Saving new value:', newValue);
 
+            // Prepare data for saving
+            let saveData = {
+                _token: '{{ csrf_token() }}'
+            };
+
+            if (field === 'collection') {
+                saveData.artwork_collection_id = newValue;
+            } else {
+                saveData[field] = newValue;
+            }
+
             // Save the value
             $.ajax({
                 url: `/inventory/${id}`,
                 type: 'PUT',
-                data: {
-                    [field]: newValue,
-                    _token: '{{ csrf_token() }}'
-                },
+                data: saveData,
                 success: function(response) {
                     console.log('Update successful');
-                    $cell.removeClass('editing').text(newValue);
+                    
+                    // For collection field, display the collection name instead of ID
+                    let displayValue = newValue;
+                    if (field === 'collection') {
+                        if (newValue) {
+                            const selectedCollection = allCollections.find(c => c.id == newValue);
+                            displayValue = selectedCollection ? selectedCollection.name : '';
+                        } else {
+                            displayValue = '';
+                        }
+                    }
+                    
+                    $cell.removeClass('editing').text(displayValue);
                 },
                 error: function(xhr) {
                     console.error('Update failed:', xhr.responseText);

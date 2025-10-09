@@ -13,7 +13,15 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
         $inventory          = Artwork::paginate(25);
-        $collections        = ArtworkCollection::latest('name')->get();
+        
+        // Filter collections by company for non-super admin users
+        if (auth()->user()->isSuperAdmin()) {
+            $collections = ArtworkCollection::latest('name')->get();
+        } else {
+            $collections = ArtworkCollection::where('company_id', auth()->user()->company_id)
+                ->latest('name')->get();
+        }
+        
         $companies          = Company::latest('name')->get();
         $selectedCollection = $request->get('collection_id', '');
 
@@ -290,39 +298,48 @@ class InventoryController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $artwork = Artwork::findOrFail($id);
+            // Try to find as artwork first, then sculpture
+            $model = Artwork::find($id);
+            if (!$model) {
+                $model = \App\Models\SculptureModel::findOrFail($id);
+            }
 
-            $artwork->name   = $request->input('name', $artwork->name);
-            $artwork->artist = $request->input('artist', $artwork->artist);
-            $artwork->type   = $request->input('type', $artwork->type);
+            $model->name   = $request->input('name', $model->name);
+            $model->artist = $request->input('artist', $model->artist);
+            $model->type   = $request->input('type', $model->type);
+            
+            // Handle collection update
+            if ($request->has('artwork_collection_id')) {
+                $model->artwork_collection_id = $request->input('artwork_collection_id');
+            }
 
             // Handle dimensions
             if ($request->has('height') || $request->has('width') || $request->has('unit')) {
-                $originalValue           = $artwork->original_value ?? [];
+                $originalValue           = $model->original_value ?? [];
                 $originalValue['height'] = $request->input('height', $originalValue['height'] ?? '');
                 $originalValue['width']  = $request->input('width', $originalValue['width'] ?? '');
                 $originalValue['unit']   = $request->input('unit', $originalValue['unit'] ?? 'cm');
-                $artwork->original_value = $originalValue;
+                $model->original_value = $originalValue;
 
                 // Convert to inches for data column
                 if ($originalValue['unit'] === 'cm' && ! empty($originalValue['width']) && ! empty($originalValue['height'])) {
-                    $data                = $artwork->data ?? [];
+                    $data                = $model->data ?? [];
                     $data['width_inch']  = round($originalValue['width'] / 2.54, 5);
                     $data['height_inch'] = round($originalValue['height'] / 2.54, 5);
-                    $artwork->data       = $data;
+                    $model->data       = $data;
                 }
             }
 
-            $artwork->save();
+            $model->save();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Artwork updated successfully',
+                'message' => 'Item updated successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error updating artwork: ' . $e->getMessage(),
+                'message' => 'Error updating item: ' . $e->getMessage(),
             ], 500);
         }
     }
