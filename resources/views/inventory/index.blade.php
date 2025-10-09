@@ -158,7 +158,7 @@
                                                                                     <!-- Save All and Cancel All buttons for new items -->
                                             <div id="bulkNewItemControls"  style="display: none;">
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <button id="saveAllNewItemsBtn" class="btn btn-success" style="background: #28a745; border: none; border-radius: 6px; padding: 4px 16px; font-weight: 500;">
+                                                    <button id="saveAllNewItemsBtn" class="btn btn-success" style="background: #099F9A; border: none; border-radius: 6px; padding: 4px 16px; font-weight: 500;">
                                                         <i class="fas fa-save me-2"></i>Save All
                                                     </button>
                                                     <button id="cancelAllNewItemsBtn" class="btn btn-danger" style="background: #dc3545; border: none; border-radius: 6px; padding: 4px 16px; font-weight: 500;">
@@ -260,7 +260,7 @@
                                             </div>
                                             <span class="progress-text">Uploading...</span>
                                         </div>
-                                        <span id="spreadsheet-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                                        <span id="spreadsheet-filename" style="display: none; font-weight: bold; color: #099F9A;"></span>
                                         <input type="file" class="form-control-file" style="display:none;" id="spreadsheetInput" accept=".csv,.xlsx,.xls">
                                     </div>
                                 </div>
@@ -274,7 +274,7 @@
                                             </div>
                                             <span class="progress-text">Uploading...</span>
                                         </div>
-                                        <span id="image-filename" style="display: none; font-weight: bold; color: #28a745;"></span>
+                                        <span id="image-filename" style="display: none; font-weight: bold; color: #099F9A;"></span>
                                         <input type="file" class="form-control-file" style="display:none;" id="imageInput" multiple accept=".png,.jpg,.jpeg">
                                     </div>
                                 </div>
@@ -457,17 +457,17 @@
                 <div class="modal-body" style="padding: 24px;">
                     <form id="multipleArtworkForm">
                         <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label for="numberOfRows" class="form-label" style="font-weight: 500; color: #495057;">Number of new rows</label>
-                                <input type="number" class="form-control" id="numberOfRows" name="number_of_rows" min="1" max="50" value="2" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                            <div class="col-md-12">
+                                <label for="numberOfRows" class="form-label" style="font-weight: 500; color: #495057;">Enter number of new artworks to add to inventory</label>
+                                <input type="number" class="form-control" id="numberOfRows" name="number_of_rows" min="1" max="50" value="2" style="width : 50%; border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-12">
                                 <h6 style="font-weight: 600; color: #495057; margin-bottom: 16px;">
-                                    Use the fields below to apply defaults to every new piece. Leave boxes blank to keep them empty.
-                                    Enter values here to pre-fill all added rows. Skip any field you don’t want filled.
+                                    Entering information into the boxes below will pre fill all the new artwork pieces you are adding to the table. 
+                                    Leave the boxes blank to keep them empty and add the details later.
                                 </h6>
                             </div>
                         </div>
@@ -525,18 +525,15 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="prefillType" class="form-label" style="font-weight: 500; color: #495057;">Type</label>
-                                    <select class="form-select" id="prefillType" name="type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                        <option value="Painting">Painting</option>
-                                        <option value="Sculpture">Sculpture</option>
-                                    </select>
+                                    <input type="text" class="form-control" id="prefillType" name="type" placeholder="Enter artwork type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 16px 24px;">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background: #6c757d; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 500;">Cancel</button>
-                    <button type="button" class="btn btn-success" id="createMultipleBtn" style="background: #28a745; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 500;">Create</button>
+                    <button type="button" class="btn btn-success" id="createMultipleBtn" style="background: #099F9A; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; color: white;">Create</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="background: #dc3545; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; color: white; margin-right: 10px;">Cancel</button>
                 </div>
             </div>
         </div>
@@ -595,15 +592,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="bulkType" class="form-label">Type</label>
-                                    <select class="form-select" id="bulkType" name="type">
-                                        <option value="">-- Keep existing --</option>
-                                        <option value="Painting">Painting</option>
-                                        <option value="Digital Art">Digital Art</option>
-                                        <option value="Sculpture">Sculpture</option>
-                                        <option value="Photography">Photography</option>
-                                        <option value="Drawing">Drawing</option>
-                                        <option value="Mixed Media">Mixed Media</option>
-                                    </select>
+                                    <input type="text" class="form-control" id="bulkType" name="type" placeholder="Enter artwork type">
                                 </div>
                             </div>
                         </div>
@@ -684,11 +673,7 @@
                 <textarea class="form-control form-control-sm description-input" rows="1" placeholder="Enter description"></textarea>
             </td> -->
             <td>
-                <select class="form-select form-select-sm type-select">
-                    <option value="">Select type</option>
-                    <option value="Painting">Painting</option>
-                    <option value="Sculpture">Sculpture</option>
-                </select>
+                <input type="text" class="form-control form-control-sm type-input" placeholder="Enter type">
             </td>
             <td>
                 <input type="number" class="form-control form-control-sm height-input" placeholder="Height" step="0.01">
