@@ -466,7 +466,7 @@
                         <div class="row mb-3">
                             <div class="col-12">
                                 <h6 style="font-weight: 600; color: #495057; margin-bottom: 16px;">
-                                    Entering information into the boxes below will pre fill all the new artwork pieces you are adding to the table. 
+                                    Entering information into the boxes below will pre fill all the new artwork pieces you are adding to the table.
                                     Leave the boxes blank to keep them empty and add the details later.
                                 </h6>
                             </div>
@@ -823,6 +823,7 @@
 <script>
 
     const allCollections = @json($collections);
+    const allCompanies = @json($companies);
     const mainContainer = document.getElementById('show-collections-container');
     const uploadContainer = document.getElementById('upload-artwork-container');
 
@@ -834,7 +835,7 @@
     const imageProgress = document.getElementById('image-progress');
     const imageFilename = document.getElementById('image-filename');
 
-    const isSuperAdmin = @json(auth()->user()->role === 'Super admin');
+    const isSuperAdmin = @json(auth()->user()->isSuperAdmin());
 
 
     let uploadedSpreadsheetData = null;
@@ -857,6 +858,75 @@
     let currentCountdown = 10;
 
 
+    function getFilteredCollections(artworkRow = null) {
+        if (isSuperAdmin) {
+            // For super admin, try to get company from the artwork row first
+            let selectedCompanyId = null;
+
+            if (artworkRow) {
+                // Try to get company from the artwork row's company cell
+                const companyCell = artworkRow.querySelector('[data-field="company"]');
+                if (companyCell) {
+                    // Get the company name from the cell text
+                    const companyName = companyCell.textContent.trim();
+                    if (companyName) {
+                        // Find the company ID by name
+                        const company = allCompanies.find(c => c.name === companyName);
+                        if (company) {
+                            selectedCompanyId = company.id;
+                        }
+                    }
+                } else {
+                    // Try to get company from company select dropdown (for new rows)
+                    const companySelect = artworkRow.querySelector('.company-select');
+                    if (companySelect && companySelect.value) {
+                        selectedCompanyId = companySelect.value;
+                    }
+                }
+            }
+
+
+            if (selectedCompanyId) {
+                return allCollections.filter(collection =>
+                    collection.company_id == selectedCompanyId
+                );
+            }
+            return allCollections; // Show all collections if no company selected
+        } else {
+            // For non-super admin, filter by user's company
+            const userCompanyId = @json(auth()->user()->company_id);
+            return allCollections.filter(collection =>
+                collection.company_id == userCompanyId
+            );
+        }
+    }
+
+    function updateCollectionDropdownForRow(rowElement) {
+        const collectionSelect = rowElement.querySelector('.collection-select');
+        if (!collectionSelect) return;
+
+        // Get filtered collections for this row
+        const filteredCollections = getFilteredCollections(rowElement);
+        
+        // Clear existing options
+        collectionSelect.innerHTML = '<option value="">Select collection</option>';
+        
+        // Add filtered collections
+        if (filteredCollections.length > 0) {
+            filteredCollections.forEach(function(collection) {
+                const option = document.createElement('option');
+                option.value = collection.id;
+                option.textContent = collection.name;
+                collectionSelect.appendChild(option);
+            });
+        } else {
+            const noCollectionsOption = document.createElement('option');
+            noCollectionsOption.value = '';
+            noCollectionsOption.textContent = 'No collections available';
+            noCollectionsOption.disabled = true;
+            collectionSelect.appendChild(noCollectionsOption);
+        }
+    }
 
     // Helper function to get property value from multiple possible property names
     function getProperty(obj, propertyNames) {
@@ -2451,7 +2521,10 @@ $(document).ready(function() {
             },
             @if(auth()->user()->isSuperAdmin())
             {
-                data: 'company'
+                data: 'company',
+                render: function(data, type, row) {
+                    return `<span class="editable-cell" data-field="company" data-id="${row.id}" data-type="company-select">${data || ''}</span>`;
+                }
             },
             @endif
             {
@@ -2735,11 +2808,24 @@ $(document).ready(function() {
                 <option value="inch" ${currentValue === 'inch' ? 'selected' : ''}>inch</option>
             </select>`);
         } else if (type === 'collection-select') {
-            // Create select dropdown for collection field
+            // Create select dropdown for collection field with filtered collections
             let options = '';
-            allCollections.forEach(function(collection) {
-                const isSelected = currentValue === collection.name ? 'selected' : '';
-                options += `<option value="${collection.id}" ${isSelected}>${collection.name}</option>`;
+            const filteredCollections = getFilteredCollections($cell.closest('tr')[0]);
+            if (filteredCollections.length > 0) {   
+                filteredCollections.forEach(function(collection) {
+                        const isSelected = currentValue === collection.name ? 'selected' : '';
+                        options += `<option value="${collection.id}" ${isSelected}>${collection.name}</option>`;
+                    });
+            }else{
+                options = `<option value="">No collections available</option>`;
+            }
+            input = $(`<select class="inline-edit-select">${options}</select>`);
+        } else if (type === 'company-select') {
+            // Create select dropdown for company field
+            let options = '';
+            allCompanies.forEach(function(company) {
+                const isSelected = currentValue === company.name ? 'selected' : '';
+                options += `<option value="${company.id}" ${isSelected}>${company.name}</option>`;
             });
             input = $(`<select class="inline-edit-select">${options}</select>`);
         } else {
@@ -2767,6 +2853,8 @@ $(document).ready(function() {
 
             if (field === 'collection') {
                 saveData.artwork_collection_id = newValue;
+            } else if (field === 'company') {
+                saveData.company_id = newValue;
             } else {
                 saveData[field] = newValue;
             }
@@ -2778,8 +2866,8 @@ $(document).ready(function() {
                 data: saveData,
                 success: function(response) {
                     console.log('Update successful');
-                    
-                    // For collection field, display the collection name instead of ID
+
+                    // For collection and company fields, display the name instead of ID
                     let displayValue = newValue;
                     if (field === 'collection') {
                         if (newValue) {
@@ -2788,8 +2876,15 @@ $(document).ready(function() {
                         } else {
                             displayValue = '';
                         }
+                    } else if (field === 'company') {
+                        if (newValue) {
+                            const selectedCompany = allCompanies.find(c => c.id == newValue);
+                            displayValue = selectedCompany ? selectedCompany.name : '';
+                        } else {
+                            displayValue = '';
+                        }
                     }
-                    
+
                     $cell.removeClass('editing').text(displayValue);
                 },
                 error: function(xhr) {
@@ -2867,17 +2962,17 @@ $(document).ready(function() {
                 // Set edit mode
                 isEditMode = true;
                 editingCollectionId = selectedCollectionId;
-                
+
                 // Update modal title for editing
                 document.getElementById('addCollectionModalLabel').textContent = 'Edit Collection';
-                
+
                 // Change button text to "Update"
                 document.getElementById('saveCollectionBtn').textContent = 'Update';
-                
+
                 // Populate the edit modal with collection data
                 document.getElementById('collectionName').value = collection.name;
                 document.getElementById('collectionCompany').value = collection.company_id || '';
-                
+
                 // Show current thumbnail if it exists
                 if (collection.thumbnail_url) {
                     const uploadBox = document.getElementById('collectionImageUploadBox');
@@ -2887,12 +2982,12 @@ $(document).ready(function() {
                     img.style.cursor = 'pointer';
                     img.title = 'Click to replace image';
                     img.crossOrigin = 'anonymous';
-                    
+
                     // Clear the upload box and show the current image
                     uploadBox.innerHTML = '';
                     uploadBox.style.backgroundColor = 'grey';
                     uploadBox.appendChild(img);
-                    
+
                     // Re-add the file input and overlay
                     const fileInput = document.createElement('input');
                     fileInput.type = 'file';
@@ -2902,12 +2997,12 @@ $(document).ready(function() {
                     fileInput.accept = 'image/*';
                     fileInput.style.display = 'none';
                     uploadBox.appendChild(fileInput);
-                    
+
                     const overlay = document.createElement('div');
                     overlay.className = 'overlay';
                     overlay.textContent = 'Click to replace image';
                     uploadBox.appendChild(overlay);
-                    
+
                     // Re-attach event listeners
                     fileInput.addEventListener('change', (event) => {
                         const file = event.target.files[0];
@@ -2915,7 +3010,7 @@ $(document).ready(function() {
                             handleCollectionImageFile(file, uploadBox, fileInput, document.getElementById('collectionImageName'));
                         }
                     });
-                    
+
                     // Add click event to the preview image
                     img.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -3023,17 +3118,17 @@ $(document).ready(function() {
         // Reset edit mode
         isEditMode = false;
         editingCollectionId = null;
-        
+
         // Reset modal title for adding new collection
         document.getElementById('addCollectionModalLabel').textContent = 'Add new collection';
-        
+
         // Reset button text to "Save"
         document.getElementById('saveCollectionBtn').textContent = 'Save';
-        
+
         // Reset form fields
         document.getElementById('collectionName').value = '';
         document.getElementById('collectionCompany').value = '';
-        
+
         // Reset image upload box to original state
         const uploadBox = document.getElementById('collectionImageUploadBox');
         uploadBox.innerHTML = `
@@ -3042,10 +3137,10 @@ $(document).ready(function() {
             <div class="overlay">Click to replace image</div>
         `;
         uploadBox.style.backgroundColor = '';
-        
+
         // Clear image name
         document.getElementById('collectionImageName').textContent = '';
-        
+
         // Re-attach event listeners to the new file input
         const newFileInput = uploadBox.querySelector('#collectionThumbnail');
         newFileInput.addEventListener('change', (event) => {
@@ -3054,7 +3149,7 @@ $(document).ready(function() {
                 handleCollectionImageFile(file, uploadBox, newFileInput, document.getElementById('collectionImageName'));
             }
         });
-        
+
         $('#addCollectionModal').modal('show');
     }
 
@@ -3070,6 +3165,20 @@ $(document).ready(function() {
         // Insert at the beginning of tbody
         const tbody = document.querySelector('#inventoryTable tbody');
         tbody.insertBefore(newRow, tbody.firstChild);
+
+        // Update collection dropdown with filtered collections
+        const rowElement = document.querySelector(`[data-temp-id="${tempId}"]`);
+        updateCollectionDropdownForRow(rowElement);
+
+        // Add company change handler for super admin
+        @if(auth()->user()->isSuperAdmin())
+        const companySelect = rowElement.querySelector('.company-select');
+        if (companySelect) {
+            companySelect.addEventListener('change', function() {
+                updateCollectionDropdownForRow(rowElement);
+            });
+        }
+        @endif
 
         // Initialize drag and drop for this row
         initializeRowDragDrop(tempId);
@@ -3098,16 +3207,6 @@ $(document).ready(function() {
         // Pre-fill the form fields
         const rowElement = document.querySelector(`[data-temp-id="${tempId}"]`);
 
-        if (prefillData.collection) {
-            // Find the collection select (not the company select)
-            const collectionSelects = rowElement.querySelectorAll('.collection-select');
-            // The collection select is the last one (after company select if it exists)
-            const collectionSelect = collectionSelects[collectionSelects.length - 1];
-            if (collectionSelect) {
-                collectionSelect.value = prefillData.collection;
-            }
-        }
-
         // Handle company selection if user is super admin
         @if(auth()->user()->isSuperAdmin())
         if (prefillData.company) {
@@ -3117,6 +3216,29 @@ $(document).ready(function() {
             }
         }
         @endif
+
+        // Update collection dropdown with filtered collections
+        updateCollectionDropdownForRow(rowElement);
+
+        // Add company change handler for super admin
+        @if(auth()->user()->isSuperAdmin())
+        const companySelect = rowElement.querySelector('.company-select');
+        if (companySelect) {
+            companySelect.addEventListener('change', function() {
+                updateCollectionDropdownForRow(rowElement);
+            });
+        }
+        @endif
+
+        if (prefillData.collection) {
+            // Find the collection select (not the company select)
+            const collectionSelects = rowElement.querySelectorAll('.collection-select');
+            // The collection select is the last one (after company select if it exists)
+            const collectionSelect = collectionSelects[collectionSelects.length - 1];
+            if (collectionSelect) {
+                collectionSelect.value = prefillData.collection;
+            }
+        }
 
         if (prefillData.artist) {
             const artistInput = rowElement.querySelector('.artist-input');
@@ -3756,32 +3878,32 @@ $(document).ready(function() {
     @if(auth()->user()->isSuperAdmin())
     const companySelect = document.getElementById('prefillCompany');
     const collectionSelect = document.getElementById('prefillCollection');
-    
+
     if (companySelect) {
         companySelect.addEventListener('change', function() {
             const companyId = this.value;
-            
+
             // Clear current options
             collectionSelect.innerHTML = '<option value="">Select collection</option>';
-            
+
             if (!companyId) {
                 return;
             }
-            
+
             // Show loading state
             const loadingOption = document.createElement('option');
             loadingOption.value = '';
             loadingOption.textContent = 'Loading collections...';
             loadingOption.disabled = true;
             collectionSelect.appendChild(loadingOption);
-            
+
             // Fetch collections for the selected company
             fetch('{{ route("inventory.collections.by-company") }}?company_id=' + companyId)
                 .then(response => response.json())
                 .then(data => {
                     // Clear loading option
                     collectionSelect.innerHTML = '<option value="">Select collection</option>';
-                    
+
                     if (data.success && data.collections.length > 0) {
                         data.collections.forEach(collection => {
                             const option = document.createElement('option');
