@@ -168,8 +168,16 @@
                                                 </div>
                                             </div>
 
-                                                                                        <!-- Right Side Action Buttons -->
-                                                                                        <div class="d-flex align-items-center gap-2 ms-auto">
+                                            <!-- Right Side Action Buttons -->
+                                            <div class="d-flex align-items-center gap-2 ms-auto">
+
+                                                                                                                                        <!-- Download Button -->
+                                                <button class="btn icon-button" type="button" id="downloadTableBtn"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Download Table Data">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
                                                 <!-- Copy/Duplicate Button -->
                                                 <button class="btn icon-button" type="button" id="duplicateArtworkBtn"
                                                         data-bs-toggle="tooltip"
