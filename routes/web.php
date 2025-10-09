@@ -57,6 +57,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('inventory/collections/add', 'InventoryController@addCollection')->name('inventory.collections.add');
     Route::put('inventory/collections/{id}/edit', 'InventoryController@editCollection')->name('inventory.collections.edit');
     Route::delete('inventory/collections/{id}/delete', 'InventoryController@deleteCollection')->name('inventory.collections.delete');
+    Route::get('inventory/collections/by-company', 'InventoryController@getCollectionsByCompany')->name('inventory.collections.by-company');
     Route::post('inventory/artworks/bulk-delete', 'InventoryController@bulkDelete')->name('inventory.artworks.bulk-delete');
     Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
     Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');

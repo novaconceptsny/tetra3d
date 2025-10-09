@@ -313,6 +313,11 @@ class InventoryController extends Controller
                 $model->artwork_collection_id = $request->input('artwork_collection_id');
             }
 
+            // Handle company update
+            if ($request->has('company_id')) {
+                $model->company_id = $request->input('company_id');
+            }
+
             // Handle dimensions
             if ($request->has('height') || $request->has('width') || $request->has('unit')) {
                 $originalValue           = $model->original_value ?? [];
@@ -466,6 +471,42 @@ class InventoryController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Collection deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getCollectionsByCompany(Request $request)
+    {
+        try {
+            $companyId = $request->input('company_id');
+            
+            if (!$companyId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Company ID is required',
+                ], 400);
+            }
+
+            // For super admin, get collections for the selected company
+            if (auth()->user()->isSuperAdmin()) {
+                $collections = ArtworkCollection::where('company_id', $companyId)
+                    ->latest('name')
+                    ->get();
+            } else {
+                // For non-super admin, only get collections for their own company
+                $collections = ArtworkCollection::where('company_id', auth()->user()->company_id)
+                    ->latest('name')
+                    ->get();
+            }
+
+            return response()->json([
+                'success' => true,
+                'collections' => $collections,
             ]);
         } catch (\Exception $e) {
             return response()->json([

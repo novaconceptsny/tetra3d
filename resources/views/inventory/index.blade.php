@@ -2736,7 +2736,7 @@ $(document).ready(function() {
             </select>`);
         } else if (type === 'collection-select') {
             // Create select dropdown for collection field
-            let options = '<option value="">Select Collection</option>';
+            let options = '';
             allCollections.forEach(function(collection) {
                 const isSelected = currentValue === collection.name ? 'selected' : '';
                 options += `<option value="${collection.id}" ${isSelected}>${collection.name}</option>`;
@@ -3751,6 +3751,62 @@ $(document).ready(function() {
             nameElement.textContent = file.name;
         }
     }
+
+    // Handle company dropdown change to filter collections
+    @if(auth()->user()->isSuperAdmin())
+    const companySelect = document.getElementById('prefillCompany');
+    const collectionSelect = document.getElementById('prefillCollection');
+    
+    if (companySelect) {
+        companySelect.addEventListener('change', function() {
+            const companyId = this.value;
+            
+            // Clear current options
+            collectionSelect.innerHTML = '<option value="">Select collection</option>';
+            
+            if (!companyId) {
+                return;
+            }
+            
+            // Show loading state
+            const loadingOption = document.createElement('option');
+            loadingOption.value = '';
+            loadingOption.textContent = 'Loading collections...';
+            loadingOption.disabled = true;
+            collectionSelect.appendChild(loadingOption);
+            
+            // Fetch collections for the selected company
+            fetch('{{ route("inventory.collections.by-company") }}?company_id=' + companyId)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear loading option
+                    collectionSelect.innerHTML = '<option value="">Select collection</option>';
+                    
+                    if (data.success && data.collections.length > 0) {
+                        data.collections.forEach(collection => {
+                            const option = document.createElement('option');
+                            option.value = collection.id;
+                            option.textContent = collection.name;
+                            collectionSelect.appendChild(option);
+                        });
+                    } else {
+                        const noCollectionsOption = document.createElement('option');
+                        noCollectionsOption.value = '';
+                        noCollectionsOption.textContent = 'No collections available for this company';
+                        noCollectionsOption.disabled = true;
+                        collectionSelect.appendChild(noCollectionsOption);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching collections:', error);
+                    collectionSelect.innerHTML = '<option value="">Error loading collections</option>';
+                });
+        });
+    }
+    @else
+    // For non-super admin users, collections are already filtered by their company
+    // No additional JavaScript needed as collections are pre-filtered on the server
+    @endif
 });
 </script>
 @endsection
