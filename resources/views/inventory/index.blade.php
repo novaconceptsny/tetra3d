@@ -1274,7 +1274,15 @@
             if (data.success) {
                 const message = isEditMode ? 'Collection updated successfully' : 'Collection added successfully';
                 alert(message);
-                window.location.reload();
+                
+                // Update collection image dynamically instead of reloading
+                if (isEditMode) {
+                    $('#addCollectionModal').modal('hide');
+                    updateCollectionImageInUI(editingCollectionId, data.collection.name, data.collection.thumbnail_url, data.collection.item_count);
+                } else {
+                    // For new collections, refresh the dropdown menu to show the new collection
+                    window.location.reload();
+                }
             } else {
                 alert('Error: ' + (data.message || `Could not ${isEditMode ? 'update' : 'add'} collection.`));
             }
@@ -2936,7 +2944,7 @@ $(document).ready(function() {
                     <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
                     <div class="text-start">
                         <div class="fw-bold">${collectionName}</div>
-                        <small class="text-muted">${itemCount}</small>
+                        <small class="text-muted">${itemCount} items</small>
                     </div>
                 `;
             } else {
@@ -2944,7 +2952,7 @@ $(document).ready(function() {
                     <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                     <div class="text-start">
                         <div class="fw-bold">${collectionName}</div>
-                        <small class="text-muted">${itemCount}</small>
+                        <small class="text-muted">${itemCount} items</small>
                     </div>
                 `;
             }
@@ -2954,7 +2962,7 @@ $(document).ready(function() {
                 <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                 <div class="text-start">
                     <div class="fw-bold">All Collections</div>
-                    <small class="text-muted">${itemCount}</small>
+                    <small class="text-muted">${itemCount} items</small>
                 </div>
             `;
         }
@@ -3974,6 +3982,82 @@ $(document).ready(function() {
     //         window.location.href = url;
     //     });
     // })();
+
+    // Function to update collection image in the UI without page reload
+    function updateCollectionImageInUI(collectionId, collectionName, thumbnailUrl, itemCount) {
+        // Update the dropdown button if this collection is currently selected
+        if (window.selectedCollectionId == collectionId) {
+            const dropdownButton = document.querySelector('.dropdown button');
+            const imageContainer = dropdownButton.querySelector('.d-flex.align-items-center');
+            
+            if (thumbnailUrl) {
+                imageContainer.innerHTML = `
+                    <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
+                    <div class="text-start">
+                        <div class="fw-bold">${collectionName}</div>
+                        <small class="text-muted">${itemCount} items</small>
+                    </div>
+                `;
+            } else {
+                imageContainer.innerHTML = `
+                    <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
+                    <div class="text-start">
+                        <div class="fw-bold">${collectionName}</div>
+                        <small class="text-muted">${itemCount} items</small>
+                    </div>
+                `;
+            }
+        }
+        
+        // Update the dropdown menu item for this collection
+        updateCollectionInDropdown(collectionId, collectionName, thumbnailUrl, itemCount);
+    }
+
+    // Function to update a specific collection in the dropdown menu
+    function updateCollectionInDropdown(collectionId, collectionName, thumbnailUrl, itemCount) {
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+            const onclick = item.getAttribute('onclick');
+            if (onclick && onclick.includes(`'${collectionId}'`)) {
+                // Update the image and text for this collection item
+                const imageElement = item.querySelector('img');
+                const iconElement = item.querySelector('i');
+                const nameElement = item.querySelector('.fw-bold');
+                const countElement = item.querySelector('.text-muted');
+                
+                if (thumbnailUrl) {
+                    if (imageElement) {
+                        imageElement.src = thumbnailUrl;
+                    } else if (iconElement) {
+                        // Replace icon with image
+                        const newImg = document.createElement('img');
+                        newImg.src = thumbnailUrl;
+                        newImg.alt = '';
+                        newImg.width = 24;
+                        newImg.height = 24;
+                        newImg.className = 'me-3 rounded';
+                        newImg.style = 'object-fit: cover;';
+                        iconElement.parentNode.replaceChild(newImg, iconElement);
+                    }
+                } else {
+                    if (imageElement) {
+                        // Replace image with icon
+                        const newIcon = document.createElement('i');
+                        newIcon.className = 'fas fa-image me-3';
+                        newIcon.style = 'color: #6c757d; font-size: 16px;';
+                        imageElement.parentNode.replaceChild(newIcon, imageElement);
+                    }
+                }
+                
+                if (nameElement) nameElement.textContent = collectionName;
+                if (countElement) countElement.textContent = itemCount;
+                
+                // Update the onclick attribute with new parameters
+                item.setAttribute('onclick', `selectCollection('${collectionId}', '${collectionName}', '${itemCount}', '${thumbnailUrl || ''}')`);
+            }
+        });
+    }
+
 
 </script>
 @endsection

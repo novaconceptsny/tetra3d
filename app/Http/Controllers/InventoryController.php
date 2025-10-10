@@ -563,7 +563,12 @@ class InventoryController extends Controller
             return response()->json([
                 'success'    => true,
                 'message'    => 'Collection updated successfully',
-                'collection' => $collection,
+                'collection' => [
+                    'id' => $collection->id,
+                    'name' => $collection->name,
+                    'thumbnail_url' => $collection->thumbnail_url,
+                    'item_count' => $collection->artworks()->count(),
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
