@@ -77,12 +77,12 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="mt-2 d-flex justify-content-center gap-2">
-                                        <button class="btn btn-outline-secondary btn-sm" onclick="editCollection()" title="Edit Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                            <i class="fas fa-edit" style="font-size: 12px;"></i>
+                                    <div class="mt-2 d-flex justify-content-center gap-2" >
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="editCollection()" title="Edit Collection" id="editCollectionBtn" style="display: none;" >
+                                            <i class="fas fa-edit" ></i>
                                         </button>
-                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteCollection()" title="Delete Collection" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                            <i class="fas fa-trash" style="font-size: 12px;"></i>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteCollection()" title="Delete Collection" id="deleteCollectionBtn" style="display: none;" >
+                                            <i class="fas fa-trash" ></i>
                                         </button>
                                     </div>
                                 </div>
@@ -2963,9 +2963,13 @@ $(document).ready(function() {
         table.ajax.reload();
 
         // Show/hide edit/delete buttons
-        const editDeleteContainer = document.querySelector('.mt-2.d-flex.justify-content-center.gap-2');
-        if (editDeleteContainer) {
-            editDeleteContainer.style.display = collectionId ? 'flex' : 'none';
+        const editCollectionBtn = document.getElementById('editCollectionBtn');
+        const deleteCollectionBtn = document.getElementById('deleteCollectionBtn');
+        if (editCollectionBtn) {
+            editCollectionBtn.style.display = collectionId ? 'flex' : 'none';
+        }
+        if (deleteCollectionBtn) {
+            deleteCollectionBtn.style.display = collectionId ? 'flex' : 'none';
         }
     };
 
