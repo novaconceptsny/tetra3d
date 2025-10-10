@@ -225,7 +225,7 @@
                                                         <th>Company</th>
                                                         @endif
                                                         <th>Collection</th>
-                                                        <th>Name</th>
+                                                        <th>Title</th>
                                                         <th>Artist</th>
                                                         <th>Type</th>
                                                         <th>Height</th>
