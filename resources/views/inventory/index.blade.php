@@ -462,90 +462,90 @@
                     <h5 class="modal-title" id="multipleArtworkModalLabel" style="font-weight: 600; color: #495057;">Add Multiple Artworks</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" style="padding: 24px;">
+                <div class="modal-body" style="padding: 0px">
                     <form id="multipleArtworkForm">
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <label for="numberOfRows" class="form-label" style="font-weight: 500; color: #495057;">Enter number of new artworks to add to inventory</label>
-                                <input type="number" class="form-control" id="numberOfRows" name="number_of_rows" min="1" max="50" value="2" style="width : 50%; border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                            </div>
+                        <div class="col-md-12" style="padding: 12px 24px;">
+                            <label for="numberOfRows" class="form-label" style="font-weight: 500; color: #495057;">Enter number of new artworks to add to inventory</label>
+                            <input type="number" class="form-control" id="numberOfRows" name="number_of_rows" min="1" max="50" value="2" style="width : 50%; border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
                         </div>
 
                         <!-- Horizontal line -->
-                        <hr style="">
-
-                        <div>
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <p style="font-size: 0.9em; color: #495057; margin-bottom: 16px;">
-                                        Entering information into the boxes below will pre fill all the new artwork pieces you are adding to the table.
-                                        Leave the boxes blank to keep them empty and add the details later.
-                                    </p>
+                        <hr style="margin: 0px;" >
+                        <div style="background-color: #f5f5f5">
+                            <div style="padding: 24px 24px 12px 24px;">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p style="font-size: 0.9em; color: #495057; margin-bottom: 16px;">
+                                            Entering information into the boxes below will pre fill all the new artwork pieces you are adding to the table.
+                                            Leave the boxes blank to keep them empty and add the details later.
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Form fields section with pale grey background -->
-                            <div class="row">
-                                <div class="col-md-12">
-                                    @if(auth()->user()->isSuperAdmin())
+                                <!-- Form fields section with pale grey background -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @if(auth()->user()->isSuperAdmin())
+                                            <div class="mb-3">
+                                                <label for="prefillCompany" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Company</label>
+                                                <select class="form-select" id="prefillCompany" name="company" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                    <option value="">Select company</option>
+                                                    @foreach($companies as $company)
+                                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            @endif
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="prefillCompany" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Company</label>
-                                            <select class="form-select" id="prefillCompany" name="company" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                                <option value="">Select company</option>
-                                                @foreach($companies as $company)
-                                                    <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                            <label for="prefillCollection" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Collection</label>
+                                            <select class="form-select" id="prefillCollection" name="collection" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                <option value="">Select collection</option>
+                                                @foreach($collections as $collection)
+                                                    <option value="{{ $collection->id }}">{{ $collection->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        @endif
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="prefillCollection" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Collection</label>
-                                        <select class="form-select" id="prefillCollection" name="collection" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                            <option value="">Select collection</option>
-                                            @foreach($collections as $collection)
-                                                <option value="{{ $collection->id }}">{{ $collection->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="mb-3">
+                                            <label for="prefillArtist" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Artist</label>
+                                            <input type="text" class="form-control" id="prefillArtist" name="artist" placeholder="Enter artist name" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="prefillHeight" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Height</label>
+                                            <input type="number" class="form-control" id="prefillHeight" name="height" placeholder="Enter height" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="prefillUnit" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Unit</label>
+                                            <select class="form-select" id="prefillUnit" name="unit" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                <option value="cm">cm</option>
+                                                <option value="inch">inch</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="prefillArtist" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Artist</label>
-                                        <input type="text" class="form-control" id="prefillArtist" name="artist" placeholder="Enter artist name" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="prefillHeight" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Height</label>
-                                        <input type="number" class="form-control" id="prefillHeight" name="height" placeholder="Enter height" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="prefillUnit" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Unit</label>
-                                        <select class="form-select" id="prefillUnit" name="unit" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                            <option value="cm">cm</option>
-                                            <option value="inch">inch</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="prefillTitle" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Title</label>
-                                        <input type="text" class="form-control" id="prefillTitle" name="title" placeholder="Enter title" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="prefillType" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Type</label>
-                                        <input type="text" class="form-control" id="prefillType" name="type" placeholder="Enter artwork type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="prefillWidth" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Width</label>
-                                        <input type="number" class="form-control" id="prefillWidth" name="width" placeholder="Enter width" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
-                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="prefillTitle" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Title</label>
+                                            <input type="text" class="form-control" id="prefillTitle" name="title" placeholder="Enter title" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="prefillType" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Type</label>
+                                            <input type="text" class="form-control" id="prefillType" name="type" placeholder="Enter artwork type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="prefillWidth" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Width</label>
+                                            <input type="number" class="form-control" id="prefillWidth" name="width" placeholder="Enter width" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
 
-                                    <div class="mb-3">
-                                        <label for="prefillDescription" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Description</label>
-                                        <textarea class="form-control" id="prefillDescription" name="description" rows="5" placeholder="Enter description" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;"></textarea>
+                                        <div class="mb-3">
+                                            <label for="prefillDescription" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Description</label>
+                                            <textarea class="form-control" id="prefillDescription" name="description" rows="5" placeholder="Enter description" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                     </form>
                 </div>
