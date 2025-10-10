@@ -3938,5 +3938,28 @@ $(document).ready(function() {
     // No additional JavaScript needed as collections are pre-filtered on the server
     @endif
 });
+    // Export inventory as ZIP (CSV + images)
+    // (function attachExportHandler(){
+    //     const downloadBtn = document.getElementById('downloadTableBtn');
+    //     if (!downloadBtn) return;
+    //     downloadBtn.addEventListener('click', function(){
+    //         const params = new URLSearchParams();
+    //         const searchInput = document.getElementById('tableSearch');
+    //         if (searchInput && searchInput.value) params.set('q', searchInput.value);
+
+    //         // Try to infer selected collection from sidebar button label
+    //         const dropdownBtn = document.querySelector('.collections-dropdown .btn');
+    //         const selectedCollectionNameEl = dropdownBtn ? dropdownBtn.querySelector('.fw-bold') : null;
+    //         const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
+    //         if (selectedName && selectedName !== 'All Collections') {
+    //             const matched = (allCollections || []).find(c => c.name === selectedName);
+    //             if (matched) params.set('collection_id', matched.id);
+    //         }
+
+    //         const url = `${'{{ route("inventory.export") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
+    //         window.location.href = url;
+    //     });
+    // })();
+
 </script>
 @endsection

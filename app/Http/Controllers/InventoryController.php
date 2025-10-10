@@ -6,6 +6,8 @@ use App\Models\ArtworkCollection;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use ZipArchive;
 
 class InventoryController extends Controller
 {
@@ -165,6 +167,122 @@ class InventoryController extends Controller
                 'error'           => 'Error loading data: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function export(Request $request)
+    {
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '1024M');
+
+        $collectionId = $request->input('collection_id');
+        $searchValue  = $request->input('q');
+
+        // Build artworks query similar to getData()
+        $query = \App\Models\Artwork::with('collection', 'company', 'media')
+            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
+
+        if ($collectionId) {
+            $query->where('artworks.artwork_collection_id', $collectionId);
+        }
+
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('artworks.name', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.artist', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.type', 'like', "%{$searchValue}%")
+                    ->orWhereHas('collection', function ($subQuery) use ($searchValue) {
+                        $subQuery->where('name', 'like', "%{$searchValue}%");
+                    })
+                    ->orWhereHas('company', function ($subQuery) use ($searchValue) {
+                        $subQuery->where('name', 'like', "%{$searchValue}%");
+                    });
+            });
+        }
+
+        // For non-super admin, scope to their company
+        if (! user()->isSuperAdmin()) {
+            $query->where('artworks.company_id', user()->company_id);
+        }
+
+        $artworks = $query->orderBy('artworks.created_at', 'desc')->get();
+
+        // Prepare temp paths
+        $timestamp = now()->format('Ymd_His');
+        $baseName = 'inventory_export_' . $timestamp;
+        $tempDir = storage_path('app/exports');
+        if (! is_dir($tempDir)) {
+            @mkdir($tempDir, 0775, true);
+        }
+
+        $csvPath = $tempDir . DIRECTORY_SEPARATOR . $baseName . '.csv';
+        $zipPath = $tempDir . DIRECTORY_SEPARATOR . $baseName . '.zip';
+
+        // Write CSV
+        $csv = fopen($csvPath, 'w');
+        // Header
+        fputcsv($csv, [
+            'ID', 'Company', 'Collection', 'Name', 'Artist', 'Type', 'Height', 'Width', 'Unit', 'Description', 'Image File'
+        ]);
+
+        // Collect image files to add in zip
+        $filesToZip = [];
+
+        foreach ($artworks as $artwork) {
+            $originalValue = (array) ($artwork->original_value ?? []);
+            $height = $originalValue['height'] ?? '';
+            $width  = $originalValue['width'] ?? '';
+            $unit   = $originalValue['unit'] ?? ($artwork->original_unit ?: 'cm');
+
+            $imageFileName = '';
+            $media = $artwork->getFirstMedia('image');
+            if ($media) {
+                $sourcePath = $media->getPath();
+                if ($sourcePath && file_exists($sourcePath)) {
+                    // Build a readable file name
+                    $safeName = Str::slug($artwork->name ?: ('artwork-' . $artwork->id));
+                    $imageFileName = $safeName . '-' . $artwork->id . '.' . pathinfo($sourcePath, PATHINFO_EXTENSION);
+                    $filesToZip[] = ['path' => $sourcePath, 'name' => 'images/' . $imageFileName];
+                }
+            }
+
+            fputcsv($csv, [
+                $artwork->id,
+                $artwork->company->name ?? '',
+                $artwork->collection->name ?? '',
+                $artwork->name,
+                $artwork->artist,
+                $artwork->type,
+                $height,
+                $width,
+                $unit,
+                $artwork->description,
+                $imageFileName,
+            ]);
+        }
+
+        fclose($csv);
+
+        // Create ZIP
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            @unlink($csvPath);
+            return response()->json(['success' => false, 'message' => 'Unable to create ZIP file'], 500);
+        }
+
+        // Add CSV
+        $zip->addFile($csvPath, $baseName . '.csv');
+
+        // Add images
+        foreach ($filesToZip as $file) {
+            $zip->addFile($file['path'], $file['name']);
+        }
+
+        $zip->close();
+
+        // Remove the standalone CSV after adding to ZIP
+        @unlink($csvPath);
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
     public function editor(Request $request)

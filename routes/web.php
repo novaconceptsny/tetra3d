@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('projects/{project}/artworks', 'ArtworkController@getArtworks')->name('artworks.get');
     Route::post('artworks/destroy/{id}', 'ArtworksController@destroyCollection')->name('artworks.destroyCollection');
     Route::get('inventory', 'InventoryController@index')->name('inventory.index');
+    Route::get('inventory/export', 'InventoryController@export')->name('inventory.export');
     
     Route::get('inventory/datatable', 'InventoryController@datatable')->name('inventory.datatable');
     Route::get('inventory/data', 'InventoryController@getData')->name('inventory.data');
