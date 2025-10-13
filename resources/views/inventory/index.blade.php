@@ -3611,6 +3611,12 @@ $(document).ready(function() {
                         dropArea.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
                         dropArea.classList.add('has-image');
 
+                        // Populate title with filename (without extension)
+                        const titleInput = row.querySelector('.title-input');
+                        if (titleInput) {
+                            const filenameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+                            titleInput.value = filenameWithoutExt;
+                        }
                     };
                     reader.readAsDataURL(file);
                 }
