@@ -1036,3 +1036,25 @@
         background-color: #e3f2fd;
         border-left: 4px solid #099F9A;
     }
+
+    /* Placeholder text styling to match input field styling */
+    #multipleArtworkModal .form-control::placeholder,
+    #multipleArtworkModal .form-select::placeholder,
+    #bulkEditModal .form-control::placeholder,
+    #bulkEditModal .form-select::placeholder {
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 400;
+        font-style: normal;
+        opacity: 1;
+    }
+
+    /* Ensure consistent placeholder styling across all form inputs */
+    .form-control::placeholder,
+    .form-select::placeholder {
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 400;
+        font-style: normal;
+        opacity: 1;
+    }
