@@ -2619,6 +2619,40 @@ $(document).ready(function() {
 
     console.log('DataTable created successfully');
 
+    // Update left collections count after each DataTables AJAX load (including reloads)
+    table.on('xhr.dt', function (e, settings, json) {
+        if (!json) return;
+
+        var newCount = typeof json.recordsTotal === 'number' ? json.recordsTotal : 0;
+
+        // Update the visible count in the dropdown button (current selection)
+        var dropdownButton = document.querySelector('.collections-dropdown .btn');
+        if (dropdownButton) {
+            var countEl = dropdownButton.querySelector('.text-start small.text-muted');
+            if (countEl) {
+                countEl.textContent = newCount + ' items';
+            }
+        }
+
+        // Also sync the corresponding item inside the dropdown list, if present
+        if (window.selectedCollectionId) {
+            var menuItems = document.querySelectorAll('.collections-dropdown .dropdown-menu .dropdown-item');
+            menuItems.forEach(function (item) {
+                var onclickAttr = item.getAttribute('onclick') || '';
+                if (onclickAttr.indexOf("selectCollection('" + window.selectedCollectionId + "'") !== -1) {
+                    var countSpan = item.querySelector('small.text-muted');
+                    if (countSpan) countSpan.textContent = newCount + ' items';
+
+                    var nameEl = item.querySelector('.fw-bold');
+                    var name = nameEl ? nameEl.textContent.trim() : '';
+                    var img = item.querySelector('img');
+                    var thumb = img ? img.getAttribute('src') : '';
+                    item.setAttribute('onclick', "selectCollection('" + window.selectedCollectionId + "', '" + name.replace(/'/g, "\\'") + "', '" + newCount + "', '" + thumb.replace(/'/g, "\\'") + "')");
+                }
+            });
+        }
+    });
+
     // Initialize Bootstrap tooltips and ensure they hide on mouseleave/blur
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
