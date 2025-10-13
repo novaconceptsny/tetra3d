@@ -1461,7 +1461,7 @@ input[type=text].form-control:not(.login-custum-form-group input),
 select.form-control {
   border: 1px solid #e0e0e0 !important;
   border-radius: 8px  !important;
-  font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
+  font: normal var(--light-font) 14px/normal var(--main-font-family) !important;
   color: #000;
   background-color: #f8f9fa !important;
 }

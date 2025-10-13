@@ -3446,8 +3446,8 @@ $(document).ready(function() {
         }
 
         if (prefillData.type) {
-            const typeSelect = rowElement.querySelector('.type-select');
-            if (typeSelect) typeSelect.value = prefillData.type;
+            const typeInput = rowElement.querySelector('.type-input');
+            if (typeInput) typeInput.value = prefillData.type;
         }
 
         // Initialize drag and drop for this row
