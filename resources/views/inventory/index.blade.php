@@ -51,7 +51,7 @@
                                             </button>
                                             <ul class="dropdown-menu w-100" style="max-height: 500px; overflow-y: auto; min-height: 200px; border: 1px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                                                 <li>
-                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '{{ $totalItems }} items')" style="border-bottom: 1px solid #f8f9fa;">
+                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '{{ $totalItems }}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
                                                         <div>
                                                             <div class="fw-bold">All Collections</div>
@@ -61,7 +61,7 @@
                                                 </li>
                                                 @foreach($collections as $collection)
                                                 <li>
-                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}} items', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
+                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         @if($collection->thumbnail_url)
                                                             <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3 rounded" style="object-fit: cover;">
                                                         @else
@@ -3860,6 +3860,12 @@ $(document).ready(function() {
 
     // Function to handle collection image file processing
     function handleCollectionImageFile(file, uploadBox, inputElement, nameElement) {
+        // CRITICAL FIX: Set the file to the input element so it's available when saving
+        // Create a new FileList with the dropped file
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        inputElement.files = dataTransfer.files;
+
         const reader = new FileReader();
         reader.onload = (e) => {
             const img = document.createElement('img');
