@@ -3677,7 +3677,7 @@ $(document).ready(function() {
             const formData = {
                 name: row.find('.title-input').val(),
                 artist: row.find('.artist-input').val(),
-                type: row.find('.type-select').val(),
+                type: row.find('.type-input').val(),
                 artwork_collection_id: row.find('.collection-select').last().val(),
                 description: row.find('.description-input').val(),
                 height: row.find('.height-input').val(),
