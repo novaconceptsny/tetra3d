@@ -949,3 +949,90 @@
     max-width: 120px;
     min-width: 120px;
 }
+
+    /* Improve table row clickability and visual feedback */
+    #inventoryTable tbody tr {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    
+    #inventoryTable tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    #inventoryTable tbody tr.selected {
+        background-color: #e3f2fd;
+    }
+    
+    /* Make editable cells more obvious */
+    .editable-cell {
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: inline-block;
+        min-width: 100%;
+        position: relative;
+    }
+    
+    .editable-cell:hover {
+        background-color: #e9ecef;
+        border: 1px solid #dee2e6;
+    }
+    
+    .editable-cell:focus {
+        background-color: #fff;
+        border: 2px solid #099F9A;
+        outline: none;
+    }
+    
+    /* Add visual indicator for editable cells */
+    .editable-cell::after {
+        content: "✏️";
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        font-size: 12px;
+    }
+    
+    .editable-cell:hover::after {
+        opacity: 0.6;
+    }
+    
+    /* Add subtle border to indicate clickable cells */
+    .editable-cell {
+        border: 1px solid transparent;
+    }
+    
+    .editable-cell:hover {
+        border: 1px solid #099F9A;
+        box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.1);
+    }
+    
+    /* Improve focus state for better accessibility */
+    .editable-cell:focus {
+        border: 2px solid #099F9A;
+        box-shadow: 0 0 0 3px rgba(9, 159, 154, 0.2);
+        outline: none;
+    }
+    
+    /* Improve checkbox visibility */
+    .row-checkbox {
+        transform: scale(1.2);
+        margin: 0;
+    }
+    
+    /* Row selection visual feedback */
+    #inventoryTable tbody tr:has(.row-checkbox:checked) {
+        background-color: #e3f2fd;
+        border-left: 4px solid #099F9A;
+    }
+    
+    /* Alternative for browsers that don't support :has() */
+    #inventoryTable tbody tr.selected-row {
+        background-color: #e3f2fd;
+        border-left: 4px solid #099F9A;
+    }

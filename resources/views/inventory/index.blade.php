@@ -2512,6 +2512,12 @@ $(document).ready(function() {
         return;
     }
 
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     // Create DataTable instance
     var table = $('#inventoryTable').DataTable({
         processing: true,
@@ -2549,56 +2555,56 @@ $(document).ready(function() {
             {
                 data: 'company',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="company" data-id="${row.id}" data-type="company-select">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="company" data-id="${row.id}" data-type="company-select" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             @endif
             {
                 data: 'collection',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="collection" data-id="${row.id}" data-type="collection-select">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="collection" data-id="${row.id}" data-type="collection-select" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             {
                 data: 'name',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="name" data-id="${row.id}">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="name" data-id="${row.id}" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             {
                 data: 'artist',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="artist" data-id="${row.id}">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="artist" data-id="${row.id}" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             {
                 data: 'type',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="type" data-id="${row.id}">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="type" data-id="${row.id}" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             {
                 data: 'height',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="height" data-id="${row.id}">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="height" data-id="${row.id}" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             {
                 data: 'width',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="width" data-id="${row.id}">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="width" data-id="${row.id}" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             {
                 data: 'unit',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="unit" data-id="${row.id}" data-type="select">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="unit" data-id="${row.id}" data-type="select" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             },
             {
                 data: 'description',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="description" data-id="${row.id}">${data || ''}</span>`;
+                    return `<span class="editable-cell" data-field="description" data-id="${row.id}" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
                 }
             }
         ],
@@ -2609,6 +2615,10 @@ $(document).ready(function() {
         responsive: true,
         search: {
             caseInsensitive: true
+        },
+        drawCallback: function() {
+            // Reinitialize tooltips after table redraw
+            $('[data-bs-toggle="tooltip"]').tooltip();
         },
         dom: 'rtip', // Hide default search and length controls, keep pagination
         initComplete: function(settings, json) {
@@ -2719,15 +2729,48 @@ $(document).ready(function() {
     $(document).on('change', '.row-checkbox', function() {
         var rowId = $(this).data('id');
         var isChecked = $(this).is(':checked');
+        var row = $(this).closest('tr');
 
         if (isChecked) {
             selectedRows.add(rowId);
+            row.addClass('selected-row');
         } else {
             selectedRows.delete(rowId);
+            row.removeClass('selected-row');
         }
 
         updateBulkEditUI();
         updateSelectAllState();
+    });
+
+    // Make entire row clickable for checkbox selection
+    $(document).on('click', '#inventoryTable tbody tr', function(e) {
+        // Don't trigger if clicking on editable cells or other interactive elements
+        if ($(e.target).hasClass('editable-cell') || 
+            $(e.target).closest('.editable-cell').length > 0 ||
+            $(e.target).is('input, select, button, a') ||
+            $(e.target).closest('input, select, button, a').length > 0) {
+            return;
+        }
+        
+        var checkbox = $(this).find('.row-checkbox');
+        var rowId = checkbox.data('id');
+        var row = $(this);
+        
+        if (checkbox.length > 0) {
+            checkbox.prop('checked', !checkbox.prop('checked'));
+            
+            if (checkbox.prop('checked')) {
+                selectedRows.add(rowId);
+                row.addClass('selected-row');
+            } else {
+                selectedRows.delete(rowId);
+                row.removeClass('selected-row');
+            }
+            
+            updateBulkEditUI();
+            updateSelectAllState();
+        }
     });
 
     // Handle select all checkbox
@@ -2738,9 +2781,11 @@ $(document).ready(function() {
         if (isChecked) {
             $('.row-checkbox').each(function() {
                 selectedRows.add($(this).data('id'));
+                $(this).closest('tr').addClass('selected-row');
             });
         } else {
             selectedRows.clear();
+            $('#inventoryTable tbody tr').removeClass('selected-row');
         }
 
         updateBulkEditUI();
