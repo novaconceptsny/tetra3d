@@ -706,6 +706,9 @@
                 </select>
             </td>
             <td>
+               <textarea class="form-control form-control-sm description-input" rows="1" placeholder="Enter description"></textarea>
+            </td>
+            <td>
                 <button class="btn btn-danger btn-sm delete-row-btn" title="Delete">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -3449,6 +3452,11 @@ $(document).ready(function() {
             const typeInput = rowElement.querySelector('.type-input');
             if (typeInput) typeInput.value = prefillData.type;
         }
+
+        if(prefillData.description) {
+            const descriptionInput = rowElement.querySelector('.description-input');
+            if (descriptionInput) descriptionInput.value = prefillData.description;
+        }       
 
         // Initialize drag and drop for this row
         initializeRowDragDrop(tempId);

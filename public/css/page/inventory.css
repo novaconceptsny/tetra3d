@@ -143,6 +143,13 @@
     margin-left: 10px;
 }
 
+/* Action column width */
+td:has(.delete-row-btn) {
+    width: 30px !important;
+    max-width: 30px;
+    min-width: 30px;
+}
+
 /* Bulk edit controls styling */
 #bulkEditControls {
     background: #f8f9fa;
