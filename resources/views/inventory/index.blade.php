@@ -818,7 +818,60 @@
         </div>
     </div>
 
-
+    <!-- Artwork Detail Popup Modal -->
+    <div class="modal fade" id="artworkDetailModal" tabindex="-1" aria-labelledby="artworkDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color: #099F9A;">
+                    <h5 class="modal-title" id="artworkDetailModalLabel">
+                        <i class="fas fa-image me-2"></i>Artwork Details
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="artwork-image-container text-center mb-3">
+                                <img id="artworkDetailImage" src="" alt="Artwork" class="img-fluid rounded shadow" style="max-height: 400px; object-fit: contain;">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="artwork-details">
+                                <h6 class="text-muted mb-3">Artwork Information</h6>
+                                <div class="detail-item mb-2">
+                                    <strong>Name:</strong> <span id="artworkDetailName">-</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Artist:</strong> <span id="artworkDetailArtist">-</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Type:</strong> <span id="artworkDetailType">-</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Collection:</strong> <span id="artworkDetailCollection">-</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Company:</strong> <span id="artworkDetailCompany">-</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Dimensions:</strong> <span id="artworkDetailDimensions">-</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <strong>Unit:</strong> <span id="artworkDetailUnit">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Description:</strong> <span id="artworkDetailDescription">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 
@@ -2619,6 +2672,20 @@ $(document).ready(function() {
         drawCallback: function() {
             // Reinitialize tooltips after table redraw
             $('[data-bs-toggle="tooltip"]').tooltip();
+            
+            // Add click handlers to artwork images
+            $('.artwork-image').off('click').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Get the row data from DataTable
+                const row = table.row($(this).closest('tr'));
+                const rowData = row.data();
+                
+                if (rowData) {
+                    showArtworkDetailModal(rowData);
+                }
+            });
         },
         dom: 'rtip', // Hide default search and length controls, keep pagination
         initComplete: function(settings, json) {
@@ -4141,6 +4208,31 @@ $(document).ready(function() {
                 item.setAttribute('onclick', `selectCollection('${collectionId}', '${collectionName}', '${itemCount}', '${thumbnailUrl || ''}')`);
             }
         });
+    }
+
+    // Function to show artwork detail modal
+    function showArtworkDetailModal(artworkData) {
+        // Populate the modal with artwork data
+        document.getElementById('artworkDetailImage').src = artworkData.image || '';
+        document.getElementById('artworkDetailName').textContent = artworkData.name || '-';
+        document.getElementById('artworkDetailArtist').textContent = artworkData.artist || '-';
+        document.getElementById('artworkDetailType').textContent = artworkData.type || '-';
+        document.getElementById('artworkDetailCollection').textContent = artworkData.collection || '-';
+        document.getElementById('artworkDetailCompany').textContent = artworkData.company || '-';
+        
+        // Format dimensions
+        const height = artworkData.height || '';
+        const width = artworkData.width || '';
+        const unit = artworkData.unit || '';
+        const dimensions = (height && width) ? `${height} × ${width} ${unit}` : '-';
+        document.getElementById('artworkDetailDimensions').textContent = dimensions;
+        
+        document.getElementById('artworkDetailUnit').textContent = artworkData.unit || '-';
+        document.getElementById('artworkDetailDescription').textContent = artworkData.description || '-';
+        
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('artworkDetailModal'));
+        modal.show();
     }
 
 

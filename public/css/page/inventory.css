@@ -28,6 +28,13 @@
     height: 40px;
     object-fit: cover;
     border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.artwork-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 /* Make only the table area scroll, keep header sticky */
@@ -97,6 +104,43 @@
     padding: 20px;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Artwork Detail Modal Styling */
+#artworkDetailModal .modal-dialog {
+    max-width: 900px;
+}
+
+#artworkDetailModal .artwork-image-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+}
+
+#artworkDetailModal .artwork-details {
+    padding: 20px 0;
+}
+
+#artworkDetailModal .detail-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+#artworkDetailModal .detail-item:last-child {
+    border-bottom: none;
+}
+
+#artworkDetailModal .detail-item strong {
+    color: #495057;
+    font-weight: 600;
+    min-width: 100px;
+    display: inline-block;
+}
+
+#artworkDetailModal .detail-item span {
+    color: #212529;
+    margin-left: 10px;
 }
 
 /* Bulk edit controls styling */
