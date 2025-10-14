@@ -71,11 +71,11 @@
            handcursor="false"
     />
 
-    <!-- Animated Hotspot -->
+    <!-- Animated Hotspot for non-Android devices -->
     <style name="artwork_hotspot"
            url="/krpano/img/hotspot-1118.png"
            edge="center"
-           devices="all"
+           devices="!android"
            tooltip=""
            scalechildren="true"
            maskchildren="false"
@@ -87,6 +87,27 @@
            capture="false"
            distorted="true"
            onloaded="delayedcall(0.1,do_crop_animation(100,100,1250);set(visible,true));"
+    />
+
+    <!-- Static Hotspot for Android devices -->
+    <style name="artwork_hotspot"
+           url="/krpano/img/hotspot-circle.png"
+           edge="center"
+           devices="android"
+           tooltip=""
+           scalechildren="true"
+           maskchildren="false"
+           width="prop"
+           height="auto"
+           frame="1"
+           visible="true"
+           zorder="40"
+           capture="false"
+           distorted="true"
+           alpha="1"
+           scale="1"
+           onover="tween(scale,1.1);"
+           onout="tween(scale,1.0);"
     />
 
 </krpano>
