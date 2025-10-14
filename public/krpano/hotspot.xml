@@ -91,7 +91,7 @@
 
     <!-- Static Hotspot for Android devices -->
     <style name="artwork_hotspot"
-           url="/krpano/img/hotspot-circle.png"
+           url="/krpano/img/hotspot-single.png"
            edge="center"
            devices="android"
            tooltip=""
