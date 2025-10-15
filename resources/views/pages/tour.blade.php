@@ -72,6 +72,34 @@
 @endsection
 
 @section('content')
+<!-- Chrome Android Touch Fix CSS -->
+<style>
+    /* Chrome Android touch fix */
+    #pano, #pano * {
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    
+    /* Ensure proper touch handling for krpano container */
+    #krpanoSWFObject {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Chrome Android specific fixes */
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+        #pano {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+    }
+</style>
+
 <!-- Landscape Orientation Prompt -->
 <div id="landscapePrompt" class="landscape-prompt">
     <div class="landscape-prompt-icon">
@@ -200,6 +228,21 @@
         krpano = krpano_interface;
 
         console.log("🕵️ krpano ready, interface:", krpano_interface);
+
+        // Chrome Android fix: Ensure proper touch event handling
+        var isChromeAndroid = /Chrome/.test(navigator.userAgent) && /Android/.test(navigator.userAgent);
+        if (isChromeAndroid) {
+            console.log("🔧 Chrome Android detected - applying touch fixes");
+            
+            // Force touch events to be handled properly
+            var krpanoContainer = document.getElementById('krpanoSWFObject');
+            if (krpanoContainer) {
+                krpanoContainer.style.touchAction = 'manipulation';
+                krpanoContainer.style.webkitTouchCallout = 'none';
+                krpanoContainer.style.webkitUserSelect = 'none';
+                krpanoContainer.style.userSelect = 'none';
+            }
+        }
 
         // helper to actually resize both krpano AND the raw canvas
         let doResize = () => {
