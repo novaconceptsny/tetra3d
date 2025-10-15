@@ -112,9 +112,8 @@ function krpanoplugin() {
 			krpano.control.layer.addEventListener("mousemove", handle_mouse_touch_events, true);
 		}
 		if (device.browser.events.touch) {
-		// Chrome Android fix: Use passive: false for touch events to allow preventDefault
-		krpano.control.layer.addEventListener(device.browser.events.touchstart, handle_mouse_touch_events, { passive: false, capture: true });
-		krpano.control.layer.addEventListener(device.browser.events.touchmove, handle_mouse_touch_events, { passive: false, capture: true });
+			krpano.control.layer.addEventListener(device.browser.events.touchstart, handle_mouse_touch_events, true);
+			krpano.control.layer.addEventListener(device.browser.events.touchmove, handle_mouse_touch_events, true);
 		}
 
 		// basic ThreeJS objects
@@ -432,14 +431,6 @@ function krpanoplugin() {
 		tour_is_shared = window.location.pathname.includes("shared-tours") || 
 						new URLSearchParams(window.location.search).get('shared') === "1";
 
-		// Chrome Android fix: Prevent default behavior for touch events to ensure proper handling
-		if (event.type == device.browser.events.touchstart || 
-			event.type == device.browser.events.touchend || 
-			event.type == device.browser.events.touchmove) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-
 		if (event.type == "mousedown") {
 			type = "ondown";
 			krpano.control.layer.addEventListener("mouseup", handle_mouse_touch_events, true);
@@ -453,12 +444,11 @@ function krpanoplugin() {
 		}
 		else if (event.type == device.browser.events.touchstart) {
 			type = "ondown";
-			// Chrome Android fix: Use passive: false to allow preventDefault
-			krpano.control.layer.addEventListener(device.browser.events.touchend, handle_mouse_touch_events, { passive: false, capture: true });
+			krpano.control.layer.addEventListener(device.browser.events.touchend, handle_mouse_touch_events, true);
 		}
 		else if (event.type == device.browser.events.touchend) {
 			type = "onup";
-			krpano.control.layer.removeEventListener(device.browser.events.touchend, handle_mouse_touch_events, { passive: false, capture: true });
+			krpano.control.layer.removeEventListener(device.browser.events.touchend, handle_mouse_touch_events, true);
 		}
 		else if (event.type == device.browser.events.touchmove) {
 			type = "onmove";
@@ -468,17 +458,6 @@ function krpanoplugin() {
 		var ms = krpano.control.getMousePos(event.changedTouches ? event.changedTouches[0] : event);
 		ms.x /= krpano.stagescale;
 		ms.y /= krpano.stagescale;
-
-		// Chrome Android fix: Additional handling for touch events
-		var isChromeAndroid = /Chrome/.test(navigator.userAgent) && /Android/.test(navigator.userAgent);
-		if (isChromeAndroid && (event.type == device.browser.events.touchstart || event.type == device.browser.events.touchend)) {
-			// Force immediate processing for Chrome Android
-			if (event.type == device.browser.events.touchstart) {
-				krpano.mouse.down = true;
-			} else if (event.type == device.browser.events.touchend) {
-				krpano.mouse.down = false;
-			}
-		}
 
 		// is there a object as that pos?
 		var hittest = do_object_hittest(ms.x, ms.y);
@@ -619,15 +598,7 @@ function krpanoplugin() {
 				console.log(hitobj.userData.surfacestateId, "surfacestateID")
 				var urlStr = "/surfaces/" + hitobj.userData.surface_id + "?spot_id=" + hitobj.userData.spot_id + "&layout_id=" + hitobj.userData.layout_id + "&hlookat=" + hlookat + "&vlookat=" + vlookat;
 				console.log(hitobj.userData.layout_id, "layout_id", urlStr)
-				
-				// Chrome Android fix: Add small delay to ensure proper navigation
-				if (isChromeAndroid) {
-					setTimeout(function() {
-						window.location.href = urlStr;
-					}, 50);
-				} else {
-					window.location.href = urlStr;
-				}
+				window.location.href = urlStr;
 			}
 			isDown = false;
 			krpano.mouse.down = false;
