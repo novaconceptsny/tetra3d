@@ -193,7 +193,10 @@ class Artwork extends Model implements HasMedia
         // }
 
         $image->resize($targetWidth, $targetHeight);
+        
+        $this->data->height_inch =  round($this->data->width_inch / $originalAspectRatio, 5);
 
+        $this->save();
 
         $this->addMediaFromBase64($image->encode('data-url'))
             ->usingFileName($media->file_name)
