@@ -2988,6 +2988,8 @@ main section.editor .editor-view .row .side-col .card-div {
 }
 
 main section.editor .editor-view .row .side-col .card-div .card-row {
+  flex-direction: column;
+  flex-wrap: unset;
   border: none;
   overflow-x: hidden;
   overflow-y: auto;

@@ -14,7 +14,7 @@ class InventoryController extends Controller
 
     public function index(Request $request)
     {
-        $inventory          = Artwork::paginate(25);
+        $inventory          = Artwork::orderBy('updated_at', 'desc')->paginate(25);
         
         // Filter collections by company for non-super admin users
         if (auth()->user()->isSuperAdmin()) {
@@ -77,11 +77,11 @@ class InventoryController extends Controller
             ];
         }
 
-        $orderBy = $columns[$orderColumn] ?? 'created_at';
+        $orderBy = $columns[$orderColumn] ?? 'updated_at';
 
         // Base query
         $query = Artwork::with('collection', 'company')
-            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
+            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at', 'artworks.updated_at']);
 
         // Filter by collection if provided
         if ($request->has('collection_id') && $request->collection_id) {
@@ -204,7 +204,7 @@ class InventoryController extends Controller
             $query->where('artworks.company_id', user()->company_id);
         }
 
-        $artworks = $query->orderBy('artworks.created_at', 'desc')->get();
+        $artworks = $query->orderBy('artworks.updated_at', 'desc')->get();
 
         // Prepare temp paths
         $timestamp = now()->format('Ymd_His');
@@ -446,13 +446,21 @@ class InventoryController extends Controller
                 $originalValue['unit']   = $request->input('unit', $originalValue['unit'] ?? 'cm');
                 $model->original_value = $originalValue;
 
+                // Convert string values to float before using round()
+                $widthFloat = !empty($originalValue['width']) ? (float) $originalValue['width'] : 0;
+                $heightFloat = !empty($originalValue['height']) ? (float) $originalValue['height'] : 0;
+                
+                $data                = $model->data ?? [];
+
+                $data['width_inch'] = round($widthFloat, 5);
+                $data['height_inch'] = round($heightFloat, 5);
+
                 // Convert to inches for data column
                 if ($originalValue['unit'] === 'cm' && ! empty($originalValue['width']) && ! empty($originalValue['height'])) {
-                    $data                = $model->data ?? [];
                     $data['width_inch']  = round($originalValue['width'] / 2.54, 5);
                     $data['height_inch'] = round($originalValue['height'] / 2.54, 5);
-                    $model->data       = $data;
                 }
+                $model->data       = $data;
             }
 
             $model->save();
@@ -1199,14 +1207,19 @@ class InventoryController extends Controller
 
                     $artwork->original_value = $originalValue;
 
+                    $data = $artwork->data ?? [];
+
+                    $data['width_inch'] = round($originalValue['width'], 5);
+                    $data['height_inch'] = round($originalValue['height'], 5);
+
                     // Convert to inches for data column if unit is cm
                     if (isset($originalValue['unit']) && $originalValue['unit'] === 'cm' &&
                         ! empty($originalValue['width']) && ! empty($originalValue['height'])) {
-                        $artwork->data = [
-                            'width_inch'  => round($originalValue['width'] / 2.54, 5),
-                            'height_inch' => round($originalValue['height'] / 2.54, 5),
-                        ];
+                        $data['width_inch'] = round($originalValue['width'] / 2.54, 5);
+                        $data['height_inch'] = round($originalValue['height'] / 2.54, 5);
                     }
+
+                    $artwork->data = $data;
 
                     $artwork->save();
                 }
