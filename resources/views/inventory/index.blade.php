@@ -2574,6 +2574,36 @@ $(document).ready(function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
+    // Store pending changes to reapply after table reload
+    var pendingChanges = {};
+
+    // Function to reapply pending changes after table reload
+    function reapplyPendingChanges() {
+        if (Object.keys(pendingChanges).length === 0) return;
+        
+        table.rows().every(function() {
+            var rowData = this.data();
+            var rowId = rowData.id;
+            
+            if (pendingChanges[rowId]) {
+                var changes = pendingChanges[rowId];
+                for (var field in changes) {
+                    rowData[field] = changes[field];
+                }
+                this.data(rowData).draw(false);
+            }
+        });
+    }
+
+    // Function to clear pending changes for a specific row or all rows
+    function clearPendingChanges(rowId) {
+        if (rowId) {
+            delete pendingChanges[rowId];
+        } else {
+            pendingChanges = {};
+        }
+    }
+
     // Create DataTable instance
     var table = $('#inventoryTable').DataTable({
         processing: true,
@@ -2761,7 +2791,10 @@ $(document).ready(function() {
 
         // Clear current search and reload table
         $('#tableSearch').val('');
-        table.ajax.reload();
+        table.ajax.reload(function() {
+            // Reapply any pending changes after reload
+            reapplyPendingChanges();
+        }, false);
 
         console.log('Search type changed to:', searchType);
     });
@@ -2934,7 +2967,11 @@ $(document).ready(function() {
                 if (response.success) {
                     alert('Successfully updated ' + response.updated_count + ' item(s).');
                     bulkEditModal.modal('hide');
-                    table.ajax.reload();
+                    // Clear pending changes since server data is now updated
+                    clearPendingChanges();
+                    table.ajax.reload(function() {
+                        // No need to reapply changes since server data is fresh
+                    }, false);
                     selectedRows.clear();
                     updateBulkEditUI();
                     updateSelectAllState();
@@ -3061,6 +3098,31 @@ $(document).ready(function() {
                     }
 
                     $cell.removeClass('editing').text(displayValue);
+                    
+                    // Update the DataTable row data with the new value
+                    const row = table.row($cell.closest('tr'));
+                    const rowData = row.data();
+                    if (rowData) {
+                        // Store the change in pendingChanges for potential reapplication after reload
+                        const rowId = rowData.id;
+                        if (!pendingChanges[rowId]) {
+                            pendingChanges[rowId] = {};
+                        }
+                        
+                        // Update the specific field in the row data
+                        if (field === 'collection') {
+                            rowData.collection = displayValue;
+                            pendingChanges[rowId].collection = displayValue;
+                        } else if (field === 'company') {
+                            rowData.company = displayValue;
+                            pendingChanges[rowId].company = displayValue;
+                        } else {
+                            rowData[field] = newValue;
+                            pendingChanges[rowId][field] = newValue;
+                        }
+                        // Update the row data in the DataTable
+                        row.data(rowData).draw(false);
+                    }
                 },
                 error: function(xhr) {
                     console.error('Update failed:', xhr.responseText);
@@ -3117,7 +3179,10 @@ $(document).ready(function() {
         }
 
         // Reload the DataTable with the new filter
-        table.ajax.reload();
+        table.ajax.reload(function() {
+            // Reapply any pending changes after reload
+            reapplyPendingChanges();
+        }, false); // false = don't reset paging
 
         // Show/hide edit/delete buttons
         const editCollectionBtn = document.getElementById('editCollectionBtn');
@@ -3783,7 +3848,10 @@ $(document).ready(function() {
                         // Remove all new rows
                         $('.new-artwork-row').remove();
                         // Reload table
-                        table.ajax.reload();
+                        table.ajax.reload(function() {
+                            // Reapply any pending changes after reload
+                            reapplyPendingChanges();
+                        }, false);
                         // Hide multiple drop zone
                         $('#multipleDropZone').remove();
                         // Update controls
@@ -3851,7 +3919,11 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.success) {
                         alert('Successfully duplicated ' + response.copied_count + ' item(s).');
-                        table.ajax.reload();
+                        // Clear pending changes since server data is now updated
+                        clearPendingChanges();
+                        table.ajax.reload(function() {
+                            // No need to reapply changes since server data is fresh
+                        }, false);
                         selectedRows.clear();
                         updateBulkEditUI();
                         updateSelectAllState();
@@ -3905,7 +3977,11 @@ $(document).ready(function() {
                 if (response.success) {
                     alert('Successfully moved ' + response.updated_count + ' item(s).');
                     $('#moveToCollectionModal').modal('hide');
-                    table.ajax.reload();
+                    // Clear pending changes since server data is now updated
+                    clearPendingChanges();
+                    table.ajax.reload(function() {
+                        // No need to reapply changes since server data is fresh
+                    }, false);
                     selectedRows.clear();
                     updateBulkEditUI();
                     updateSelectAllState();
@@ -3946,7 +4022,11 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.success) {
                         alert('Successfully deleted ' + response.deleted_count + ' item(s).');
-                        table.ajax.reload();
+                        // Clear pending changes since server data is now updated
+                        clearPendingChanges();
+                        table.ajax.reload(function() {
+                            // No need to reapply changes since server data is fresh
+                        }, false);
                         selectedRows.clear();
                         updateBulkEditUI();
                         updateSelectAllState();
