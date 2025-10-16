@@ -31,7 +31,7 @@
 
                                                     @if($selectedCollectionData)
                                                         @if($selectedCollectionData->thumbnail_url)
-                                                            <img src="{{ $selectedCollectionData->thumbnail_url }}" alt="{{ $selectedCollectionData->name }}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
+                                                            <img src="{{ $selectedCollectionData->thumbnail_url }}" alt="{{ $selectedCollectionData->name }}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 0;">
                                                         @else
                                                             <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                                                         @endif
@@ -63,7 +63,7 @@
                                                 <li>
                                                     <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}}', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         @if($collection->thumbnail_url)
-                                                            <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3 rounded" style="object-fit: cover;">
+                                                            <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3" style="object-fit: cover; border-radius: 0;">
                                                         @else
                                                             <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
                                                         @endif
@@ -3226,7 +3226,7 @@ $(document).ready(function() {
             // Update the image and text for selected collection
             if (thumbnailUrl) {
                 imageContainer.innerHTML = `
-                    <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
+                    <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 0;">
                     <div class="text-start">
                         <div class="fw-bold">${collectionName}</div>
                         <small class="text-muted">${itemCount} items</small>
@@ -4312,7 +4312,7 @@ $(document).ready(function() {
             
             if (thumbnailUrl) {
                 imageContainer.innerHTML = `
-                    <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 2px;">
+                    <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 0;">
                     <div class="text-start">
                         <div class="fw-bold">${collectionName}</div>
                         <small class="text-muted">${itemCount} items</small>
