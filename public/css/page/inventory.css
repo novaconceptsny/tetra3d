@@ -1109,3 +1109,42 @@ td:has(.delete-row-btn) {
         font-style: normal;
         opacity: 1;
     }
+
+    /* Description textarea styling for inline editing */
+    .description-input {
+        min-width: 200px;
+        max-width: 300px;
+        resize: vertical;
+        font-size: 14px;
+        line-height: 1.4;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0.375rem 0.75rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .description-input:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Ensure the textarea doesn't break table layout */
+    .editable-cell.editing {
+        padding: 0;
+        vertical-align: top;
+    }
+
+    .editable-cell.editing .description-input {
+        width: 100%;
+        min-height: 40px;
+        max-height: 80px;
+    }
+
+    #artworkDetailDescription {
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        white-space: pre-wrap !important;
+        max-width: 100% !important;
+    }

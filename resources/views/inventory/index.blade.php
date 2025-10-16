@@ -863,7 +863,8 @@
                                     <strong>Unit:</strong> <span id="artworkDetailUnit">-</span>
                                 </div>
                                 <div class="detail-item">
-                                    <strong>Description:</strong> <span id="artworkDetailDescription">-</span>
+                                    <strong>Description:</strong> 
+                                    <div id="artworkDetailDescription" >-</div>
                                 </div>
                             </div>
                         </div>
@@ -2690,7 +2691,7 @@ $(document).ready(function() {
             {
                 data: 'description',
                 render: function(data, type, row) {
-                    return `<span class="editable-cell" data-field="description" data-id="${row.id}" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</span>`;
+                    return `<textarea class="form-control form-control-sm description-input" rows="2" placeholder="Enter description..." data-field="description" data-id="${row.id}" data-type="textarea" title="Click to edit" data-bs-toggle="tooltip">${data || ''}</textarea>`;
                 }
             }
         ],
@@ -2717,6 +2718,64 @@ $(document).ready(function() {
                 
                 if (rowData) {
                     showArtworkDetailModal(rowData);
+                }
+            });
+
+            // Add event handlers for description textareas
+            $('.description-input').off('blur keypress').on('blur keypress', function(e) {
+                if (e.type === 'keypress') {
+                    // Use Ctrl+Enter to save for textareas
+                    if (e.which !== 13 || !e.ctrlKey) return;
+                }
+
+                const $textarea = $(this);
+                const field = $textarea.data('field');
+                const id = $textarea.data('id');
+                const newValue = $textarea.val();
+
+                console.log('Saving description for ID:', id, 'new value:', newValue);
+
+                // Prepare data for saving
+                let saveData = {
+                    _token: '{{ csrf_token() }}',
+                    description: newValue
+                };
+
+                // Save the value
+                $.ajax({
+                    url: `/inventory/${id}`,
+                    type: 'PUT',
+                    data: saveData,
+                    success: function(response) {
+                        console.log('Description update successful');
+                        
+                        // Update the DataTable row data with the new value
+                        const row = table.row($textarea.closest('tr'));
+                        const rowData = row.data();
+                        if (rowData) {
+                            // Store the change in pendingChanges for potential reapplication after reload
+                            const rowId = rowData.id;
+                            if (!pendingChanges[rowId]) {
+                                pendingChanges[rowId] = {};
+                            }
+                            rowData.description = newValue;
+                            pendingChanges[rowId].description = newValue;
+                            // Update the row data in the DataTable
+                            row.data(rowData).draw(false);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Description update failed:', xhr.responseText);
+                        alert('Error updating description: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    }
+                });
+            });
+
+            // Handle escape key to cancel (optional - could revert to original value)
+            $('.description-input').off('keydown').on('keydown', function(e) {
+                if (e.which === 27) { // Escape key
+                    // Optionally revert to original value or just blur
+                    $(this).blur();
                 }
             });
         },
@@ -2851,8 +2910,8 @@ $(document).ready(function() {
         // Don't trigger if clicking on editable cells or other interactive elements
         if ($(e.target).hasClass('editable-cell') || 
             $(e.target).closest('.editable-cell').length > 0 ||
-            $(e.target).is('input, select, button, a') ||
-            $(e.target).closest('input, select, button, a').length > 0) {
+            $(e.target).is('input, select, button, a, textarea') ||
+            $(e.target).closest('input, select, button, a, textarea').length > 0) {
             return;
         }
         
@@ -3040,6 +3099,9 @@ $(document).ready(function() {
                 options += `<option value="${company.id}" ${isSelected}>${company.name}</option>`;
             });
             input = $(`<select class="inline-edit-select">${options}</select>`);
+        } else if (type === 'textarea') {
+            // Create textarea for description field
+            input = $(`<textarea class="form-control form-control-sm description-input" rows="2" placeholder="Enter description..." data-field="description" data-id="${id}" data-type="textarea" title="Click to edit" data-bs-toggle="tooltip">${currentValue}</textarea>`);
         } else {
             // Create input field
             const inputType = (field === 'height' || field === 'width') ? 'number' : 'text';
@@ -3049,11 +3111,23 @@ $(document).ready(function() {
         // Replace cell content with input
         $cell.html(input);
         input.focus();
-        input.select();
+        
+        // Select text for input fields, but not for textareas
+        if (type !== 'textarea') {
+            input.select();
+        }
 
-        // Handle save on blur or enter
+        // Handle save on blur or enter (Ctrl+Enter for textareas)
         input.on('blur keypress', function(e) {
-            if (e.type === 'keypress' && e.which !== 13) return;
+            if (e.type === 'keypress') {
+                if (type === 'textarea') {
+                    // For textareas, use Ctrl+Enter to save
+                    if (e.which !== 13 || !e.ctrlKey) return;
+                } else {
+                    // For other inputs, use Enter to save
+                    if (e.which !== 13) return;
+                }
+            }
 
             const newValue = $(this).val();
             console.log('Saving new value:', newValue);
@@ -4322,7 +4396,7 @@ $(document).ready(function() {
         document.getElementById('artworkDetailDimensions').textContent = dimensions;
         
         document.getElementById('artworkDetailUnit').textContent = artworkData.unit || '-';
-        document.getElementById('artworkDetailDescription').textContent = artworkData.description || '-';
+        document.getElementById('artworkDetailDescription').innerHTML = artworkData.description || '-';
         
         // Show the modal
         const modal = new bootstrap.Modal(document.getElementById('artworkDetailModal'));
