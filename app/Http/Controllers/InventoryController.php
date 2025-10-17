@@ -178,7 +178,7 @@ class InventoryController extends Controller
         $searchValue  = $request->input('q');
 
         // Build artworks query similar to getData()
-        $query = \App\Models\Artwork::with('collection', 'company', 'media')
+        $query = Artwork::with('collection', 'company', 'media')
             ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
 
         if ($collectionId) {
@@ -217,11 +217,20 @@ class InventoryController extends Controller
         $csvPath = $tempDir . DIRECTORY_SEPARATOR . $baseName . '.csv';
         $zipPath = $tempDir . DIRECTORY_SEPARATOR . $baseName . '.zip';
 
-        // Write CSV
+        // Write CSV with template format matching downloadSpreadsheet function
         $csv = fopen($csvPath, 'w');
-        // Header
+        
+        // Add template headers and instructions (matching downloadSpreadsheet format)
+        fputcsv($csv, ['Artwork upload spreadsheet']);
+        fputcsv($csv, []);
+        fputcsv($csv, ['Add required information for each piece of artwork']);
+        fputcsv($csv, ["Ensure the 'Filename' fully matches the images filename"]);
+        fputcsv($csv, ['Upload completed spreadsheet to Tetra']);
+        fputcsv($csv, []);
+        
+        // Column headers (matching downloadSpreadsheet format)
         fputcsv($csv, [
-            'ID', 'Company', 'Collection', 'Name', 'Artist', 'Type', 'Height', 'Width', 'Unit', 'Description', 'Image File'
+            'Filename', 'Company', 'Collection', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type'
         ]);
 
         // Collect image files to add in zip
@@ -245,18 +254,18 @@ class InventoryController extends Controller
                 }
             }
 
+            // Data rows (matching downloadSpreadsheet column order)
             fputcsv($csv, [
-                $artwork->id,
-                $artwork->company->name ?? '',
-                $artwork->collection->name ?? '',
-                $artwork->name,
-                $artwork->artist,
-                $artwork->type,
-                $height,
-                $width,
-                $unit,
-                $artwork->description,
-                $imageFileName,
+                $imageFileName,                    // Filename
+                $artwork->company->name ?? '',     // Company
+                $artwork->collection->name ?? '',  // Collection
+                $artwork->name,                    // Title
+                $artwork->artist,                  // Artist
+                $height,                           // Height
+                $width,                            // Width
+                $unit,                             // Unit
+                $artwork->description,             // Description
+                $artwork->type,                    // Type
             ]);
         }
 

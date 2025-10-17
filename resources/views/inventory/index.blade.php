@@ -796,6 +796,30 @@
         </div>
     </div>
 
+    <!-- Collection Selection Alert Modal -->
+    <div class="modal fade" id="collectionSelectionAlertModal" tabindex="-1" aria-labelledby="collectionSelectionAlertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="collectionSelectionAlertModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Collection Selection Required
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6>Please Select a Collection</h6>
+                    <p class="text-muted mb-0">You need to select a specific collection before downloading the inventory. Please choose a collection from the sidebar and try again.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Continue Upload Confirmation Modal -->
     <div class="modal fade" id="continueUploadModal" tabindex="-1" aria-labelledby="continueUploadModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -4281,27 +4305,35 @@ $(document).ready(function() {
     @endif
 });
     // Export inventory as ZIP (CSV + images)
-    // (function attachExportHandler(){
-    //     const downloadBtn = document.getElementById('downloadTableBtn');
-    //     if (!downloadBtn) return;
-    //     downloadBtn.addEventListener('click', function(){
-    //         const params = new URLSearchParams();
-    //         const searchInput = document.getElementById('tableSearch');
-    //         if (searchInput && searchInput.value) params.set('q', searchInput.value);
+    (function attachExportHandler(){
+        const downloadBtn = document.getElementById('downloadTableBtn');
+        if (!downloadBtn) return;
+        downloadBtn.addEventListener('click', function(){
+            // Check if a specific collection is selected
+            const dropdownBtn = document.querySelector('.collections-dropdown .btn');
+            const selectedCollectionNameEl = dropdownBtn ? dropdownBtn.querySelector('.fw-bold') : null;
+            const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
+            
+            // If no specific collection is selected (showing "All Collections"), show alert modal
+            if (!selectedName || selectedName === 'All Collections') {
+                // Show the collection selection alert modal
+                const alertModal = new bootstrap.Modal(document.getElementById('collectionSelectionAlertModal'));
+                alertModal.show();
+                return; // Stop execution here
+            }
 
-    //         // Try to infer selected collection from sidebar button label
-    //         const dropdownBtn = document.querySelector('.collections-dropdown .btn');
-    //         const selectedCollectionNameEl = dropdownBtn ? dropdownBtn.querySelector('.fw-bold') : null;
-    //         const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
-    //         if (selectedName && selectedName !== 'All Collections') {
-    //             const matched = (allCollections || []).find(c => c.name === selectedName);
-    //             if (matched) params.set('collection_id', matched.id);
-    //         }
+            const params = new URLSearchParams();
+            const searchInput = document.getElementById('tableSearch');
+            if (searchInput && searchInput.value) params.set('q', searchInput.value);
 
-    //         const url = `${'{{ route("inventory.export") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
-    //         window.location.href = url;
-    //     });
-    // })();
+            // Set collection_id parameter
+            const matched = (allCollections || []).find(c => c.name === selectedName);
+            if (matched) params.set('collection_id', matched.id);
+
+            const url = `${'{{ route("inventory.export") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
+            window.location.href = url;
+        });
+    })();
 
     // Function to update collection image in the UI without page reload
     function updateCollectionImageInUI(collectionId, collectionName, thumbnailUrl, itemCount) {
