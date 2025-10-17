@@ -472,11 +472,11 @@ class InventoryController extends Controller
                 $model->data       = $data;
             }
 
+            $model->save();
+
             if (! empty($model->data->width_inch) && ! empty($model->data->height_inch)) {
                 $model->resizeImage();
             }
-
-            $model->save();
 
             return response()->json([
                 'success' => true,
@@ -1233,12 +1233,13 @@ class InventoryController extends Controller
                     }
 
                     $artwork->data = $data;
+                    $artwork->save();
                     
                     if (! empty($artwork->data->width_inch) && ! empty($artwork->data->height_inch)) {
                         $artwork->resizeImage();
                     }
 
-                    $artwork->save();
+
                 }
 
                 $updatedCount++;
