@@ -5,6 +5,6 @@
     </button> -->
     <!-- <a id="save_btn" class="action btn btn-sm hide px-2" href="javascript:void(0)" data-text="Save Changes"><i
             class="fa fal fa-floppy-disk text-black"></i></a> -->
-    <a id="remove_btn" class="action btn btn-sm hide px-2" href="javascript:void(0)" data-text="Remove"><i
-            class="fa fal fa-window-close text-black"></i></a>
+    <!-- <a id="remove_btn" class="action btn btn-sm hide px-2" href="javascript:void(0)" data-text="Remove"><i
+            class="fa fal fa-window-close text-black"></i></a> -->
 </div>

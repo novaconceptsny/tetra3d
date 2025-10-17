@@ -66,6 +66,9 @@
                         <button class="btn btn-outline-secondary btn-sm icon-button" id="toggle-guides" data-hidden="false" title="Hide Guides">
                             <i class="fal fa-eye"></i>
                         </button>
+                        <button class="btn btn-danger btn-sm icon-button remove-button" id="remove_btn" title="Remove Selected Artwork" style="display: none !important;">
+                            <i class="fal fa-times"></i>
+                        </button>
 
                         <x-menu-item 
                             text="{{ $return_to_versions ? 'Return to List View' : 'Return to 360 View' }}" 
@@ -222,5 +225,22 @@
     background-color: #099F9A !important;
     color: white !important;
     border-color: #099F9A !important;
+}
+
+/* Remove button styles */
+.remove-button {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+}
+
+.remove-button:hover {
+    background-color: #c82333 !important;
+    color: white !important;
+    border-color: #bd2130 !important;
+}
+
+.remove-button i {
+    color: white !important;
 }
 </style>
