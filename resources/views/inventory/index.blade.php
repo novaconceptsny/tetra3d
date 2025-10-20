@@ -137,7 +137,7 @@
                                             </div>
                                             <div class="d-flex align-items-center">
                                                 <!-- Main Artwork Button -->
-                                                <button class="btn d-flex align-items-center gap-2" type="button" id="addArtworkBtn" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; border-radius: 8px 0 0 8px; padding: 4px 16px; font-weight: 500; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                                                <button class="btn d-flex align-items-center gap-2" type="button" id="addArtworkBtn" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; border-radius: 8px 0 0 8px; padding: 4px 16px; font-weight: 500; font-size: 14px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
                                                     <i class="fas fa-plus" style="color: #495057;"></i>
                                                     <span>Artwork</span>
                                                 </button>
@@ -146,9 +146,9 @@
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle" type="button" id="artworkDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="background: #ffffff; border: 1px solid #dee2e6; color: #495057; border-radius: 0 8px 8px 0; padding: 4px 12px; font-weight: 500; border-left: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
                                                     </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="artworkDropdownBtn" style="border-radius: 8px; border: 1px solid #dee2e6; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); min-width: 160px;">
+                                                    <ul class="dropdown-menu" aria-labelledby="artworkDropdownBtn" style="border-radius: 8px; border: 1px solid #dee2e6; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); min-width: 160px; font-size: 14px;">
                                                         <li><a class="dropdown-item" href="#" id="addMultipleArtworksBtn" style="padding: 4px 16px; color: #495057; text-decoration: none; display: flex; align-items: center; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
-                                                            <i class="fas fa-layer-group me-2" style="color: #6c757d;"></i>Add multiple
+                                                            <i class="fas fa-layer-group me-2" style="color: #6c757d; "></i>Add multiple
                                                         </a></li>
                                                     </ul>
                                                 </div>
