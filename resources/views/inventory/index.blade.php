@@ -108,17 +108,16 @@
                                         <div class="row mb-3">
                                             <div class="col-md-12">
                                                 <div class="dataTables_filter">
-                                                    <label for="tableSearch" class="form-label">Search:</label>
                                                     <div class="search-container d-flex align-items-center">
                                                         <input type="search" id="tableSearch" class="form-control form-control-sm me-2" placeholder="Search..." style="flex: 1;">
-                                                        <div class="search-toggle-buttons">
+                                                        <!-- <div class="search-toggle-buttons">
                                                             <button type="button" class="btn btn-sm search-toggle-btn active" data-type="artwork" id="artworkToggle">
                                                                 Artwork
                                                             </button>
                                                             <button type="button" class="btn btn-sm search-toggle-btn" data-type="collections" id="collectionsToggle">
                                                                 Collections
                                                             </button>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                 </div>
                                             </div>
