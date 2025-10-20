@@ -22,7 +22,7 @@
         <div class="row login-row">
             <div class="inner-div col-lg-4">
                 <div class="logo">
-                    <img width="200" src="{{ asset('backend/images/logo/logo_dark.png') }}" alt="logo-img"/>
+                    <img width="150" src="{{ asset('backend/images/logo/logo_dark.png') }}" alt="logo-img"/>
                 </div>
                 <div class="fir-inner">
                     <h4 class="login d-flex align-items-center justify-content-center">

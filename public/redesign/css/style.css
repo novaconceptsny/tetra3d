@@ -163,7 +163,7 @@ header#header nav .nav-container .navbar-brand {
 }
 
 header#header nav .nav-container .navbar-brand img {
-  height: 35px;
+  height: 25px;
 }
 
 header#header nav .nav-container .navbar-brand svg {
@@ -3904,7 +3904,7 @@ select option {
   
   /* Make logo smaller on very small screens */
   header#header .navbar-brand img {
-    max-height: 35px;
+    max-height: 25px;
   }
 }
 
