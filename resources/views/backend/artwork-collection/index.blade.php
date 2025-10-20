@@ -33,11 +33,7 @@
                     @forelse($collections as $collection)
                         <tr>
                             <td>
-                                @if( $collection->company->name === 'My Workspace')
-                                    {{ $collection->company->name }}_{{ str_pad($collection->company->id, 2, '0', STR_PAD_LEFT) }}
-                                @else
-                                    {{ $collection->company->name }}
-                                @endif
+                                {{ formatCompanyName($collection->company->name, $collection->company->id) }}
                             </td>
                             <td>{{ $collection->name }}</td>
                             <td>{{ $collection->artworks_count }}</td>

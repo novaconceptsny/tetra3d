@@ -31,7 +31,13 @@ class InventoryController extends Controller
                 ->latest('name')->get();
         }
         
-        $companies          = Company::latest('name')->get();
+        $companies = Company::latest('name')->get();
+        
+        // Add ID to "My Workspace" company names
+        $companies->transform(function ($company) {
+            $company->name = formatCompanyName($company->name, $company->id);
+            return $company;
+        });
         $selectedCollection = $request->get('collection_id', '');
 
         return view('inventory.index', compact('inventory', 'collections', 'selectedCollection', 'companies'));
@@ -156,7 +162,8 @@ class InventoryController extends Controller
 
             // Only include company data for super admin users
             if (user()->isSuperAdmin()) {
-                $rowData['company'] = $artwork->company->name ?? '';
+                $companyName = $artwork->company->name ?? '';
+                $rowData['company'] = formatCompanyName($companyName, $artwork->company->id ?? 0);
             }
 
             return $rowData;
@@ -270,10 +277,14 @@ class InventoryController extends Controller
                 }
             }
 
+            // Format company name for export
+            $companyName = $artwork->company->name ?? '';
+            $companyName = formatCompanyName($companyName, $artwork->company->id ?? 0);
+
             // Data rows (matching downloadSpreadsheet column order)
             fputcsv($csv, [
                 $imageFileName,                    // Filename
-                $artwork->company->name ?? '',     // Company
+                $companyName,                      // Company
                 $artwork->collection->name ?? '',  // Collection
                 $artwork->name,                    // Title
                 $artwork->artist,                  // Artist
@@ -379,7 +390,8 @@ class InventoryController extends Controller
 
         // Only include company data for super admin users
         if (user()->isSuperAdmin()) {
-            $rowData['company'] = $artwork->company->name ?? '';
+            $companyName = $artwork->company->name ?? '';
+            $rowData['company'] = formatCompanyName($companyName, $artwork->company->id ?? 0);
         }
 
         return response()->json([
@@ -731,7 +743,8 @@ class InventoryController extends Controller
 
             // Only include company data for super admin users
             if (user()->isSuperAdmin()) {
-                $rowData['company'] = $artwork->company->name ?? '';
+                $companyName = $artwork->company->name ?? '';
+                $rowData['company'] = formatCompanyName($companyName, $artwork->company->id ?? 0);
             }
 
             return response()->json([
