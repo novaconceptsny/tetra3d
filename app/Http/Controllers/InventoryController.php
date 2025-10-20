@@ -18,7 +18,14 @@ class InventoryController extends Controller
         
         // Filter collections by company for non-super admin users
         if (auth()->user()->isSuperAdmin()) {
-            $collections = ArtworkCollection::latest('name')->get();
+            // For super admin, check if company filter is applied
+            $companyId = $request->get('company_id');
+            if ($companyId) {
+                $collections = ArtworkCollection::where('company_id', $companyId)
+                    ->latest('name')->get();
+            } else {
+                $collections = ArtworkCollection::latest('name')->get();
+            }
         } else {
             $collections = ArtworkCollection::where('company_id', auth()->user()->company_id)
                 ->latest('name')->get();
@@ -650,11 +657,13 @@ class InventoryController extends Controller
             // For super admin, get collections for the selected company
             if (auth()->user()->isSuperAdmin()) {
                 $collections = ArtworkCollection::where('company_id', $companyId)
+                    ->withCount('artworks')
                     ->latest('name')
                     ->get();
             } else {
                 // For non-super admin, only get collections for their own company
                 $collections = ArtworkCollection::where('company_id', auth()->user()->company_id)
+                    ->withCount('artworks')
                     ->latest('name')
                     ->get();
             }

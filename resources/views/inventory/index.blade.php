@@ -10,8 +10,20 @@
                             <!-- Sidebar -->
                             <div class="collections-sidebar" style="width: 250px; min-width: 220px; background: #f8f9fa; border-radius: 12px; margin-right: 24px;">
                                 <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
+                                    @if(auth()->user()->isSuperAdmin())
+                                    <!-- Company Filter for Super Admin -->
+                                    <div class="mb-3">
+                                        <h6 class="mb-2" style="font-weight: 500; color: #495057;">Company</h6>
+                                        <select id="companyFilter" class="form-select form-select-sm" onchange="filterCollectionsByCompany()" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                            <option value="">All</option>
+                                            @foreach($companies as $company)
+                                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @endif
                                     <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h5 class="mb-0">Collections</h5>
+                                        <h6 class="mb-2" style="font-weight: 500; color: #495057;">Collections</h6>
                                         <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()" style="width: 36px; height: 36px; border-radius: 50%; background: #099F9A; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2); transition: all 0.3s ease;">
                                             <i class="fas fa-plus text-white" style="font-size: 16px; font-weight: 500;"></i>
                                         </button>
@@ -49,7 +61,7 @@
                                                 </div>
                                                 <i class="fas fa-chevron-down text-muted"></i>
                                             </button>
-                                            <ul class="dropdown-menu w-100" style="max-height: 500px; overflow-y: auto; min-height: 200px; border: 1px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <ul id="collectionsDropdownMenu" class="dropdown-menu w-100" style="max-height: 500px; overflow-y: auto; min-height: 200px; border: 1px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                                                 <li>
                                                     <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '{{ $totalItems }}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
@@ -60,7 +72,7 @@
                                                     </a>
                                                 </li>
                                                 @foreach($collections as $collection)
-                                                <li>
+                                                <li data-company-id="{{ $collection->company_id }}">
                                                     <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}}', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         @if($collection->thumbnail_url)
                                                             <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3" style="object-fit: cover; border-radius: 0;">
@@ -3293,6 +3305,64 @@ $(document).ready(function() {
         }
     };
 
+    // Function to filter collections by company (for super admin only)
+    window.filterCollectionsByCompany = function() {
+        const companyFilter = document.getElementById('companyFilter');
+        const selectedCompanyId = companyFilter ? companyFilter.value : '';
+        const collectionsDropdown = document.getElementById('collectionsDropdownMenu');
+        
+        if (!collectionsDropdown) return;
+        
+        // If no company selected, show all collections
+        if (selectedCompanyId === '') {
+            // Show all collection items
+            const collectionItems = collectionsDropdown.querySelectorAll('li[data-company-id]');
+            collectionItems.forEach(item => {
+                item.style.display = 'block';
+            });
+            
+            // Reset to original total
+            const allCollectionsItem = collectionsDropdown.querySelector('li:first-child small.text-muted');
+            if (allCollectionsItem) {
+                allCollectionsItem.textContent = '{{ $totalItems }} items';
+            }
+            return;
+        }
+        
+        // Make AJAX call to get filtered collections
+        fetch('{{ route("inventory.collections.by-company") }}?company_id=' + selectedCompanyId)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Hide all collection items first
+                const collectionItems = collectionsDropdown.querySelectorAll('li[data-company-id]');
+                collectionItems.forEach(item => {
+                    item.style.display = 'none';
+                });
+                
+                // Show only collections for the selected company
+                data.collections.forEach(collection => {
+                    const items = collectionsDropdown.querySelectorAll(`li[data-company-id="${collection.company_id}"]`);
+                    items.forEach(item => {
+                        item.style.display = 'block';
+                    });
+                });
+                
+                // Update the "All Collections" count
+                const totalItems = data.collections.reduce((sum, collection) => {
+                    return sum + (collection.artworks_count || 0);
+                }, 0);
+                
+                const allCollectionsItem = collectionsDropdown.querySelector('li:first-child small.text-muted');
+                if (allCollectionsItem) {
+                    allCollectionsItem.textContent = `${totalItems} items`;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error filtering collections:', error);
+        });
+    };
 
             // Edit collection function
     window.editCollection = function() {
