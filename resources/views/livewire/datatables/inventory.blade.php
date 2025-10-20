@@ -6,8 +6,8 @@
                 <div class="card shadow-sm border-0 rounded-4 p-3" style="background: #fff;">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h5 class="mb-0">Collections</h5>
-                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()" style="width: 32px; height: 32px; border-radius: 50%; background: #007bff; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-plus text-white" style="font-size: 14px;"></i>
+                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#addCollectionModal" onclick="handleOpenCollectionModal()" style="width: 36px; height: 36px; border-radius: 50%; background: #099F9A; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(9, 159, 154, 0.2); transition: all 0.3s ease;">
+                            <i class="fas fa-plus text-white" style="font-size: 16px; font-weight: 500;"></i>
                         </button>
                     </div>
                     <div class="collections-dropdown">
@@ -391,7 +391,8 @@
                     </form>
                 </div>
                 <div class="modal-footer d-flex justify-content-end">
-                    <button type="button" class="btn btn-save-collection" id="saveCollectionBtn" onclick="handleSaveCollection()">Save</button>
+                    <button type="button" class="btn btn-save-collection" style="background-color: #099F9A; border-color: #099F9A; color: white;" id="saveCollectionBtn" onclick="handleSaveCollection()">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
@@ -631,10 +632,9 @@
     }
 
     .add-collection-modal-dialog .modal-content {
-        height: 500px   ;
         min-height: 500px;
-        max-height: 500px;
         overflow: auto;
+        padding: 10px;
     }
 
     .btn-save-collection {

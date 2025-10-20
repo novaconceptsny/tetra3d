@@ -163,7 +163,7 @@ header#header nav .nav-container .navbar-brand {
 }
 
 header#header nav .nav-container .navbar-brand img {
-  height: 35px;
+  height: 25px;
 }
 
 header#header nav .nav-container .navbar-brand svg {
@@ -1237,7 +1237,7 @@ main section.collection .pagination-div.pagination-white .pagination .page-item.
 }
 
 main section.collection .main-intro {
-  padding-inline: 50px;
+  padding-inline: 30px;
   margin-top: 50px;
 }
 
@@ -1461,7 +1461,7 @@ input[type=text].form-control:not(.login-custum-form-group input),
 select.form-control {
   border: 1px solid #e0e0e0 !important;
   border-radius: 8px  !important;
-  font: normal var(--light-font) 20px/normal var(--main-font-family) !important;
+  font: normal var(--light-font) 14px/normal var(--main-font-family) !important;
   color: #000;
   background-color: #f8f9fa !important;
 }
@@ -2988,6 +2988,8 @@ main section.editor .editor-view .row .side-col .card-div {
 }
 
 main section.editor .editor-view .row .side-col .card-div .card-row {
+  flex-direction: column;
+  flex-wrap: unset;
   border: none;
   overflow-x: hidden;
   overflow-y: auto;
@@ -3902,7 +3904,7 @@ select option {
   
   /* Make logo smaller on very small screens */
   header#header .navbar-brand img {
-    max-height: 35px;
+    max-height: 25px;
   }
 }
 
@@ -4076,14 +4078,12 @@ select option {
   padding: 8px 12px !important;
   font-size: 14px !important;
   transition: all 0.2s ease-in-out !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
 .custom-select:focus {
   outline: none !important;
   border-color: #3b82f6 !important;
   background-color: #ffffff !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
 .custom-select:hover {

@@ -369,7 +369,6 @@ class CanvasManager {
                 // Update artwork count
                 this.incrementArtworkCount(parseInt(newSelection.artworkId));
                 this.unsavedChanges = true;
-                this.toggleRemoveButton();
                 
                 // Show success feedback
              //   this.showDropSuccess(dropX, dropY);
@@ -468,7 +467,6 @@ class CanvasManager {
                 this.placeSelectedImage(newSelection);
                 this.incrementArtworkCount(parseInt(newSelection.artworkId));
                 this.unsavedChanges = true;
-                this.toggleRemoveButton();
             } else {
                 let imgData = this.getSelectionData(target);
                 this.addWarpedArtwork(imgData);
@@ -1141,7 +1139,6 @@ class CanvasManager {
 
     activeStateUpdated() {
         this.toggleSaveButton();
-        this.toggleRemoveButton();
     }
 
     isInactive() {

@@ -175,11 +175,28 @@ class Artwork extends Model implements HasMedia
         ini_set('memory_limit', '1G');
 
         $image = Image::make($media->getPath());
+        
+        // Get the original image actual proportions
+        $originalWidth = $image->width();
+        $originalHeight = $image->height();
+        $originalAspectRatio = $originalWidth / $originalHeight;
+        
+        // Calculate new dimensions based on actual proportions and data-width value
+        $targetWidth = $this->data->scale * $this->data->width_inch;
+        $targetHeight = $targetWidth / $originalAspectRatio;
+        
+        // If the calculated height exceeds the target height, use height as the constraint
+        // $maxTargetHeight = $this->data->scale * $this->data->height_inch;
+        // if ($targetHeight > $maxTargetHeight) {
+        //     $targetHeight = $maxTargetHeight;
+        //     $targetWidth = $targetHeight * $originalAspectRatio;
+        // }
 
-        $image->resize(
-            $this->data->scale * $this->data->width_inch,
-            $this->data->scale * $this->data->height_inch
-        );
+        $image->resize($targetWidth, $targetHeight);
+        
+        $this->data->height_inch =  round($this->data->width_inch / $originalAspectRatio, 5);
+
+        $this->save();
 
         $this->addMediaFromBase64($image->encode('data-url'))
             ->usingFileName($media->file_name)

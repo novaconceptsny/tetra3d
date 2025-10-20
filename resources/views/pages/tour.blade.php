@@ -51,7 +51,7 @@
     <x-menu-item :visible="$layout && !$tour_is_shared" target="_blank"
         :route="route('share.index', ['layout_id' => $layout?->id])"
         text="Share" icon="fal fa-share-nodes" />
-    <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('artworks.index')"
+    <x-menu-item text="Artwork Collection" icon="fal fa-palette" :route="route('inventory.index')"
         :visible="!$tour_is_shared" />
     <x-menu-item text="Sculpture List" icon="fal fa-cube" target="_self" route="#" :visible="$project && !$tour_is_shared && $tourModel" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
         aria-controls="offcanvasExample" />
