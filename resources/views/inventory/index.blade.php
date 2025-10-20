@@ -54,17 +54,17 @@
                                                     @else
                                                         <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                                                         <div class="text-start">
-                                                            <div  style="font-weight: 500; color: #495057;">All Collections</div>
+                                                            <div  style="font-weight: 500; color: #495057; font-size: 14px;">All Collections</div>
                                                             <small class="text-muted">{{ $totalItems }} items</small>
                                                         </div>
                                                     @endif
                                                 </div>
                                                 <i class="fas fa-chevron-down text-muted"></i>
                                             </button>
-                                            <ul id="collectionsDropdownMenu" class="dropdown-menu w-100" style="max-height: 500px; overflow-y: auto; min-height: 200px; border: 1px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <ul id="collectionsDropdownMenu" class="dropdown-menu w-100" style="max-height: 500px; overflow-y: auto; min-height: 200px; border: 1px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); color: #6c757d; font-size: 14px; font-weight: 500;">
                                                 <li>
                                                     <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '{{ $totalItems }}')" style="border-bottom: 1px solid #f8f9fa;">
-                                                        <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
+                                                        <i class="fas fa-image me-3" ></i>
                                                         <div>
                                                             <div  style="font-weight: 500; color: #495057;">All Collections</div>
                                                             <small class="text-muted">{{ $totalItems }} items</small>
@@ -77,7 +77,7 @@
                                                         @if($collection->thumbnail_url)
                                                             <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3" style="object-fit: cover; border-radius: 0;">
                                                         @else
-                                                            <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
+                                                            <i class="fas fa-image me-3" ></i>
                                                         @endif
                                                         <div>
                                                             <div  style="font-weight: 500; color: #495057;">{{ $collection->name }}</div>
@@ -3263,7 +3263,7 @@ $(document).ready(function() {
                 imageContainer.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 0;">
                     <div class="text-start">
-                        <div class="fw-bold">${collectionName}</div>
+                        <div id="selectedCollectionName" style="font-weigh : 500; color: #495057; font-size : 14px">${collectionName}</div>
                         <small class="text-muted">${itemCount} items</small>
                     </div>
                 `;
@@ -3271,7 +3271,7 @@ $(document).ready(function() {
                 imageContainer.innerHTML = `
                     <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                     <div class="text-start">
-                        <div class="fw-bold">${collectionName}</div>
+                        <div id="selectedCollectionName" style="font-weigh : 500; color: #495057; font-size : 14px">${collectionName}</div>
                         <small class="text-muted">${itemCount} items</small>
                     </div>
                 `;
@@ -3281,7 +3281,7 @@ $(document).ready(function() {
             imageContainer.innerHTML = `
                 <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                 <div class="text-start">
-                    <div class="fw-bold">All Collections</div>
+                    <div id="selectedCollectionName" style="font-weigh : 500; color: #495057; font-size : 14px">All Collections</div>
                     <small class="text-muted">${itemCount} items</small>
                 </div>
             `;
@@ -3311,6 +3311,13 @@ $(document).ready(function() {
         const collectionsDropdown = document.getElementById('collectionsDropdownMenu');
         
         if (!collectionsDropdown) return;
+
+        
+        // Reset to "All Collections" when company changes
+        const allCollectionsItem = collectionsDropdown.querySelector('li:first-child a');
+        if (allCollectionsItem) {
+            allCollectionsItem.click(); // Trigger the "All Collections" selection
+        }
         
         // If no company selected, show all collections
         if (selectedCompanyId === '') {
@@ -4397,7 +4404,7 @@ $(document).ready(function() {
         downloadBtn.addEventListener('click', function(){
             // Check if a specific collection is selected
             const dropdownBtn = document.querySelector('.collections-dropdown .btn');
-            const selectedCollectionNameEl = dropdownBtn ? dropdownBtn.querySelector('.fw-bold') : null;
+            const selectedCollectionNameEl = document.getElementById('selectedCollectionName');
             const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
             
             // If no specific collection is selected (showing "All Collections"), show alert modal
@@ -4432,7 +4439,7 @@ $(document).ready(function() {
                 imageContainer.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 0;">
                     <div class="text-start">
-                        <div class="fw-bold">${collectionName}</div>
+                        <div id="selectedCollectionName" style="font-weigh : 500; color: #495057; font-size : 14px">${collectionName}</div>
                         <small class="text-muted">${itemCount} items</small>
                     </div>
                 `;
@@ -4440,7 +4447,7 @@ $(document).ready(function() {
                 imageContainer.innerHTML = `
                     <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                     <div class="text-start">
-                        <div class="fw-bold">${collectionName}</div>
+                        <div id="selectedCollectionName" style="font-weigh : 500; color: #495057; font-size : 14px">${collectionName}</div>
                         <small class="text-muted">${itemCount} items</small>
                     </div>
                 `;
