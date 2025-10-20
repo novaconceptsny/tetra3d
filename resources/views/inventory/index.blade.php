@@ -48,13 +48,13 @@
                                                             <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                                                         @endif
                                                         <div class="text-start">
-                                                            <div class="fw-bold">{{ $selectedCollectionData->name }}</div>
+                                                            <div  style="font-weight: 500; color: #495057;">{{ $selectedCollectionData->name }}</div>
                                                             <small class="text-muted">{{ $selectedCollectionData->artworks()->count() }} items</small>
                                                         </div>
                                                     @else
                                                         <i class="fas fa-image me-3" style="color: #6c757d; font-size: 18px;"></i>
                                                         <div class="text-start">
-                                                            <div class="fw-bold">All Collections</div>
+                                                            <div  style="font-weight: 500; color: #495057;">All Collections</div>
                                                             <small class="text-muted">{{ $totalItems }} items</small>
                                                         </div>
                                                     @endif
@@ -66,7 +66,7 @@
                                                     <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('', 'All Collections', '{{ $totalItems }}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
                                                         <div>
-                                                            <div class="fw-bold">All Collections</div>
+                                                            <div  style="font-weight: 500; color: #495057;">All Collections</div>
                                                             <small class="text-muted">{{ $totalItems }} items</small>
                                                         </div>
                                                     </a>
@@ -80,7 +80,7 @@
                                                             <i class="fas fa-image me-3" style="color: #6c757d; font-size: 16px;"></i>
                                                         @endif
                                                         <div>
-                                                            <div class="fw-bold">{{ $collection->name }}</div>
+                                                            <div  style="font-weight: 500; color: #495057;">{{ $collection->name }}</div>
                                                             <small class="text-muted">{{ $collection->artworks()->count() }} items</small>
                                                         </div>
                                                     </a>
@@ -3357,6 +3357,17 @@ $(document).ready(function() {
                 if (allCollectionsItem) {
                     allCollectionsItem.textContent = `${totalItems} items`;
                 }
+
+                // Update the dropdown button's item count
+                const dropdownButton = collectionsDropdown.closest('.dropdown').querySelector('button[data-bs-toggle="dropdown"]');
+                if (dropdownButton) {
+                    const buttonTextElement = dropdownButton.querySelector('.text-start small.text-muted');
+                    if (buttonTextElement) {
+                        buttonTextElement.textContent = `${totalItems} items`;
+                    }
+                }
+
+                
             }
         })
         .catch(error => {
