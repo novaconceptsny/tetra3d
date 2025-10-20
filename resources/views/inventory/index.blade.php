@@ -337,15 +337,6 @@
                                         <tr>
                                             <th style="color: black; font-weight: 500;">Image</th>
                                             <th style="color: black; font-weight: 500;">
-                                                Company
-                                                <select id="masterCompanyHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                                    <option value="">Select company</option>
-                                                    @foreach($companies as $company)
-                                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </th>
-                                            <th style="color: black; font-weight: 500;">
                                             Collection
                                                 <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
                                                     @foreach($collections as $collection)
@@ -2310,17 +2301,7 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
-                <td>
-                    ${artwork.company ?
-                        artwork.company :
-                        `<select class="form-select artwork-company-select ${!masterCompanyDropdown || !masterCompanyDropdown.value ? 'empty-cell' : ''}">
-                            <option value="">Select Company</option>
-                            @foreach($companies as $company)
-                                <option value="{{$company->id}}" ${masterCompanyDropdown && masterCompanyDropdown.value == {{$company->id}} ? 'selected' : ''}>{{$company->name}}</option>
-                            @endforeach
-                        </select>`
-                    }
-                </td>
+
                 <td >
                     <select class="form-select artwork-collection-select">
                         @foreach($collections as $collection)
