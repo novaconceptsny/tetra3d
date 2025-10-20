@@ -113,6 +113,15 @@ class InventoryController extends Controller
         } elseif ($orderBy === 'collection') {
             $query->leftJoin('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
                 ->orderBy('artwork_collections.name', $orderDir);
+        } elseif ($orderBy === 'height') {
+            // Sort by height from JSON field, handling both numeric and string values
+            $query->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.height')), '0') AS DECIMAL(10,2)) {$orderDir}");
+        } elseif ($orderBy === 'width') {
+            // Sort by width from JSON field, handling both numeric and string values
+            $query->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.width')), '0') AS DECIMAL(10,2)) {$orderDir}");
+        } elseif ($orderBy === 'unit') {
+            // Sort by unit from JSON field, handling NULL values
+            $query->orderByRaw("COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.unit')), '') {$orderDir}");
         } else {
             $query->orderBy($orderBy, $orderDir);
         }
