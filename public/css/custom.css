@@ -198,3 +198,131 @@ a:has(> .pin):hover .spotname {
 /*td.layout-table-title:hover a{*/
 /*    display: inline-block;*/
 /*}*/
+
+/* Tour User Profile Dropdown Styles */
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu.show {
+    display: block;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu.pro-drop {
+    padding: 10px;
+    background: #fff;
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.15);
+    border-radius: 0;
+    z-index: 20 !important;
+    min-width: 250px;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .drop-profile {
+    padding: 10px 0 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #000;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .drop-profile img {
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    margin-right: 10px;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .drop-profile .user-detail h6 {
+    font-family: var(--main-font-family, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 20px;
+    color: #000000;
+    margin-bottom: 0px;
+    width: 115px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .drop-profile .user-detail p {
+    font-family: var(--main-font-family, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 18px;
+    color: #000000;
+    margin: 0px;
+    width: 115px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link {
+    padding-left: 20px;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link li {
+    list-style: none;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    color: #000;
+    text-decoration: none;
+    transition: color 0.15s ease-in-out;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link .dropdown-item:hover {
+    color: #0d6efd;
+    background-color: transparent;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link .dropdown-item i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .profile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.tour-header-user-buttons .nav-item.dropdown .profile-menu-btn img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
