@@ -889,7 +889,7 @@
                                     <strong>Unit:</strong> <span id="artworkDetailUnit">-</span>
                                 </div>
                                 <div class="detail-item">
-                                    <strong>Description:</strong> 
+                                    <strong>Description:</strong>
                                     <div id="artworkDetailDescription" >-</div>
                                 </div>
                             </div>
@@ -1008,10 +1008,10 @@
 
         // Get filtered collections for this row
         const filteredCollections = getFilteredCollections(rowElement);
-        
+
         // Clear existing options
         collectionSelect.innerHTML = '<option value="">Select collection</option>';
-        
+
         // Add filtered collections
         if (filteredCollections.length > 0) {
             filteredCollections.forEach(function(collection) {
@@ -1357,7 +1357,7 @@
             if (data.success) {
                 const message = isEditMode ? 'Collection updated successfully' : 'Collection added successfully';
                 alert(message);
-                
+
                 // Update collection image dynamically instead of reloading
                 if (isEditMode) {
                     $('#addCollectionModal').modal('hide');
@@ -1637,6 +1637,7 @@
         }
     }
 
+
     function uploadCurrentPageArtworks() {
         const submitBtn = document.getElementById('submit-artworks-btn');
         const originalText = submitBtn.innerHTML;
@@ -1665,23 +1666,20 @@
             rows.forEach((row, index) => {
                 const cells = row.querySelectorAll('td');
                 const image = cells[0].querySelector('img');
-                const companySelect = cells[1].querySelector('select');
-                const collectionSelect = cells[2].querySelector('select');
+                const collectionSelect = cells[1].querySelector('select');
 
                 const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
-                const companyName = companySelect.options[companySelect.selectedIndex].text;
-                const unitSelect = cells[7].querySelector('select');
+                const unitSelect = cells[6].querySelector('select');
                 const unitValue = unitSelect ? unitSelect.value : '';
 
                 const rowData = {
                     collection_name: collectionName,
-                    company_name: companyName,
-                    title: cells[3].textContent.trim(),
-                    artist: cells[4].textContent.trim(),
-                    height: cells[5].querySelector('input').value,
-                    width: cells[6].querySelector('input').value,
-                    description: cells[8].textContent.trim(),
-                    type: cells[9].textContent.trim(),
+                    title: cells[2].textContent.trim(),
+                    artist: cells[3].textContent.trim(),
+                    height: cells[4].querySelector('input').value,
+                    width: cells[5].querySelector('input').value,
+                    description: cells[7].textContent.trim(),
+                    type: cells[8].textContent.trim(),
                     unit: unitValue,
                 };
 
@@ -1786,6 +1784,7 @@
             });
         }, 50); // Small delay to ensure modal renders first
     }
+
 
     // Remove row
     document.querySelectorAll('#artworkTableBody .btn-danger').forEach(btn => {
@@ -2597,11 +2596,11 @@ $(document).ready(function() {
     // Function to reapply pending changes after table reload
     function reapplyPendingChanges() {
         if (Object.keys(pendingChanges).length === 0) return;
-        
+
         table.rows().every(function() {
             var rowData = this.data();
             var rowId = rowData.id;
-            
+
             if (pendingChanges[rowId]) {
                 var changes = pendingChanges[rowId];
                 for (var field in changes) {
@@ -2722,16 +2721,16 @@ $(document).ready(function() {
         drawCallback: function() {
             // Reinitialize tooltips after table redraw
             $('[data-bs-toggle="tooltip"]').tooltip();
-            
+
             // Add click handlers to artwork images
             $('.artwork-image').off('click').on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 // Get the row data from DataTable
                 const row = table.row($(this).closest('tr'));
                 const rowData = row.data();
-                
+
                 if (rowData) {
                     showArtworkDetailModal(rowData);
                 }
@@ -2764,7 +2763,7 @@ $(document).ready(function() {
                     data: saveData,
                     success: function(response) {
                         console.log('Description update successful');
-                        
+
                         // Update the DataTable row data with the new value
                         const row = table.row($textarea.closest('tr'));
                         const rowData = row.data();
@@ -2924,20 +2923,20 @@ $(document).ready(function() {
     // Make entire row clickable for checkbox selection
     $(document).on('click', '#inventoryTable tbody tr', function(e) {
         // Don't trigger if clicking on editable cells or other interactive elements
-        if ($(e.target).hasClass('editable-cell') || 
+        if ($(e.target).hasClass('editable-cell') ||
             $(e.target).closest('.editable-cell').length > 0 ||
             $(e.target).is('input, select, button, a, textarea') ||
             $(e.target).closest('input, select, button, a, textarea').length > 0) {
             return;
         }
-        
+
         var checkbox = $(this).find('.row-checkbox');
         var rowId = checkbox.data('id');
         var row = $(this);
-        
+
         if (checkbox.length > 0) {
             checkbox.prop('checked', !checkbox.prop('checked'));
-            
+
             if (checkbox.prop('checked')) {
                 selectedRows.add(rowId);
                 row.addClass('selected-row');
@@ -2945,7 +2944,7 @@ $(document).ready(function() {
                 selectedRows.delete(rowId);
                 row.removeClass('selected-row');
             }
-            
+
             updateBulkEditUI();
             updateSelectAllState();
         }
@@ -3098,7 +3097,7 @@ $(document).ready(function() {
             // Create select dropdown for collection field with filtered collections
             let options = '';
             const filteredCollections = getFilteredCollections($cell.closest('tr')[0]);
-            if (filteredCollections.length > 0) {   
+            if (filteredCollections.length > 0) {
                 filteredCollections.forEach(function(collection) {
                         const isSelected = currentValue === collection.name ? 'selected' : '';
                         options += `<option value="${collection.id}" ${isSelected}>${collection.name}</option>`;
@@ -3127,7 +3126,7 @@ $(document).ready(function() {
         // Replace cell content with input
         $cell.html(input);
         input.focus();
-        
+
         // Select text for input fields, but not for textareas
         if (type !== 'textarea') {
             input.select();
@@ -3188,7 +3187,7 @@ $(document).ready(function() {
                     }
 
                     $cell.removeClass('editing').text(displayValue);
-                    
+
                     // Update the DataTable row data with the new value
                     const row = table.row($cell.closest('tr'));
                     const rowData = row.data();
@@ -3198,7 +3197,7 @@ $(document).ready(function() {
                         if (!pendingChanges[rowId]) {
                             pendingChanges[rowId] = {};
                         }
-                        
+
                         // Update the specific field in the row data
                         if (field === 'collection') {
                             rowData.collection = displayValue;
@@ -3290,16 +3289,16 @@ $(document).ready(function() {
         const companyFilter = document.getElementById('companyFilter');
         const selectedCompanyId = companyFilter ? companyFilter.value : '';
         const collectionsDropdown = document.getElementById('collectionsDropdownMenu');
-        
+
         if (!collectionsDropdown) return;
 
-        
+
         // Reset to "All Collections" when company changes
         const allCollectionsItem = collectionsDropdown.querySelector('li:first-child a');
         if (allCollectionsItem) {
             allCollectionsItem.click(); // Trigger the "All Collections" selection
         }
-        
+
         // If no company selected, show all collections
         if (selectedCompanyId === '') {
             // Show all collection items
@@ -3307,7 +3306,7 @@ $(document).ready(function() {
             collectionItems.forEach(item => {
                 item.style.display = 'block';
             });
-            
+
             // Reset to original total
             const allCollectionsItem = collectionsDropdown.querySelector('li:first-child small.text-muted');
             if (allCollectionsItem) {
@@ -3315,7 +3314,7 @@ $(document).ready(function() {
             }
             return;
         }
-        
+
         // Make AJAX call to get filtered collections
         fetch('{{ route("inventory.collections.by-company") }}?company_id=' + selectedCompanyId)
         .then(response => response.json())
@@ -3326,7 +3325,7 @@ $(document).ready(function() {
                 collectionItems.forEach(item => {
                     item.style.display = 'none';
                 });
-                
+
                 // Show only collections for the selected company
                 data.collections.forEach(collection => {
                     const items = collectionsDropdown.querySelectorAll(`li[data-company-id="${collection.company_id}"]`);
@@ -3334,12 +3333,12 @@ $(document).ready(function() {
                         item.style.display = 'block';
                     });
                 });
-                
+
                 // Update the "All Collections" count
                 const totalItems = data.collections.reduce((sum, collection) => {
                     return sum + (collection.artworks_count || 0);
                 }, 0);
-                
+
                 const allCollectionsItem = collectionsDropdown.querySelector('li:first-child small.text-muted');
                 if (allCollectionsItem) {
                     allCollectionsItem.textContent = `${totalItems} items`;
@@ -3354,7 +3353,7 @@ $(document).ready(function() {
                     }
                 }
 
-                
+
             }
         })
         .catch(error => {
@@ -3687,7 +3686,7 @@ $(document).ready(function() {
         if(prefillData.description) {
             const descriptionInput = rowElement.querySelector('.description-input');
             if (descriptionInput) descriptionInput.value = prefillData.description;
-        }       
+        }
 
         // Initialize drag and drop for this row
         initializeRowDragDrop(tempId);
@@ -4387,7 +4386,7 @@ $(document).ready(function() {
             const dropdownBtn = document.querySelector('.collections-dropdown .btn');
             const selectedCollectionNameEl = document.getElementById('selectedCollectionName');
             const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
-            
+
             // If no specific collection is selected (showing "All Collections"), show alert modal
             if (!selectedName || selectedName === 'All Collections') {
                 // Show the collection selection alert modal
@@ -4415,7 +4414,7 @@ $(document).ready(function() {
         if (window.selectedCollectionId == collectionId) {
             const dropdownButton = document.querySelector('.dropdown button');
             const imageContainer = dropdownButton.querySelector('.d-flex.align-items-center');
-            
+
             if (thumbnailUrl) {
                 imageContainer.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 0;">
@@ -4434,7 +4433,7 @@ $(document).ready(function() {
                 `;
             }
         }
-        
+
         // Update the dropdown menu item for this collection
         updateCollectionInDropdown(collectionId, collectionName, thumbnailUrl, itemCount);
     }
@@ -4450,7 +4449,7 @@ $(document).ready(function() {
                 const iconElement = item.querySelector('i');
                 const nameElement = item.querySelector('.fw-bold');
                 const countElement = item.querySelector('.text-muted');
-                
+
                 if (thumbnailUrl) {
                     if (imageElement) {
                         imageElement.src = thumbnailUrl;
@@ -4474,10 +4473,10 @@ $(document).ready(function() {
                         imageElement.parentNode.replaceChild(newIcon, imageElement);
                     }
                 }
-                
+
                 if (nameElement) nameElement.textContent = collectionName;
                 if (countElement) countElement.textContent = itemCount;
-                
+
                 // Update the onclick attribute with new parameters
                 item.setAttribute('onclick', `selectCollection('${collectionId}', '${collectionName}', '${itemCount}', '${thumbnailUrl || ''}')`);
             }
@@ -4493,17 +4492,17 @@ $(document).ready(function() {
         document.getElementById('artworkDetailType').textContent = artworkData.type || '-';
         document.getElementById('artworkDetailCollection').textContent = artworkData.collection || '-';
         document.getElementById('artworkDetailCompany').textContent = artworkData.company || '-';
-        
+
         // Format dimensions
         const height = artworkData.height || '';
         const width = artworkData.width || '';
         const unit = artworkData.unit || '';
         const dimensions = (height && width) ? `${height} × ${width} ${unit}` : '-';
         document.getElementById('artworkDetailDimensions').textContent = dimensions;
-        
+
         document.getElementById('artworkDetailUnit').textContent = artworkData.unit || '-';
         document.getElementById('artworkDetailDescription').innerHTML = artworkData.description || '-';
-        
+
         // Show the modal
         const modal = new bootstrap.Modal(document.getElementById('artworkDetailModal'));
         modal.show();

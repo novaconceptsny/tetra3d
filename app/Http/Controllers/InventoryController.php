@@ -260,10 +260,10 @@ class InventoryController extends Controller
         $filesToZip = [];
 
         foreach ($artworks as $artwork) {
-            $originalValue = (array) ($artwork->original_value ?? []);
-            $height = $originalValue['height'] ?? '';
-            $width  = $originalValue['width'] ?? '';
-            $unit   = $originalValue['unit'] ?? ($artwork->original_unit ?: 'cm');
+            // Access original_value as SchemalessAttributes object
+            $height = $artwork->original_value->height ?? '';
+            $width  = $artwork->original_value->width ?? '';
+            $unit   = $artwork->original_value->unit ?? ($artwork->original_unit ?: 'cm');
 
             $imageFileName = '';
             $media = $artwork->getFirstMedia('image');
@@ -288,8 +288,8 @@ class InventoryController extends Controller
                 $artwork->collection->name ?? '',  // Collection
                 $artwork->name,                    // Title
                 $artwork->artist,                  // Artist
-                $height,                           // Height
-                $width,                            // Width
+                $height ?: '',                     // Height (ensure empty string if null)
+                $width ?: '',                      // Width (ensure empty string if null)
                 $unit,                             // Unit
                 $artwork->description,             // Description
                 $artwork->type,                    // Type
@@ -903,6 +903,7 @@ class InventoryController extends Controller
 
         try {
             $artworkData = json_decode($request->input('artwork_data'), true);
+
 
             if (! $artworkData || ! is_array($artworkData)) {
                 return response()->json(['success' => false, 'message' => 'Invalid data.'], 400);
