@@ -927,15 +927,7 @@ class InventoryController extends Controller
                 try {
                     // Create artwork object first
                     $artwork             = new Artwork();
-                    // $artwork->company_id = user()->company_id;
-
-                    $company = Company::where('name', $row['company_name'])->first();
-                    if (! $company) {
-                        $errors[] = "Company '{$row['company_name']}' not found for artwork #{$index}.";
-                        continue;
-                    }
-                    $artwork->company_id = $company->id;
-                    
+             
                     // Find collection by name
                     $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
                     if (! $collection) {
@@ -943,6 +935,9 @@ class InventoryController extends Controller
                         continue;
                     }
                     $artwork->artwork_collection_id = $collection->id;
+
+
+                    $artwork->company_id = $collection->company_id;
 
                     $artwork->name          = $row['title'] ?? '';
                     $artwork->artist        = $row['artist'] ?? '';
