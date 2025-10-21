@@ -188,7 +188,9 @@
         <div class="tour-custom-header">
             <div class="tour-header-left">
                 <div class="tour-header-icon">
-                    <img src="{{ asset('backend/images/logo/logo_small.png') }}" alt="dash-logo" style="width: 40px; height: 40px;"/>
+                    <a href="{{ route('tour-360.index') }}">
+                        <img src="{{ asset('backend/images/logo/logo_small.png') }}" alt="dash-logo" style="width: 40px; height: 40px;"/>
+                    </a>
                 </div>
                 <div class="tour-header-text">{{ $project ? $project->name : 'No Project' }} > {{ $layout ? $layout->name : 'No Layout' }} > {{ $spot ? $spot->name : 'No Spot' }}</div>
             </div>
