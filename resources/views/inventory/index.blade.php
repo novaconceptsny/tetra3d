@@ -332,18 +332,17 @@
                                     </div>
                                 </div>
 
+                                Collection
+                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                    @foreach($collections as $collection)
+                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                    @endforeach
+                                </select>
+
                                 <table class="table align-middle">
                                     <thead style="background-color: #f8f9fa;">
                                         <tr>
                                             <th style="color: black; font-weight: 500;">Image</th>
-                                            <th style="color: black; font-weight: 500;">
-                                            Collection
-                                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                                    @foreach($collections as $collection)
-                                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </th>
                                             <th style="color: black; font-weight: 500;">Title</th>
                                             <th style="color: black; font-weight: 500;">Artist</th>
                                             <th style="color: black; font-weight: 500;">Height</th>
@@ -1382,8 +1381,6 @@
         const row = document.createElement('tr');
         const uniqueId = 'artwork-image-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
         const masterUnitDropdown = document.getElementById('masterUnit');
-        const masterCollectionDropdown = document.getElementById('masterCollectionHeader') || document.getElementById('masterCollectionStandalone');
-        const masterCompanyDropdown = document.getElementById('masterCompanyHeader');
 
         row.innerHTML = `
             <td>
@@ -1392,22 +1389,7 @@
                     <input type="file" accept=".png,.jpg,.jpeg" style="display:none;" id="${uniqueId}">
                 </div>
             </td>
-            <td>
-                <select class="form-select artwork-company-select ${!masterCompanyDropdown || !masterCompanyDropdown.value ? 'empty-cell' : ''}">
-                    <option value="">Select Company</option>
-                    @foreach($companies as $company)
-                        <option value="{{$company->id}}" ${masterCompanyDropdown && masterCompanyDropdown.value == {{$company->id}} ? 'selected' : ''}>{{$company->name}}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td>
-                <select class="form-select artwork-collection-select ${!masterCollectionDropdown || !masterCollectionDropdown.value ? 'empty-cell' : ''}">
-                    <option value="">Select Collection</option>
-                    @foreach($collections as $collection)
-                        <option value="{{$collection->id}}" ${masterCollectionDropdown && masterCollectionDropdown.value == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
-                    @endforeach
-                </select>
-            </td>
+
             <td contenteditable="true" data-placeholder="Enter title..." class="empty-cell"></td>
             <td contenteditable="true" data-placeholder="Enter artist name..." class="empty-cell"></td>
             <td><input type="number" id="artwork-height" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
@@ -1666,20 +1648,20 @@
             rows.forEach((row, index) => {
                 const cells = row.querySelectorAll('td');
                 const image = cells[0].querySelector('img');
-                const collectionSelect = cells[1].querySelector('select');
-
-                const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
-                const unitSelect = cells[6].querySelector('select');
+                // Get collection name from master collection header dropdown
+                const masterCollectionSelect = document.getElementById('masterCollectionHeader');
+                const collectionName = masterCollectionSelect.options[masterCollectionSelect.selectedIndex].text;
+                const unitSelect = cells[5].querySelector('select');
                 const unitValue = unitSelect ? unitSelect.value : '';
 
                 const rowData = {
                     collection_name: collectionName,
-                    title: cells[2].textContent.trim(),
-                    artist: cells[3].textContent.trim(),
-                    height: cells[4].querySelector('input').value,
-                    width: cells[5].querySelector('input').value,
-                    description: cells[7].textContent.trim(),
-                    type: cells[8].textContent.trim(),
+                    title: cells[1].textContent.trim(),
+                    artist: cells[2].textContent.trim(),
+                    height: cells[3].querySelector('input').value,
+                    width: cells[4].querySelector('input').value,
+                    description: cells[6].textContent.trim(),
+                    type: cells[7].textContent.trim(),
                     unit: unitValue,
                 };
 
@@ -2287,8 +2269,25 @@
     }
 
     function displayCurrentPage() {
+
+        const masterCollectionSelect = document.getElementById('masterCollectionHeader');
+
+        // Update masterCollectionSelect based on collection data from allArtworksData
+        if (allArtworksData.length > 0) {
+            // Get the first artwork's collection ID to determine the collection
+            const firstArtworkCollectionId = allArtworksData[0].collectionId;
+            
+            if (firstArtworkCollectionId) {
+                // Find the collection name by ID
+                const collection = allCollections.find(c => c.id == firstArtworkCollectionId);
+                if (collection) {
+                    // Set the master collection dropdown to match the first artwork's collection
+                    masterCollectionSelect.value = collection.id;
+                }
+            }
+        }
+
         const tbody = document.getElementById('artworkTableBody');
-        const masterCompanyDropdown = document.getElementById('masterCompanyHeader');
         tbody.innerHTML = ''; // Clear current page
 
         const startIndex = (currentPage - 1) * artworksPerPage;
@@ -2301,13 +2300,6 @@
             row.innerHTML = `
                 <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
 
-                <td >
-                    <select class="form-select artwork-collection-select">
-                        @foreach($collections as $collection)
-                            <option value="{{$collection->id}}" ${artwork.collectionId == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
-                        @endforeach
-                    </select>
-                </td>
                 <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
                 <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
                 <td><input type="number" id="artwork-height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
