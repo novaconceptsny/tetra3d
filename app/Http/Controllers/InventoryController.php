@@ -928,16 +928,32 @@ class InventoryController extends Controller
                     // Create artwork object first
                     $artwork             = new Artwork();
              
-                    // Find collection by name
-                    $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
+                    // Find collection by name - for super admin, search within their accessible collections
+                    if (user()->isSuperAdmin()) {
+                        // For super admin, find collection by name within their company or accessible companies
+                        $collection = ArtworkCollection::where('name', $row['collection_name'])
+                            ->where('company_id', user()->company_id)
+                            ->first();
+                        
+                        // If not found in user's company, try to find in any accessible company
+                        if (!$collection) {
+                            $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
+                        }
+                    } else {
+                        // For regular users, only search within their company
+                        $collection = ArtworkCollection::where('name', $row['collection_name'])
+                            ->where('company_id', user()->company_id)
+                            ->first();
+                    }
+                    
                     if (! $collection) {
                         $errors[] = "Collection '{$row['collection_name']}' not found for artwork #{$index}.";
                         continue;
                     }
                     $artwork->artwork_collection_id = $collection->id;
 
-
-                    $artwork->company_id = $collection->company_id;
+                    // Set company_id to the user's company, not the collection's company
+                    $artwork->company_id = user()->company_id;
 
                     $artwork->name          = $row['title'] ?? '';
                     $artwork->artist        = $row['artist'] ?? '';
