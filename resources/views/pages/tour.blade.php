@@ -54,10 +54,10 @@
         font-weight: 500;
         letter-spacing: 0.5px;
         text-shadow: 
-            -1px -1px 0 rgba(0, 0, 0, 0.6),
-            1px -1px 0 rgba(0, 0, 0, 0.6),
-            -1px 1px 0 rgba(0, 0, 0, 0.6),
-            1px 1px 0 rgba(0, 0, 0, 0.6);
+            -1px -1px 0 rgba(0, 0, 0, 0.3),
+            1px -1px 0 rgba(0, 0, 0, 0.3),
+            -1px 1px 0 rgba(0, 0, 0, 0.3),
+            1px 1px 0 rgba(0, 0, 0, 0.3);
     }
     
     .tour-header-right {
