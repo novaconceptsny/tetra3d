@@ -204,12 +204,14 @@
                     <button class="tour-header-btn" title="Sculpture List" onclick="toggleSculptureList()">
                         <i class="fas fa-monument"></i>
                     </button>
+                    @if(auth()->user()->isSuperAdmin())
                     <button class="tour-header-btn" title="3D Model" onclick="toggleLayout()">
                         <i class="fas fa-cube"></i>
                     </button>
                     <button class="tour-header-btn" title="Tracker" onclick="toggleTracker()">
                         <i class="fas fa-ruler-combined"></i>
-                    </button>          
+                    </button>
+                    @endif          
                 </div>
                 <div class="tour-header-user-buttons">
                     @auth
