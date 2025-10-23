@@ -358,3 +358,36 @@ a:has(> .pin):hover .spotname {
     background-color: #f8f9fa;
     z-index: -1;
 }
+
+/* Sticky Bottom Controls */
+.sticky-bottom-controls {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    right: 30px;
+    background-color: white;
+    border-top: 1px solid #dee2e6;
+    padding: 15px 20px;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sticky-bottom-controls .pagination-info {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.sticky-bottom-controls .btn {
+    min-width: 100px;
+}
+
+/* Collection dropdown height control */
+#masterCollectionHeader {
+    max-height: 200px !important; /* Adjust this value to control dropdown height */
+}
+
+#masterCollectionHeader option {
+    padding: 8px 12px; /* Add padding to options for better spacing */
+    line-height: 1.4; /* Control line height for better readability */
+}
+

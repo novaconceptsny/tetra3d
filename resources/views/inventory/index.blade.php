@@ -309,9 +309,25 @@
                                 </div>
                             </div>
 
-
                             <!-- Artworks Table -->
                             <div class="table-responsive mb-3">
+
+                                @if(auth()->user()->isSuperAdmin())
+                                Company
+                                <select id="masterCompanyDropdown" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                    @foreach($companies as $company)
+                                        <option value="{{$company->id}}">{{$company->name}}</option>
+                                    @endforeach
+                                </select>
+                                @endif
+
+                                Collection
+                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;" size="1">
+                                    @foreach($collections as $collection)
+                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                    @endforeach
+                                </select>
+                            
                                 <!-- Top Pagination Controls -->
                                 <div id="pagination-controls-top" style="display: none;" class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -333,21 +349,6 @@
                                     </div>
                                 </div>
 
-                                @if(auth()->user()->isSuperAdmin())
-                                Company
-                                <select id="masterCompanyDropdown" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                    @foreach($companies as $company)
-                                        <option value="{{$company->id}}">{{$company->name}}</option>
-                                    @endforeach
-                                </select>
-                                @endif
-
-                                Collection
-                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                    @foreach($collections as $collection)
-                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                                    @endforeach
-                                </select>
 
                                 <div class="table-container">
                                     <table class="table align-middle">
@@ -388,30 +389,13 @@
                                 </div>
                             </div>
 
-                            <!-- Pagination Controls -->
-                            <div id="pagination-controls" style="display: none;" class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="pagination-info">
-                                        <span id="pagination-text">Page 1 of 1</span>
-                                        <span class="ms-3">(<span id="total-artworks">0</span> total artworks)</span>
-                                    </div>
-                                    <div class="pagination-buttons d-flex align-items-center">
-                                        <button class="btn btn-outline-secondary btn-sm" id="prev-page-btn" onclick="handlePrevPage()">
-                                            <i class="fas fa-chevron-left"></i> Previous
-                                        </button>
-                                        <div class="page-numbers ms-2 me-2" id="page-numbers">
-                                            <!-- Page numbers will be generated here -->
-                                        </div>
-                                        <button class="btn btn-outline-secondary btn-sm" id="next-page-btn" onclick="handleNextPage()">
-                                            Next <i class="fas fa-chevron-right"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Sticky Bottom Controls -->
+                            <div class="sticky-bottom-controls">
 
-                            <div class="d-flex  align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
-                                <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
-                                <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
+                                <div class="d-flex align-items-end gap-2" style="width: fit-content; margin-left: auto;">
+                                    <button class="btn btn-outline-primary" id="add-artwork-btn" style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
+                                    <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1414,7 +1398,7 @@
             </td>
             <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
             <td contenteditable="true" data-placeholder="Enter artwork type..." class="empty-cell"></td>
-            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+            <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
         `;
         row.querySelector('button').onclick = function() {
             row.remove();
@@ -2144,11 +2128,6 @@
     }
 
     function updatePaginationControls() {
-        const prevBtn = document.getElementById('prev-page-btn');
-        const nextBtn = document.getElementById('next-page-btn');
-        const paginationText = document.getElementById('pagination-text');
-        const totalArtworks = document.getElementById('total-artworks');
-
         // Top pagination controls
         const prevBtnTop = document.getElementById('prev-page-btn-top');
         const nextBtnTop = document.getElementById('next-page-btn-top');
@@ -2156,61 +2135,16 @@
         const totalArtworksTop = document.getElementById('total-artworks-top');
 
         // Update both top and bottom controls
-        [prevBtn, prevBtnTop].forEach(btn => btn.disabled = currentPage === 1);
-        [nextBtn, nextBtnTop].forEach(btn => btn.disabled = currentPage === totalPages);
-        [paginationText, paginationTextTop].forEach(text => text.textContent = `Page ${currentPage} of ${totalPages}`);
-        [totalArtworks, totalArtworksTop].forEach(total => total.textContent = allArtworksData.length);
+        [prevBtnTop].forEach(btn => btn.disabled = currentPage === 1);
+        [nextBtnTop].forEach(btn => btn.disabled = currentPage === totalPages);
+        [paginationTextTop].forEach(text => text.textContent = `Page ${currentPage} of ${totalPages}`);
+        [totalArtworksTop].forEach(total => total.textContent = allArtworksData.length);
 
         // Generate page number buttons for both top and bottom
-        generatePageNumbers();
         generatePageNumbersTop();
 
         // Update submit button state
         updateSubmitButtonState();
-    }
-
-    function generatePageNumbers() {
-        const pageNumbersContainer = document.getElementById('page-numbers');
-        pageNumbersContainer.innerHTML = '';
-
-        if (totalPages <= 1) return;
-
-        const maxVisiblePages = 10; // Show max 10 page numbers
-        let startPage = 1;
-        let endPage = totalPages;
-
-        // Calculate which page numbers to show
-        if (totalPages > maxVisiblePages) {
-            if (currentPage <= 5) {
-                endPage = maxVisiblePages;
-            } else if (currentPage >= totalPages - 4) {
-                startPage = totalPages - maxVisiblePages + 1;
-            } else {
-                startPage = currentPage - 4;
-                endPage = currentPage + 5;
-            }
-        }
-
-        // Add first page and ellipsis if needed
-        if (startPage > 1) {
-            addPageButton(1, pageNumbersContainer);
-            if (startPage > 2) {
-                addEllipsis(pageNumbersContainer);
-            }
-        }
-
-        // Add page numbers
-        for (let i = startPage; i <= endPage; i++) {
-            addPageButton(i, pageNumbersContainer);
-        }
-
-        // Add last page and ellipsis if needed
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                addEllipsis(pageNumbersContainer);
-            }
-            addPageButton(totalPages, pageNumbersContainer);
-        }
     }
 
     function generatePageNumbersTop() {
@@ -2324,7 +2258,7 @@
                 </td>
                 <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.description ? 'empty-cell' : ''}">${artwork.description || ''}</td>
                 <td contenteditable="true" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
-                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
             `;
             row.querySelector('button').onclick = function() {
                 row.remove();
@@ -2380,17 +2314,13 @@
     }
 
     function showPaginationControls() {
-        const paginationControls = document.getElementById('pagination-controls');
         const paginationControlsTop = document.getElementById('pagination-controls-top');
-        paginationControls.style.display = 'block';
         paginationControlsTop.style.display = 'block';
         updatePaginationControls();
     }
 
     function hidePaginationControls() {
-        const paginationControls = document.getElementById('pagination-controls');
         const paginationControlsTop = document.getElementById('pagination-controls-top');
-        paginationControls.style.display = 'none';
         paginationControlsTop.style.display = 'none';
     }
 
