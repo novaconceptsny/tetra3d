@@ -1046,6 +1046,23 @@
 
 
 
+    // Function to save individual artwork field changes
+    function saveArtworkField(artwork, field, value) {
+        // Update the artwork object in memory
+        if (artwork) {
+            artwork[field] = value;
+            
+            // Update the corresponding item in allArtworksData
+            const artworkIndex = allArtworksData.findIndex(a => a.id === artwork.id || a.filename === artwork.filename);
+            if (artworkIndex !== -1) {
+                allArtworksData[artworkIndex][field] = value;
+            }
+            
+            // Optional: Show a visual indicator that the field was saved
+            console.log(`Saved ${field}: ${value} for artwork ${artwork.filename || artwork.id}`);
+        }
+    }
+
     // Function to check if submit button should be enabled
     function updateSubmitButtonState() {
         const submitBtn = document.getElementById('submit-artworks-btn');
@@ -1396,7 +1413,7 @@
                     <option value="cm" ${masterUnitDropdown.value === 'cm' ? 'selected' : ''}>cm</option>
                 </select>
             </td>
-            <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
+            <td><textarea data-field="description" placeholder="Enter artwork description..." class="form-control empty-cell" rows="2" style="resize: vertical; min-height: 40px;"></textarea></td>
             <td contenteditable="true" data-placeholder="Enter artwork type..." class="empty-cell"></td>
             <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
         `;
@@ -2241,23 +2258,24 @@
         currentPageArtworks = allArtworksData.slice(startIndex, endIndex);
 
         // Display current page artworks
-        currentPageArtworks.forEach(artwork => {
+        currentPageArtworks.forEach((artwork, index) => {
             const row = document.createElement('tr');
+            const uniqueId = `artwork-${artwork.id || Date.now()}-${index}`;
             row.innerHTML = `
                 <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
 
-                <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
-                <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
-                <td><input type="number" id="artwork-height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
-                <td><input type="number" id="artwork-width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
+                <td contenteditable="true" data-field="title" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
+                <td contenteditable="true" data-field="artist" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
+                <td><input type="number" id="artwork-height-${uniqueId}" data-field="height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
+                <td><input type="number" id="artwork-width-${uniqueId}" data-field="width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
                 <td>
-                    <select class="form-select artwork-unit-select">
+                    <select class="form-select artwork-unit-select" data-field="unit">
                         <option value="inch" ${artwork.unit === 'inch' ? 'selected' : ''}>inch</option>
                         <option value="cm" ${artwork.unit === 'cm' ? 'selected' : ''}>cm</option>
                     </select>
                 </td>
-                <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.description ? 'empty-cell' : ''}">${artwork.description || ''}</td>
-                <td contenteditable="true" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
+                <td><textarea data-field="description" placeholder="Enter artwork description..." class="form-control ${!artwork.description ? 'empty-cell' : ''}" rows="2" style="resize: vertical; min-height: 40px;">${artwork.description || ''}</textarea></td>
+                <td contenteditable="true" data-field="type" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
                 <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
             `;
             row.querySelector('button').onclick = function() {
@@ -2266,7 +2284,7 @@
             };
             tbody.appendChild(row);
 
-            // Add event listeners for empty-cell class
+            // Add event listeners for empty-cell class and data saving
             const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
             contentEditableCells.forEach(cell => {
                 cell.addEventListener('input', function() {
@@ -2274,6 +2292,21 @@
                         this.classList.remove('empty-cell');
                     } else {
                         this.classList.add('empty-cell');
+                    }
+                });
+                
+                // Save data on blur (when user finishes editing)
+                cell.addEventListener('blur', function() {
+                    const field = this.getAttribute('data-field');
+                    const value = this.textContent.trim();
+                    saveArtworkField(artwork, field, value);
+                });
+                
+                // Save data on Enter key press
+                cell.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur(); // This will trigger the blur event and save
                     }
                 });
             });
@@ -2287,6 +2320,21 @@
                         this.classList.add('empty-cell');
                     }
                 });
+                
+                // Save data on blur
+                input.addEventListener('blur', function() {
+                    const field = this.getAttribute('data-field');
+                    const value = this.value.trim();
+                    saveArtworkField(artwork, field, value);
+                });
+                
+                // Save data on Enter key press
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur(); // This will trigger the blur event and save
+                    }
+                });
             });
 
             const selectFields = row.querySelectorAll('select');
@@ -2297,6 +2345,30 @@
                     } else {
                         this.classList.add('empty-cell');
                     }
+                    
+                    // Save data immediately on change
+                    const field = this.getAttribute('data-field');
+                    const value = this.value;
+                    saveArtworkField(artwork, field, value);
+                });
+            });
+
+            // Add event listeners for textarea fields
+            const textareaFields = row.querySelectorAll('textarea');
+            textareaFields.forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    if (this.value.trim() !== '') {
+                        this.classList.remove('empty-cell');
+                    } else {
+                        this.classList.add('empty-cell');
+                    }
+                });
+                
+                // Save data on blur
+                textarea.addEventListener('blur', function() {
+                    const field = this.getAttribute('data-field');
+                    const value = this.value.trim();
+                    saveArtworkField(artwork, field, value);
                 });
             });
 
