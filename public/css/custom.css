@@ -326,3 +326,35 @@ a:has(> .pin):hover .spotname {
     border-radius: 50%;
     object-fit: cover;
 }
+
+/* Sticky Table Header Styles */
+.table-container {
+    max-height: 70vh;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+.table-container table {
+    margin-bottom: 0;
+}
+
+.table-container thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Ensure the sticky header maintains its styling */
+.table-container thead th::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f8f9fa;
+    z-index: -1;
+}

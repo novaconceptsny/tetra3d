@@ -265,12 +265,13 @@
                                     <i class="fas fa-arrow-left me-2"></i> Back
                                 </button>
                             </div>
-                            <div class="text-center mb-4">
-                                <button class="btn btn-primary" id="download-template-btn" onclick="downloadSpreadsheet()">Download spreadsheet template (.csv, .xlsx)</button>
-                            </div>
+
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Upload spreadsheet</label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="form-label">Upload spreadsheet</label>
+                                        <button class="btn btn-light border-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="background-color: #f8f9fa; color: #28a745; font-weight: 500; padding: 12px 24px; border-radius: 6px;">Download spreadsheet template</button>
+                                    </div>
                                     <div class="upload-box" id="spreadsheet-upload">
                                         <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv, .xlsx, .xls file</span>
                                         <div id="spreadsheet-progress" style="display: none;">
@@ -348,41 +349,43 @@
                                     @endforeach
                                 </select>
 
-                                <table class="table align-middle">
-                                    <thead style="background-color: #f8f9fa;">
-                                        <tr>
-                                            <th style="color: black; font-weight: 500;">Image</th>
-                                            <th style="color: black; font-weight: 500;">Title</th>
-                                            <th style="color: black; font-weight: 500;">Artist</th>
-                                            <th style="color: black; font-weight: 500;">Height</th>
-                                            <th style="color: black; font-weight: 500;">Width</th>
-                                            <th style="color: black; font-weight: 500;">
-                                            Preferred unit
-                                                <select id="masterUnit" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                                    <option value="inch">Inch</option>
-                                                    <option value="cm">cm</option>
-                                                </select>
-                                            </th>
-                                            <th style="color: black; font-weight: 500;">Description</th>
-                                            <th style="color: black; font-weight: 500;">Type</th>
-                                            <th style="color: black; font-weight: 500;"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="artworkTableBody">
-                                        <!-- Example row, repeat for each artwork -->
-                                        <!-- <tr>
-                                            <td><img src="..." style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
-                                            <td contenteditable="true">Indispensable exhibition</td>
-                                            <td contenteditable="true">Jaguar Attacking a Horse</td>
-                                            <td contenteditable="true">Anna Ovanesova</td>
-                                            <td contenteditable="true">45.6</td>
-                                            <td contenteditable="true">35.4</td>
-                                            <td contenteditable="true">Digital Art</td>
-                                            <td><button class="btn btn-danger btn-sm">Remove</button></td>
-                                        </tr> -->
-                                        <!-- More rows... -->
-                                    </tbody>
-                                </table>
+                                <div class="table-container">
+                                    <table class="table align-middle">
+                                        <thead style="background-color: #f8f9fa;">
+                                            <tr>
+                                                <th style="color: black; font-weight: 500;">Image</th>
+                                                <th style="color: black; font-weight: 500;">Title</th>
+                                                <th style="color: black; font-weight: 500;">Artist</th>
+                                                <th style="color: black; font-weight: 500;">Height</th>
+                                                <th style="color: black; font-weight: 500;">Width</th>
+                                                <th style="color: black; font-weight: 500;">
+                                                Preferred unit
+                                                    <select id="masterUnit" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                                        <option value="inch">Inch</option>
+                                                        <option value="cm">cm</option>
+                                                    </select>
+                                                </th>
+                                                <th style="color: black; font-weight: 500;">Description</th>
+                                                <th style="color: black; font-weight: 500;">Type</th>
+                                                <th style="color: black; font-weight: 500;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="artworkTableBody">
+                                            <!-- Example row, repeat for each artwork -->
+                                            <!-- <tr>
+                                                <td><img src="..." style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                                                <td contenteditable="true">Indispensable exhibition</td>
+                                                <td contenteditable="true">Jaguar Attacking a Horse</td>
+                                                <td contenteditable="true">Anna Ovanesova</td>
+                                                <td contenteditable="true">45.6</td>
+                                                <td contenteditable="true">35.4</td>
+                                                <td contenteditable="true">Digital Art</td>
+                                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                                            </tr> -->
+                                            <!-- More rows... -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
                             <!-- Pagination Controls -->
@@ -2285,7 +2288,7 @@
         if (allArtworksData.length > 0) {
             // Get the first artwork's collection ID to determine the collection
             const firstArtworkCollectionId = allArtworksData[0].collectionId;
-            
+
             if (firstArtworkCollectionId) {
                 // Find the collection name by ID
                 const collection = allCollections.find(c => c.id == firstArtworkCollectionId);
@@ -4513,21 +4516,21 @@ $(document).ready(function() {
     document.addEventListener('DOMContentLoaded', function() {
         const companyDropdown = document.getElementById('masterCompanyDropdown');
         const collectionDropdown = document.getElementById('masterCollectionHeader');
-        
+
         if (companyDropdown && collectionDropdown) {
             companyDropdown.addEventListener('change', function() {
                 const companyId = this.value;
-                
+
                 // Clear current collections
                 collectionDropdown.innerHTML = '<option value="">Loading...</option>';
-                
+
                 // Fetch collections for the selected company
                 fetch(`{{ route('inventory.collections.by-company') }}?company_id=${companyId}`)
                     .then(response => response.json())
                     .then(data => {
                         // Clear the loading option
                         collectionDropdown.innerHTML = '';
-                        
+
                         // Add new collection options
                         if (data.collections && data.collections.length > 0) {
                             data.collections.forEach(collection => {
