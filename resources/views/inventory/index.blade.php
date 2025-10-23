@@ -332,6 +332,15 @@
                                     </div>
                                 </div>
 
+                                @if(auth()->user()->isSuperAdmin())
+                                Company
+                                <select id="masterCompanyDropdown" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                    @foreach($companies as $company)
+                                        <option value="{{$company->id}}">{{$company->name}}</option>
+                                    @endforeach
+                                </select>
+                                @endif
+
                                 Collection
                                 <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
                                     @foreach($collections as $collection)
@@ -4499,6 +4508,49 @@ $(document).ready(function() {
         const modal = new bootstrap.Modal(document.getElementById('artworkDetailModal'));
         modal.show();
     }
+
+    // Handle company dropdown change to filter collections
+    document.addEventListener('DOMContentLoaded', function() {
+        const companyDropdown = document.getElementById('masterCompanyDropdown');
+        const collectionDropdown = document.getElementById('masterCollectionHeader');
+        
+        if (companyDropdown && collectionDropdown) {
+            companyDropdown.addEventListener('change', function() {
+                const companyId = this.value;
+                
+                // Clear current collections
+                collectionDropdown.innerHTML = '<option value="">Loading...</option>';
+                
+                // Fetch collections for the selected company
+                fetch(`{{ route('inventory.collections.by-company') }}?company_id=${companyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear the loading option
+                        collectionDropdown.innerHTML = '';
+                        
+                        // Add new collection options
+                        if (data.collections && data.collections.length > 0) {
+                            data.collections.forEach(collection => {
+                                const option = document.createElement('option');
+                                option.value = collection.id;
+                                option.textContent = collection.name;
+                                collectionDropdown.appendChild(option);
+                            });
+                        } else {
+                            // Add a "No collections" option if no collections found
+                            const option = document.createElement('option');
+                            option.value = '';
+                            option.textContent = 'No collections found';
+                            collectionDropdown.appendChild(option);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching collections:', error);
+                        collectionDropdown.innerHTML = '<option value="">Error loading collections</option>';
+                    });
+            });
+        }
+    });
 
 
 </script>
