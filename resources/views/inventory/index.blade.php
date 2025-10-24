@@ -73,7 +73,7 @@
                                                 </li>
                                                 @foreach($collections as $collection)
                                                 <li data-company-id="{{ $collection->company_id }}">
-                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{ addslashes($collection->name ?? '') }}', '{{$collection->artworks()->count()}}', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
+                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', {{ json_encode($collection->name ?? '') }}, '{{$collection->artworks()->count()}}', {{ json_encode($collection->thumbnail_url) }})" style="border-bottom: 1px solid #f8f9fa;">
                                                         @if($collection->thumbnail_url)
                                                             <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3" style="object-fit: cover; border-radius: 0;">
                                                         @else
@@ -2828,20 +2828,21 @@ $(document).ready(function() {
 
         // Also sync the corresponding item inside the dropdown list, if present
         if (window.selectedCollectionId) {
-            var menuItems = document.querySelectorAll('.collections-dropdown .dropdown-menu .dropdown-item');
-            menuItems.forEach(function (item) {
-                var onclickAttr = item.getAttribute('onclick') || '';
-                if (onclickAttr.indexOf("selectCollection('" + window.selectedCollectionId + "'") !== -1) {
-                    var countSpan = item.querySelector('small.text-muted');
-                    if (countSpan) countSpan.textContent = newCount + ' items';
+            // Find the original collection data from allCollections instead of DOM
+            const originalCollection = allCollections.find(c => c.id == window.selectedCollectionId);
+            if (originalCollection) {
+                var menuItems = document.querySelectorAll('.collections-dropdown .dropdown-menu .dropdown-item');
+                menuItems.forEach(function (item) {
+                    var onclickAttr = item.getAttribute('onclick') || '';
+                    if (onclickAttr.indexOf("selectCollection('" + window.selectedCollectionId + "'") !== -1) {
+                        var countSpan = item.querySelector('small.text-muted');
+                        if (countSpan) countSpan.textContent = newCount + ' items';
 
-                    var nameEl = item.querySelector('.fw-bold');
-                    var name = nameEl ? nameEl.textContent.trim() : '';
-                    var img = item.querySelector('img');
-                    var thumb = img ? img.getAttribute('src') : '';
-                    item.setAttribute('onclick', "selectCollection('" + window.selectedCollectionId + "', '" + name.replace(/'/g, "\\'") + "', '" + newCount + "', '" + thumb.replace(/'/g, "\\'") + "')");
-                }
-            });
+                        // Use original collection data instead of DOM text content
+                        item.setAttribute('onclick', `selectCollection('${window.selectedCollectionId}', ${JSON.stringify(originalCollection.name)}, '${newCount}', ${JSON.stringify(originalCollection.thumbnail_url || '')})`);
+                    }
+                });
+            }
         }
     });
 
@@ -4491,7 +4492,7 @@ $(document).ready(function() {
                 if (countElement) countElement.textContent = itemCount;
 
                 // Update the onclick attribute with new parameters
-                item.setAttribute('onclick', `selectCollection('${collectionId}', '${collectionName}', '${itemCount}', '${thumbnailUrl || ''}')`);
+                item.setAttribute('onclick', `selectCollection('${collectionId}', ${JSON.stringify(collectionName)}, '${itemCount}', ${JSON.stringify(thumbnailUrl || '')})`);
             }
         });
     }
