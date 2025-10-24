@@ -261,7 +261,7 @@ class InventoryController extends Controller
         
         // Column headers (matching downloadSpreadsheet format)
         fputcsv($csv, [
-            'Filename', 'Company', 'Collection', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type'
+            'Filename', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type'
         ]);
 
         // Collect image files to add in zip
@@ -286,14 +286,12 @@ class InventoryController extends Controller
             }
 
             // Format company name for export
-            $companyName = $artwork->company->name ?? '';
-            $companyName = formatCompanyName($companyName, $artwork->company->id ?? 0);
+            // $companyName = $artwork->company->name ?? '';
+            // $companyName = formatCompanyName($companyName, $artwork->company->id ?? 0);
 
             // Data rows (matching downloadSpreadsheet column order)
             fputcsv($csv, [
                 $imageFileName,                    // Filename
-                $companyName,                      // Company
-                $artwork->collection->name ?? '',  // Collection
                 $artwork->name,                    // Title
                 $artwork->artist,                  // Artist
                 $height ?: '',                     // Height (ensure empty string if null)

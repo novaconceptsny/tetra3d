@@ -1232,7 +1232,7 @@
             ["Ensure the 'Filename' fully matches the images filename"],
             ['Upload completed spreadsheet to Tetra'],
             [],
-            ['Filename', 'Company', 'Collection', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type']
+            ['Filename', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type']
         ];
 
         const rows = document.querySelectorAll('#artworkTableBody tr');
@@ -1245,18 +1245,18 @@
             rowData.push(img ? img.getAttribute('data-filename') || '' : '');
 
             // 2. Collection
-            const collectionSelect = cells[2].querySelector('select');
-            rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
+            // const collectionSelect = cells[2].querySelector('select');
+            // rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
 
-            rowData.push(cells[3].textContent.trim());
-            rowData.push(cells[4].textContent.trim());
-            rowData.push(cells[5].querySelector('input').value);
-            rowData.push(cells[6].querySelector('input').value);
-            const unitSelect = cells[7].querySelector('select');
+            rowData.push(cells[1].textContent.trim());
+            rowData.push(cells[2].textContent.trim());
+            rowData.push(cells[3].querySelector('input').value);
+            rowData.push(cells[4].querySelector('input').value);
+            const unitSelect = cells[5].querySelector('select');
             rowData.push(unitSelect ? unitSelect.value : '');
 
+            rowData.push(cells[6].textContent.trim());
             rowData.push(cells[7].textContent.trim());
-            rowData.push(cells[8].textContent.trim());
 
             data.push(rowData);
         });
