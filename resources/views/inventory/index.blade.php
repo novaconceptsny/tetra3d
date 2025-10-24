@@ -1656,14 +1656,16 @@
             const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
             document.getElementById('submitProgressText').textContent = `Preparing artworks ${startIndex + 1}-${endIndex} for upload...`;
             document.getElementById('submitProgressBar').style.width = '25%';
-
+            
+            // Get collection name from master collection header dropdown
+            const masterCollectionSelect = document.getElementById('masterCollectionHeader');
+            const collectionName = masterCollectionSelect.options[masterCollectionSelect.selectedIndex].text;
             // Collect all the data from current page
             rows.forEach((row, index) => {
                 const cells = row.querySelectorAll('td');
                 const image = cells[0].querySelector('img');
-                // Get collection name from master collection header dropdown
-                const masterCollectionSelect = document.getElementById('masterCollectionHeader');
-                const collectionName = masterCollectionSelect.options[masterCollectionSelect.selectedIndex].text;
+
+
                 const unitSelect = cells[5].querySelector('select');
                 const unitValue = unitSelect ? unitSelect.value : '';
 
