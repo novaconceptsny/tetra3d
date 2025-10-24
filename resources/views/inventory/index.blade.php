@@ -3239,11 +3239,12 @@ $(document).ready(function() {
 
     // Collection selection function
     window.selectCollection = function(collectionId, collectionName, itemCount, thumbnailUrl = null) {
-        window.selectedCollectionId = collectionId;
         console.log(collectionId, "collectionId")
         console.log(collectionName, "collectionName")
         console.log(itemCount, "itemCount")
         console.log(thumbnailUrl, "thumbnailUrl")
+        
+        window.selectedCollectionId = collectionId;
 
         // Update the dropdown button content
         const dropdownButton = document.querySelector('.dropdown button');
