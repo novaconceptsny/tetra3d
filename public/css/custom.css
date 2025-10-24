@@ -302,6 +302,20 @@ a:has(> .pin):hover .spotname {
     background-color: transparent;
 }
 
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link .dropdown-item:active,
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link .dropdown-item:focus,
+.tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link .dropdown-item.active {
+    color: #099F9A;
+    background-color: #099F9A;
+}
+
+.profile .nav-item.dropdown .dropdown-menu .link .dropdown-item:active,
+.profile .nav-item.dropdown .dropdown-menu .link .dropdown-item:focus,
+.profile .nav-item.dropdown .dropdown-menu .link .dropdown-item.active {
+    color: #099F9A;
+    background-color: #099F9A;
+}
+
 .tour-header-user-buttons .nav-item.dropdown .dropdown-menu .link .dropdown-item i {
     margin-right: 8px;
     width: 16px;
