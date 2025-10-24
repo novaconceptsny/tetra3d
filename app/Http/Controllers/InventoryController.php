@@ -229,9 +229,10 @@ class InventoryController extends Controller
 
         $artworks = $query->orderBy('artworks.updated_at', 'desc')->get();
 
+        // Generate custom filename using the new function
+        $baseName = $this->generateExportFilename($collectionId, $artworks);
+
         // Prepare temp paths
-        $timestamp = now()->format('Ymd_His');
-        $baseName = 'inventory_export_' . $timestamp;
         $tempDir = storage_path('app/exports');
         if (! is_dir($tempDir)) {
             @mkdir($tempDir, 0775, true);
@@ -1300,5 +1301,46 @@ class InventoryController extends Controller
                 'message' => 'Error updating items: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Generate custom filename for export based on collection, piece count, and date
+     *
+     * @param int|null $collectionId
+     * @param \Illuminate\Database\Eloquent\Collection $artworks
+     * @return string
+     */
+    private function generateExportFilename($collectionId, $artworks)
+    {
+        // Get collection name for filename
+        $collectionName = 'All Collections';
+        if ($collectionId) {
+            $collection = ArtworkCollection::find($collectionId);
+            if ($collection) {
+                $collectionName = $collection->name;
+            }
+        } elseif ($artworks->isNotEmpty()) {
+            // If no specific collection but artworks exist, get the first collection name
+            $firstArtwork = $artworks->first();
+            if ($firstArtwork && $firstArtwork->collection) {
+                $collectionName = $firstArtwork->collection->name;
+            }
+        }
+
+        // Count number of pieces
+        $pieceCount = $artworks->count();
+
+        // Format date - you can choose between the two formats:
+        // Format 1: Oct232025 (Month + Day + Year)
+        $dateFormat1 = now()->format('M') . now()->format('d') . now()->format('Y');
+        // Format 2: 20251101 (YYYYMMDD)
+        $dateFormat2 = now()->format('Ymd');
+        
+        // Choose format (using format 1 as in your example)
+        $dateString = $dateFormat1;
+
+        // Create custom filename: collection_name_no_of_pieces_date
+        // Keep original collection name with spaces
+        return $collectionName . '_' . $pieceCount . '_' . $dateString;
     }
 }
