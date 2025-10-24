@@ -73,7 +73,7 @@
                                                 </li>
                                                 @foreach($collections as $collection)
                                                 <li data-company-id="{{ $collection->company_id }}">
-                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}}', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
+                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', {!! json_encode($collection->name) !!}, '{{$collection->artworks()->count()}}', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
                                                         @if($collection->thumbnail_url)
                                                             <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3" style="object-fit: cover; border-radius: 0;">
                                                         @else
