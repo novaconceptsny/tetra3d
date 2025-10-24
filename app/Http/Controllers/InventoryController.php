@@ -92,13 +92,20 @@ class InventoryController extends Controller
 
         $orderBy = $columns[$orderColumn] ?? 'updated_at';
 
-        // Base query
-        $query = Artwork::with('collection', 'company')
+        // Base query - remove global scope to avoid ambiguity when joining tables
+        $query = Artwork::withoutGlobalScope('forCurrentCompany')
+            ->with('collection', 'company')
             ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at', 'artworks.updated_at']);
 
         // Filter by collection if provided
         if ($request->has('collection_id') && $request->collection_id) {
             $query->where('artworks.artwork_collection_id', $request->collection_id);
+        }
+
+        // For non-super admin users, ensure we're only getting artworks from their company
+        // This needs to be done before any joins to avoid ambiguity
+        if (!user()->isSuperAdmin()) {
+            $query->where('artworks.company_id', user()->company_id);
         }
 
         // Apply search filter
