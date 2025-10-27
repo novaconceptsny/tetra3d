@@ -194,6 +194,7 @@
                 <div class="tour-header-text">{{ $project ? $project->name : 'No Project' }} > {{ $layout ? $layout->name : 'No Layout' }} > {{ $spot ? $spot->name : 'No Spot' }}</div>
             </div>
             <div class="tour-header-right">
+                @if(!$tour_is_shared)
                 <div class="tour-header-buttons">
                     <button class="tour-header-btn" title="Share" onclick="toggleShare()">
                         <i class="fas fa-share-nodes"></i>
@@ -213,6 +214,7 @@
                     </button>
                     @endif          
                 </div>
+                @endif
                 <div class="tour-header-user-buttons">
                     @auth
                         <div class="nav-item dropdown">
