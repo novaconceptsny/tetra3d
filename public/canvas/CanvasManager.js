@@ -664,17 +664,16 @@ class CanvasManager {
         let b = this.boundingBox.width;
         let c = this.canvasState.actualWidthInch * scale;
 
+        if (overrideScale != null) {
+            c = this.canvasState.actualWidthInch * overrideScale;
+        }
+
         let adaptedScale = a * (b / c);
 
         image.scaleToWidth(adaptedScale, false);
         this.canvasState.defaultScale = image.scaleX;
         this.defaultScales[image.id] = image.scaleX;
 
-        if (overrideScale != null) {
-            c = this.canvasState.actualWidthInch * overrideScale;
-        }
-        adaptedScale = a * (b / c);
-        image.scaleToWidth(adaptedScale, false);
     }
 
     placeSelectedImage(artSelection, topPos = this.boundingBox.top, leftPos = this.boundingBox.left, centerOnPosition = false) {

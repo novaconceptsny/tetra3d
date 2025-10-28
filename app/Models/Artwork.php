@@ -168,7 +168,7 @@ class Artwork extends Model implements HasMedia
         return intval(max($scaleWidth, $scaleHeight));
     }
 
-    public function resizeImage()
+    public function getOriginalAspectRatio()
     {
         $media = $this->getFirstMedia('image');
 
@@ -180,21 +180,33 @@ class Artwork extends Model implements HasMedia
         $originalWidth = $image->width();
         $originalHeight = $image->height();
         $originalAspectRatio = $originalWidth / $originalHeight;
+
+        return $originalAspectRatio;
+    }
+
+    public function resizeImage()
+    {
+        $media = $this->getFirstMedia('image');
+
+        ini_set('memory_limit', '1G');
+
+        $image = Image::make($media->getPath());
         
-        // Calculate new dimensions based on actual proportions and data-width value
-        $targetWidth = $this->data->scale * $this->data->width_inch;
-        $targetHeight = $targetWidth / $originalAspectRatio;
         
-        // If the calculated height exceeds the target height, use height as the constraint
-        // $maxTargetHeight = $this->data->scale * $this->data->height_inch;
-        // if ($targetHeight > $maxTargetHeight) {
-        //     $targetHeight = $maxTargetHeight;
-        //     $targetWidth = $targetHeight * $originalAspectRatio;
+        // Calculate new dimensions based on actual proportions and data-height value
+        $targetHeight = $this->data->scale * $this->data->height_inch;
+        $targetWidth = $targetHeight * $this->getOriginalAspectRatio();
+        
+        // If the calculated width exceeds the target width, use width as the constraint
+        // $maxTargetWidth = $this->data->scale * $this->data->width_inch;
+        // if ($targetWidth > $maxTargetWidth) {
+        //     $targetWidth = $maxTargetWidth;
+        //     $targetHeight = $targetWidth / $originalAspectRatio;
         // }
 
         $image->resize($targetWidth, $targetHeight);
         
-        $this->data->height_inch =  round($this->data->width_inch / $originalAspectRatio, 5);
+        $this->data->width_inch =  round($this->data->height_inch * $this->getOriginalAspectRatio(), 5);
 
         $this->save();
 
