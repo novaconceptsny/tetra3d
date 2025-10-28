@@ -97,7 +97,12 @@ class ResourceController extends Controller
                 'tour_id'       => 'required|exists:tours,id',
             ]);
 
-            CompanyTour::where('tour_id', $request->tour_id)->delete();
+            $user = auth()->user();
+            if($user->isSuperAdmin()) {
+                CompanyTour::where('tour_id', $request->tour_id)->delete();
+            } else {
+                CompanyTour::where('tour_id', $request->tour_id)->where('company_id', $user->company_id)->delete();
+            }
 
             foreach ($request->company_ids as $companyId) {
                 // Find the company by id
