@@ -1,5 +1,104 @@
 @extends('layouts.redesign')
 
+@section('styles')
+<style>
+    /* Hide the white header on tour page */
+    #header {
+        display: none !important;
+    }
+    
+    /* Remove margin-top from main content when header is hidden */
+    #site__body {
+        margin-top: 0 !important;
+    }
+    
+    /* Make tour page full height */
+    body {
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    #site__body {
+        height: 100vh;
+    }
+    
+    /* Custom Tour Header Styles */
+    .tour-custom-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+ 
+    }
+    
+    .tour-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .tour-header-icon {
+        color: white;
+        font-size: 16px;
+        opacity: 0.8;
+    }
+    
+    .tour-header-text {
+        color: white;
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-shadow: 
+            -1px -1px 0 rgba(0, 0, 0, 0.1),
+            1px -1px 0 rgba(0, 0, 0, 0.1),
+            -1px 1px 0 rgba(0, 0, 0, 0.1),
+            1px 1px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .tour-header-right {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        gap: 50px;
+    }
+    
+    .tour-header-buttons {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .tour-header-btn {
+        background:  rgba(255, 255, 255, 0.6);
+        border: none;
+        color: black;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 16px;
+    }
+    
+    
+    .tour-header-btn:active {
+        transform: translateY(0);
+    }
+    
+    .tour-header-btn i {
+        font-size: 16px;
+    }
+  
+</style>
+@endsection
+
 @php
     $layout_id = request('layout_id');
     $project = $project ?? null;
@@ -83,8 +182,104 @@
     </div>
 </div>
 
-<div style="height: calc(100vh - 52px);">
+<div style="height: 100vh;">
     <div class="h-100 position-relative">
+        <div class="tour-custom-header">
+            <div class="tour-header-left">
+                <div class="tour-header-icon">
+                    <a href="{{ route('tour-360.index') }}">
+                        <img src="{{ asset('backend/images/logo/logo_small.png') }}" alt="dash-logo" style="width: 40px; height: 40px;"/>
+                    </a>
+                </div>
+                <div class="tour-header-text">{{ $project ? $project->name : 'No Project' }} > {{ $layout ? $layout->name : 'No Layout' }} > {{ $spot ? $spot->name : 'No Spot' }}</div>
+            </div>
+            <div class="tour-header-right">
+                @if(!$tour_is_shared)
+                <div class="tour-header-buttons">
+                    <button class="tour-header-btn" title="Share" onclick="toggleShare()">
+                        <i class="fas fa-share-nodes"></i>
+                    </button>
+                    <button class="tour-header-btn" title="Artwork Collection" onclick="toggleArtworkCollection()">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                    <button class="tour-header-btn" title="Sculpture List" onclick="toggleSculptureList()">
+                        <i class="fas fa-monument"></i>
+                    </button>
+                    @if(auth()->user()->isSuperAdmin())
+                    <button class="tour-header-btn" title="3D Model" onclick="toggleLayout()">
+                        <i class="fas fa-cube"></i>
+                    </button>
+                    <button class="tour-header-btn" title="Tracker" onclick="toggleTracker()">
+                        <i class="fas fa-ruler-combined"></i>
+                    </button>
+                    @endif          
+                </div>
+                @endif
+                <div class="tour-header-user-buttons">
+                    @auth
+                        <div class="nav-item dropdown">
+                            <a class="dropdown-link nav-link text-white profile-menu-btn" href="#" id="tourUserDropdown" role="button"
+                                data-bs-toggle="dropdown" style="padding: 0;">
+                                <img class="user-img-border" src="{{ user()->avatar_url }}"
+                                        alt="{{ user()->name }}"/>
+                            </a>
+                            <ul class="dropdown-menu pro-drop" aria-labelledby="tourUserDropdown">
+                                <div class="drop-profile">
+                                    <img class="user-img-border" src="{{ user()->avatar_url }}"
+                                            alt="{{ user()->name }}">
+                                    <div class="user-detail">
+                                        <h6>{{ user()->name }}</h6>
+                                        <p class="profile-email">{{ user()->email }}</p>
+                                    </div>
+                                </div>
+                                <div class="link">
+                                    @can('access-backend')
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('backend.dashboard') }}"
+                                                target="_blank">
+                                                <i class="fal fa-user-shield"></i>
+                                                {{ __('Admin Area') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @if(session()->has('admin_id'))
+                                        <li>
+                                            <a class="dropdown-item" href="javascript:void(0);"
+                                                target="_blank"
+                                                onclick="event.preventDefault(); document.getElementById('back-to-admin-form').submit();">
+                                                <i class="fal fa-arrow-from-left"></i>
+                                                {{ __('Back to Admin') }}
+                                            </a>
+                                            <form id="back-to-admin-form" target="_blank" class="d-none"
+                                                    action="{{ route('back.to.admin') }}" method="post">
+                                                @csrf
+                                            </form>
+                                        </li>
+                                    @endif
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                            <i class="fal fa-user"></i>
+                                            {{ __('My Profile') }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            <i class="fal fa-sign-out"></i>
+                                            {{ __('Logout') }}
+                                        </a>
+                                    </li>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            class="d-none">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </ul>
+                        </div>
+                    @endauth
+                </div>
+            </div>
+        </div>
         @if ($tracker)
             <div id="tracker"></div>
         @endif
@@ -1021,6 +1216,48 @@
         // Add a small delay to ensure the orientation change is complete
         setTimeout(checkOrientation, 100);
     });
+
+    // Button click functions
+    function toggleShare() {
+        @if($layout && !$tour_is_shared)
+            window.open('{{ route('share.index', ['layout_id' => $layout?->id]) }}', '_blank');
+        @else
+            alert('Share functionality is not available in this context.');
+        @endif
+    }
+
+    function toggleArtworkCollection() {
+        @if(!$tour_is_shared)
+            window.open('{{ route('inventory.index') }}', '_blank');
+        @else
+            alert('Artwork Collection is not available for shared tours.');
+        @endif
+    }
+
+    function toggleSculptureList() {
+        @if($project && !$tour_is_shared && $tourModel)
+            const offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasExample'));
+            offcanvas.show();
+        @else
+            alert('Sculpture List is not available in this context.');
+        @endif
+    }
+
+    function toggleTracker() {
+        @auth
+            @if(user()?->can('perform-admin-actions'))
+                const currentUrl = new URL(window.location.href);
+                const currentTracker = currentUrl.searchParams.get('tracker');
+                const newTracker = currentTracker === '1' ? '0' : '1';
+                currentUrl.searchParams.set('tracker', newTracker);
+                window.location.href = currentUrl.toString();
+            @else
+                alert('You do not have permission to access the tracker.');
+            @endif
+        @else
+            alert('You must be logged in to access the tracker.');
+        @endauth
+    }
 
 </script>
 @endsection

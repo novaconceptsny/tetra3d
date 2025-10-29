@@ -125,8 +125,8 @@ class InventoryDatatable extends BaseDatatable
 
         $sculptureRows->transform(function ($row) {
             // Add company ID for "My workspace" entries, but only for super admin
-            if (user()->isAdmin() && $row->company->name === 'My Workspace') {
-                $row->company_name = $row->company->name . '_' . str_pad($row->company->id, 2, '0', STR_PAD_LEFT);
+            if (user()->isAdmin()) {
+                $row->company_name = formatCompanyName($row->company->name, $row->company->id);
             } else {
                 $row->company_name = $row->company->name;
             }
@@ -137,8 +137,8 @@ class InventoryDatatable extends BaseDatatable
 
         $artworkRows->transform(function ($row) {
             // Add company ID for "My workspace" entries, but only for super admin
-            if (user()->isAdmin() && $row->company->name === 'My Workspace') {
-                $row->company_name = $row->company->name . '_' . str_pad($row->company->id, 2, '0', STR_PAD_LEFT);
+            if (user()->isAdmin()) {
+                $row->company_name = formatCompanyName($row->company->name, $row->company->id);
             } else {
                 $row->company_name = $row->company->name;
             }

@@ -57,3 +57,20 @@ function resizeBase64Image($base64, $scale)
     );
     return $image->encode('data-url');
 }
+
+/**
+ * Format company name with ID for "My Workspace" companies
+ * 
+ * @param string $companyName
+ * @param int $companyId
+ * @param int $padLength Length to pad the ID (default: 2)
+ * @return string
+ */
+function formatCompanyName($companyName, $companyId, $padLength = 2)
+{
+    if ($companyName === 'My Workspace') {
+        return $companyName . '_' . str_pad($companyId, $padLength, '0', STR_PAD_LEFT);
+    }
+    
+    return $companyName;
+}

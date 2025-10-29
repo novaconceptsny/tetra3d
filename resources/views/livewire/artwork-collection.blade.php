@@ -529,11 +529,13 @@
                 loader.style.display = 'block';
             }
             
-            // Disable form elements during loading
+            // Store focus state before disabling
             const searchInput = document.querySelector('#search-input');
             const collectionSelect = document.querySelector('#collection-select');
-            if (searchInput) searchInput.disabled = true;
+            
+            // Only disable collection select, keep search input enabled to maintain focus
             if (collectionSelect) collectionSelect.disabled = true;
+            // Don't disable search input to prevent focus loss
         }
 
         hideLoading() {
@@ -542,11 +544,10 @@
                 loader.style.display = 'none';
             }
             
-            // Re-enable form elements after loading
-            const searchInput = document.querySelector('#search-input');
+            // Re-enable collection select after loading
             const collectionSelect = document.querySelector('#collection-select');
-            if (searchInput) searchInput.disabled = false;
             if (collectionSelect) collectionSelect.disabled = false;
+            // Search input was never disabled, so no need to re-enable it
         }
 
         showError(message) {

@@ -73,7 +73,7 @@
                                                 </li>
                                                 @foreach($collections as $collection)
                                                 <li data-company-id="{{ $collection->company_id }}">
-                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', '{{$collection->name}}', '{{$collection->artworks()->count()}}', '{{$collection->thumbnail_url}}')" style="border-bottom: 1px solid #f8f9fa;">
+                                                    <a class="dropdown-item d-flex align-items-center p-2" href="#" onclick="selectCollection('{{$collection->id}}', {{ json_encode($collection->name ?? '') }}, '{{$collection->artworks()->count()}}', {{ json_encode($collection->thumbnail_url) }})" style="border-bottom: 1px solid #f8f9fa;">
                                                         @if($collection->thumbnail_url)
                                                             <img src="{{ $collection->thumbnail_url }}" alt="" width="24" height="24" class="me-3" style="object-fit: cover; border-radius: 0;">
                                                         @else
@@ -265,12 +265,13 @@
                                     <i class="fas fa-arrow-left me-2"></i> Back
                                 </button>
                             </div>
-                            <div class="text-center mb-4">
-                                <button class="btn btn-primary" id="download-template-btn" onclick="downloadSpreadsheet()">Download spreadsheet template (.csv, .xlsx)</button>
-                            </div>
+
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Upload spreadsheet</label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="form-label">Upload spreadsheet</label>
+                                        <button class="btn btn-light border-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="background-color: #f8f9fa; color: #28a745; font-weight: 500; padding: 12px 24px; border-radius: 6px;">Download spreadsheet template</button>
+                                    </div>
                                     <div class="upload-box" id="spreadsheet-upload">
                                         <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv, .xlsx, .xls file</span>
                                         <div id="spreadsheet-progress" style="display: none;">
@@ -308,9 +309,25 @@
                                 </div>
                             </div>
 
-
                             <!-- Artworks Table -->
                             <div class="table-responsive mb-3">
+
+                                @if(auth()->user()->isSuperAdmin())
+                                Company
+                                <select id="masterCompanyDropdown" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                    @foreach($companies as $company)
+                                        <option value="{{$company->id}}">{{$company->name}}</option>
+                                    @endforeach
+                                </select>
+                                @endif
+
+                                Collection
+                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;" size="1">
+                                    @foreach($collections as $collection)
+                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                    @endforeach
+                                </select>
+                            
                                 <!-- Top Pagination Controls -->
                                 <div id="pagination-controls-top" style="display: none;" class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -332,84 +349,53 @@
                                     </div>
                                 </div>
 
-                                <table class="table align-middle">
-                                    <thead style="background-color: #f8f9fa;">
-                                        <tr>
-                                            <th style="color: black; font-weight: 500;">Image</th>
-                                            <th style="color: black; font-weight: 500;">
-                                                Company
-                                                <select id="masterCompanyHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                                    <option value="">Select company</option>
-                                                    @foreach($companies as $company)
-                                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </th>
-                                            <th style="color: black; font-weight: 500;">
-                                            Collection
-                                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                                    @foreach($collections as $collection)
-                                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </th>
-                                            <th style="color: black; font-weight: 500;">Title</th>
-                                            <th style="color: black; font-weight: 500;">Artist</th>
-                                            <th style="color: black; font-weight: 500;">Height</th>
-                                            <th style="color: black; font-weight: 500;">Width</th>
-                                            <th style="color: black; font-weight: 500;">
-                                            Preferred unit
-                                                <select id="masterUnit" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
-                                                    <option value="inch">Inch</option>
-                                                    <option value="cm">cm</option>
-                                                </select>
-                                            </th>
-                                            <th style="color: black; font-weight: 500;">Description</th>
-                                            <th style="color: black; font-weight: 500;">Type</th>
-                                            <th style="color: black; font-weight: 500;"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="artworkTableBody">
-                                        <!-- Example row, repeat for each artwork -->
-                                        <!-- <tr>
-                                            <td><img src="..." style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
-                                            <td contenteditable="true">Indispensable exhibition</td>
-                                            <td contenteditable="true">Jaguar Attacking a Horse</td>
-                                            <td contenteditable="true">Anna Ovanesova</td>
-                                            <td contenteditable="true">45.6</td>
-                                            <td contenteditable="true">35.4</td>
-                                            <td contenteditable="true">Digital Art</td>
-                                            <td><button class="btn btn-danger btn-sm">Remove</button></td>
-                                        </tr> -->
-                                        <!-- More rows... -->
-                                    </tbody>
-                                </table>
-                            </div>
 
-                            <!-- Pagination Controls -->
-                            <div id="pagination-controls" style="display: none;" class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="pagination-info">
-                                        <span id="pagination-text">Page 1 of 1</span>
-                                        <span class="ms-3">(<span id="total-artworks">0</span> total artworks)</span>
-                                    </div>
-                                    <div class="pagination-buttons d-flex align-items-center">
-                                        <button class="btn btn-outline-secondary btn-sm" id="prev-page-btn" onclick="handlePrevPage()">
-                                            <i class="fas fa-chevron-left"></i> Previous
-                                        </button>
-                                        <div class="page-numbers ms-2 me-2" id="page-numbers">
-                                            <!-- Page numbers will be generated here -->
-                                        </div>
-                                        <button class="btn btn-outline-secondary btn-sm" id="next-page-btn" onclick="handleNextPage()">
-                                            Next <i class="fas fa-chevron-right"></i>
-                                        </button>
-                                    </div>
+                                <div class="table-container">
+                                    <table class="table align-middle">
+                                        <thead style="background-color: #f8f9fa;">
+                                            <tr>
+                                                <th style="color: black; font-weight: 500;">Image</th>
+                                                <th style="color: black; font-weight: 500;">Title</th>
+                                                <th style="color: black; font-weight: 500;">Artist</th>
+                                                <th style="color: black; font-weight: 500;">Height</th>
+                                                <th style="color: black; font-weight: 500;">Width</th>
+                                                <th style="color: black; font-weight: 500;">
+                                                Preferred unit
+                                                    <select id="masterUnit" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
+                                                        <option value="inch">Inch</option>
+                                                        <option value="cm">cm</option>
+                                                    </select>
+                                                </th>
+                                                <th style="color: black; font-weight: 500;">Description</th>
+                                                <th style="color: black; font-weight: 500;">Type</th>
+                                                <th style="color: black; font-weight: 500;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="artworkTableBody">
+                                            <!-- Example row, repeat for each artwork -->
+                                            <!-- <tr>
+                                                <td><img src="..." style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+                                                <td contenteditable="true">Indispensable exhibition</td>
+                                                <td contenteditable="true">Jaguar Attacking a Horse</td>
+                                                <td contenteditable="true">Anna Ovanesova</td>
+                                                <td contenteditable="true">45.6</td>
+                                                <td contenteditable="true">35.4</td>
+                                                <td contenteditable="true">Digital Art</td>
+                                                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                                            </tr> -->
+                                            <!-- More rows... -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
 
-                            <div class="d-flex  align-items-end gap-2" style="width: fit-content; margin-left: auto; ;">
-                                <button class="btn btn-outline-primary" id="add-artwork-btn"  style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
-                                <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
+                            <!-- Sticky Bottom Controls -->
+                            <div class="sticky-bottom-controls">
+
+                                <div class="d-flex align-items-end gap-2" style="width: fit-content; margin-left: auto;">
+                                    <button class="btn btn-outline-primary" id="add-artwork-btn" style="width: fit-content;" onclick="handleAddRow()">Add Artwork</button>
+                                    <button class="btn btn-success" id="submit-artworks-btn" style="width: fit-content;" onclick="handleSubmitArtworks()" disabled>Submit</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -898,7 +884,7 @@
                                     <strong>Unit:</strong> <span id="artworkDetailUnit">-</span>
                                 </div>
                                 <div class="detail-item">
-                                    <strong>Description:</strong> 
+                                    <strong>Description:</strong>
                                     <div id="artworkDetailDescription" >-</div>
                                 </div>
                             </div>
@@ -1017,10 +1003,10 @@
 
         // Get filtered collections for this row
         const filteredCollections = getFilteredCollections(rowElement);
-        
+
         // Clear existing options
         collectionSelect.innerHTML = '<option value="">Select collection</option>';
-        
+
         // Add filtered collections
         if (filteredCollections.length > 0) {
             filteredCollections.forEach(function(collection) {
@@ -1059,6 +1045,23 @@
     }
 
 
+
+    // Function to save individual artwork field changes
+    function saveArtworkField(artwork, field, value) {
+        // Update the artwork object in memory
+        if (artwork) {
+            artwork[field] = value;
+            
+            // Update the corresponding item in allArtworksData
+            const artworkIndex = allArtworksData.findIndex(a => a.id === artwork.id || a.filename === artwork.filename);
+            if (artworkIndex !== -1) {
+                allArtworksData[artworkIndex][field] = value;
+            }
+            
+            // Optional: Show a visual indicator that the field was saved
+            console.log(`Saved ${field}: ${value} for artwork ${artwork.filename || artwork.id}`);
+        }
+    }
 
     // Function to check if submit button should be enabled
     function updateSubmitButtonState() {
@@ -1229,7 +1232,7 @@
             ["Ensure the 'Filename' fully matches the images filename"],
             ['Upload completed spreadsheet to Tetra'],
             [],
-            ['Filename', 'Company', 'Collection', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type']
+            ['Filename', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type']
         ];
 
         const rows = document.querySelectorAll('#artworkTableBody tr');
@@ -1242,18 +1245,18 @@
             rowData.push(img ? img.getAttribute('data-filename') || '' : '');
 
             // 2. Collection
-            const collectionSelect = cells[2].querySelector('select');
-            rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
+            // const collectionSelect = cells[2].querySelector('select');
+            // rowData.push(collectionSelect && collectionSelect.value ? collectionSelect.options[collectionSelect.selectedIndex].text : '');
 
-            rowData.push(cells[3].textContent.trim());
-            rowData.push(cells[4].textContent.trim());
-            rowData.push(cells[5].querySelector('input').value);
-            rowData.push(cells[6].querySelector('input').value);
-            const unitSelect = cells[7].querySelector('select');
+            rowData.push(cells[1].textContent.trim());
+            rowData.push(cells[2].textContent.trim());
+            rowData.push(cells[3].querySelector('input').value);
+            rowData.push(cells[4].querySelector('input').value);
+            const unitSelect = cells[5].querySelector('select');
             rowData.push(unitSelect ? unitSelect.value : '');
 
+            rowData.push(cells[6].textContent.trim());
             rowData.push(cells[7].textContent.trim());
-            rowData.push(cells[8].textContent.trim());
 
             data.push(rowData);
         });
@@ -1366,7 +1369,7 @@
             if (data.success) {
                 const message = isEditMode ? 'Collection updated successfully' : 'Collection added successfully';
                 alert(message);
-                
+
                 // Update collection image dynamically instead of reloading
                 if (isEditMode) {
                     $('#addCollectionModal').modal('hide');
@@ -1391,8 +1394,6 @@
         const row = document.createElement('tr');
         const uniqueId = 'artwork-image-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
         const masterUnitDropdown = document.getElementById('masterUnit');
-        const masterCollectionDropdown = document.getElementById('masterCollectionHeader') || document.getElementById('masterCollectionStandalone');
-        const masterCompanyDropdown = document.getElementById('masterCompanyHeader');
 
         row.innerHTML = `
             <td>
@@ -1401,22 +1402,7 @@
                     <input type="file" accept=".png,.jpg,.jpeg" style="display:none;" id="${uniqueId}">
                 </div>
             </td>
-            <td>
-                <select class="form-select artwork-company-select ${!masterCompanyDropdown || !masterCompanyDropdown.value ? 'empty-cell' : ''}">
-                    <option value="">Select Company</option>
-                    @foreach($companies as $company)
-                        <option value="{{$company->id}}" ${masterCompanyDropdown && masterCompanyDropdown.value == {{$company->id}} ? 'selected' : ''}>{{$company->name}}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td>
-                <select class="form-select artwork-collection-select ${!masterCollectionDropdown || !masterCollectionDropdown.value ? 'empty-cell' : ''}">
-                    <option value="">Select Collection</option>
-                    @foreach($collections as $collection)
-                        <option value="{{$collection->id}}" ${masterCollectionDropdown && masterCollectionDropdown.value == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
-                    @endforeach
-                </select>
-            </td>
+
             <td contenteditable="true" data-placeholder="Enter title..." class="empty-cell"></td>
             <td contenteditable="true" data-placeholder="Enter artist name..." class="empty-cell"></td>
             <td><input type="number" id="artwork-height" class="form-control empty-cell" style="width: 100px; min-width: 60px;" /></td>
@@ -1427,9 +1413,9 @@
                     <option value="cm" ${masterUnitDropdown.value === 'cm' ? 'selected' : ''}>cm</option>
                 </select>
             </td>
-            <td contenteditable="true" data-placeholder="Enter artwork description..." class="empty-cell"></td>
+            <td><textarea data-field="description" placeholder="Enter artwork description..." class="form-control empty-cell" rows="2" style="resize: vertical; min-height: 40px;"></textarea></td>
             <td contenteditable="true" data-placeholder="Enter artwork type..." class="empty-cell"></td>
-            <td><button class="btn btn-danger btn-sm">Remove</button></td>
+            <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
         `;
         row.querySelector('button').onclick = function() {
             row.remove();
@@ -1646,6 +1632,7 @@
         }
     }
 
+
     function uploadCurrentPageArtworks() {
         const submitBtn = document.getElementById('submit-artworks-btn');
         const originalText = submitBtn.innerHTML;
@@ -1669,28 +1656,27 @@
             const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
             document.getElementById('submitProgressText').textContent = `Preparing artworks ${startIndex + 1}-${endIndex} for upload...`;
             document.getElementById('submitProgressBar').style.width = '25%';
-
+            
+            // Get collection name from master collection header dropdown
+            const masterCollectionSelect = document.getElementById('masterCollectionHeader');
+            const collectionName = masterCollectionSelect.options[masterCollectionSelect.selectedIndex].text;
             // Collect all the data from current page
             rows.forEach((row, index) => {
                 const cells = row.querySelectorAll('td');
                 const image = cells[0].querySelector('img');
-                const companySelect = cells[1].querySelector('select');
-                const collectionSelect = cells[2].querySelector('select');
 
-                const collectionName = collectionSelect.options[collectionSelect.selectedIndex].text;
-                const companyName = companySelect.options[companySelect.selectedIndex].text;
-                const unitSelect = cells[7].querySelector('select');
+
+                const unitSelect = cells[5].querySelector('select');
                 const unitValue = unitSelect ? unitSelect.value : '';
 
                 const rowData = {
                     collection_name: collectionName,
-                    company_name: companyName,
-                    title: cells[3].textContent.trim(),
-                    artist: cells[4].textContent.trim(),
-                    height: cells[5].querySelector('input').value,
-                    width: cells[6].querySelector('input').value,
-                    description: cells[8].textContent.trim(),
-                    type: cells[9].textContent.trim(),
+                    title: cells[1].textContent.trim(),
+                    artist: cells[2].textContent.trim(),
+                    height: cells[3].querySelector('input').value,
+                    width: cells[4].querySelector('input').value,
+                    description: cells[6].textContent.trim(),
+                    type: cells[7].textContent.trim(),
                     unit: unitValue,
                 };
 
@@ -1795,6 +1781,7 @@
             });
         }, 50); // Small delay to ensure modal renders first
     }
+
 
     // Remove row
     document.querySelectorAll('#artworkTableBody .btn-danger').forEach(btn => {
@@ -2160,11 +2147,6 @@
     }
 
     function updatePaginationControls() {
-        const prevBtn = document.getElementById('prev-page-btn');
-        const nextBtn = document.getElementById('next-page-btn');
-        const paginationText = document.getElementById('pagination-text');
-        const totalArtworks = document.getElementById('total-artworks');
-
         // Top pagination controls
         const prevBtnTop = document.getElementById('prev-page-btn-top');
         const nextBtnTop = document.getElementById('next-page-btn-top');
@@ -2172,61 +2154,16 @@
         const totalArtworksTop = document.getElementById('total-artworks-top');
 
         // Update both top and bottom controls
-        [prevBtn, prevBtnTop].forEach(btn => btn.disabled = currentPage === 1);
-        [nextBtn, nextBtnTop].forEach(btn => btn.disabled = currentPage === totalPages);
-        [paginationText, paginationTextTop].forEach(text => text.textContent = `Page ${currentPage} of ${totalPages}`);
-        [totalArtworks, totalArtworksTop].forEach(total => total.textContent = allArtworksData.length);
+        [prevBtnTop].forEach(btn => btn.disabled = currentPage === 1);
+        [nextBtnTop].forEach(btn => btn.disabled = currentPage === totalPages);
+        [paginationTextTop].forEach(text => text.textContent = `Page ${currentPage} of ${totalPages}`);
+        [totalArtworksTop].forEach(total => total.textContent = allArtworksData.length);
 
         // Generate page number buttons for both top and bottom
-        generatePageNumbers();
         generatePageNumbersTop();
 
         // Update submit button state
         updateSubmitButtonState();
-    }
-
-    function generatePageNumbers() {
-        const pageNumbersContainer = document.getElementById('page-numbers');
-        pageNumbersContainer.innerHTML = '';
-
-        if (totalPages <= 1) return;
-
-        const maxVisiblePages = 10; // Show max 10 page numbers
-        let startPage = 1;
-        let endPage = totalPages;
-
-        // Calculate which page numbers to show
-        if (totalPages > maxVisiblePages) {
-            if (currentPage <= 5) {
-                endPage = maxVisiblePages;
-            } else if (currentPage >= totalPages - 4) {
-                startPage = totalPages - maxVisiblePages + 1;
-            } else {
-                startPage = currentPage - 4;
-                endPage = currentPage + 5;
-            }
-        }
-
-        // Add first page and ellipsis if needed
-        if (startPage > 1) {
-            addPageButton(1, pageNumbersContainer);
-            if (startPage > 2) {
-                addEllipsis(pageNumbersContainer);
-            }
-        }
-
-        // Add page numbers
-        for (let i = startPage; i <= endPage; i++) {
-            addPageButton(i, pageNumbersContainer);
-        }
-
-        // Add last page and ellipsis if needed
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                addEllipsis(pageNumbersContainer);
-            }
-            addPageButton(totalPages, pageNumbersContainer);
-        }
     }
 
     function generatePageNumbersTop() {
@@ -2297,8 +2234,25 @@
     }
 
     function displayCurrentPage() {
+
+        const masterCollectionSelect = document.getElementById('masterCollectionHeader');
+
+        // Update masterCollectionSelect based on collection data from allArtworksData
+        if (allArtworksData.length > 0) {
+            // Get the first artwork's collection ID to determine the collection
+            const firstArtworkCollectionId = allArtworksData[0].collectionId;
+
+            if (firstArtworkCollectionId) {
+                // Find the collection name by ID
+                const collection = allCollections.find(c => c.id == firstArtworkCollectionId);
+                if (collection) {
+                    // Set the master collection dropdown to match the first artwork's collection
+                    masterCollectionSelect.value = collection.id;
+                }
+            }
+        }
+
         const tbody = document.getElementById('artworkTableBody');
-        const masterCompanyDropdown = document.getElementById('masterCompanyHeader');
         tbody.innerHTML = ''; // Clear current page
 
         const startIndex = (currentPage - 1) * artworksPerPage;
@@ -2306,41 +2260,25 @@
         currentPageArtworks = allArtworksData.slice(startIndex, endIndex);
 
         // Display current page artworks
-        currentPageArtworks.forEach(artwork => {
+        currentPageArtworks.forEach((artwork, index) => {
             const row = document.createElement('tr');
+            const uniqueId = `artwork-${artwork.id || Date.now()}-${index}`;
             row.innerHTML = `
                 <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
+
+                <td contenteditable="true" data-field="title" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
+                <td contenteditable="true" data-field="artist" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
+                <td><input type="number" id="artwork-height-${uniqueId}" data-field="height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
+                <td><input type="number" id="artwork-width-${uniqueId}" data-field="width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
                 <td>
-                    ${artwork.company ?
-                        artwork.company :
-                        `<select class="form-select artwork-company-select ${!masterCompanyDropdown || !masterCompanyDropdown.value ? 'empty-cell' : ''}">
-                            <option value="">Select Company</option>
-                            @foreach($companies as $company)
-                                <option value="{{$company->id}}" ${masterCompanyDropdown && masterCompanyDropdown.value == {{$company->id}} ? 'selected' : ''}>{{$company->name}}</option>
-                            @endforeach
-                        </select>`
-                    }
-                </td>
-                <td >
-                    <select class="form-select artwork-collection-select">
-                        @foreach($collections as $collection)
-                            <option value="{{$collection->id}}" ${artwork.collectionId == {{$collection->id}} ? 'selected' : ''}>{{$collection->name}}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td contenteditable="true" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
-                <td contenteditable="true" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
-                <td><input type="number" id="artwork-height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
-                <td><input type="number" id="artwork-width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
-                <td>
-                    <select class="form-select artwork-unit-select">
+                    <select class="form-select artwork-unit-select" data-field="unit">
                         <option value="inch" ${artwork.unit === 'inch' ? 'selected' : ''}>inch</option>
                         <option value="cm" ${artwork.unit === 'cm' ? 'selected' : ''}>cm</option>
                     </select>
                 </td>
-                <td contenteditable="true" data-placeholder="Enter artwork description..." class="${!artwork.description ? 'empty-cell' : ''}">${artwork.description || ''}</td>
-                <td contenteditable="true" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
-                <td><button class="btn btn-danger btn-sm">Remove</button></td>
+                <td><textarea data-field="description" placeholder="Enter artwork description..." class="form-control ${!artwork.description ? 'empty-cell' : ''}" rows="2" style="resize: vertical; min-height: 40px;">${artwork.description || ''}</textarea></td>
+                <td contenteditable="true" data-field="type" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
+                <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
             `;
             row.querySelector('button').onclick = function() {
                 row.remove();
@@ -2348,7 +2286,7 @@
             };
             tbody.appendChild(row);
 
-            // Add event listeners for empty-cell class
+            // Add event listeners for empty-cell class and data saving
             const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
             contentEditableCells.forEach(cell => {
                 cell.addEventListener('input', function() {
@@ -2356,6 +2294,21 @@
                         this.classList.remove('empty-cell');
                     } else {
                         this.classList.add('empty-cell');
+                    }
+                });
+                
+                // Save data on blur (when user finishes editing)
+                cell.addEventListener('blur', function() {
+                    const field = this.getAttribute('data-field');
+                    const value = this.textContent.trim();
+                    saveArtworkField(artwork, field, value);
+                });
+                
+                // Save data on Enter key press
+                cell.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur(); // This will trigger the blur event and save
                     }
                 });
             });
@@ -2369,6 +2322,21 @@
                         this.classList.add('empty-cell');
                     }
                 });
+                
+                // Save data on blur
+                input.addEventListener('blur', function() {
+                    const field = this.getAttribute('data-field');
+                    const value = this.value.trim();
+                    saveArtworkField(artwork, field, value);
+                });
+                
+                // Save data on Enter key press
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur(); // This will trigger the blur event and save
+                    }
+                });
             });
 
             const selectFields = row.querySelectorAll('select');
@@ -2379,6 +2347,30 @@
                     } else {
                         this.classList.add('empty-cell');
                     }
+                    
+                    // Save data immediately on change
+                    const field = this.getAttribute('data-field');
+                    const value = this.value;
+                    saveArtworkField(artwork, field, value);
+                });
+            });
+
+            // Add event listeners for textarea fields
+            const textareaFields = row.querySelectorAll('textarea');
+            textareaFields.forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    if (this.value.trim() !== '') {
+                        this.classList.remove('empty-cell');
+                    } else {
+                        this.classList.add('empty-cell');
+                    }
+                });
+                
+                // Save data on blur
+                textarea.addEventListener('blur', function() {
+                    const field = this.getAttribute('data-field');
+                    const value = this.value.trim();
+                    saveArtworkField(artwork, field, value);
                 });
             });
 
@@ -2396,17 +2388,13 @@
     }
 
     function showPaginationControls() {
-        const paginationControls = document.getElementById('pagination-controls');
         const paginationControlsTop = document.getElementById('pagination-controls-top');
-        paginationControls.style.display = 'block';
         paginationControlsTop.style.display = 'block';
         updatePaginationControls();
     }
 
     function hidePaginationControls() {
-        const paginationControls = document.getElementById('pagination-controls');
         const paginationControlsTop = document.getElementById('pagination-controls-top');
-        paginationControls.style.display = 'none';
         paginationControlsTop.style.display = 'none';
     }
 
@@ -2616,11 +2604,11 @@ $(document).ready(function() {
     // Function to reapply pending changes after table reload
     function reapplyPendingChanges() {
         if (Object.keys(pendingChanges).length === 0) return;
-        
+
         table.rows().every(function() {
             var rowData = this.data();
             var rowId = rowData.id;
-            
+
             if (pendingChanges[rowId]) {
                 var changes = pendingChanges[rowId];
                 for (var field in changes) {
@@ -2741,16 +2729,16 @@ $(document).ready(function() {
         drawCallback: function() {
             // Reinitialize tooltips after table redraw
             $('[data-bs-toggle="tooltip"]').tooltip();
-            
+
             // Add click handlers to artwork images
             $('.artwork-image').off('click').on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 // Get the row data from DataTable
                 const row = table.row($(this).closest('tr'));
                 const rowData = row.data();
-                
+
                 if (rowData) {
                     showArtworkDetailModal(rowData);
                 }
@@ -2783,7 +2771,7 @@ $(document).ready(function() {
                     data: saveData,
                     success: function(response) {
                         console.log('Description update successful');
-                        
+
                         // Update the DataTable row data with the new value
                         const row = table.row($textarea.closest('tr'));
                         const rowData = row.data();
@@ -2840,20 +2828,21 @@ $(document).ready(function() {
 
         // Also sync the corresponding item inside the dropdown list, if present
         if (window.selectedCollectionId) {
-            var menuItems = document.querySelectorAll('.collections-dropdown .dropdown-menu .dropdown-item');
-            menuItems.forEach(function (item) {
-                var onclickAttr = item.getAttribute('onclick') || '';
-                if (onclickAttr.indexOf("selectCollection('" + window.selectedCollectionId + "'") !== -1) {
-                    var countSpan = item.querySelector('small.text-muted');
-                    if (countSpan) countSpan.textContent = newCount + ' items';
+            // Find the original collection data from allCollections instead of DOM
+            const originalCollection = allCollections.find(c => c.id == window.selectedCollectionId);
+            if (originalCollection) {
+                var menuItems = document.querySelectorAll('.collections-dropdown .dropdown-menu .dropdown-item');
+                menuItems.forEach(function (item) {
+                    var onclickAttr = item.getAttribute('onclick') || '';
+                    if (onclickAttr.indexOf("selectCollection('" + window.selectedCollectionId + "'") !== -1) {
+                        var countSpan = item.querySelector('small.text-muted');
+                        if (countSpan) countSpan.textContent = newCount + ' items';
 
-                    var nameEl = item.querySelector('.fw-bold');
-                    var name = nameEl ? nameEl.textContent.trim() : '';
-                    var img = item.querySelector('img');
-                    var thumb = img ? img.getAttribute('src') : '';
-                    item.setAttribute('onclick', "selectCollection('" + window.selectedCollectionId + "', '" + name.replace(/'/g, "\\'") + "', '" + newCount + "', '" + thumb.replace(/'/g, "\\'") + "')");
-                }
-            });
+                        // Use original collection data instead of DOM text content
+                        item.setAttribute('onclick', `selectCollection('${window.selectedCollectionId}', ${JSON.stringify(originalCollection.name)}, '${newCount}', ${JSON.stringify(originalCollection.thumbnail_url || '')})`);
+                    }
+                });
+            }
         }
     });
 
@@ -2943,20 +2932,20 @@ $(document).ready(function() {
     // Make entire row clickable for checkbox selection
     $(document).on('click', '#inventoryTable tbody tr', function(e) {
         // Don't trigger if clicking on editable cells or other interactive elements
-        if ($(e.target).hasClass('editable-cell') || 
+        if ($(e.target).hasClass('editable-cell') ||
             $(e.target).closest('.editable-cell').length > 0 ||
             $(e.target).is('input, select, button, a, textarea') ||
             $(e.target).closest('input, select, button, a, textarea').length > 0) {
             return;
         }
-        
+
         var checkbox = $(this).find('.row-checkbox');
         var rowId = checkbox.data('id');
         var row = $(this);
-        
+
         if (checkbox.length > 0) {
             checkbox.prop('checked', !checkbox.prop('checked'));
-            
+
             if (checkbox.prop('checked')) {
                 selectedRows.add(rowId);
                 row.addClass('selected-row');
@@ -2964,7 +2953,7 @@ $(document).ready(function() {
                 selectedRows.delete(rowId);
                 row.removeClass('selected-row');
             }
-            
+
             updateBulkEditUI();
             updateSelectAllState();
         }
@@ -3117,7 +3106,7 @@ $(document).ready(function() {
             // Create select dropdown for collection field with filtered collections
             let options = '';
             const filteredCollections = getFilteredCollections($cell.closest('tr')[0]);
-            if (filteredCollections.length > 0) {   
+            if (filteredCollections.length > 0) {
                 filteredCollections.forEach(function(collection) {
                         const isSelected = currentValue === collection.name ? 'selected' : '';
                         options += `<option value="${collection.id}" ${isSelected}>${collection.name}</option>`;
@@ -3146,7 +3135,7 @@ $(document).ready(function() {
         // Replace cell content with input
         $cell.html(input);
         input.focus();
-        
+
         // Select text for input fields, but not for textareas
         if (type !== 'textarea') {
             input.select();
@@ -3207,7 +3196,7 @@ $(document).ready(function() {
                     }
 
                     $cell.removeClass('editing').text(displayValue);
-                    
+
                     // Update the DataTable row data with the new value
                     const row = table.row($cell.closest('tr'));
                     const rowData = row.data();
@@ -3217,7 +3206,7 @@ $(document).ready(function() {
                         if (!pendingChanges[rowId]) {
                             pendingChanges[rowId] = {};
                         }
-                        
+
                         // Update the specific field in the row data
                         if (field === 'collection') {
                             rowData.collection = displayValue;
@@ -3251,6 +3240,11 @@ $(document).ready(function() {
 
     // Collection selection function
     window.selectCollection = function(collectionId, collectionName, itemCount, thumbnailUrl = null) {
+        console.log(collectionId, "collectionId")
+        console.log(collectionName, "collectionName")
+        console.log(itemCount, "itemCount")
+        console.log(thumbnailUrl, "thumbnailUrl")
+        
         window.selectedCollectionId = collectionId;
 
         // Update the dropdown button content
@@ -3309,16 +3303,16 @@ $(document).ready(function() {
         const companyFilter = document.getElementById('companyFilter');
         const selectedCompanyId = companyFilter ? companyFilter.value : '';
         const collectionsDropdown = document.getElementById('collectionsDropdownMenu');
-        
+
         if (!collectionsDropdown) return;
 
-        
+
         // Reset to "All Collections" when company changes
         const allCollectionsItem = collectionsDropdown.querySelector('li:first-child a');
         if (allCollectionsItem) {
             allCollectionsItem.click(); // Trigger the "All Collections" selection
         }
-        
+
         // If no company selected, show all collections
         if (selectedCompanyId === '') {
             // Show all collection items
@@ -3326,7 +3320,7 @@ $(document).ready(function() {
             collectionItems.forEach(item => {
                 item.style.display = 'block';
             });
-            
+
             // Reset to original total
             const allCollectionsItem = collectionsDropdown.querySelector('li:first-child small.text-muted');
             if (allCollectionsItem) {
@@ -3334,7 +3328,7 @@ $(document).ready(function() {
             }
             return;
         }
-        
+
         // Make AJAX call to get filtered collections
         fetch('{{ route("inventory.collections.by-company") }}?company_id=' + selectedCompanyId)
         .then(response => response.json())
@@ -3345,7 +3339,7 @@ $(document).ready(function() {
                 collectionItems.forEach(item => {
                     item.style.display = 'none';
                 });
-                
+
                 // Show only collections for the selected company
                 data.collections.forEach(collection => {
                     const items = collectionsDropdown.querySelectorAll(`li[data-company-id="${collection.company_id}"]`);
@@ -3353,12 +3347,12 @@ $(document).ready(function() {
                         item.style.display = 'block';
                     });
                 });
-                
+
                 // Update the "All Collections" count
                 const totalItems = data.collections.reduce((sum, collection) => {
                     return sum + (collection.artworks_count || 0);
                 }, 0);
-                
+
                 const allCollectionsItem = collectionsDropdown.querySelector('li:first-child small.text-muted');
                 if (allCollectionsItem) {
                     allCollectionsItem.textContent = `${totalItems} items`;
@@ -3373,7 +3367,7 @@ $(document).ready(function() {
                     }
                 }
 
-                
+
             }
         })
         .catch(error => {
@@ -3706,7 +3700,7 @@ $(document).ready(function() {
         if(prefillData.description) {
             const descriptionInput = rowElement.querySelector('.description-input');
             if (descriptionInput) descriptionInput.value = prefillData.description;
-        }       
+        }
 
         // Initialize drag and drop for this row
         initializeRowDragDrop(tempId);
@@ -4406,7 +4400,7 @@ $(document).ready(function() {
             const dropdownBtn = document.querySelector('.collections-dropdown .btn');
             const selectedCollectionNameEl = document.getElementById('selectedCollectionName');
             const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
-            
+
             // If no specific collection is selected (showing "All Collections"), show alert modal
             if (!selectedName || selectedName === 'All Collections') {
                 // Show the collection selection alert modal
@@ -4434,7 +4428,7 @@ $(document).ready(function() {
         if (window.selectedCollectionId == collectionId) {
             const dropdownButton = document.querySelector('.dropdown button');
             const imageContainer = dropdownButton.querySelector('.d-flex.align-items-center');
-            
+
             if (thumbnailUrl) {
                 imageContainer.innerHTML = `
                     <img src="${thumbnailUrl}" alt="${collectionName}" class="me-3" style="width: 18px; height: 18px; object-fit: cover; border-radius: 0;">
@@ -4453,7 +4447,7 @@ $(document).ready(function() {
                 `;
             }
         }
-        
+
         // Update the dropdown menu item for this collection
         updateCollectionInDropdown(collectionId, collectionName, thumbnailUrl, itemCount);
     }
@@ -4469,7 +4463,7 @@ $(document).ready(function() {
                 const iconElement = item.querySelector('i');
                 const nameElement = item.querySelector('.fw-bold');
                 const countElement = item.querySelector('.text-muted');
-                
+
                 if (thumbnailUrl) {
                     if (imageElement) {
                         imageElement.src = thumbnailUrl;
@@ -4493,12 +4487,12 @@ $(document).ready(function() {
                         imageElement.parentNode.replaceChild(newIcon, imageElement);
                     }
                 }
-                
+
                 if (nameElement) nameElement.textContent = collectionName;
                 if (countElement) countElement.textContent = itemCount;
-                
+
                 // Update the onclick attribute with new parameters
-                item.setAttribute('onclick', `selectCollection('${collectionId}', '${collectionName}', '${itemCount}', '${thumbnailUrl || ''}')`);
+                item.setAttribute('onclick', `selectCollection('${collectionId}', ${JSON.stringify(collectionName)}, '${itemCount}', ${JSON.stringify(thumbnailUrl || '')})`);
             }
         });
     }
@@ -4512,21 +4506,64 @@ $(document).ready(function() {
         document.getElementById('artworkDetailType').textContent = artworkData.type || '-';
         document.getElementById('artworkDetailCollection').textContent = artworkData.collection || '-';
         document.getElementById('artworkDetailCompany').textContent = artworkData.company || '-';
-        
+
         // Format dimensions
         const height = artworkData.height || '';
         const width = artworkData.width || '';
         const unit = artworkData.unit || '';
         const dimensions = (height && width) ? `${height} × ${width} ${unit}` : '-';
         document.getElementById('artworkDetailDimensions').textContent = dimensions;
-        
+
         document.getElementById('artworkDetailUnit').textContent = artworkData.unit || '-';
         document.getElementById('artworkDetailDescription').innerHTML = artworkData.description || '-';
-        
+
         // Show the modal
         const modal = new bootstrap.Modal(document.getElementById('artworkDetailModal'));
         modal.show();
     }
+
+    // Handle company dropdown change to filter collections
+    document.addEventListener('DOMContentLoaded', function() {
+        const companyDropdown = document.getElementById('masterCompanyDropdown');
+        const collectionDropdown = document.getElementById('masterCollectionHeader');
+
+        if (companyDropdown && collectionDropdown) {
+            companyDropdown.addEventListener('change', function() {
+                const companyId = this.value;
+
+                // Clear current collections
+                collectionDropdown.innerHTML = '<option value="">Loading...</option>';
+
+                // Fetch collections for the selected company
+                fetch(`{{ route('inventory.collections.by-company') }}?company_id=${companyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear the loading option
+                        collectionDropdown.innerHTML = '';
+
+                        // Add new collection options
+                        if (data.collections && data.collections.length > 0) {
+                            data.collections.forEach(collection => {
+                                const option = document.createElement('option');
+                                option.value = collection.id;
+                                option.textContent = collection.name;
+                                collectionDropdown.appendChild(option);
+                            });
+                        } else {
+                            // Add a "No collections" option if no collections found
+                            const option = document.createElement('option');
+                            option.value = '';
+                            option.textContent = 'No collections found';
+                            collectionDropdown.appendChild(option);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching collections:', error);
+                        collectionDropdown.innerHTML = '<option value="">Error loading collections</option>';
+                    });
+            });
+        }
+    });
 
 
 </script>

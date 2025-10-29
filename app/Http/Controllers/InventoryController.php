@@ -31,7 +31,13 @@ class InventoryController extends Controller
                 ->latest('name')->get();
         }
         
-        $companies          = Company::latest('name')->get();
+        $companies = Company::latest('name')->get();
+        
+        // Add ID to "My Workspace" company names
+        $companies->transform(function ($company) {
+            $company->name = formatCompanyName($company->name, $company->id);
+            return $company;
+        });
         $selectedCollection = $request->get('collection_id', '');
 
         return view('inventory.index', compact('inventory', 'collections', 'selectedCollection', 'companies'));
@@ -86,13 +92,20 @@ class InventoryController extends Controller
 
         $orderBy = $columns[$orderColumn] ?? 'updated_at';
 
-        // Base query
-        $query = Artwork::with('collection', 'company')
+        // Base query - remove global scope to avoid ambiguity when joining tables
+        $query = Artwork::withoutGlobalScope('forCurrentCompany')
+            ->with('collection', 'company')
             ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at', 'artworks.updated_at']);
 
         // Filter by collection if provided
         if ($request->has('collection_id') && $request->collection_id) {
             $query->where('artworks.artwork_collection_id', $request->collection_id);
+        }
+
+        // For non-super admin users, ensure we're only getting artworks from their company
+        // This needs to be done before any joins to avoid ambiguity
+        if (!user()->isSuperAdmin()) {
+            $query->where('artworks.company_id', user()->company_id);
         }
 
         // Apply search filter
@@ -156,7 +169,8 @@ class InventoryController extends Controller
 
             // Only include company data for super admin users
             if (user()->isSuperAdmin()) {
-                $rowData['company'] = $artwork->company->name ?? '';
+                $companyName = $artwork->company->name ?? '';
+                $rowData['company'] = formatCompanyName($companyName, $artwork->company->id ?? 0);
             }
 
             return $rowData;
@@ -222,9 +236,10 @@ class InventoryController extends Controller
 
         $artworks = $query->orderBy('artworks.updated_at', 'desc')->get();
 
+        // Generate custom filename using the new function
+        $baseName = $this->generateExportFilename($collectionId, $artworks);
+
         // Prepare temp paths
-        $timestamp = now()->format('Ymd_His');
-        $baseName = 'inventory_export_' . $timestamp;
         $tempDir = storage_path('app/exports');
         if (! is_dir($tempDir)) {
             @mkdir($tempDir, 0775, true);
@@ -246,17 +261,17 @@ class InventoryController extends Controller
         
         // Column headers (matching downloadSpreadsheet format)
         fputcsv($csv, [
-            'Filename', 'Company', 'Collection', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type'
+            'Filename', 'Title', 'Artist', 'Height', 'Width', 'Unit', 'Description', 'Type'
         ]);
 
         // Collect image files to add in zip
         $filesToZip = [];
 
         foreach ($artworks as $artwork) {
-            $originalValue = (array) ($artwork->original_value ?? []);
-            $height = $originalValue['height'] ?? '';
-            $width  = $originalValue['width'] ?? '';
-            $unit   = $originalValue['unit'] ?? ($artwork->original_unit ?: 'cm');
+            // Access original_value as SchemalessAttributes object
+            $height = $artwork->original_value->height ?? '';
+            $width  = $artwork->original_value->width ?? '';
+            $unit   = $artwork->original_value->unit ?? ($artwork->original_unit ?: 'cm');
 
             $imageFileName = '';
             $media = $artwork->getFirstMedia('image');
@@ -270,15 +285,17 @@ class InventoryController extends Controller
                 }
             }
 
+            // Format company name for export
+            // $companyName = $artwork->company->name ?? '';
+            // $companyName = formatCompanyName($companyName, $artwork->company->id ?? 0);
+
             // Data rows (matching downloadSpreadsheet column order)
             fputcsv($csv, [
                 $imageFileName,                    // Filename
-                $artwork->company->name ?? '',     // Company
-                $artwork->collection->name ?? '',  // Collection
                 $artwork->name,                    // Title
                 $artwork->artist,                  // Artist
-                $height,                           // Height
-                $width,                            // Width
+                $height ?: '',                     // Height (ensure empty string if null)
+                $width ?: '',                      // Width (ensure empty string if null)
                 $unit,                             // Unit
                 $artwork->description,             // Description
                 $artwork->type,                    // Type
@@ -379,7 +396,8 @@ class InventoryController extends Controller
 
         // Only include company data for super admin users
         if (user()->isSuperAdmin()) {
-            $rowData['company'] = $artwork->company->name ?? '';
+            $companyName = $artwork->company->name ?? '';
+            $rowData['company'] = formatCompanyName($companyName, $artwork->company->id ?? 0);
         }
 
         return response()->json([
@@ -488,6 +506,7 @@ class InventoryController extends Controller
                 $model->data       = $data;
             }
 
+            $model->updateSizeData();
             $model->save();
 
             if (! empty($model->data->width_inch) && ! empty($model->data->height_inch)) {
@@ -731,7 +750,8 @@ class InventoryController extends Controller
 
             // Only include company data for super admin users
             if (user()->isSuperAdmin()) {
-                $rowData['company'] = $artwork->company->name ?? '';
+                $companyName = $artwork->company->name ?? '';
+                $rowData['company'] = formatCompanyName($companyName, $artwork->company->id ?? 0);
             }
 
             return response()->json([
@@ -830,6 +850,7 @@ class InventoryController extends Controller
 
                             // Refresh model to ensure media is attached
                             $artwork->refresh();
+                            $artwork->updateSizeData();
 
                             // Resize image if dimensions are available
                             if (!empty($artwork->data->width_inch) && !empty($artwork->data->height_inch)) {
@@ -891,6 +912,7 @@ class InventoryController extends Controller
         try {
             $artworkData = json_decode($request->input('artwork_data'), true);
 
+
             if (! $artworkData || ! is_array($artworkData)) {
                 return response()->json(['success' => false, 'message' => 'Invalid data.'], 400);
             }
@@ -913,22 +935,33 @@ class InventoryController extends Controller
                 try {
                     // Create artwork object first
                     $artwork             = new Artwork();
-                    // $artwork->company_id = user()->company_id;
-
-                    $company = Company::where('name', $row['company_name'])->first();
-                    if (! $company) {
-                        $errors[] = "Company '{$row['company_name']}' not found for artwork #{$index}.";
-                        continue;
+             
+                    // Find collection by name - for super admin, search within their accessible collections
+                    if (user()->isSuperAdmin()) {
+                        // For super admin, find collection by name within their company or accessible companies
+                        $collection = ArtworkCollection::where('name', $row['collection_name'])
+                            ->where('company_id', user()->company_id)
+                            ->first();
+                        
+                        // If not found in user's company, try to find in any accessible company
+                        if (!$collection) {
+                            $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
+                        }
+                    } else {
+                        // For regular users, only search within their company
+                        $collection = ArtworkCollection::where('name', $row['collection_name'])
+                            ->where('company_id', user()->company_id)
+                            ->first();
                     }
-                    $artwork->company_id = $company->id;
                     
-                    // Find collection by name
-                    $collection = ArtworkCollection::where('name', $row['collection_name'])->first();
                     if (! $collection) {
                         $errors[] = "Collection '{$row['collection_name']}' not found for artwork #{$index}.";
                         continue;
                     }
                     $artwork->artwork_collection_id = $collection->id;
+
+                    // Set company_id to the user's company, not the collection's company
+                    $artwork->company_id = user()->company_id;
 
                     $artwork->name          = $row['title'] ?? '';
                     $artwork->artist        = $row['artist'] ?? '';
@@ -987,6 +1020,7 @@ class InventoryController extends Controller
 
                             // Refresh model to ensure media is attached
                             $artwork->refresh();
+                            $artwork->updateSizeData();
 
                             // Resize image if dimensions are available
                             if (! empty($artwork->data->width_inch) && ! empty($artwork->data->height_inch)) {
@@ -1251,6 +1285,7 @@ class InventoryController extends Controller
                     }
 
                     $artwork->data = $data;
+                    $artwork->updateSizeData();
                     $artwork->save();
                     
                     if (! empty($artwork->data->width_inch) && ! empty($artwork->data->height_inch)) {
@@ -1275,5 +1310,46 @@ class InventoryController extends Controller
                 'message' => 'Error updating items: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Generate custom filename for export based on collection, piece count, and date
+     *
+     * @param int|null $collectionId
+     * @param \Illuminate\Database\Eloquent\Collection $artworks
+     * @return string
+     */
+    private function generateExportFilename($collectionId, $artworks)
+    {
+        // Get collection name for filename
+        $collectionName = 'All Collections';
+        if ($collectionId) {
+            $collection = ArtworkCollection::find($collectionId);
+            if ($collection) {
+                $collectionName = $collection->name;
+            }
+        } elseif ($artworks->isNotEmpty()) {
+            // If no specific collection but artworks exist, get the first collection name
+            $firstArtwork = $artworks->first();
+            if ($firstArtwork && $firstArtwork->collection) {
+                $collectionName = $firstArtwork->collection->name;
+            }
+        }
+
+        // Count number of pieces
+        $pieceCount = $artworks->count();
+
+        // Format date - you can choose between the two formats:
+        // Format 1: Oct232025 (Month + Day + Year)
+        $dateFormat1 = now()->format('M') . now()->format('d') . now()->format('Y');
+        // Format 2: 20251101 (YYYYMMDD)
+        $dateFormat2 = now()->format('Ymd');
+        
+        // Choose format (using format 1 as in your example)
+        $dateString = $dateFormat1;
+
+        // Create custom filename: collection_name_no_of_pieces_date
+        // Keep original collection name with spaces
+        return $collectionName . '_' . $pieceCount . '_' . $dateString;
     }
 }

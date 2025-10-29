@@ -335,7 +335,7 @@ function handleRemoveGallery() {
 }
 
 function goToTour(tourId) {
-    window.location.href = '/tours/' + tourId;
+    window.open('/tours/' + tourId, '_blank');
 }
 
 $(document).ready(function() {
