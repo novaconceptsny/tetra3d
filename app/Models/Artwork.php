@@ -172,6 +172,10 @@ class Artwork extends Model implements HasMedia
     {
         $media = $this->getFirstMedia('image');
 
+        if (!$media) {
+            return 1;
+        }
+
         ini_set('memory_limit', '1G');
 
         $image = Image::make($media->getPath());
@@ -182,6 +186,12 @@ class Artwork extends Model implements HasMedia
         $originalAspectRatio = $originalWidth / $originalHeight;
 
         return $originalAspectRatio;
+    }
+
+    public function updateSizeData()
+    {
+        $this->data->width_inch =  round($this->data->height_inch * $this->getOriginalAspectRatio(), 5);
+        $this->save();
     }
 
     public function resizeImage()
@@ -195,6 +205,20 @@ class Artwork extends Model implements HasMedia
         
         // Calculate new dimensions based on actual proportions and data-height value
         $targetHeight = $this->data->scale * $this->data->height_inch;
+        
+        // Debug logging: Output values to console/log
+        logger('resizeImage Debug', [
+            'scale' => $this->data->scale,
+            'height_inch' => $this->data->height_inch,
+            'targetHeight' => $targetHeight,
+        ]);
+        // Uncomment below to use dd() instead (stops execution):
+        // dd([
+        //     'scale' => $this->data->scale,
+        //     'height_inch' => $this->data->height_inch,
+        //     'targetHeight' => $targetHeight,
+        // ]);
+        
         $targetWidth = $targetHeight * $this->getOriginalAspectRatio();
         
         // If the calculated width exceeds the target width, use width as the constraint
@@ -206,7 +230,6 @@ class Artwork extends Model implements HasMedia
 
         $image->resize($targetWidth, $targetHeight);
         
-        $this->data->width_inch =  round($this->data->height_inch * $this->getOriginalAspectRatio(), 5);
 
         $this->save();
 

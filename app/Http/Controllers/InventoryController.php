@@ -506,12 +506,12 @@ class InventoryController extends Controller
                 $model->data       = $data;
             }
 
+            $model->updateSizeData();
+            $model->save();
 
             if (! empty($model->data->width_inch) && ! empty($model->data->height_inch)) {
-               $model->data->width_inch = $model->data->height_inch * $model->getOriginalAspectRatio();
+                $model->resizeImage();
             }
-
-            $model->save();
 
             return response()->json([
                 'success' => true,
@@ -850,6 +850,7 @@ class InventoryController extends Controller
 
                             // Refresh model to ensure media is attached
                             $artwork->refresh();
+                            $artwork->updateSizeData();
 
                             // Resize image if dimensions are available
                             if (!empty($artwork->data->width_inch) && !empty($artwork->data->height_inch)) {
@@ -1019,6 +1020,7 @@ class InventoryController extends Controller
 
                             // Refresh model to ensure media is attached
                             $artwork->refresh();
+                            $artwork->updateSizeData();
 
                             // Resize image if dimensions are available
                             if (! empty($artwork->data->width_inch) && ! empty($artwork->data->height_inch)) {
@@ -1283,12 +1285,13 @@ class InventoryController extends Controller
                     }
 
                     $artwork->data = $data;
+                    $artwork->updateSizeData();
+                    $artwork->save();
                     
                     if (! empty($artwork->data->width_inch) && ! empty($artwork->data->height_inch)) {
-                        $artwork->data->width_inch = $artwork->data->height_inch * $artwork->getOriginalAspectRatio();
+                        $artwork->resizeImage();
                     }
-                    
-                    $artwork->save();
+
 
                 }
 
