@@ -50,14 +50,20 @@ a:has(> .pin):hover .spotname {
     color: red;
 }
 
+.view-map-btn {
+    position: absolute;
+    bottom: 80px;
+    right: 80px;
+    z-index: 1000;
+    display: block !important;
+    visibility: visible !important;
+}
+
 .view-map-btn i {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 40px !important;
-    position: absolute;
-    bottom: 80px;
-    right: 80px;
     width: 60px;
     height: 60px;
     border-radius: 9999px;
@@ -69,6 +75,45 @@ a:has(> .pin):hover .spotname {
     color: black;
     font-size: 48px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+}
+
+/* Mobile responsive styles for map button and zoom controls */
+@media (max-width: 768px) {
+    .view-map-btn {
+        bottom: 50px;
+        right: 35px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .view-map-btn i {
+        width: 50px;
+        height: 50px;
+        font-size: 32px !important;
+    }
+    
+    .view-map-btn a {
+        width: 50px;
+        height: 50px;
+        font-size: 36px;
+    }
+    
+    /* Ensure zoom controls don't overlap with map button on mobile */
+    /* Zoom controls are positioned via krpano menu.xml, so we adjust their position via CSS if needed */
+    #krpanoSWFObject [name="zoom_in"] {
+        bottom: 50px !important;
+        right: 130px !important;
+    }
+    
+    #krpanoSWFObject [name="zoom_out"] {
+        bottom: 50px !important;
+        right: 50px !important;
+    }
 }
 
 .tour-map-container {

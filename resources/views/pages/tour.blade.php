@@ -95,6 +95,25 @@
     .tour-header-btn i {
         font-size: 16px;
     }
+    
+    /* Map button visibility and positioning fixes */
+    .view-map-btn {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    /* Mobile-specific fixes for map button and zoom controls */
+    @media (max-width: 768px) {
+        .view-map-btn {
+            position: absolute;
+            bottom: 50px !important;
+            right: 35px !important;
+            z-index: 1000;
+            display: block !important;
+            visibility: visible !important;
+        }
+    }
   
 </style>
 @endsection
