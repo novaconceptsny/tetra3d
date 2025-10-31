@@ -50,14 +50,20 @@ a:has(> .pin):hover .spotname {
     color: red;
 }
 
+.view-map-btn {
+    position: absolute;
+    bottom: 80px;
+    right: 80px;
+    z-index: 1000;
+    display: block !important;
+    visibility: visible !important;
+}
+
 .view-map-btn i {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 40px !important;
-    position: absolute;
-    bottom: 80px;
-    right: 80px;
     width: 60px;
     height: 60px;
     border-radius: 9999px;
@@ -69,6 +75,45 @@ a:has(> .pin):hover .spotname {
     color: black;
     font-size: 48px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+}
+
+/* Mobile responsive styles for map button and zoom controls */
+@media (max-width: 768px) {
+    .view-map-btn {
+        bottom: 50px;
+        right: 35px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .view-map-btn i {
+        width: 50px;
+        height: 50px;
+        font-size: 32px !important;
+    }
+    
+    .view-map-btn a {
+        width: 50px;
+        height: 50px;
+        font-size: 36px;
+    }
+    
+    /* Ensure zoom controls don't overlap with map button on mobile */
+    /* Zoom controls are positioned via krpano menu.xml, so we adjust their position via CSS if needed */
+    #krpanoSWFObject [name="zoom_in"] {
+        bottom: 50px !important;
+        right: 130px !important;
+    }
+    
+    #krpanoSWFObject [name="zoom_out"] {
+        bottom: 50px !important;
+        right: 50px !important;
+    }
 }
 
 .tour-map-container {
@@ -403,5 +448,100 @@ a:has(> .pin):hover .spotname {
 #masterCollectionHeader option {
     padding: 8px 12px; /* Add padding to options for better spacing */
     line-height: 1.4; /* Control line height for better readability */
+}
+
+/* Artwork Info Modal Responsive Styles */
+.artwork-info-modal .modal-dialog,
+.modal:has(.artwork-info-modal-body) .modal-dialog {
+    max-width: 800px;
+}
+
+.artwork-info-modal .modal-content,
+.modal:has(.artwork-info-modal-body) .modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.artwork-info-modal-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.artwork-info-image {
+    max-height: 320px; /* smaller by default */
+    width: 100%;
+    object-fit: contain;
+}
+
+/* Mobile responsive styles for artwork info modal */
+@media (max-width: 768px) {
+    .artwork-info-modal .modal-dialog,
+    .modal:has(.artwork-info-modal-body) .modal-dialog {
+        max-width: 95vw !important;
+        max-height: 90vh !important;
+        margin: 0.5rem auto !important;
+        display: flex;
+        align-items: center;
+        min-height: auto;
+    }
+
+    .artwork-info-modal .modal-content,
+    .modal:has(.artwork-info-modal-body) .modal-content {
+        max-height: 90vh !important;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .artwork-info-modal-body {
+        max-height: 90vh !important;
+        padding: 0.75rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        padding-top: 30px;
+        flex: 1;
+        min-height: 0; /* Allow flexbox to shrink */
+    }
+
+    .artwork-info-image {
+        max-height: 120px; /* smaller on mobile */
+        width: 100%;
+        object-fit: contain;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 576px) {
+    .artwork-info-modal .modal-dialog,
+    .modal:has(.artwork-info-modal-body) .modal-dialog {
+        max-width: 98vw !important;
+        max-height: 95vh !important;
+        margin: 0.25rem auto !important;
+    }
+
+    .artwork-info-modal .modal-content,
+    .modal:has(.artwork-info-modal-body) .modal-content {
+        max-height: 95vh !important;
+    }
+
+    .artwork-info-modal-body {
+        max-height: 95vh !important;
+        padding: 0.5rem;
+    }
+
+    .artwork-info-image {
+        max-height: 100px; /* smallest on small phones */
+    }
+}
+
+/* Ensure Wire Elements Pro modal is above tour UI (map/zoom buttons) */
+.wep-modal,
+.wep-modal-container,
+.wep-modal-backdrop,
+.wep-modal-content {
+    z-index: 2001 !important;
 }
 
