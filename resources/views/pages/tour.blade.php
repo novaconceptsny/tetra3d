@@ -1116,10 +1116,12 @@
     function load_artModels(art_id, surface_id, image_url, surfacestateId, imageWidth, imageHeight, position_x, position_y, position_z, normal_x, normal_y, normal_z) {
         // Load a texture (image)
         const textureLoader = new THREE.TextureLoader();
+        const fallbackImageUrl = '/images/defaults/no-artwork.png';
 
         var spherical_position = cartesianToSpherical(position_x, position_y, position_z);
 
-        textureLoader.load(image_url, (texture) => {
+        // Helper function to create artwork mesh
+        function createArtworkMesh(texture) {
             // Flip the texture horizontally and vertically
             texture.flipY = true; // Flips vertically
             texture.center.set(0.5, 0.5); // Set rotation center point
@@ -1171,7 +1173,46 @@
                 scale: tourScale,
             });
         }
-        );
+
+        // Helper function to create mesh with fallback
+        function loadWithFallback(url, isFallback = false) {
+            textureLoader.load(url, (texture) => {
+                createArtworkMesh(texture);
+            }, undefined, (error) => {
+                if (isFallback) {
+                    // If fallback also fails, create mesh with default placeholder texture
+                    console.error('Failed to load fallback image:', error);
+                    // Create a canvas with a simple placeholder
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 256;
+                    canvas.height = 256;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#f0f0f0';
+                    ctx.fillRect(0, 0, 256, 256);
+                    ctx.fillStyle = '#999';
+                    ctx.font = '20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('No Image', 128, 128);
+                    // Create texture from canvas (createArtworkMesh will handle flipY, center, rotation)
+                    const defaultTexture = new THREE.CanvasTexture(canvas);
+                    createArtworkMesh(defaultTexture);
+                } else {
+                    // Try fallback image
+                    console.warn('Failed to load artwork image:', url, 'Error:', error, 'Using fallback image for artwork ID:', art_id);
+                    loadWithFallback(fallbackImageUrl, true);
+                }
+            });
+        }
+
+        // Check if image_url is valid, otherwise use fallback
+        if (!image_url || image_url === '' || image_url === null) {
+            console.warn('Artwork image URL is empty, using fallback image for artwork ID:', art_id);
+            loadWithFallback(fallbackImageUrl, false);
+            return;
+        }
+
+        // Try loading the artwork image with fallback
+        loadWithFallback(image_url, false);
     }
 
     function findAddModelPosition() {
