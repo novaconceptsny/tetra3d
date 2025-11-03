@@ -114,6 +114,13 @@
             visibility: visible !important;
         }
     }
+    
+    /* Hide the rotate notification for phone */
+    #landscapePrompt,
+    .landscape-prompt {
+        display: none !important;
+        visibility: hidden !important;
+    }
   
 </style>
 @endsection
@@ -1252,30 +1259,30 @@
         });
     });
 
-    // Landscape Orientation Prompt Functionality
-    function checkOrientation() {
-        const landscapePrompt = document.getElementById('landscapePrompt');
-        if (!landscapePrompt) return;
+    // Landscape Orientation Prompt Functionality - DISABLED
+    // function checkOrientation() {
+    //     const landscapePrompt = document.getElementById('landscapePrompt');
+    //     if (!landscapePrompt) return;
 
-        const isMobile = window.innerWidth <= 767;
-        const isPortrait = window.innerHeight > window.innerWidth;
+    //     const isMobile = window.innerWidth <= 767;
+    //     const isPortrait = window.innerHeight > window.innerWidth;
 
-        if (isMobile && isPortrait) {
-            landscapePrompt.classList.remove('hidden');
-        } else {
-            landscapePrompt.classList.add('hidden');
-        }
-    }
+    //     if (isMobile && isPortrait) {
+    //         landscapePrompt.classList.remove('hidden');
+    //     } else {
+    //         landscapePrompt.classList.add('hidden');
+    //     }
+    // }
 
-    // Check orientation on page load
-    document.addEventListener('DOMContentLoaded', checkOrientation);
+    // // Check orientation on page load
+    // document.addEventListener('DOMContentLoaded', checkOrientation);
 
-    // Check orientation on window resize and orientation change
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', () => {
-        // Add a small delay to ensure the orientation change is complete
-        setTimeout(checkOrientation, 100);
-    });
+    // // Check orientation on window resize and orientation change
+    // window.addEventListener('resize', checkOrientation);
+    // window.addEventListener('orientationchange', () => {
+    //     // Add a small delay to ensure the orientation change is complete
+    //     setTimeout(checkOrientation, 100);
+    // });
 
     // Button click functions
     function toggleShare() {
