@@ -1,81 +1,79 @@
-<x-wire-elements-pro::bootstrap.modal size="lg" class="artwork-info-modal">
+<x-wire-elements-pro::bootstrap.modal size="fullscreen" class="artwork-info-modal">
     <x-slot name="title">
         <div class="d-flex align-items-center">
             <i class="fas fa-palette me-2"></i>
-            Artwork Information
+            Artwork Details
         </div>
     </x-slot>
     
-    <div class="d-flex flex-column align-items-center justify-content-center artwork-info-modal-body">
+    <div class="artwork-info-modal-body">
         @if($artwork)
-            <div class="d-flex flex-column align-items-center justify-content-center gap-4">
-                <div class="col-md-12">
+            <div class="row g-4">
+                <!-- Left Section: Artwork Image -->
+                <div class="col-md-5 col-12">
                     @if($artwork->image_url)
-                        <img src="{{ $artwork->image_url }}" class="img-fluid rounded shadow-sm artwork-info-image" alt="{{ $artwork->name }}" style="object-fit: cover;">
+                        <img src="{{ $artwork->image_url }}" class="img-fluid rounded shadow-sm artwork-info-image" alt="{{ $artwork->name }}" style="width: 100%; height: auto; object-fit: contain;">
                     @else
-                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <div class="bg-light rounded d-flex align-items-center justify-content-center artwork-info-image" style="height: 400px; min-height: 300px;">
                             <i class="fas fa-image fa-3x text-muted"></i>
                         </div>
                     @endif
                 </div>
-                <div class="col-md-12">
-                    <div class="card-body p-0">
-                        <h5 class="card-title text-primary mb-3">{{ $artwork->name }}</h5>
-                        <ul class="list-unstyled mb-0">
+                
+                <!-- Right Section: Artwork Information -->
+                <div class="col-md-7 col-12">
+                    <div class="artwork-info-section">
+                        <h5 class="mb-4">Artwork Information</h5>
+                        <div class="artwork-info-list">
+                            <div class="info-item mb-3">
+                                <span class="info-label fw-bold me-2">Name:</span>
+                                <span class="info-value">{{ $artwork->name }}</span>
+                            </div>
                             @if($artwork->artist)
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Artist:</span> 
-                                    <span class="text-dark">{{ $artwork->artist }}</span>
-                                </li>
-                            @endif
-                            @if(isset($artwork->description))
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Description:</span> 
-                                    <span class="text-dark">{{ $artwork->description }}</span>
-                                </li>
-                            @else
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Description:</span> 
-                                    <span class="text-dark">No Description</span>
-                                </li>
+                                <div class="info-item mb-3">
+                                    <span class="info-label fw-bold me-2">Artist:</span>
+                                    <span class="info-value">{{ $artwork->artist }}</span>
+                                </div>
                             @endif
                             @if($artwork->type)
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Type:</span> 
-                                    <span class="text-dark">{{ $artwork->type }}</span>
-                                </li>
+                                <div class="info-item mb-3">
+                                    <span class="info-label fw-bold me-2">Type:</span>
+                                    <span class="info-value">{{ $artwork->type }}</span>
+                                </div>
                             @endif
-                            <li class="mb-2">
-                                <span class="fw-bold me-2 text-muted">Dimensions:</span> 
-                                <span class="text-dark">
+                            @if($artwork->collection)
+                                <div class="info-item mb-3">
+                                    <span class="info-label fw-bold me-2">Collection:</span>
+                                    <span class="info-value">{{ $artwork->collection->name }}</span>
+                                </div>
+                            @endif
+                            <div class="info-item mb-3">
+                                <span class="info-label fw-bold me-2">Dimensions:</span>
+                                <span class="info-value">
                                     @if(isset($artwork->data['height_inch']) && isset($artwork->data['width_inch']))
                                         {{ $artwork->data['height_inch'] }}" × {{ $artwork->data['width_inch'] }}"
                                     @elseif($artwork->dimensions)
                                         {{ $artwork->dimensions }}
                                     @else
-                                        <span class="text-muted">Not specified</span>
+                                        -
                                     @endif
                                 </span>
-                            </li>
-                            @if($artwork->collection)
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Collection:</span> 
-                                    <span class="text-dark">{{ $artwork->collection->name }}</span>
-                                </li>
-                            @endif
-                            @if(isset($artwork->data['year']))
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Year:</span> 
-                                    <span class="text-dark">{{ $artwork->data['year'] }}</span>
-                                </li>
-                            @endif
-                            @if(isset($artwork->data['medium']))
-                                <li class="mb-2">
-                                    <span class="fw-bold me-2 text-muted">Medium:</span> 
-                                    <span class="text-dark">{{ $artwork->data['medium'] }}</span>
-                                </li>
-                            @endif
-                        </ul>
+                            </div>
+                            <div class="info-item mb-3">
+                                <span class="info-label fw-bold me-2">Unit:</span>
+                                <span class="info-value">{{ $artwork->original_unit ?? 'cm' }}</span>
+                            </div>
+                            <div class="info-item mb-3">
+                                <span class="info-label fw-bold me-2">Description:</span>
+                                <div class="info-value">
+                                    @if($artwork->description)
+                                        {{ $artwork->description }}
+                                    @else
+                                        <span class="text-muted">No description available</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,10 +87,9 @@
         @endif
     </div>
 
-    <div class="d-flex justify-content-end">
-        <!-- <button class="btn btn-primary c-btn-primary" type="button" wire:click="closeModal">
-            <i class="fas fa-times me-1"></i>
+    <div class="d-flex justify-content-center mt-1">
+        <button class="btn btn-primary c-btn-primary" type="button" wire:click="closeModal">
             {{ __('Close') }}
-        </button> -->
+        </button>
     </div>
 </x-wire-elements-pro::bootstrap.modal> 
