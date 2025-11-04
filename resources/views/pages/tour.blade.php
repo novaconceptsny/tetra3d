@@ -461,7 +461,10 @@
         });
         window.addEventListener("orientationchange", () => {
             console.log("🔃 orientationchange fired");
-            setTimeout(doResize, 300);
+            // Reload page on orientation change
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
         });
     }
 
@@ -1325,6 +1328,26 @@
             alert('You must be logged in to access the tracker.');
         @endauth
     }
+
+    // Additional orientation detection using window dimensions as backup
+    let lastOrientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
+    
+    function checkOrientationChange() {
+        const currentOrientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
+        if (currentOrientation !== lastOrientation) {
+            console.log("🔄 Orientation changed from " + lastOrientation + " to " + currentOrientation);
+            lastOrientation = currentOrientation;
+            // Reload page on orientation change
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
+        }
+    }
+    
+    // Check orientation on resize as backup for orientationchange event
+    window.addEventListener('resize', () => {
+        setTimeout(checkOrientationChange, 200);
+    });
 
 </script>
 @endsection
