@@ -627,7 +627,7 @@ function krpanoplugin() {
 		direct_x.position.set(55, 0, 0);
 		direct_y.position.set(0, -55, 0); // Y direct position
 		direct_z.position.set(0, 0, 55);
-		gizmoPlane.position.set(30, 0, 30);
+		gizmoPlane.position.set(30, 5, 30);
 
 		arrow_x.name = 'arrow_x';
 		arrow_y.name = 'arrow_y';
