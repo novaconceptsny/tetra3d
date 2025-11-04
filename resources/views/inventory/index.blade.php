@@ -630,13 +630,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    @if(auth()->user()->isSuperAdmin())
+                    <div class="mb-3">
+                        <label for="moveCompanySelect" class="form-label">Select Company</label>
+                        <select class="form-select" id="moveCompanySelect" name="company" required>
+                            <option value="">Select company</option>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
                     <div class="mb-3">
                         <label for="moveCollectionSelect" class="form-label">Select Collection</label>
-                        <select class="form-select" id="moveCollectionSelect" name="collection">
+                        <select class="form-select" id="moveCollectionSelect" name="collection" required>
                             <option value="">Select collection</option>
-                            @foreach($collections as $collection)
-                                <option value="{{ $collection->id }}">{{ $collection->name }}</option>
-                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -4132,14 +4140,79 @@ $(document).ready(function() {
             alert('Please select at least one item to move.');
             return;
         }
-        $('#moveCollectionSelect').val('');
+        $('#moveCompanySelect').val('');
+        $('#moveCollectionSelect').val('').html('<option value="">Select collection</option>');
+        
+        // For non-super admin, automatically load collections for their company
+        if (!isSuperAdmin) {
+            var userCompanyId = @json(auth()->user()->company_id);
+            loadCollectionsForCompany(userCompanyId);
+        }
+        
         $('#moveToCollectionModal').modal('show');
+    });
+
+    // Helper function to load collections for a company
+    function loadCollectionsForCompany(companyId) {
+        var $collectionSelect = $('#moveCollectionSelect');
+        
+        // Reset collection dropdown
+        $collectionSelect.val('').html('<option value="">Select collection</option>');
+        
+        if (!companyId) {
+            return;
+        }
+        
+        // Fetch collections for the selected company
+        $.ajax({
+            url: '{{ route("inventory.collections.by-company") }}',
+            type: 'GET',
+            data: {
+                company_id: companyId
+            },
+            success: function(response) {
+                if (response.success && response.collections.length > 0) {
+                    response.collections.forEach(function(collection) {
+                        $collectionSelect.append(
+                            $('<option></option>')
+                                .attr('value', collection.id)
+                                .text(collection.name)
+                        );
+                    });
+                } else {
+                    $collectionSelect.append(
+                        $('<option></option>')
+                            .attr('value', '')
+                            .text('No collections available')
+                            .prop('disabled', true)
+                    );
+                }
+            },
+            error: function(xhr) {
+                alert('Error loading collections: ' + (xhr.responseJSON?.message || 'Unknown error'));
+            }
+        });
+    }
+
+    // Filter collections based on selected company (only for super admin)
+    $('#moveCompanySelect').on('change', function() {
+        if (isSuperAdmin) {
+            var companyId = $(this).val();
+            loadCollectionsForCompany(companyId);
+        }
     });
 
     // Confirm move action
     $('#confirmMoveBtn').on('click', function() {
+        var targetCompany = $('#moveCompanySelect').val();
         var targetCollection = $('#moveCollectionSelect').val();
         var selectedIds = Array.from(selectedRows);
+
+        // Only validate company selection for super admin
+        if (isSuperAdmin && !targetCompany) {
+            alert('Please select a company.');
+            return;
+        }
 
         if (!targetCollection) {
             alert('Please select a collection to move to.');

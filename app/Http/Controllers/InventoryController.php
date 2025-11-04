@@ -1229,6 +1229,12 @@ class InventoryController extends Controller
 
             if ($request->has('collection') && ! empty($request->input('collection'))) {
                 $updateData['artwork_collection_id'] = $request->input('collection');
+                
+                // Update company_id to match the collection's company
+                $collection = ArtworkCollection::find($request->input('collection'));
+                if ($collection && $collection->company_id) {
+                    $updateData['company_id'] = $collection->company_id;
+                }
             }
 
             // Handle dimensions update
