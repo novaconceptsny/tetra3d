@@ -137,7 +137,13 @@
 
                             <!-- Layout/Tour/Project info -->
                             <div class="mt-2 small text-muted">
-                                <div>Layout: {{ $sharedLayout->layout->name ?? 'N/A' }}</div>
+                                <div>Layout: 
+                                    @if($sharedLayout->layout && $sharedLayout->layout->assignedTour())
+                                        <a href="{{ route('tours.show', [$sharedLayout->layout->assignedTour()->id, 'layout_id' => $sharedLayout->layout->id]) }}" target="_blank">{{ $sharedLayout->layout->name ?? 'N/A' }}</a>
+                                    @else
+                                        {{ $sharedLayout->layout->name ?? 'N/A' }}
+                                    @endif
+                                </div>
                                 <div>Tour: {{ $sharedLayout->layout->assignedTour()->name ?? 'N/A' }}</div>
                                 <div>Project: {{ $sharedLayout->layout->project?->name ?? 'N/A' }}</div>
                             </div>
@@ -476,6 +482,18 @@
             background-color: #099F9A !important;
             border-color: #099F9A !important;
             box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25) !important;
+        }
+
+        /* Layout name link styling */
+        .card-body .small.text-muted a {
+            color: #099F9A !important;
+            text-decoration: none;
+            transition: color 0.2s ease, text-decoration 0.2s ease;
+        }
+
+        .card-body .small.text-muted a:hover {
+            color: #088a85 !important;
+            text-decoration: underline;
         }
     </style>
 @endsection
