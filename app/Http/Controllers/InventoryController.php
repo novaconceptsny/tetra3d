@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Company;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -1315,6 +1316,111 @@ class InventoryController extends Controller
                 'success' => false,
                 'message' => 'Error updating items: ' . $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '1024M');
+
+        $collectionId = $request->input('collection_id');
+        $searchValue  = $request->input('q');
+
+        // Build artworks query similar to getData()
+        $query = Artwork::with('collection', 'company', 'media')
+            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
+
+        if ($collectionId) {
+            $query->where('artworks.artwork_collection_id', $collectionId);
+        }
+
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('artworks.name', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.artist', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.type', 'like', "%{$searchValue}%")
+                    ->orWhereHas('collection', function ($subQuery) use ($searchValue) {
+                        $subQuery->where('name', 'like', "%{$searchValue}%");
+                    })
+                    ->orWhereHas('company', function ($subQuery) use ($searchValue) {
+                        $subQuery->where('name', 'like', "%{$searchValue}%");
+                    });
+            });
+        }
+
+        // For non-super admin, scope to their company
+        if (! user()->isSuperAdmin()) {
+            $query->where('artworks.company_id', user()->company_id);
+        }
+
+        $artworks = $query->orderBy('artworks.updated_at', 'desc')->get();
+
+        // Generate custom filename
+        $baseName = $this->generateExportFilename($collectionId, $artworks);
+
+        // Get collection name for PDF title
+        $collectionName = 'All Collections';
+        if ($collectionId) {
+            $collection = ArtworkCollection::find($collectionId);
+            if ($collection) {
+                $collectionName = $collection->name;
+            }
+        } elseif ($artworks->isNotEmpty()) {
+            $firstArtwork = $artworks->first();
+            if ($firstArtwork && $firstArtwork->collection) {
+                $collectionName = $firstArtwork->collection->name;
+            }
+        }
+
+        // Prepare data for PDF
+        $pdfData = [];
+        foreach ($artworks as $artwork) {
+            $height = $artwork->original_value->height ?? '';
+            $width  = $artwork->original_value->width ?? '';
+            $unit   = $artwork->original_value->unit ?? ($artwork->original_unit ?: 'cm');
+
+            $imageUrl = '';
+            $media = $artwork->getFirstMedia('image');
+            if ($media) {
+                // Get absolute URL for PDF
+                $imageUrl = $media->getUrl();
+                // Ensure it's an absolute URL
+                if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                    $imageUrl = url($imageUrl);
+                }
+            }
+
+            $pdfData[] = [
+                'image' => $imageUrl,
+                'name' => $artwork->name ?? '',
+                'artist' => $artwork->artist ?? '',
+                'type' => $artwork->type ?? '',
+                'height' => $height,
+                'width' => $width,
+                'unit' => $unit,
+                'description' => $artwork->description ?? '',
+                'collection' => $artwork->collection->name ?? '',
+                'company' => auth()->user()->isSuperAdmin() ? ($artwork->company->name ?? '') : '',
+            ];
+        }
+
+        // Use dompdf if available, otherwise fallback to HTML download
+        try {
+            $pdf = Pdf::loadView('inventory.pdf', [
+                'artworks' => $pdfData,
+                'collectionName' => $collectionName,
+                'isSuperAdmin' => auth()->user()->isSuperAdmin(),
+            ]);
+            return $pdf->download($baseName . '.pdf');
+        } catch (\Exception $e) {
+            // Fallback: Create HTML view that can be printed as PDF
+            // User can use browser's print to PDF feature
+            return view('inventory.pdf', [
+                'artworks' => $pdfData,
+                'collectionName' => $collectionName,
+                'isSuperAdmin' => auth()->user()->isSuperAdmin(),
+            ]);
         }
     }
 

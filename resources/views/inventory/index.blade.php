@@ -825,6 +825,36 @@
         </div>
     </div>
 
+    <!-- Download Format Selection Modal -->
+    <div class="modal fade" id="downloadFormatModal" tabindex="-1" aria-labelledby="downloadFormatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="downloadFormatModalLabel">
+                        <i class="fas fa-download me-2"></i>Select Download Format
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-4">Choose how you would like to download the inventory:</p>
+                    <div class="d-flex flex-column gap-3">
+                        <button type="button" class="btn btn-outline-primary btn-lg download-format-btn" data-format="pdf">
+                            <i class="fas fa-file-pdf me-2"></i>Download as PDF
+                            <small class="d-block mt-1 text-muted">Table format with thumbnail images</small>
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-lg download-format-btn" data-format="spreadsheet">
+                            <i class="fas fa-file-excel me-2"></i>Download as Spreadsheet (ZIP)
+                            <small class="d-block mt-1 text-muted">CSV file with images in a ZIP archive</small>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Continue Upload Confirmation Modal -->
     <div class="modal fade" id="continueUploadModal" tabindex="-1" aria-labelledby="continueUploadModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -4464,7 +4494,7 @@ $(document).ready(function() {
     // No additional JavaScript needed as collections are pre-filtered on the server
     @endif
 });
-    // Export inventory as ZIP (CSV + images)
+    // Export inventory - Show format selection modal
     (function attachExportHandler(){
         const downloadBtn = document.getElementById('downloadTableBtn');
         if (!downloadBtn) return;
@@ -4482,16 +4512,42 @@ $(document).ready(function() {
                 return; // Stop execution here
             }
 
-            const params = new URLSearchParams();
-            const searchInput = document.getElementById('tableSearch');
-            if (searchInput && searchInput.value) params.set('q', searchInput.value);
+            // Show download format selection modal
+            const formatModal = new bootstrap.Modal(document.getElementById('downloadFormatModal'));
+            formatModal.show();
+        });
 
-            // Set collection_id parameter
-            const matched = (allCollections || []).find(c => c.name === selectedName);
-            if (matched) params.set('collection_id', matched.id);
+        // Handle format selection buttons
+        document.querySelectorAll('.download-format-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const format = this.getAttribute('data-format');
+                const selectedCollectionNameEl = document.getElementById('selectedCollectionName');
+                const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
 
-            const url = `${'{{ route("inventory.export") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
-            window.location.href = url;
+                if (!selectedName || selectedName === 'All Collections') {
+                    return;
+                }
+
+                const params = new URLSearchParams();
+                const searchInput = document.getElementById('tableSearch');
+                if (searchInput && searchInput.value) params.set('q', searchInput.value);
+
+                // Set collection_id parameter
+                const matched = (allCollections || []).find(c => c.name === selectedName);
+                if (matched) params.set('collection_id', matched.id);
+
+                let url;
+                if (format === 'pdf') {
+                    url = `${'{{ route("inventory.export-pdf") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
+                } else {
+                    url = `${'{{ route("inventory.export") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
+                }
+
+                // Close modal and download
+                const formatModal = bootstrap.Modal.getInstance(document.getElementById('downloadFormatModal'));
+                formatModal.hide();
+                window.location.href = url;
+            });
         });
     })();
 
