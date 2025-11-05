@@ -57,41 +57,43 @@ class InventoryController extends Controller
             $start       = $request->input('start', 0);
             $length      = $request->input('length', 10);
             $searchValue = $request->input('search.value', '');
-            $orderColumn = $request->input('order.0.column', user()->isSuperAdmin() ? 10 : 9); // Default to description column
+            $orderColumn = $request->input('order.0.column', 0); // Default to artwork ID column
             $orderDir    = $request->input('order.0.dir', 'desc');
 
-        // Column mapping for ordering
+        // Column mapping for ordering (accounting for hidden ID column at position 0)
         $columns = [
-            0  => 'id',         // Checkbox column
-            1  => 'image',      // Image column (not orderable)
-            2  => 'company',    // Company (only for super admin)
-            3  => 'collection', // Collection
-            4  => 'name',       // Name
-            5  => 'artist',     // Artist
-            6  => 'type',       // Type
-            7  => 'height',     // Height
-            8  => 'width',      // Width
-            9  => 'unit',       // Unit
-            10 => 'description', // Description
+            0  => 'id',         // Hidden ID column (orderable)
+            1  => null,         // Checkbox column (not orderable)
+            2  => null,         // Image column (not orderable)
+            3  => 'company',    // Company (only for super admin)
+            4  => 'collection', // Collection
+            5  => 'name',       // Name
+            6  => 'artist',     // Artist
+            7  => 'type',       // Type
+            8  => 'height',     // Height
+            9  => 'width',      // Width
+            10 => 'unit',       // Unit
+            11 => 'description', // Description
         ];
 
         // Adjust column mapping if user is not super admin
         if (! user()->isSuperAdmin()) {
             $columns = [
-                0 => 'id',         // Checkbox column
-                1 => 'image',      // Image column (not orderable)
-                2 => 'collection', // Collection
-                3 => 'name',       // Name
-                4 => 'artist',     // Artist
-                5 => 'type',       // Type
-                6 => 'height',     // Height
-                7 => 'width',      // Width
-                8 => 'unit',       // Unit
-                9 => 'description', // Description
+                0 => 'id',         // Hidden ID column (orderable)
+                1 => null,         // Checkbox column (not orderable)
+                2 => null,         // Image column (not orderable)
+                3 => 'collection', // Collection
+                4 => 'name',       // Name
+                5 => 'artist',     // Artist
+                6 => 'type',       // Type
+                7 => 'height',     // Height
+                8 => 'width',      // Width
+                9 => 'unit',       // Unit
+                10 => 'description', // Description
             ];
         }
 
-        $orderBy = $columns[$orderColumn] ?? 'updated_at';
+        $orderBy = $columns[$orderColumn] ?? 'id'; // Default to ID if column not found
 
         // Base query - remove global scope to avoid ambiguity when joining tables
         $query = Artwork::withoutGlobalScope('forCurrentCompany')
@@ -127,7 +129,11 @@ class InventoryController extends Controller
         // Get total records count (before pagination)
         $totalRecords = $query->count();
 
-        // Apply ordering
+        // Apply ordering (skip if orderBy is null for non-orderable columns)
+        if ($orderBy === null) {
+            $orderBy = 'id'; // Fallback to ID if column is not orderable
+        }
+        
         if ($orderBy === 'company') {
             $query->leftJoin('companies', 'artworks.company_id', '=', 'companies.id')
                 ->orderBy('companies.name', $orderDir);

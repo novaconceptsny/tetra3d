@@ -230,6 +230,7 @@
                                             <table id="inventoryTable" class="table table-striped table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
+                                                        <th style="display: none;">ID</th>
                                                         <th><input type="checkbox" id="selectAll" class="form-check-input"></th>
                                                         <th>Image</th>
                                                         @if(auth()->user()->isSuperAdmin())
@@ -2685,6 +2686,11 @@ $(document).ready(function() {
         },
         columns: [
             {
+                data: 'id',
+                orderable: true,
+                visible: false  // Hidden column for sorting by ID
+            },
+            {
                 data: null,
                 orderable: false,
                 render: function(data, type, row) {
@@ -2757,7 +2763,7 @@ $(document).ready(function() {
             }
         ],
 
-        order: [{{ auth()->user()->isSuperAdmin() ? '10' : '9' }}, 'desc'], // Sort by description desc
+        order: [[0, 'desc']], // Sort by artwork ID desc
         pageLength: 25,
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         responsive: true,
