@@ -912,7 +912,7 @@
                                 <div class="detail-item mb-2">
                                     <strong>Collection:</strong> <span id="artworkDetailCollection">-</span>
                                 </div>
-                                <div class="detail-item mb-2">
+                                <div class="detail-item mb-2 d-none">
                                     <strong>Company:</strong> <span id="artworkDetailCompany">-</span>
                                 </div>
                                 <div class="detail-item mb-2">
