@@ -616,7 +616,7 @@ class CanvasManager {
 
             if (options.target && this.restrictBoundaries) {
                 // check boundaries
-                let xyScale = defaultScales[object.id];
+                let xyScale = this.defaultScales[object.id] || object.scaleX || 1;
 
                 const objectBottom = Math.abs(object.top + (object.height * xyScale));
                 const objectRight = Math.abs(object.left + (object.width * xyScale));
@@ -643,6 +643,74 @@ class CanvasManager {
                     let x = rightBound - Math.abs(object.width * xyScale);
                     object.set({ left: x });
                 }
+            }
+        }.bind(this));
+
+        // Handle artwork removal when dragged outside canvas
+        this.artworkCanvas.on('object:modified', function (options) {
+            if (this.isInactive()) {
+                return;
+            }
+
+            const object = options.target;
+            if (!object || object.type !== 'image') {
+                return;
+            }
+
+            // Skip if this is a guide line
+            if (object.isGuide) {
+                return;
+            }
+
+            // Get the bounding rectangle of the object (accounts for rotation and scaling)
+            const objectBounds = object.getBoundingRect();
+            const objectLeft = objectBounds.left;
+            const objectTop = objectBounds.top;
+            const objectRight = objectBounds.left + objectBounds.width;
+            const objectBottom = objectBounds.top + objectBounds.height;
+
+            // Get bounding box boundaries (canvas editor page)
+            const topBound = this.boundingBox.top;
+            const leftBound = this.boundingBox.left;
+            const bottomBound = topBound + this.boundingBox.height;
+            const rightBound = leftBound + this.boundingBox.width;
+
+            // Check if object is completely outside the bounding box
+            // The object is considered outside if all of its bounds are outside
+            const isOutside = 
+                objectRight < leftBound ||  // Completely to the left
+                objectLeft > rightBound ||   // Completely to the right
+                objectBottom < topBound ||   // Completely above
+                objectTop > bottomBound;     // Completely below
+
+            if (isOutside) {
+                // Remove the artwork
+                const artworkId = parseInt(object.originalArtworkId || object.id);
+                
+                // Remove from canvas
+                this.artworkCanvas.remove(object);
+                
+                // Remove from assigned artwork array
+                this.canvasState.assignedArtwork = this.canvasState.assignedArtwork.filter(art => {
+                    // For new instances, check against the unique ID
+                    if (art.uniqueInstanceId) {
+                        return art.uniqueInstanceId !== object.id;
+                    }
+                    // For legacy instances, check against artwork ID
+                    return art.getArtworkId() !== object.id;
+                });
+                
+                // Update artwork count
+                this.decrementArtworkCount(artworkId);
+                
+                // Hide remove button if no selection
+                this.removeBtn.hide();
+                
+                // Mark as unsaved
+                this.unsavedChanges = true;
+                this.toggleSaveButton();
+                
+                this.artworkCanvas.renderAll();
             }
         }.bind(this));
     }
