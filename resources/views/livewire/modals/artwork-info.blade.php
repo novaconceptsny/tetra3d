@@ -6,7 +6,45 @@
         </div>
     </x-slot>
     
-    <div class="artwork-info-modal-body">
+    <style>
+        @media (max-width: 768px) {
+            .artwork-info-modal .modal-body {
+                overflow-y: auto !important;
+                max-height: calc(100vh - 150px) !important;
+                -webkit-overflow-scrolling: touch;
+                padding: 1rem;
+            }
+            
+            .artwork-info-modal-body {
+                overflow-y: auto !important;
+                max-height: calc(100vh - 150px) !important;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .artwork-info-modal .modal-content {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .artwork-info-modal .modal-header {
+                flex-shrink: 0;
+            }
+            
+            .artwork-info-modal .artwork-info-close-button {
+                flex-shrink: 0;
+                position: sticky;
+                bottom: 0;
+                background: white;
+                z-index: 10;
+                padding: 1rem;
+                margin-top: 1rem;
+                border-top: 1px solid #dee2e6;
+            }
+        }
+    </style>
+    
+    <div class="artwork-info-modal-body" style="overflow-y: auto; max-height: calc(100vh - 200px); -webkit-overflow-scrolling: touch;">
         @if($artwork)
             <div class="row g-4">
                 <!-- Left Section: Artwork Image -->
@@ -67,7 +105,12 @@
                                 <span class="info-label fw-bold me-2">Description:</span>
                                 <div class="info-value">
                                     @if($artwork->description)
-                                        {{ $artwork->description }}
+                                        <textarea 
+                                            class="form-control" 
+                                            rows="5" 
+                                            readonly 
+                                            style="resize: none; background-color: #f8f9fa; cursor: default;"
+                                        >{{ $artwork->description }}</textarea>
                                     @else
                                         <span class="text-muted">No description available</span>
                                     @endif
@@ -87,8 +130,8 @@
         @endif
     </div>
 
-    <div class="d-flex justify-content-center mt-1">
-        <button class="btn btn-primary c-btn-primary" type="button" wire:click="closeModal">
+    <div class="d-flex justify-content-center mt-3 mb-3 artwork-info-close-button">
+        <button class="btn btn-primary c-btn-primary" type="button" wire:click="$dispatch('modal.close')" style="min-height: 44px; min-width: 100px; touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.1);">
             {{ __('Close') }}
         </button>
     </div>
