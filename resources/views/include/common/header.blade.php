@@ -97,7 +97,7 @@
                                             </a>
                                         </li>
                                     @endcan
-                                    @if(session()->has('admin_id'))
+                                    @if(session()->has('admin_id') && auth()->user() && auth()->user()->isSuperAdmin())
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0);"
                                                 target="_blank"

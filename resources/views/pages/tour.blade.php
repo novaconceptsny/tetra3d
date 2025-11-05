@@ -6,22 +6,22 @@
     #header {
         display: none !important;
     }
-    
+
     /* Remove margin-top from main content when header is hidden */
     #site__body {
         margin-top: 0 !important;
     }
-    
+
     /* Make tour page full height */
     body {
         height: 100vh;
         overflow: hidden;
     }
-    
+
     #site__body {
         height: 100vh;
     }
-    
+
     /* Custom Tour Header Styles */
     .tour-custom-header {
         position: absolute;
@@ -33,45 +33,45 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
- 
+
     }
-    
+
     .tour-header-left {
         display: flex;
         align-items: center;
         gap: 12px;
     }
-    
+
     .tour-header-icon {
         color: white;
         font-size: 16px;
         opacity: 0.8;
     }
-    
+
     .tour-header-text {
         color: white;
         font-size: 18px;
         font-weight: 500;
         letter-spacing: 0.5px;
-        text-shadow: 
+        text-shadow:
             -1px -1px 0 rgba(0, 0, 0, 0.1),
             1px -1px 0 rgba(0, 0, 0, 0.1),
             -1px 1px 0 rgba(0, 0, 0, 0.1),
             1px 1px 0 rgba(0, 0, 0, 0.1);
     }
-    
+
     .tour-header-right {
         display: flex;
         align-items: center;
         margin-right: 20px;
         gap: 50px;
     }
-    
+
     .tour-header-buttons {
         display: flex;
         gap: 8px;
     }
-    
+
     .tour-header-btn {
         background:  rgba(255, 255, 255, 0.6);
         border: none;
@@ -86,23 +86,23 @@
         transition: all 0.2s ease;
         font-size: 16px;
     }
-    
-    
+
+
     .tour-header-btn:active {
         transform: translateY(0);
     }
-    
+
     .tour-header-btn i {
         font-size: 16px;
     }
-    
+
     /* Map button visibility and positioning fixes */
     .view-map-btn {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
     }
-    
+
     /* Mobile-specific fixes for map button and zoom controls */
     @media (max-width: 768px) {
         .view-map-btn {
@@ -114,14 +114,14 @@
             visibility: visible !important;
         }
     }
-    
+
     /* Hide the rotate notification for phone */
     #landscapePrompt,
     .landscape-prompt {
         display: none !important;
         visibility: hidden !important;
     }
-  
+
 </style>
 @endsection
 
@@ -238,7 +238,7 @@
                     <button class="tour-header-btn" title="Tracker" onclick="toggleTracker()">
                         <i class="fas fa-ruler-combined"></i>
                     </button>
-                    @endif          
+                    @endif
                 </div>
                 @endif
                 <div class="tour-header-user-buttons">
@@ -268,7 +268,7 @@
                                             </a>
                                         </li>
                                     @endcan
-                                    @if(session()->has('admin_id'))
+                                    @if(session()->has('admin_id') && auth()->user() && auth()->user()->isSuperAdmin())
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0);"
                                                 target="_blank"
@@ -1331,7 +1331,7 @@
 
     // Additional orientation detection using window dimensions as backup
     let lastOrientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
-    
+
     function checkOrientationChange() {
         const currentOrientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
         if (currentOrientation !== lastOrientation) {
@@ -1343,7 +1343,7 @@
             }, 300);
         }
     }
-    
+
     // Check orientation on resize as backup for orientationchange event
     window.addEventListener('resize', () => {
         setTimeout(checkOrientationChange, 200);

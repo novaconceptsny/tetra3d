@@ -22,7 +22,7 @@
                     <h6 class="text-overflow m-0">{{ __('Welcome') }} {{ user()->name }}!</h6>
                 </div>
 
-                @if(session()->has('admin_id'))
+                @if(session()->has('admin_id') && auth()->user() && auth()->user()->isSuperAdmin())
                     <form class="d-inline" action="{{ route('back.to.admin') }}" method="post">
                         @csrf
                         <button type="submit" class="dropdown-item notify-item"><i class="fal fa-arrow-to-left"></i>
