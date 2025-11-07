@@ -88,7 +88,7 @@
                                     </div>
                                 </div>
                                 <div class="link">
-                                    @can('access-backend')
+                                    @if(auth()->user() && auth()->user()->isSuperAdmin())
                                         <li>
                                             <a class="dropdown-item" href="{{ route('backend.dashboard') }}"
                                                 target="_blank">
@@ -96,8 +96,8 @@
                                                 {{ __('Admin Area') }}
                                             </a>
                                         </li>
-                                    @endcan
-                                    @if(session()->has('admin_id') && auth()->user() && auth()->user()->isSuperAdmin())
+                                    @endif
+                                    @if(session()->has('admin_id'))
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0);"
                                                 target="_blank"
