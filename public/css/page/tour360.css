@@ -40,7 +40,7 @@ body {
 .favourites-section {
   background: #fff;
   margin: 0;
-  padding: 20px 20px;
+  padding: 20px 0px 20px 0px;
 }
 .favourites-section h5 {
   font-size: 20px;
