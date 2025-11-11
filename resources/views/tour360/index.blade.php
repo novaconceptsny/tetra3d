@@ -195,7 +195,7 @@
                                                     <div class="rounded img-home p-2 d-flex justify-content-center align-items-center" >
                                                         <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="card-body px-2">
                                                         <div class="d-flex justify-content-between align-items-start mb-2 flex-grow-1">
                                                             <p class="card-text mb-0">
                                                                 <span>{{ $project->name }}</span>
