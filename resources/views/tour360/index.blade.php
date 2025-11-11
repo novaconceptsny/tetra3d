@@ -135,7 +135,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5>
                                     @if(str_contains($company->name, 'My Workspace'))
-                                        My workspace
+                                        My workspace@if(auth()->user() && auth()->user()->isSuperAdmin())_{{ $company->id }}@endif
                                     @else
                                         {{ $company->name }}
                                     @endif
