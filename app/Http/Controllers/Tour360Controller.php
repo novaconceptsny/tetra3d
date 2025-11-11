@@ -106,7 +106,7 @@ class Tour360Controller extends Controller
     public function edit($id)
     {
         try {
-            $project = Project::findOrFail($id);
+            $project = Project::with('company')->findOrFail($id);
 
             // Get all tours
             $tours = Tour::where('company_id', $project->company_id)->get();
@@ -125,6 +125,7 @@ class Tour360Controller extends Controller
             $data['users']               = User::forCurrentCompany()->get();
             $data['artworkCollections']  = ArtworkCollection::forCurrentCompany()->get();
             $data['project']             = $project;
+            $data['company']             = $project->company;
             $data['assignedCollections'] = $project->artworkCollections;
             $data['assignedUsers']       = $project->contributors;
             $data['assignedTours']       = $project->assignedTours();

@@ -775,6 +775,10 @@
                 // Update section title for editing
                 document.querySelector('.create-project-section .modal-title').textContent = 'Edit project';
 
+                // Populate company name field
+                inlineCompanyInput.value = data.company?.name || '';
+                createProjectSection.dataset.companyId = data.project.company_id;
+
                 // Populate form with existing data from the server response
                 document.getElementById('inlineProjectNameInput').value = data.project.name;
                 document.getElementById('inlineUnits').value = data.project.unit || 'metric';
