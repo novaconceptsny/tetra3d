@@ -134,6 +134,7 @@
                                                     <option value="100">100</option>
                                                 </select>
                                             </div>
+                                            @if(!auth()->user()->isSuperAdmin())
                                             <div class="d-flex align-items-center">
                                                 <!-- Main Artwork Button -->
                                                 <button class="btn d-flex align-items-center gap-2" type="button" id="addArtworkBtn" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; border-radius: 8px 0 0 8px; padding: 4px 16px; font-weight: 500; font-size: 14px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
@@ -152,6 +153,7 @@
                                                     </ul>
                                                 </div>
                                             </div>
+                                            @endif
 
                                                                                     <!-- Bulk Edit Controls -->
                                             <div id="bulkEditControls" style="display: none;">
@@ -206,6 +208,7 @@
                                                 </button>
 
                                                 <!-- Upload Multiple Button -->
+                                                @if(!auth()->user()->isSuperAdmin())
                                                 <button class="btn icon-button" type="button" id="uploadMultipleBtn"
                                                         data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
@@ -213,6 +216,7 @@
                                                         onclick="handleOpenUploadArtworks()"> >
                                                     <i class="fas fa-upload" style="color: #495057;"></i>
                                                 </button>
+                                                @endif
 
                                                 <!-- Delete Button -->
                                                 <button class="btn icon-button" type="button" id="deleteArtworkBtn"
