@@ -988,6 +988,13 @@
     .modal select.empty-select {
         color: #b3b3b3 !important;
     }
+
+    /* Ensure consistent font sizing within the inventory table */
+    #inventoryTable,
+    #inventoryTable th,
+    #inventoryTable td {
+        font-size: 14px !important;
+    }
 </style>
 
 @endsection
