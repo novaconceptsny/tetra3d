@@ -106,8 +106,15 @@
 
         <select id="companySelect"  name="states[]" multiple="multiple" style="width: 100%;">
             @foreach($companies as $company)
+                @php
+                    // Remove the _## suffix from "My Workspace_##" names
+                    $displayName = $company->name;
+                    if (str_contains($displayName, 'My Workspace') && preg_match('/^My Workspace_\d+$/', $displayName)) {
+                        $displayName = preg_replace('/_\d+$/', '', $displayName);
+                    }
+                @endphp
                 <option style="padding: 8px 16px;" 
-                    value="{{ $company->id }}">{{ $company->name }}
+                    value="{{ $company->id }}">{{ $displayName }}
                 </option>
             @endforeach
         </select>
