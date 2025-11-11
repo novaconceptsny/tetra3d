@@ -945,6 +945,47 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/css/vendor/dataTables.bootstrap4.css') }}">
 <link href="{{ asset('css/page/inventory.css') }}" rel="stylesheet">
 
+<style>
+    /* Pale grey placeholder text for all input fields in modals */
+    .modal input::placeholder,
+    .modal textarea::placeholder {
+        color: #b3b3b3 !important;
+        opacity: 1;
+    }
+
+    /* Pale grey text for select dropdowns when no option is selected (empty value) */
+    .modal select option[value=""] {
+        color: #b3b3b3 !important;
+    }
+
+    /* Pale grey text for select dropdowns when they have empty/default placeholder option selected */
+    .modal select:invalid,
+    .modal select option:first-child {
+        color: #b3b3b3 !important;
+    }
+
+    /* Ensure select shows pale grey when empty value is selected */
+    .modal select option:checked[value=""] {
+        color: #b3b3b3 !important;
+    }
+
+    /* For select elements, make the displayed text pale grey when empty option is selected */
+    .modal select.form-select option[value=""]:checked,
+    .modal select.form-control option[value=""]:checked {
+        color: #b3b3b3 !important;
+    }
+
+    /* Additional styling to ensure empty selects show pale grey text */
+    .modal select:has(option[value=""]:checked) {
+        color: #b3b3b3 !important;
+    }
+
+    /* Fallback for browsers that don't support :has() - use JavaScript-friendly approach */
+    .modal select.empty-select {
+        color: #b3b3b3 !important;
+    }
+</style>
+
 @endsection
 
 
@@ -972,6 +1013,39 @@
 
     const isSuperAdmin = @json(auth()->user()->isSuperAdmin());
 
+    // Function to update select dropdown styling based on value
+    function updateSelectStyling(selectElement) {
+        if (!selectElement) return;
+        if (selectElement.value === '' || selectElement.value === null) {
+            selectElement.classList.add('empty-select');
+        } else {
+            selectElement.classList.remove('empty-select');
+        }
+    }
+
+    // Function to initialize select styling for all selects in a modal
+    function initializeModalSelectStyling(modalElement) {
+        if (!modalElement) return;
+        const selects = modalElement.querySelectorAll('select');
+        selects.forEach(select => {
+            updateSelectStyling(select);
+            // Add change event listener
+            select.addEventListener('change', function() {
+                updateSelectStyling(this);
+            });
+        });
+    }
+
+    // Attach event listeners to all modals when they are shown
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all modals
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function() {
+                initializeModalSelectStyling(this);
+            });
+        });
+    });
 
     let uploadedSpreadsheetData = null;
     let uploadedImageFiles = [];

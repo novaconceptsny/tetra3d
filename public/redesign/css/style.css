@@ -1182,6 +1182,7 @@ main.login .container-fluid .row .sec-col p {
 main section.collection {
   height: calc(100vh - 83px);
   overflow: auto;
+  background: #f8f9fa !important;
 }
 
 main section.collection .pagination-div {
