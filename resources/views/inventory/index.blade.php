@@ -271,12 +271,17 @@
                                 </button>
                             </div>
 
+                            <div class="row mb-2">
+                                <div class="col md-6 d-flex align-items-center justify-content-between">
+                                    <label class="form-label mb-0" style="font-size: 0.875rem;">Upload spreadsheet</label>
+                                    <label class="form-label mb-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="cursor: pointer; font-size: 0.875rem;">Download spreadsheet template</label>
+                                </div>
+                                <div class="col md-6 d-flex align-items-center">
+                                    <label class="form-label mb-0" style="font-size: 0.875rem;">Upload image files</label>
+                                </div>
+                            </div>
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <label class="form-label">Upload spreadsheet</label>
-                                        <button class="btn btn-light border-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="background-color: #f8f9fa; color: #28a745; font-weight: 500; padding: 12px 24px; border-radius: 6px;">Download spreadsheet template</button>
-                                    </div>
                                     <div class="upload-box" id="spreadsheet-upload">
                                         <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv, .xlsx, .xls file</span>
                                         <div id="spreadsheet-progress" style="display: none;">
@@ -290,7 +295,6 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Upload image files</label>
                                     <div class="upload-box" id="image-upload">
                                         <span id="image-upload-text">Drag & drop a file here<br>or choose .png, .jpg, .jpeg files</span>
                                         <div id="image-progress" style="display: none;">
@@ -332,7 +336,7 @@
                                         <option value="{{$collection->id}}">{{$collection->name}}</option>
                                     @endforeach
                                 </select>
-                            
+
                                 <!-- Top Pagination Controls -->
                                 <div id="pagination-controls-top" style="display: none;" class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -1175,13 +1179,13 @@
         // Update the artwork object in memory
         if (artwork) {
             artwork[field] = value;
-            
+
             // Update the corresponding item in allArtworksData
             const artworkIndex = allArtworksData.findIndex(a => a.id === artwork.id || a.filename === artwork.filename);
             if (artworkIndex !== -1) {
                 allArtworksData[artworkIndex][field] = value;
             }
-            
+
             // Optional: Show a visual indicator that the field was saved
             console.log(`Saved ${field}: ${value} for artwork ${artwork.filename || artwork.id}`);
         }
@@ -1780,7 +1784,7 @@
             const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
             document.getElementById('submitProgressText').textContent = `Preparing artworks ${startIndex + 1}-${endIndex} for upload...`;
             document.getElementById('submitProgressBar').style.width = '25%';
-            
+
             // Get collection name from master collection header dropdown
             const masterCollectionSelect = document.getElementById('masterCollectionHeader');
             const collectionName = masterCollectionSelect.options[masterCollectionSelect.selectedIndex].text;
@@ -2420,14 +2424,14 @@
                         this.classList.add('empty-cell');
                     }
                 });
-                
+
                 // Save data on blur (when user finishes editing)
                 cell.addEventListener('blur', function() {
                     const field = this.getAttribute('data-field');
                     const value = this.textContent.trim();
                     saveArtworkField(artwork, field, value);
                 });
-                
+
                 // Save data on Enter key press
                 cell.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
@@ -2446,14 +2450,14 @@
                         this.classList.add('empty-cell');
                     }
                 });
-                
+
                 // Save data on blur
                 input.addEventListener('blur', function() {
                     const field = this.getAttribute('data-field');
                     const value = this.value.trim();
                     saveArtworkField(artwork, field, value);
                 });
-                
+
                 // Save data on Enter key press
                 input.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
@@ -2471,7 +2475,7 @@
                     } else {
                         this.classList.add('empty-cell');
                     }
-                    
+
                     // Save data immediately on change
                     const field = this.getAttribute('data-field');
                     const value = this.value;
@@ -2489,7 +2493,7 @@
                         this.classList.add('empty-cell');
                     }
                 });
-                
+
                 // Save data on blur
                 textarea.addEventListener('blur', function() {
                     const field = this.getAttribute('data-field');
@@ -3373,7 +3377,7 @@ $(document).ready(function() {
         console.log(collectionName, "collectionName")
         console.log(itemCount, "itemCount")
         console.log(thumbnailUrl, "thumbnailUrl")
-        
+
         window.selectedCollectionId = collectionId;
 
         // Update the dropdown button content
@@ -4263,27 +4267,27 @@ $(document).ready(function() {
         }
         $('#moveCompanySelect').val('');
         $('#moveCollectionSelect').val('').html('<option value="">Select collection</option>');
-        
+
         // For non-super admin, automatically load collections for their company
         if (!isSuperAdmin) {
             var userCompanyId = @json(auth()->user()->company_id);
             loadCollectionsForCompany(userCompanyId);
         }
-        
+
         $('#moveToCollectionModal').modal('show');
     });
 
     // Helper function to load collections for a company
     function loadCollectionsForCompany(companyId) {
         var $collectionSelect = $('#moveCollectionSelect');
-        
+
         // Reset collection dropdown
         $collectionSelect.val('').html('<option value="">Select collection</option>');
-        
+
         if (!companyId) {
             return;
         }
-        
+
         // Fetch collections for the selected company
         $.ajax({
             url: '{{ route("inventory.collections.by-company") }}',
