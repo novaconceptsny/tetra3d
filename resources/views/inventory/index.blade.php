@@ -568,65 +568,91 @@
     <!-- Bulk Edit Modal -->
     <div class="modal fade" id="bulkEditModal" tabindex="-1" aria-labelledby="bulkEditModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bulkEditModalLabel">Edit information for selected pieces</h5>
+            <div class="modal-content" style="border-radius: 12px; border: 1px solid #e0e0e0;">
+                <div class="modal-header" style="background: #f8f9fa; border-bottom: 1px solid #dee2e6; border-radius: 12px 12px 0 0;">
+                    <h5 class="modal-title" id="bulkEditModalLabel" style="font-weight: 600; color: #495057;">Edit Multiple Artworks</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 0px">
                     <form id="bulkEditForm">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="bulkCollection" class="form-label">Collection</label>
-                                    <select class="form-select" id="bulkCollection" name="collection">
-                                        <option value="">-- Keep existing --</option>
-                                        @foreach($collections as $collection)
-                                            <option value="{{ $collection->id }}">{{ $collection->name }}</option>
-                                        @endforeach
-                                    </select>
+                        <div style="background-color: #f5f5f5">
+                            <div style="padding: 24px 24px 12px 24px;">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p style="font-size: 0.9em; color: #495057; margin-bottom: 16px;">
+                                            Entering information into the boxes below will update all selected artwork pieces. Leave the boxes blank to keep existing values unchanged.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="bulkArtist" class="form-label">Artist</label>
-                                    <input type="text" class="form-control" id="bulkArtist" name="artist" placeholder="Enter artist name">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkHeight" class="form-label">Height</label>
-                                    <input type="number" class="form-control" id="bulkHeight" name="height" placeholder="Enter height">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkUnit" class="form-label">Unit</label>
-                                    <select class="form-select" id="bulkUnit" name="unit">
-                                        <option value="">-- Keep existing --</option>
-                                        <option value="cm">cm</option>
-                                        <option value="inch">inch</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="bulkTitle" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="bulkTitle" name="name" placeholder="Enter title">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkDescription" class="form-label">Description</label>
-                                    <textarea class="form-control" id="bulkDescription" name="description" rows="3" placeholder="Enter description"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkWidth" class="form-label">Width</label>
-                                    <input type="number" class="form-control" id="bulkWidth" name="width" placeholder="Enter width">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkType" class="form-label">Type</label>
-                                    <input type="text" class="form-control" id="bulkType" name="type" placeholder="Enter artwork type">
+
+                                <!-- Form fields section with pale grey background -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @if(auth()->user()->isSuperAdmin())
+                                            <div class="mb-3">
+                                                <label for="bulkCompany" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Company</label>
+                                                <select class="form-select" id="bulkCompany" name="company" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                    <option value="">-- Keep existing --</option>
+                                                    @foreach($companies as $company)
+                                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="bulkCollection" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Collection</label>
+                                            <select class="form-select" id="bulkCollection" name="collection" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                <option value="">-- Keep existing --</option>
+                                                @foreach($collections as $collection)
+                                                    <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkArtist" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Artist</label>
+                                            <input type="text" class="form-control" id="bulkArtist" name="artist" placeholder="Enter artist name" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkHeight" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Height</label>
+                                            <input type="number" class="form-control" id="bulkHeight" name="height" placeholder="Enter height" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkUnit" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Unit</label>
+                                            <select class="form-select" id="bulkUnit" name="unit" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                <option value="">-- Keep existing --</option>
+                                                <option value="cm">cm</option>
+                                                <option value="inch">inch</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="bulkTitle" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Title</label>
+                                            <input type="text" class="form-control" id="bulkTitle" name="name" placeholder="Enter title" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkType" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Type</label>
+                                            <input type="text" class="form-control" id="bulkType" name="type" placeholder="Enter artwork type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkWidth" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Width</label>
+                                            <input type="number" class="form-control" id="bulkWidth" name="width" placeholder="Enter width" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkDescription" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Description</label>
+                                            <textarea class="form-control" id="bulkDescription" name="description" rows="5" placeholder="Enter description" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="bulkUpdateBtn">Update Selected Items</button>
+                <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 16px 24px;">
+                    <button type="button" class="btn btn-success" id="bulkUpdateBtn" style="background: #099F9A; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; color: white;">Update Selected</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="background: #dc3545; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; color: white; margin-right: 10px;">Cancel</button>
                 </div>
             </div>
         </div>
@@ -671,7 +697,7 @@
     <template id="newArtworkRowTemplate">
         <tr class="new-artwork-row" data-temp-id="">
             <td>
-                <input type="checkbox" class="form-check-input">
+                <input type="checkbox" class="form-check-input new-row-checkbox">
             </td>
             <td>
                 <div class="drag-drop-area" style="width: 40px; height: 40px; border: 2px dashed #dee2e6; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f8f9fa;">
@@ -3038,7 +3064,8 @@ $(document).ready(function() {
     });
 
     // Bulk edit functionality
-    var selectedRows = new Set();
+    var selectedRows = new Set(); // For existing rows (with IDs)
+    var selectedNewRows = new Set(); // For new rows (with temp IDs)
     var bulkEditControls = $('#bulkEditControls');
     var bulkEditBtn = $('#bulkEditBtn');
     var selectedCount = $('#selectedCount');
@@ -3046,7 +3073,7 @@ $(document).ready(function() {
     var bulkUpdateBtn = $('#bulkUpdateBtn');
     var selectAllCheckbox = $('#selectAll');
 
-    // Handle individual checkbox changes
+    // Handle individual checkbox changes for existing rows
     $(document).on('change', '.row-checkbox', function() {
         var rowId = $(this).data('id');
         var isChecked = $(this).is(':checked');
@@ -3064,6 +3091,24 @@ $(document).ready(function() {
         updateSelectAllState();
     });
 
+    // Handle individual checkbox changes for new rows
+    $(document).on('change', '.new-row-checkbox', function() {
+        var row = $(this).closest('.new-artwork-row');
+        var tempId = row.attr('data-temp-id');
+        var isChecked = $(this).is(':checked');
+
+        if (isChecked) {
+            selectedNewRows.add(tempId);
+            row.addClass('selected-row');
+        } else {
+            selectedNewRows.delete(tempId);
+            row.removeClass('selected-row');
+        }
+
+        updateBulkEditUI();
+        updateSelectAllState();
+    });
+
     // Make entire row clickable for checkbox selection
     $(document).on('click', '#inventoryTable tbody tr', function(e) {
         // Don't trigger if clicking on editable cells or other interactive elements
@@ -3074,11 +3119,13 @@ $(document).ready(function() {
             return;
         }
 
-        var checkbox = $(this).find('.row-checkbox');
-        var rowId = checkbox.data('id');
         var row = $(this);
+        var checkbox = row.find('.row-checkbox');
+        var newCheckbox = row.find('.new-row-checkbox');
 
+        // Handle existing rows
         if (checkbox.length > 0) {
+            var rowId = checkbox.data('id');
             checkbox.prop('checked', !checkbox.prop('checked'));
 
             if (checkbox.prop('checked')) {
@@ -3092,20 +3139,42 @@ $(document).ready(function() {
             updateBulkEditUI();
             updateSelectAllState();
         }
+        // Handle new rows
+        else if (newCheckbox.length > 0) {
+            var tempId = row.attr('data-temp-id');
+            newCheckbox.prop('checked', !newCheckbox.prop('checked'));
+
+            if (newCheckbox.prop('checked')) {
+                selectedNewRows.add(tempId);
+                row.addClass('selected-row');
+            } else {
+                selectedNewRows.delete(tempId);
+                row.removeClass('selected-row');
+            }
+
+            updateBulkEditUI();
+            updateSelectAllState();
+        }
     });
 
     // Handle select all checkbox
     selectAllCheckbox.on('change', function() {
         var isChecked = $(this).is(':checked');
-        $('.row-checkbox').prop('checked', isChecked);
+        $('.row-checkbox, .new-row-checkbox').prop('checked', isChecked);
 
         if (isChecked) {
             $('.row-checkbox').each(function() {
                 selectedRows.add($(this).data('id'));
                 $(this).closest('tr').addClass('selected-row');
             });
+            $('.new-row-checkbox').each(function() {
+                var tempId = $(this).closest('.new-artwork-row').attr('data-temp-id');
+                selectedNewRows.add(tempId);
+                $(this).closest('tr').addClass('selected-row');
+            });
         } else {
             selectedRows.clear();
+            selectedNewRows.clear();
             $('#inventoryTable tbody tr').removeClass('selected-row');
         }
 
@@ -3114,7 +3183,7 @@ $(document).ready(function() {
 
     // Update bulk edit UI visibility
     function updateBulkEditUI() {
-        var count = selectedRows.size;
+        var count = selectedRows.size + selectedNewRows.size;
         selectedCount.text(count + ' item' + (count !== 1 ? 's' : '') + ' selected');
 
         if (count > 0) {
@@ -3139,8 +3208,8 @@ $(document).ready(function() {
 
     // Update select all checkbox state
     function updateSelectAllState() {
-        var totalCheckboxes = $('.row-checkbox').length;
-        var checkedCheckboxes = $('.row-checkbox:checked').length;
+        var totalCheckboxes = $('.row-checkbox, .new-row-checkbox').length;
+        var checkedCheckboxes = $('.row-checkbox:checked, .new-row-checkbox:checked').length;
 
         if (checkedCheckboxes === 0) {
             selectAllCheckbox.prop('indeterminate', false).prop('checked', false);
@@ -3153,7 +3222,7 @@ $(document).ready(function() {
 
     // Open bulk edit modal
     bulkEditBtn.on('click', function() {
-        if (selectedRows.size === 0) {
+        if (selectedRows.size === 0 && selectedNewRows.size === 0) {
             alert('Please select at least one item to edit.');
             return;
         }
@@ -3163,9 +3232,11 @@ $(document).ready(function() {
     // Handle bulk update
     bulkUpdateBtn.on('click', function() {
         var formData = $('#bulkEditForm').serialize();
+        var formDataObj = Object.fromEntries(new URLSearchParams(formData));
         var selectedIds = Array.from(selectedRows);
+        var selectedNewRowIds = Array.from(selectedNewRows);
 
-        if (selectedIds.length === 0) {
+        if (selectedIds.length === 0 && selectedNewRowIds.length === 0) {
             alert('No items selected.');
             return;
         }
@@ -3173,38 +3244,162 @@ $(document).ready(function() {
         // Show loading state
         bulkUpdateBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Updating...');
 
-        $.ajax({
-            url: '{{ route("inventory.bulk-update") }}',
-            type: 'POST',
-            data: {
-                ids: selectedIds,
-                _token: '{{ csrf_token() }}',
-                ...Object.fromEntries(new URLSearchParams(formData))
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert('Successfully updated ' + response.updated_count + ' item(s).');
-                    bulkEditModal.modal('hide');
-                    // Clear pending changes since server data is now updated
-                    clearPendingChanges();
-                    table.ajax.reload(function() {
-                        // No need to reapply changes since server data is fresh
-                    }, false);
-                    selectedRows.clear();
-                    updateBulkEditUI();
-                    updateSelectAllState();
-                    $('#bulkEditForm')[0].reset();
-                } else {
-                    alert('Error: ' + response.message);
+        // Update new rows directly in DOM
+        var newRowsUpdated = 0;
+        selectedNewRowIds.forEach(function(tempId) {
+            var row = document.querySelector(`.new-artwork-row[data-temp-id="${tempId}"]`);
+            if (row) {
+                // Update company if provided
+                @if(auth()->user()->isSuperAdmin())
+                if (formDataObj.company) {
+                    var companySelect = row.querySelector('.company-select');
+                    if (companySelect) {
+                        companySelect.value = formDataObj.company;
+                        // Trigger change to update collections
+                        $(companySelect).trigger('change');
+                    }
                 }
-            },
-            error: function(xhr) {
-                alert('Error updating items: ' + (xhr.responseJSON?.message || 'Unknown error'));
-            },
-            complete: function() {
-                bulkUpdateBtn.prop('disabled', false).html('Update Selected Items');
+                @endif
+
+                // Update collection if provided
+                if (formDataObj.collection) {
+                    var collectionSelect = row.querySelector('.collection-select');
+                    if (collectionSelect) {
+                        collectionSelect.value = formDataObj.collection;
+                    }
+                }
+
+                // Update title if provided
+                if (formDataObj.name) {
+                    var titleInput = row.querySelector('.title-input');
+                    if (titleInput) {
+                        titleInput.value = formDataObj.name;
+                    }
+                }
+
+                // Update artist if provided
+                if (formDataObj.artist) {
+                    var artistInput = row.querySelector('.artist-input');
+                    if (artistInput) {
+                        artistInput.value = formDataObj.artist;
+                    }
+                }
+
+                // Update type if provided
+                if (formDataObj.type) {
+                    var typeInput = row.querySelector('.type-input');
+                    if (typeInput) {
+                        typeInput.value = formDataObj.type;
+                    }
+                }
+
+                // Update height if provided
+                if (formDataObj.height) {
+                    var heightInput = row.querySelector('.height-input');
+                    if (heightInput) {
+                        heightInput.value = formDataObj.height;
+                    }
+                }
+
+                // Update width if provided
+                if (formDataObj.width) {
+                    var widthInput = row.querySelector('.width-input');
+                    if (widthInput) {
+                        widthInput.value = formDataObj.width;
+                    }
+                }
+
+                // Update unit if provided
+                if (formDataObj.unit) {
+                    var unitSelect = row.querySelector('.unit-select');
+                    if (unitSelect) {
+                        unitSelect.value = formDataObj.unit;
+                    }
+                }
+
+                // Update description if provided
+                if (formDataObj.description) {
+                    var descriptionInput = row.querySelector('.description-input');
+                    if (descriptionInput) {
+                        descriptionInput.value = formDataObj.description;
+                    }
+                }
+
+                newRowsUpdated++;
             }
         });
+
+        // Update existing rows via AJAX if any are selected
+        if (selectedIds.length > 0) {
+            $.ajax({
+                url: '{{ route("inventory.bulk-update") }}',
+                type: 'POST',
+                data: {
+                    ids: selectedIds,
+                    _token: '{{ csrf_token() }}',
+                    ...formDataObj
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var totalUpdated = response.updated_count + newRowsUpdated;
+                        alert('Successfully updated ' + totalUpdated + ' item(s).');
+                        bulkEditModal.modal('hide');
+                        // Clear pending changes since server data is now updated
+                        clearPendingChanges();
+                        table.ajax.reload(function() {
+                            // No need to reapply changes since server data is fresh
+                        }, false);
+                        // Clear existing rows selection (they're reloaded from server)
+                        selectedRows.clear();
+                        // Keep new rows selected - reselect their checkboxes
+                        selectedNewRowIds.forEach(function(tempId) {
+                            var row = document.querySelector(`.new-artwork-row[data-temp-id="${tempId}"]`);
+                            if (row) {
+                                var checkbox = row.querySelector('.new-row-checkbox');
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                    $(row).addClass('selected-row');
+                                }
+                            }
+                        });
+                        updateBulkEditUI();
+                        updateSelectAllState();
+                        $('#bulkEditForm')[0].reset();
+                    } else {
+                        alert('Error: ' + response.message);
+                        bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error updating items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+                },
+                complete: function() {
+                    if (selectedIds.length > 0) {
+                        bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+                    }
+                }
+            });
+        } else {
+            // Only new rows were selected, no AJAX needed
+            alert('Successfully updated ' + newRowsUpdated + ' item(s).');
+            bulkEditModal.modal('hide');
+            // Keep new rows selected - reselect their checkboxes
+            selectedNewRowIds.forEach(function(tempId) {
+                var row = document.querySelector(`.new-artwork-row[data-temp-id="${tempId}"]`);
+                if (row) {
+                    var checkbox = row.querySelector('.new-row-checkbox');
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        $(row).addClass('selected-row');
+                    }
+                }
+            });
+            updateBulkEditUI();
+            updateSelectAllState();
+            $('#bulkEditForm')[0].reset();
+            bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+        }
     });
 
     // Clear selection when modal is closed
@@ -4165,6 +4360,8 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.success) {
                         alert('Successfully saved ' + response.saved_count + ' item(s).');
+                        // Clear selected new rows since all are being saved and removed
+                        selectedNewRows.clear();
                         // Remove all new rows
                         $('.new-artwork-row').remove();
                         // Reload table
@@ -4176,6 +4373,8 @@ $(document).ready(function() {
                         $('#multipleDropZone').remove();
                         // Update controls
                         updateBulkNewItemControls();
+                        updateBulkEditUI();
+                        updateSelectAllState();
                     } else {
                         alert('Error: ' + response.message);
                     }
@@ -4193,18 +4392,29 @@ $(document).ready(function() {
     // Cancel All functionality
     cancelAllBtn.on('click', function() {
         if (confirm('Are you sure you want to cancel all new items? This action cannot be undone.')) {
+            // Clear selected new rows since all are being removed
+            selectedNewRows.clear();
             // Remove all new rows
             $('.new-artwork-row').remove();
             // Hide multiple drop zone
             $('#multipleDropZone').remove();
             // Update controls
             updateBulkNewItemControls();
+            updateBulkEditUI();
+            updateSelectAllState();
         }
     });
 
     // Individual delete row functionality
     $(document).on('click', '.delete-row-btn', function() {
         const row = $(this).closest('.new-artwork-row');
+        const tempId = row.attr('data-temp-id');
+        
+        // Remove from selectedNewRows if it was selected
+        if (tempId && selectedNewRows.has(tempId)) {
+            selectedNewRows.delete(tempId);
+        }
+        
         row.remove();
 
         // Hide multiple drop zone if no more new rows
@@ -4214,6 +4424,8 @@ $(document).ready(function() {
 
         // Update controls
         updateBulkNewItemControls();
+        updateBulkEditUI();
+        updateSelectAllState();
     });
 
     // Copy/Duplicate functionality
