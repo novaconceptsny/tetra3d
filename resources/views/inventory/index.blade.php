@@ -321,21 +321,23 @@
                             <!-- Artworks Table -->
                             <div class="table-responsive mb-3">
 
-                                @if(auth()->user()->isSuperAdmin())
+                                <!-- @if(auth()->user()->isSuperAdmin())
                                 Company
                                 <select id="masterCompanyDropdown" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
                                     @foreach($companies as $company)
                                         <option value="{{$company->id}}">{{$company->name}}</option>
                                     @endforeach
                                 </select>
-                                @endif
+                                @endif -->
 
-                                Collection
-                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;" size="1">
-                                    @foreach($collections as $collection)
-                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                                    @endforeach
-                                </select>
+                                <div class="d-flex align-items-center justify-content-center" style="background-color: #f5f5f5;">
+                                    Collection :
+                                    <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;" size="1">
+                                        @foreach($collections as $collection)
+                                            <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
                                 <!-- Top Pagination Controls -->
                                 <div id="pagination-controls-top" style="display: none;" class="mb-3">
