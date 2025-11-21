@@ -16,6 +16,7 @@ class TourMap extends Component
     public $layoutId;
     public $selectedMap;
     public $tourModel;
+    public bool $isShared = false;
 
     public function mount(Tour $tour, Spot $spot)
     {

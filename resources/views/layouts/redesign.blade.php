@@ -49,8 +49,13 @@
                     </div>
                     <div class="modal-body">
                         @if(isset($tour))
-                            <livewire:tour-map :tour="$tour" :spot="$spot" :layout-id="request('layout_id')"
-                            :shared_tour_id="$shared_tour_id ?? null" />
+                            <livewire:tour-map
+                                :tour="$tour"
+                                :spot="$spot"
+                                :layout-id="request('layout_id')"
+                                :shared_tour_id="$shared_tour_id ?? null"
+                                :is-shared="Route::is('shared-tours.show')"
+                            />
                         @endif
                     </div>
                     <div class="modal-footer">
