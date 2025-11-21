@@ -275,10 +275,10 @@ class InventoryController extends Controller
         $filesToZip = [];
 
         foreach ($artworks as $artwork) {
-            // Access original_value as SchemalessAttributes object
-            $height = $artwork->original_value->height ?? '';
-            $width  = $artwork->original_value->width ?? '';
-            $unit   = $artwork->original_value->unit ?? ($artwork->original_unit ?: 'cm');
+            $dimensions = $this->resolveArtworkDimensions($artwork);
+            $height = $dimensions['height'];
+            $width = $dimensions['width'];
+            $unit = $dimensions['unit'];
 
             $imageFileName = '';
             $media = $artwork->getFirstMedia('image');
@@ -1382,9 +1382,6 @@ class InventoryController extends Controller
         // Prepare data for PDF
         $pdfData = [];
         foreach ($artworks as $artwork) {
-            $height = $artwork->original_value->height ?? '';
-            $width  = $artwork->original_value->width ?? '';
-            $unit   = $artwork->original_value->unit ?? ($artwork->original_unit ?: 'cm');
 
             $imageUrl = '';
             $media = $artwork->getFirstMedia('image');
@@ -1397,14 +1394,16 @@ class InventoryController extends Controller
                 }
             }
 
+            $dimensions = $this->resolveArtworkDimensions($artwork);
+
             $pdfData[] = [
                 'image' => $imageUrl,
                 'name' => $artwork->name ?? '',
                 'artist' => $artwork->artist ?? '',
                 'type' => $artwork->type ?? '',
-                'height' => $height,
-                'width' => $width,
-                'unit' => $unit,
+                'height' => $dimensions['height'],
+                'width' => $dimensions['width'],
+                'unit' => $dimensions['unit'],
                 'description' => $artwork->description ?? '',
                 'collection' => $artwork->collection->name ?? '',
                 'company' => auth()->user()->isSuperAdmin() ? ($artwork->company->name ?? '') : '',
@@ -1428,6 +1427,51 @@ class InventoryController extends Controller
                 'isSuperAdmin' => auth()->user()->isSuperAdmin(),
             ]);
         }
+    }
+
+    /**
+     * Ensure we always have meaningful height/width values when exporting/downloading.
+     */
+    private function resolveArtworkDimensions(Artwork $artwork): array
+    {
+        $originalValue = optional($artwork->original_value);
+        $data = optional($artwork->data);
+
+        $height = $originalValue->height;
+        $width = $originalValue->width;
+        $unit = $originalValue->unit ?? $artwork->original_unit;
+
+        $heightInch = $data->height_inch;
+        $widthInch = $data->width_inch;
+
+        if (! $unit) {
+            $unit = ($heightInch || $widthInch) ? 'inch' : 'cm';
+        }
+
+        if (($height === null || $height === '') && $heightInch !== null && $heightInch !== '') {
+            $height = $this->convertDimensionFromInches($heightInch, $unit);
+        }
+
+        if (($width === null || $width === '') && $widthInch !== null && $widthInch !== '') {
+            $width = $this->convertDimensionFromInches($widthInch, $unit);
+        }
+
+        return [
+            'height' => ($height === null || $height === '') ? '0' : $height,
+            'width' => ($width === null || $width === '') ? '0' : $width,
+            'unit' => $unit,
+        ];
+    }
+
+    private function convertDimensionFromInches($value, string $unit)
+    {
+        $numericValue = (float) $value;
+
+        if ($unit === 'cm') {
+            return round($numericValue * 2.54, 2);
+        }
+
+        return round($numericValue, 2);
     }
 
     /**
