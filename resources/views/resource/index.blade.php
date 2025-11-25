@@ -5,7 +5,9 @@
     <!-- About Section -->
     <div style="margin-bottom: 40px;">
         <h4>About</h4>
-        <p>Tetra3D is a tool designed.......................</p>
+        <p>Tetra3d is a browser-based platform for building and sharing immersive virtual gallery tours. Designed for artists, curators, and organizations, it allows users to easily upload artwork, select from a variety of gallery templates, and design interactive 3D exhibitions that can be shared online.</p>
+
+         <p>Beyond creating virtual tours, Tetra3d also serves as a workspace for managing artwork—helping you organize your digital collection, link pieces to specific projects, and experiment with different layouts and gallery designs. Whether you’re planning an upcoming exhibition, showcasing a portfolio, or collaborating with a team, Tetra3d provides the tools to bring your gallery vision to life.</p>
     </div>
 
     <!-- Tutorials Section -->
@@ -90,8 +92,33 @@
 
     <!-- FAQ / About Section -->
     <div>
-        <h4>About</h4>
-        <p>How can I compare layouts?</p>
+        <h4>FAQ</h4>
+        <p><strong>How do I get started with my first project?</strong></p>
+        <p>
+            Once you’ve uploaded artwork and added gallery templates to your workspace or company, you can create your first project.
+            A project links your selected artworks and galleries in one place. Inside the project, you can start building layouts—each layout is a version of your gallery setup.
+            Layouts can be saved, duplicated, edited, and deleted, allowing you to experiment with different arrangements and compare your ideas easily.
+        </p>
+        <p><strong>
+            Do I need any special software or hardware to use Tetra3d?
+        </strong></p>
+        <p>
+            No, you don’t need any special software. Tetra3d is fully browser-based, so you can access and use it directly through your web browser without any additional software or hardware requirements.
+        </p>
+        <p><strong>
+            What are free template galleries, and how do I use them?
+        </strong></p>
+        <p>
+            At Nova, we've designed a variety of pre-built gallery tours that users can explore and personalize by adding their own artwork.
+            All available template galleries are listed on this page. You can browse through each gallery as a preview, and once you find one you like, simply add it to your company.
+            From there, you can use the template in your project.
+        </p>
+        <p><strong>
+            Is there a limit to the number of artworks I can display in a gallery?
+        </strong></p>
+        <p>
+            The only limitation is the available wall space within the gallery. You can place multiple pieces of artwork on a single surface, allowing for flexible arrangement and display options.
+        </p>
     </div>
 </div>
 
@@ -113,7 +140,7 @@
                         $displayName = preg_replace('/_\d+$/', '', $displayName);
                     }
                 @endphp
-                <option style="padding: 8px 16px;" 
+                <option style="padding: 8px 16px;"
                     value="{{ $company->id }}">{{ $displayName }}
                 </option>
             @endforeach
@@ -139,7 +166,7 @@
         <input type="hidden" id="modalTourId" value="">
         <div style="color:#d97706; margin-bottom:16px;">
             <span style="font-size:24px; vertical-align:middle;">&#9888;</span>
-            Any projects or layouts that use this template gallery will remain on your Projects page. 
+            Any projects or layouts that use this template gallery will remain on your Projects page.
             If you'd like to remove them, you'll need to delete them separately.
         </div>
         <div style="display:flex; justify-content:center; gap:24px;">
@@ -183,17 +210,17 @@ function openAddCompanyModal(galleryName, tourId) {
 
     const select = $("#companySelect").select2();
     var gallery = templateTours.find(function(g) { return g.id == tourId; });
-    
+
     // Move first assigned company to top
     if (gallery.assigned_company_ids && gallery.assigned_company_ids.length > 0) {
         const firstAssignedId = gallery.assigned_company_ids[0];
         const $firstOption = select.find(`option[value="${firstAssignedId}"]`);
         const $firstOptionClone = $firstOption.clone();
-        
+
         $firstOption.remove();
         select.prepend($firstOptionClone);
     }
-    
+
     select.val(gallery.assigned_company_ids).trigger('change');
 
     // Add dynamic styling based on mainCompanyIds
@@ -218,13 +245,13 @@ function openAddCompanyModal(galleryName, tourId) {
             }
         `;
     }
-    
+
     // Remove any previously added dynamic styles
     const oldStyle = document.getElementById('dynamic-select2-style');
     if (oldStyle) {
         oldStyle.remove();
     }
-    
+
     // Add the new styles
     styleElement.id = 'dynamic-select2-style';
     document.head.appendChild(styleElement);
@@ -240,7 +267,7 @@ function openAddCompanyModal(galleryName, tourId) {
                     const removeBtn = choice.querySelector('.select2-selection__choice__remove');
                     if (removeBtn) removeBtn.style.display = 'block';
                 });
-                
+
                 if (gallery.mainCompanyIds && gallery.mainCompanyIds.length > 0) {
                     // Apply special styling to first choice
                     const firstChoice = choices[0];
@@ -255,13 +282,13 @@ function openAddCompanyModal(galleryName, tourId) {
 function closeAddCompanyModal() {
     document.getElementById('addCompanyModal').style.display = 'none';
 }
-function handleAddCompany() {   
+function handleAddCompany() {
     var select = document.getElementById('companySelect');
-    var selectedCompanyNames = select.selectedOptions ? 
-        Array.from(select.selectedOptions).map(option => option.text) : 
+    var selectedCompanyNames = select.selectedOptions ?
+        Array.from(select.selectedOptions).map(option => option.text) :
         [];
-    var selectedCompanyIds = select.selectedOptions ? 
-        Array.from(select.selectedOptions).map(option => option.value) : 
+    var selectedCompanyIds = select.selectedOptions ?
+        Array.from(select.selectedOptions).map(option => option.value) :
         [];
     var tourId = document.getElementById('modalTourId').value;
 
@@ -313,7 +340,7 @@ function closeRemoveGalleryModal() {
 
 function handleRemoveGallery() {
     var tourId = document.getElementById('modalTourId').value;
-    
+
     // Send to backend via AJAX
     fetch("{{ route('resource.removeGallery') }}", {
         method: "POST",
@@ -337,7 +364,7 @@ function handleRemoveGallery() {
             alert('Failed to remove gallery: ' + response.error);
         }
     });
-    
+
     closeRemoveGalleryModal();
 }
 
