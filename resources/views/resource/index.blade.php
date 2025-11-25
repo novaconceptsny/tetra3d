@@ -4,7 +4,7 @@
 <div class="container" style="background: #f7f9fb; min-height: 100vh; padding: 40px 0;">
     <!-- About Section -->
     <div style="margin-bottom: 40px;">
-        <h4>About</h4>
+        <h4 class="section-title">About</h4>
         <p>Tetra3d is a browser-based platform for building and sharing immersive virtual gallery tours. Designed for artists, curators, and organizations, it allows users to easily upload artwork, select from a variety of gallery templates, and design interactive 3D exhibitions that can be shared online.</p>
 
          <p>Beyond creating virtual tours, Tetra3d also serves as a workspace for managing artwork—helping you organize your digital collection, link pieces to specific projects, and experiment with different layouts and gallery designs. Whether you’re planning an upcoming exhibition, showcasing a portfolio, or collaborating with a team, Tetra3d provides the tools to bring your gallery vision to life.</p>
@@ -12,7 +12,7 @@
 
     <!-- Tutorials Section -->
     <div style="margin-bottom: 40px;">
-        <h4 style="margin-bottom: 20px;">Tutorials</h4>
+        <h4 class="section-title">Tutorials</h4>
         <div style="margin-bottom: 10px;"><strong>Tetra3D</strong></div>
         <div style="display: flex; gap: 24px; margin-bottom: 32px;">
             <div>
@@ -51,7 +51,7 @@
 
     <!-- Template Galleries Section -->
     <div style="margin-bottom: 40px;">
-        <h4 style="margin-bottom: 20px;">Template galleries</h4>
+        <h4 class="section-title">Template galleries</h4>
         <div class="template-gallery-grid">
             @foreach($templateTours as $i => $gallery)
                 <div class="template-gallery-card">
@@ -77,7 +77,7 @@
 
     <!-- FAQ / About Section -->
     <div>
-        <h4>FAQ</h4>
+        <h4 class="section-title">FAQ</h4>
         <div id="faqList"></div>
     </div>
 </div>
@@ -154,6 +154,12 @@
 }
 
 /* Remove the static first-child styles since we'll apply them dynamically */
+.section-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #111827;
+}
 .template-gallery-grid {
     display: flex;
     flex-wrap: wrap;
