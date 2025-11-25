@@ -1027,6 +1027,27 @@
     #inventoryTable td {
         font-size: 14px !important;
     }
+
+    /* Inline editable boxes mimic input height */
+    .editable-box {
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 8px;
+        min-height: 38px;
+        line-height: 1.2;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .editable-box:focus {
+        outline: none;
+        border-color: #099F9A;
+        box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.2);
+        background-color: #fff;
+    }
 </style>
 
 @endsection
@@ -2422,8 +2443,12 @@
             row.innerHTML = `
                 <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
 
-                <td contenteditable="true" data-field="title" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
-                <td contenteditable="true" data-field="artist" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
+                <td>
+                    <div contenteditable="true" data-field="title" data-placeholder="Enter title..." class="editable-box ${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</div>
+                </td>
+                <td>
+                    <div contenteditable="true" data-field="artist" data-placeholder="Enter artist name..." class="editable-box ${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</div>
+                </td>
                 <td><input type="number" id="artwork-height-${uniqueId}" data-field="height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
                 <td><input type="number" id="artwork-width-${uniqueId}" data-field="width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
                 <td>
@@ -2433,7 +2458,9 @@
                     </select>
                 </td>
                 <td><textarea data-field="description" placeholder="Enter artwork description..." class="form-control ${!artwork.description ? 'empty-cell' : ''}" rows="2" style="resize: vertical; min-height: 40px;">${artwork.description || ''}</textarea></td>
-                <td contenteditable="true" data-field="type" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
+                <td>
+                    <div contenteditable="true" data-field="type" data-placeholder="Enter artwork type..." class="editable-box ${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</div>
+                </td>
                 <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
             `;
             row.querySelector('button').onclick = function() {
@@ -3114,6 +3141,8 @@ $(document).ready(function() {
         // Don't trigger if clicking on editable cells or other interactive elements
         if ($(e.target).hasClass('editable-cell') ||
             $(e.target).closest('.editable-cell').length > 0 ||
+            $(e.target).hasClass('editable-box') ||
+            $(e.target).closest('.editable-box').length > 0 ||
             $(e.target).is('input, select, button, a, textarea') ||
             $(e.target).closest('input, select, button, a, textarea').length > 0) {
             return;
@@ -4409,12 +4438,12 @@ $(document).ready(function() {
     $(document).on('click', '.delete-row-btn', function() {
         const row = $(this).closest('.new-artwork-row');
         const tempId = row.attr('data-temp-id');
-        
+
         // Remove from selectedNewRows if it was selected
         if (tempId && selectedNewRows.has(tempId)) {
             selectedNewRows.delete(tempId);
         }
-        
+
         row.remove();
 
         // Hide multiple drop zone if no more new rows
