@@ -52,39 +52,24 @@
     <!-- Template Galleries Section -->
     <div style="margin-bottom: 40px;">
         <h4 style="margin-bottom: 20px;">Template galleries</h4>
-        <div style="display: flex; gap: 24px;">
+        <div class="template-gallery-grid">
             @foreach($templateTours as $i => $gallery)
-                <div style="position: relative;">
+                <div class="template-gallery-card">
                     <img
+                        class="template-gallery-image"
                         src="{{ $gallery->getFirstMediaUrl('thumbnail') ?: asset('images/gallery_' . ($i > 1 ? 1 : ($i+1)) . '.png') }}"
-                        style="width:350px; border-radius:12px; cursor: pointer;"
                         onclick="goToTour({{ $gallery->id }})"
                     >
                     <!-- Plus Button -->
                     <button
+                        class="template-gallery-action"
                         onclick="handleGalleryButtonClick('{{ $gallery->name }}', {{ $gallery->id }}, {{ $gallery->isOwn ? 'true' : 'false' }})"
                         title="Add to company"
                         data-tour-id="{{ $gallery->id }}"
-                        style="
-                            position: absolute;
-                            top: 12px;
-                            right: 12px;
-                            width: 36px;
-                            height: 36px;
-                            border-radius: 50%;
-                            border: none;
-                            background: #fff;
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-size: 24px;
-                            cursor: pointer;
-                            z-index: 2;
-                        ">
+                    >
                         {{ $gallery->isOwn ? '✓' : '+' }}
                     </button>
-                    <div style="text-align:center; margin-top:8px;">{{ $gallery->name }}</div>
+                    <div class="template-gallery-name">{{ $gallery->name }}</div>
                 </div>
             @endforeach
         </div>
@@ -169,6 +154,61 @@
 }
 
 /* Remove the static first-child styles since we'll apply them dynamically */
+.template-gallery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.template-gallery-card {
+    position: relative;
+    flex: 0 0 320px;
+    max-width: 320px;
+}
+
+.template-gallery-image {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.template-gallery-action {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.template-gallery-name {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .template-gallery-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .template-gallery-image {
+        height: 180px;
+    }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
@@ -202,7 +242,7 @@ const faqs = [
     {
         question: 'Can I work with others in my company or invite collaborators?',
         answer: `Currently, accounts are created for individuals. If you want to collaborate with others in your organization, we’ll set up a company account for you and add your team members. Once your company account is active, you can assign users to projects and work together within shared galleries and layouts.`
-    },,
+    },
     {
         question: 'Can I share my completed gallery with others?',
         answer: `Yes! Once your artwork is placed, you can generate a shareable link. When sent to others, the link provides view-only access, allowing them to navigate through the tour and explore your artwork. However, they won’t be able to make any changes to the pieces or their placement.`
