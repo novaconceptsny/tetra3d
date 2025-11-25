@@ -122,14 +122,7 @@
             <tr>
                 <td style="text-align: center;">
                     @if($artwork['image'])
-                        @php
-                            // Convert relative URLs to absolute URLs for PDF
-                            $imageUrl = $artwork['image'];
-                            if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                                $imageUrl = url($imageUrl);
-                            }
-                        @endphp
-                        <img src="{{ $imageUrl }}" alt="Artwork" class="artwork-image">
+                        <img src="{{ $artwork['image'] }}" alt="Artwork" class="artwork-image">
                     @else
                         <div class="no-image">No Image</div>
                     @endif

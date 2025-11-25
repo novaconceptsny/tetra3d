@@ -1382,22 +1382,28 @@ class InventoryController extends Controller
         // Prepare data for PDF
         $pdfData = [];
         foreach ($artworks as $artwork) {
-
-            $imageUrl = '';
+            $imageSource = '';
             $media = $artwork->getFirstMedia('image');
             if ($media) {
-                // Get absolute URL for PDF
-                $imageUrl = $media->getUrl();
-                // Ensure it's an absolute URL
-                if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                    $imageUrl = url($imageUrl);
+                $mediaPath = $media->getPath();
+
+                if ($mediaPath && is_readable($mediaPath)) {
+                    $mimeType = $media->mime_type ?? (function_exists('mime_content_type') ? mime_content_type($mediaPath) : 'image/jpeg');
+                    $imageSource = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($mediaPath));
+                } else {
+                    // Fall back to absolute URL so the image still renders if DomPDF is configured to fetch remote assets
+                    $imageUrl = $media->getUrl();
+                    if (! filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                        $imageUrl = url($imageUrl);
+                    }
+                    $imageSource = $imageUrl;
                 }
             }
 
             $dimensions = $this->resolveArtworkDimensions($artwork);
 
             $pdfData[] = [
-                'image' => $imageUrl,
+                'image' => $imageSource,
                 'name' => $artwork->name ?? '',
                 'artist' => $artwork->artist ?? '',
                 'type' => $artwork->type ?? '',
