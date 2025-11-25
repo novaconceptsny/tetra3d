@@ -93,32 +93,7 @@
     <!-- FAQ / About Section -->
     <div>
         <h4>FAQ</h4>
-        <p><strong>How do I get started with my first project?</strong></p>
-        <p>
-            Once you’ve uploaded artwork and added gallery templates to your workspace or company, you can create your first project.
-            A project links your selected artworks and galleries in one place. Inside the project, you can start building layouts—each layout is a version of your gallery setup.
-            Layouts can be saved, duplicated, edited, and deleted, allowing you to experiment with different arrangements and compare your ideas easily.
-        </p>
-        <p><strong>
-            Do I need any special software or hardware to use Tetra3d?
-        </strong></p>
-        <p>
-            No, you don’t need any special software. Tetra3d is fully browser-based, so you can access and use it directly through your web browser without any additional software or hardware requirements.
-        </p>
-        <p><strong>
-            What are free template galleries, and how do I use them?
-        </strong></p>
-        <p>
-            At Nova, we've designed a variety of pre-built gallery tours that users can explore and personalize by adding their own artwork.
-            All available template galleries are listed on this page. You can browse through each gallery as a preview, and once you find one you like, simply add it to your company.
-            From there, you can use the template in your project.
-        </p>
-        <p><strong>
-            Is there a limit to the number of artworks I can display in a gallery?
-        </strong></p>
-        <p>
-            The only limitation is the available wall space within the gallery. You can place multiple pieces of artwork on a single surface, allowing for flexible arrangement and display options.
-        </p>
+        <div id="faqList"></div>
     </div>
 </div>
 
@@ -202,6 +177,59 @@
 var companies = @json($companies);
 var templateTours = @json($templateTours);
 console.log(templateTours);
+
+const faqs = [
+    {
+        question: 'How do I get started with my first project?',
+        answer: `Once you've uploaded artwork and added gallery templates to your workspace or company, you can create your first project. A project links your selected artworks and galleries in one place. Inside the project, you can start building layouts—each layout is a version of your gallery setup. Layouts can be saved, duplicated, edited, and deleted, allowing you to experiment with different arrangements and compare your ideas easily.`
+    },
+    {
+        question: 'Do I need any special software or hardware to use Tetra3d?',
+        answer: `No, you don't need any special software. Tetra3d is fully browser-based, so you can access and use it directly through your web browser without any additional software or hardware requirements.`
+    },
+    {
+        question: 'What are free template galleries, and how do I use them?',
+        answer: `At Nova, we've designed a variety of pre-built gallery tours that users can explore and personalize by adding their own artwork. All available template galleries are listed on this page. You can browse through each gallery as a preview, and once you find one you like, simply add it to your company. From there, you can use the template in your project.`
+    },
+    {
+        question: 'Is there a limit to the number of artworks I can display in a gallery?',
+        answer: `The only limitation is the available wall space within the gallery. You can place multiple pieces of artwork on a single surface, allowing for flexible arrangement and display options.`
+    },
+    {
+        question: 'Can I compare different gallery layouts?',
+        answer: `Absolutely! Within your project, you can easily duplicate a layout. Once you’ve created the duplicate, you can adjust the artwork on one or more surfaces to make comparisons. For a side-by-side view, simply open each layout in a separate tab and navigate through each gallery tour to compare the changes.`
+    },
+    {
+        question: 'Can I work with others in my company or invite collaborators?',
+        answer: `Currently, accounts are created for individuals. If you want to collaborate with others in your organization, we’ll set up a company account for you and add your team members. Once your company account is active, you can assign users to projects and work together within shared galleries and layouts.`
+    },,
+    {
+        question: 'Can I share my completed gallery with others?',
+        answer: `Yes! Once your artwork is placed, you can generate a shareable link. When sent to others, the link provides view-only access, allowing them to navigate through the tour and explore your artwork. However, they won’t be able to make any changes to the pieces or their placement.`
+    },
+    {
+        question: 'What file formats does Tetra3d support for images and 3D models?',
+        answer: `Tetra3d supports 2D images in JPEG or PNG format, with a maximum file size of 20MB. If you're interested in adding sculptures or 3D models to your gallery, please contact us at Nova for further assistance.`
+    },
+    {
+        question: 'What happens if I accidentally delete something in my gallery?',
+        answer: `If you delete a piece of artwork from a surface in your gallery, it will not be removed from your collection. It will still appear in your artwork inventory on the editor page. However, deleting a layout, project, collection, or artwork from the inventory page will permanently remove those items.`
+    }
+];
+
+function renderFaqs() {
+    const list = document.getElementById('faqList');
+    if (!list) return;
+
+    list.innerHTML = faqs.map(faq => `
+        <div class="faq-item" style="margin-bottom: 16px;">
+            <p><strong>${faq.question}</strong></p>
+            <p>${faq.answer}</p>
+        </div>
+    `).join('');
+}
+
+renderFaqs();
 
 function openAddCompanyModal(galleryName, tourId) {
     document.getElementById('addCompanyModal').style.display = 'flex';
