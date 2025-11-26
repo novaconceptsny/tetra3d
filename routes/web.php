@@ -88,6 +88,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/resource', 'ResourceController@index')->name('resource.index');
     Route::post('/resource/assign-tour-to-companies', 'ResourceController@assignTourToCompanies')->name('resource.assignTourToCompanies');
     Route::post('/resource/remove-gallery', 'ResourceController@removeGallery')->name('resource.removeGallery');
+    Route::post('/resource/videos/upload', 'ResourceController@uploadVideo')->name('resource.videos.upload');
+    Route::delete('/resource/videos/{id}', 'ResourceController@deleteVideo')->name('resource.videos.delete');
     
     Route::controller(Tour360Controller::class)->group(function () {
         Route::get('/tour-360', 'index')->name('tour-360.index');

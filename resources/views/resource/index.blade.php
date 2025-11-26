@@ -14,25 +14,45 @@
     <div style="margin-bottom: 40px;">
         <h4 class="section-title">Tutorials</h4>
         <div style="margin-bottom: 10px;"><strong>Tetra3D</strong></div>
-        <div style="display: flex; gap: 24px; margin-bottom: 32px;">
-            <div>
-                <div>Creating a Layout</div>
-                <img src="{{ asset('images/dashboard__bg.png') }}" style="width:200px; border-radius:8px;">
+        
+        @if(auth()->user() && auth()->user()->isSuperAdmin())
+            <!-- Upload Video Button (Super Admin Only) -->
+            <div style="margin-bottom: 16px;">
+                <button onclick="openUploadVideoModal()" style="background:#007bff; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;">
+                    + Upload Video
+                </button>
             </div>
-            <div>
-                <div>Adding artwork & sculptures</div>
-                <img src="{{ asset('images/dashboard__bg.png') }}" style="width:200px; border-radius:8px;">
-            </div>
-            <div>
-                <div>Uploading artwork</div>
-                <img src="{{ asset('images/dashboard__bg.png') }}" style="width:200px; border-radius:8px;">
-            </div>
-            <div>
-                <div>Sharing your layout</div>
-                <img src="{{ asset('images/dashboard__bg.png') }}" style="width:200px; border-radius:8px;">
-            </div>
+        @endif
+
+        <div id="tutorialVideosContainer" style="display: flex; gap: 24px; margin-bottom: 32px; flex-wrap: wrap;">
+            @forelse($tutorialVideos as $video)
+                <div class="tutorial-video-item" style="position: relative;">
+                    <div style="font-weight: 500; margin-bottom: 8px; font-size: 16px;">{{ $video->title }}</div>
+                    <div style="position: relative;">
+                        <video 
+                            controls 
+                            style="width: 380px; max-width: 100%; height: auto; border-radius:8px; background:#000;"
+                        >
+                            <source src="{{ $video->video_url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        @if(auth()->user() && auth()->user()->isSuperAdmin())
+                            <button 
+                                onclick="deleteVideo({{ $video->id }})" 
+                                class="video-delete-btn"
+                                style="position: absolute; top: 8px; right: 8px; background: rgba(211, 47, 47, 0.9); color: #fff; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center;"
+                                title="Delete video"
+                            >
+                                ×
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div style="color: #888; font-style: italic;">No tutorial videos available.</div>
+            @endforelse
         </div>
-        <div style="margin-bottom: 10px;"><strong>Curate2D</strong></div>
+        {{-- <div style="margin-bottom: 10px;"><strong>Curate2D</strong></div>
         <div style="display: flex; gap: 24px;">
             <div>
                 <div>Uploading an image</div>
@@ -46,7 +66,7 @@
                 <div>Adding artwork & sculptures</div>
                 <img src="{{ asset('images/dashboard__bg.png') }}" style="width:200px; border-radius:8px;">
             </div>
-        </div>
+        </div> --}}
     </div>
 
     <!-- Template Galleries Section -->
@@ -135,6 +155,32 @@
         </div>
     </div>
 </div>
+
+<!-- Upload Video Modal -->
+@if(auth()->user() && auth()->user()->isSuperAdmin())
+<div id="uploadVideoModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:30; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:32px; min-width:500px; max-width:600px; position:relative;">
+        <button onclick="closeUploadVideoModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+        <h5 style="margin-bottom:20px;">Upload Tutorial Video</h5>
+        <form id="uploadVideoForm" enctype="multipart/form-data">
+            @csrf
+            <div style="margin-bottom:16px;">
+                <label style="display:block; margin-bottom:8px; font-weight:500;">Video Title *</label>
+                <input type="text" id="videoTitle" name="title" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="display:block; margin-bottom:8px; font-weight:500;">Video File * (MP4, WebM, OGG, MOV, AVI - Max 100MB)</label>
+                <input type="file" id="videoFile" name="video" accept="video/*" required style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+            </div>
+            <div id="uploadVideoError" style="color:#d32f2f; margin-bottom:16px; display:none;"></div>
+            <div style="text-align: right; margin-top:16px;">
+                <button type="button" onclick="closeUploadVideoModal()" style="background:#888; color:#fff; border:none; padding:8px 16px; border-radius:4px; margin-right:8px;">Cancel</button>
+                <button type="submit" id="uploadVideoButton" style="background:#007bff; color:#fff; border:none; padding:8px 16px; border-radius:4px;">Upload</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
@@ -445,6 +491,93 @@ function handleRemoveGallery() {
 function goToTour(tourId) {
     window.open('/tours/' + tourId, '_blank');
 }
+
+@if(auth()->user() && auth()->user()->isSuperAdmin())
+// Video Upload Functions
+function openUploadVideoModal() {
+    document.getElementById('uploadVideoModal').style.display = 'flex';
+    document.getElementById('uploadVideoForm').reset();
+    document.getElementById('uploadVideoError').style.display = 'none';
+}
+
+function closeUploadVideoModal() {
+    document.getElementById('uploadVideoModal').style.display = 'none';
+    document.getElementById('uploadVideoForm').reset();
+    document.getElementById('uploadVideoError').style.display = 'none';
+}
+
+// Handle video upload form submission
+document.getElementById('uploadVideoForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('title', document.getElementById('videoTitle').value);
+    formData.append('video', document.getElementById('videoFile').files[0]);
+    
+    formData.append('_token', '{{ csrf_token() }}');
+    
+    const uploadButton = document.getElementById('uploadVideoButton');
+    uploadButton.disabled = true;
+    uploadButton.textContent = 'Uploading...';
+    
+    const errorDiv = document.getElementById('uploadVideoError');
+    errorDiv.style.display = 'none';
+    
+    fetch("{{ route('resource.videos.upload') }}", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(response => {
+        uploadButton.disabled = false;
+        uploadButton.textContent = 'Upload';
+        
+        if (response.success) {
+            closeUploadVideoModal();
+            window.location.reload();
+        } else {
+            errorDiv.textContent = response.error || 'Failed to upload video';
+            errorDiv.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        uploadButton.disabled = false;
+        uploadButton.textContent = 'Upload';
+        errorDiv.textContent = 'An error occurred while uploading the video';
+        errorDiv.style.display = 'block';
+        console.error('Error:', error);
+    });
+});
+
+// Delete video function
+function deleteVideo(videoId) {
+    if (!confirm('Are you sure you want to delete this video?')) {
+        return;
+    }
+    
+    const deleteUrl = "{{ url('/resource/videos') }}/" + videoId;
+    
+    fetch(deleteUrl, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        }
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            window.location.reload();
+        } else {
+            alert('Failed to delete video: ' + (response.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the video');
+    });
+}
+@endif
 
 $(document).ready(function() {
     $('#companySelect').select2();
