@@ -742,8 +742,8 @@ header#header nav .nav-container .menu-nav.applied-nav .profile .dropdown a {
 
 header#header nav .nav-container .menu-nav.applied-nav .profile .dropdown a.profile-menu-btn {
   border-radius: 50% !important;
-  width: 39px !important;
-  height: 39px !important;
+  width: 32px !important;
+  height: 32px !important;
   overflow: hidden;
   border: 2px solid #222436 !important;
 }
@@ -754,8 +754,8 @@ header#header nav .nav-container .menu-nav.applied-nav .profile .dropdown a.drop
 }
 
 header#header nav .nav-container .menu-nav.applied-nav .profile .dropdown a img {
-  width: 39px !important;
-  height: 39px !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 
 header#header nav .nav-container .menu-nav.applied-nav .profile .dropdown ul.dropdown-menu {

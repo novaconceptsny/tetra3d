@@ -13,11 +13,11 @@ header#header {
     background: #fff;
   z-index: 5 !important;
   border-bottom: 1px solid #C6C6C6;
-  min-height: 50px; // Ensure consistent minimum height
+  min-height: 40px; // Ensure consistent minimum height
   
   nav.navbar-light {
     background-color: $white-color;
-    min-height: 50px; // Ensure consistent minimum height for light navbar
+    min-height: 40px; // Ensure consistent minimum height for light navbar
     
     .navbar-collapse{
       .breadcrumb-div {
@@ -38,7 +38,7 @@ header#header {
           font-family: var(--main-font-family);
           font-style: normal;
           font-weight: var(--light-font);
-          font-size: 20px !important;
+          font-size: 16px !important;
           line-height: 1.2;
           color: #6c6c6c;
             &:not(:first-child){
@@ -91,7 +91,7 @@ header#header {
       justify-content: space-between;
       width: 100%;
       padding: 0;
-      min-height: 50px; // Ensure consistent minimum height for nav container
+      min-height: 40px; // Ensure consistent minimum height for nav container
       .navbar-brand {
         padding: 0;
           display: flex;
@@ -108,7 +108,7 @@ header#header {
           }
           span{
               font-family: var(--main-font-family);
-              font-size: 24px;
+              font-size: 18px;
               font-style: normal;
               font-weight: var(--light-font);
               line-height: normal;
@@ -120,7 +120,7 @@ header#header {
         align-items: center;
         justify-content: flex-start;
         height: 100% !important;
-        min-height: 50px; // Ensure consistent minimum height for navbar collapse
+        min-height: 40px; // Ensure consistent minimum height for navbar collapse
         .navbar-nav {
           &.link-nav{
           margin-left: 200px;
@@ -133,9 +133,9 @@ header#header {
             height: 100%;
             .nav-link {
               height: 100%;
-              padding: 12px 0;
+              padding: 8px 0;
                 font-family: var(--main-font-family);
-                font-size: 19px;
+                font-size: 16px;
                 font-style: normal;
                 font-weight: var(--light-font);
                 line-height: normal;
@@ -337,8 +337,8 @@ header#header {
                   margin-left: -10px;
                 }
                 img{
-                  width: 50px !important;
-                  height: 39px !important;
+                  width: 32px !important;
+                  height: 32px !important;
                   border-radius: 50% !important;
                 }
               }
@@ -427,6 +427,122 @@ header#header {
                       font-size: 14px;
                       line-height: 22px;
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      .menu-nav.applied-nav {
+        .profile {
+          display: flex;
+          align-items: center;
+          gap: 13px;
+          position: relative;
+
+          .dropdown {
+            padding: 0;
+            a {
+              font-family: var(--main-font-family);
+              font-style: normal;
+              font-weight: var(--regular-font);
+              font-size: 16px !important;
+              line-height: 22px;
+              &.dropdown-toggle::after {
+                font-size: 25px;
+                margin-left: -10px;
+              }
+              &.profile-menu-btn {
+                border-radius: 50% !important;
+                width: 32px !important;
+                height: 32px !important;
+                overflow: hidden;
+                border: 2px solid #222436 !important;
+              }
+              img {
+                width: 32px !important;
+                height: 32px !important;
+              }
+            }
+            ul.dropdown-menu {
+              margin-top: 0;
+              width: 230px;
+              position: absolute;
+              inset: calc(100% + 6px) 0 auto auto;
+              padding: 10px;
+              background: #fff;
+              box-shadow: 0 0 35px rgba(0, 0, 0, 0.15);
+              border-radius: 0;
+              z-index: 20 !important;
+
+              .drop-profile {
+                padding: 10px 0 8px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 4px;
+                margin-bottom: 16px;
+                border-bottom: 1px solid #000;
+
+                img {
+                  margin-right: 10px;
+                }
+
+                .user-detail {
+                  h6 {
+                    font-family: var(--main-font-family);
+                    font-style: normal;
+                    font-weight: var(--semibold-font);
+                    font-size: 18px;
+                    line-height: 20px;
+                    color: $black-color;
+                    margin-bottom: 0px;
+                    width: 115px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                  }
+                  p {
+                    font-family: var(--main-font-family);
+                    font-style: normal;
+                    font-weight: var(--regular-font);
+                    font-size: 14px;
+                    line-height: 18px;
+                    color: $black-color;
+                    margin: 0px;
+                    width: 115px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                  }
+                }
+              }
+              .link {
+                padding-left: 20px;
+
+                li {
+                  &:hover {
+                    background: #e9ecef;
+                  }
+
+                  a {
+                    text-decoration: none;
+                    color: $dark-color;
+                    i {
+                      font-size: 24px;
+                      color: $dark-color;
+                    }
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 5px 3px;
+                    font-family: var(--main-font-family);
+                    font-style: normal;
+                    font-weight: var(--regular-font);
+                    font-size: 14px;
+                    line-height: 22px;
                   }
                 }
               }
