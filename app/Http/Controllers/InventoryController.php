@@ -96,24 +96,28 @@ class InventoryController extends Controller
         $orderBy = $columns[$orderColumn] ?? 'id'; // Default to ID if column not found
 
         // Base query - remove global scope to avoid ambiguity when joining tables
-        $query = Artwork::withoutGlobalScope('forCurrentCompany')
+        $baseQuery = Artwork::withoutGlobalScope('forCurrentCompany')
             ->with('collection', 'company')
             ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at', 'artworks.updated_at']);
 
         // Filter by collection if provided
         if ($request->has('collection_id') && $request->collection_id) {
-            $query->where('artworks.artwork_collection_id', $request->collection_id);
+            $baseQuery->where('artworks.artwork_collection_id', $request->collection_id);
         }
 
         // For non-super admin users, ensure we're only getting artworks from their company
         // This needs to be done before any joins to avoid ambiguity
         if (!user()->isSuperAdmin()) {
-            $query->where('artworks.company_id', user()->company_id);
+            $baseQuery->where('artworks.company_id', user()->company_id);
         }
 
-        // Apply search filter
+        // Total records (before search filter)
+        $totalRecords = (clone $baseQuery)->count();
+
+        // Apply search filter to cloned query
+        $filteredQuery = clone $baseQuery;
         if (! empty($searchValue)) {
-            $query->where(function ($q) use ($searchValue) {
+            $filteredQuery->where(function ($q) use ($searchValue) {
                 $q->where('artworks.name', 'like', "%{$searchValue}%")
                     ->orWhere('artworks.artist', 'like', "%{$searchValue}%")
                     ->orWhere('artworks.type', 'like', "%{$searchValue}%")
@@ -126,8 +130,8 @@ class InventoryController extends Controller
             });
         }
 
-        // Get total records count (before pagination)
-        $totalRecords = $query->count();
+        // Count after search filter
+        $totalFilteredRecords = (clone $filteredQuery)->count();
 
         // Apply ordering (skip if orderBy is null for non-orderable columns)
         if ($orderBy === null) {
@@ -135,26 +139,26 @@ class InventoryController extends Controller
         }
         
         if ($orderBy === 'company') {
-            $query->leftJoin('companies', 'artworks.company_id', '=', 'companies.id')
+            $filteredQuery->leftJoin('companies', 'artworks.company_id', '=', 'companies.id')
                 ->orderBy('companies.name', $orderDir);
         } elseif ($orderBy === 'collection') {
-            $query->leftJoin('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
+            $filteredQuery->leftJoin('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
                 ->orderBy('artwork_collections.name', $orderDir);
         } elseif ($orderBy === 'height') {
             // Sort by height from JSON field, handling both numeric and string values
-            $query->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.height')), '0') AS DECIMAL(10,2)) {$orderDir}");
+            $filteredQuery->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.height')), '0') AS DECIMAL(10,2)) {$orderDir}");
         } elseif ($orderBy === 'width') {
             // Sort by width from JSON field, handling both numeric and string values
-            $query->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.width')), '0') AS DECIMAL(10,2)) {$orderDir}");
+            $filteredQuery->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.width')), '0') AS DECIMAL(10,2)) {$orderDir}");
         } elseif ($orderBy === 'unit') {
             // Sort by unit from JSON field, handling NULL values
-            $query->orderByRaw("COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.unit')), '') {$orderDir}");
+            $filteredQuery->orderByRaw("COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.unit')), '') {$orderDir}");
         } else {
-            $query->orderBy($orderBy, $orderDir);
+            $filteredQuery->orderBy($orderBy, $orderDir);
         }
 
         // Apply pagination
-        $artworks = $query->skip($start)->take($length)->get();
+        $artworks = $filteredQuery->skip($start)->take($length)->get();
 
         // Transform data for DataTables
         $data = $artworks->map(function ($artwork) {
@@ -186,7 +190,7 @@ class InventoryController extends Controller
         return response()->json([
             'draw'            => intval($draw),
             'recordsTotal'    => $totalRecords,
-            'recordsFiltered' => $totalRecords, // Same as total since we're not doing separate filtered count
+            'recordsFiltered' => $totalFilteredRecords,
             'data'            => $data,
         ]);
         

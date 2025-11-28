@@ -3045,6 +3045,7 @@ $(document).ready(function() {
 
     // Search toggle functionality
     var currentSearchType = 'artwork';
+    var searchDebounceTimer = null;
 
     $('.search-toggle-btn').on('click', function() {
         var searchType = $(this).data('type');
@@ -3070,19 +3071,29 @@ $(document).ready(function() {
         console.log('Search type changed to:', searchType);
     });
 
-    // Custom search functionality
-    $('#tableSearch').on('keyup', function() {
+    // Helper to execute searches and always reset pagination
+    function executeInventorySearch(value) {
+        table.search(value || '');
+        table.page('first').draw('page'); // ensure server queries from start
+    }
+
+    // Custom search functionality with debounce
+    $('#tableSearch').on('input', function() {
         var searchValue = this.value;
 
-        // Apply search based on current type
-        if (currentSearchType === 'artwork') {
-            // Search in artwork table
-            table.search(searchValue).draw();
-        } else {
-            // For collections, we might need to implement different logic
-            // For now, still search in the main table but could be extended
-            table.search(searchValue).draw();
+        if (searchDebounceTimer) {
+            clearTimeout(searchDebounceTimer);
         }
+
+        searchDebounceTimer = setTimeout(function() {
+            // Apply search based on current type
+            if (currentSearchType === 'artwork') {
+                executeInventorySearch(searchValue);
+            } else {
+                // For collections, reuse main table search for now
+                executeInventorySearch(searchValue);
+            }
+        }, 200);
     });
 
     // Custom length functionality
