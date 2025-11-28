@@ -64,7 +64,10 @@
                             <x-error field="email"/>
                         </div>
                         <div class="form-group login-custum-form-group">
-                            <label for="password">{{ __('Password') }}</label>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label for="password" class="mb-0">{{ __('Password') }}</label>
+                                <small class="password-requirement-text">Your password must be at least 9 characters.</small>
+                            </div>
                             <div class="password-input-wrapper">
                                 <input
                                     placeholder="Password"
@@ -238,6 +241,14 @@
 .form-control.is-invalid:focus {
     border-color: #dc3545;
     box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+}
+
+/* Password requirement text styling */
+.password-requirement-text {
+    color: #ff69b4;
+    font-size: 0.875em;
+    font-weight: 500;
+    margin-left: auto;
 }
 </style>
 
