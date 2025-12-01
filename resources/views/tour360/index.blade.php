@@ -998,6 +998,12 @@
 
         // Function to handle image file processing
         function handleImageFile(file, uploadBox, inputElement, nameElement) {
+            // Immediately set the file in the input element so it's available for upload
+            // even if the user doesn't click "Edit"
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            inputElement.files = dataTransfer.files;
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = document.createElement('img');
