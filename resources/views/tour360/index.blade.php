@@ -9,37 +9,28 @@
                 <div class="card search-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <div class="search-container flex-grow-1 me-3">
+                            <div class="search-container flex-grow-1">
                                 <div class="input-group">
-                                    <span class="input-group-text">
+                                    <select class="form-select search-category-dropdown" id="searchCategory" style="max-width: 110px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                                        <option value="all">All</option>
+                                        @if(auth()->user() && auth()->user()->isSuperAdmin())
+                                            <option value="companies">Companies</option>
+                                        @endif
+                                        <option value="projects">Projects</option>
+                                        <option value="tours">Tours</option>
+                                        <option value="layouts">Layouts</option>
+                                    </select>
+                                    <span class="input-group-text" style="border-left: 0; border-right: 0;">
                                         <i class="fas fa-search"></i>
                                     </span>
                                     <input type="text"
                                            class="form-control search-input global-search-input"
-                                           placeholder="Search all layouts, tours, and projects..."
+                                           placeholder="Search..."
                                            id="globalSearchInput"
-                                           style="min-width: 300px;">
-                                    <button class="btn btn-outline-secondary" type="button" id="clearGlobalSearch">
+                                           style="min-width: 300px; border-left: 0;">
+                                    <button class="btn btn-outline-secondary" type="button" id="clearGlobalSearch" style="border-left: 0;">
                                         <i class="fas fa-times"></i>
                                     </button>
-                                </div>
-                            </div>
-                            <div class="search-filters">
-                                <div class="btn-group" role="group">
-                                    <input type="checkbox" class="btn-check" id="searchLayouts" >
-                                    <label class="btn btn-outline-primary btn-sm" for="searchLayouts">
-                                        <i class="fas fa-cube me-1"></i>Layouts
-                                    </label>
-
-                                    <input type="checkbox" class="btn-check" id="searchTours" >
-                                    <label class="btn btn-outline-primary btn-sm" for="searchTours">
-                                        <i class="fas fa-map me-1"></i>Tours
-                                    </label>
-
-                                    <input type="checkbox" class="btn-check" id="searchProjects" >
-                                    <label class="btn btn-outline-primary btn-sm" for="searchProjects">
-                                        <i class="fas fa-folder me-1"></i>Projects
-                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -131,11 +122,15 @@
             <div class="projects-section">
                 @if($companies->count() > 0)
                     @foreach($companies as $company)
-                        <div class="company-section mb-5">
+                        <div class="company-section mb-5" data-company-id="{{ $company->id }}" data-company-name="{{ $company->name }}">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5>
                                     @if(str_contains($company->name, 'My Workspace'))
-                                        My workspace
+                                        @if(auth()->user() && auth()->user()->isSuperAdmin())
+                                            My workspace_{{ $company->id }}
+                                        @else
+                                            My workspace
+                                        @endif
                                     @else
                                         {{ $company->name }}
                                     @endif
@@ -191,7 +186,7 @@
                                                     <div class="rounded img-home p-2 d-flex justify-content-center align-items-center" >
                                                         <img src="{{ $project->background_url }}" class="card-img-top img-fluid" alt="{{ $project->title }}">
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="card-body px-2">
                                                         <div class="d-flex justify-content-between align-items-start mb-2 flex-grow-1">
                                                             <p class="card-text mb-0">
                                                                 <span>{{ $project->name }}</span>
@@ -480,6 +475,26 @@
 
         .__cropro_  {
             position: fixed !important;
+        }
+
+        /* Amazon-style search dropdown */
+        .search-category-dropdown {
+            background-color: #f3f3f3;
+            border: 1px solid #ddd;
+            border-right: none;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+        }
+
+        .search-category-dropdown:focus {
+            background-color: #fff;
+            border-color: #099F9A;
+            box-shadow: 0 0 0 0.2rem rgba(9, 159, 154, 0.25);
+        }
+
+        .input-group .search-category-dropdown + .input-group-text {
+            border-left: 1px solid #ddd;
         }
 
     </style>
@@ -771,6 +786,10 @@
                 // Update section title for editing
                 document.querySelector('.create-project-section .modal-title').textContent = 'Edit project';
 
+                // Populate company name field
+                inlineCompanyInput.value = data.company?.name || '';
+                createProjectSection.dataset.companyId = data.project.company_id;
+
                 // Populate form with existing data from the server response
                 document.getElementById('inlineProjectNameInput').value = data.project.name;
                 document.getElementById('inlineUnits').value = data.project.unit || 'metric';
@@ -979,6 +998,12 @@
 
         // Function to handle image file processing
         function handleImageFile(file, uploadBox, inputElement, nameElement) {
+            // Immediately set the file in the input element so it's available for upload
+            // even if the user doesn't click "Edit"
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            inputElement.files = dataTransfer.files;
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = document.createElement('img');
@@ -1397,10 +1422,8 @@
             const searchResultsContainer = document.getElementById('searchResultsContainer');
             const clearGlobalSearchBtn = document.getElementById('clearGlobalSearch');
 
-            // Search filters
-            const searchLayoutsCheckbox = document.getElementById('searchLayouts');
-            const searchToursCheckbox = document.getElementById('searchTours');
-            const searchProjectsCheckbox = document.getElementById('searchProjects');
+            // Search category dropdown
+            const searchCategoryDropdown = document.getElementById('searchCategory');
 
             let searchTimeout;
 
@@ -1413,9 +1436,10 @@
 
                 const results = [];
                 const term = searchTerm.toLowerCase().trim();
+                const selectedCategory = searchCategoryDropdown.value;
 
-                // Search in favorites (layouts)
-                if (searchLayoutsCheckbox.checked) {
+                // Search in layouts
+                if (selectedCategory === 'all' || selectedCategory === 'layouts') {
                     // Search through all layouts from server data
                     allLayouts.forEach(layout => {
                         const layoutName = layout.name || '';
@@ -1448,7 +1472,7 @@
                 }
 
                 // Search in projects
-                if (searchProjectsCheckbox.checked) {
+                if (selectedCategory === 'all' || selectedCategory === 'projects') {
                     const projectCards = document.querySelectorAll('.layout-item .card[data-project-id]');
                     projectCards.forEach(card => {
                         const projectName = card.querySelector('.card-text span')?.textContent || '';
@@ -1475,8 +1499,8 @@
                     });
                 }
 
-                // Search in tours (if available in the DOM)
-                if (searchToursCheckbox.checked) {
+                // Search in tours
+                if (selectedCategory === 'all' || selectedCategory === 'tours') {
                     // Search through all tours from server data
                     allTours.forEach(tour => {
                         const tourName = tour.name || '';
@@ -1495,6 +1519,27 @@
                                 action: `window.location.href='/tours/${tour.id}'`,
                                 element: null, // Not in DOM, so null
                                 companyName: companyName
+                            });
+                        }
+                    });
+                }
+
+                // Search in companies (only for super admin)
+                if (selectedCategory === 'all' || selectedCategory === 'companies') {
+                    // Search through companies from the DOM
+                    const companySections = document.querySelectorAll('.company-section');
+                    companySections.forEach(section => {
+                        const companyName = section.getAttribute('data-company-name') || section.querySelector('h5')?.textContent.trim() || '';
+                        const companyId = section.getAttribute('data-company-id') || '';
+                        
+                        if (companyName.toLowerCase().includes(term)) {
+                            results.push({
+                                type: 'company',
+                                id: companyId,
+                                title: companyName,
+                                subtitle: 'Company',
+                                action: `scrollToCompanySection('${companyId}')`,
+                                element: section
                             });
                         }
                     });
@@ -1577,9 +1622,26 @@
                     case 'layout': return 'fa-cube';
                     case 'tour': return 'fa-map';
                     case 'project': return 'fa-folder';
+                    case 'company': return 'fa-building';
                     default: return 'fa-file';
                 }
             }
+
+            // Update placeholder based on selected category
+            function updatePlaceholder() {
+                const selectedCategory = searchCategoryDropdown.value;
+                const placeholders = {
+                    'all': 'Search all layouts, tours, and projects...',
+                    'companies': 'Search companies...',
+                    'projects': 'Search projects...',
+                    'tours': 'Search tours...',
+                    'layouts': 'Search layouts...'
+                };
+                globalSearchInput.placeholder = placeholders[selectedCategory] || 'Search...';
+            }
+
+            // Set initial placeholder
+            updatePlaceholder();
 
             // Global search event listeners
             globalSearchInput.addEventListener('input', function() {
@@ -1598,13 +1660,12 @@
                 globalSearchInput.focus();
             });
 
-            // Search filter change events
-            [searchLayoutsCheckbox, searchToursCheckbox, searchProjectsCheckbox].forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    if (globalSearchInput.value.trim()) {
-                        performGlobalSearch(globalSearchInput.value);
-                    }
-                });
+            // Search category dropdown change event
+            searchCategoryDropdown.addEventListener('change', function() {
+                updatePlaceholder();
+                if (globalSearchInput.value.trim()) {
+                    performGlobalSearch(globalSearchInput.value);
+                }
             });
 
             // Global keyboard shortcuts
@@ -1785,6 +1846,20 @@
             }
         });
         @endif
+
+        // Function to scroll to company section
+        function scrollToCompanySection(companyId) {
+            const companySection = document.querySelector(`[data-company-id="${companyId}"]`);
+            if (companySection) {
+                companySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a highlight effect
+                companySection.style.transition = 'box-shadow 0.3s ease';
+                companySection.style.boxShadow = '0 0 20px rgba(9, 159, 154, 0.5)';
+                setTimeout(() => {
+                    companySection.style.boxShadow = '';
+                }, 2000);
+            }
+        }
 
         // Function to toggle layout favorite status from search results
         function toggleLayoutFavorite(layoutId, buttonElement) {

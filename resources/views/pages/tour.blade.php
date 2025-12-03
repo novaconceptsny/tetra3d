@@ -114,6 +114,13 @@
             visibility: visible !important;
         }
     }
+    
+    /* Hide the rotate notification for phone */
+    #landscapePrompt,
+    .landscape-prompt {
+        display: none !important;
+        visibility: hidden !important;
+    }
   
 </style>
 @endsection
@@ -252,7 +259,7 @@
                                     </div>
                                 </div>
                                 <div class="link">
-                                    @can('access-backend')
+                                    @if(auth()->user() && auth()->user()->isSuperAdmin())
                                         <li>
                                             <a class="dropdown-item" href="{{ route('backend.dashboard') }}"
                                                 target="_blank">
@@ -260,7 +267,7 @@
                                                 {{ __('Admin Area') }}
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endif
                                     @if(session()->has('admin_id'))
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0);"
@@ -454,7 +461,10 @@
         });
         window.addEventListener("orientationchange", () => {
             console.log("🔃 orientationchange fired");
-            setTimeout(doResize, 300);
+            // Reload page on orientation change
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
         });
     }
 
@@ -1252,30 +1262,30 @@
         });
     });
 
-    // Landscape Orientation Prompt Functionality
-    function checkOrientation() {
-        const landscapePrompt = document.getElementById('landscapePrompt');
-        if (!landscapePrompt) return;
+    // Landscape Orientation Prompt Functionality - DISABLED
+    // function checkOrientation() {
+    //     const landscapePrompt = document.getElementById('landscapePrompt');
+    //     if (!landscapePrompt) return;
 
-        const isMobile = window.innerWidth <= 767;
-        const isPortrait = window.innerHeight > window.innerWidth;
+    //     const isMobile = window.innerWidth <= 767;
+    //     const isPortrait = window.innerHeight > window.innerWidth;
 
-        if (isMobile && isPortrait) {
-            landscapePrompt.classList.remove('hidden');
-        } else {
-            landscapePrompt.classList.add('hidden');
-        }
-    }
+    //     if (isMobile && isPortrait) {
+    //         landscapePrompt.classList.remove('hidden');
+    //     } else {
+    //         landscapePrompt.classList.add('hidden');
+    //     }
+    // }
 
-    // Check orientation on page load
-    document.addEventListener('DOMContentLoaded', checkOrientation);
+    // // Check orientation on page load
+    // document.addEventListener('DOMContentLoaded', checkOrientation);
 
-    // Check orientation on window resize and orientation change
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', () => {
-        // Add a small delay to ensure the orientation change is complete
-        setTimeout(checkOrientation, 100);
-    });
+    // // Check orientation on window resize and orientation change
+    // window.addEventListener('resize', checkOrientation);
+    // window.addEventListener('orientationchange', () => {
+    //     // Add a small delay to ensure the orientation change is complete
+    //     setTimeout(checkOrientation, 100);
+    // });
 
     // Button click functions
     function toggleShare() {
@@ -1318,6 +1328,26 @@
             alert('You must be logged in to access the tracker.');
         @endauth
     }
+
+    // Additional orientation detection using window dimensions as backup
+    let lastOrientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
+    
+    function checkOrientationChange() {
+        const currentOrientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
+        if (currentOrientation !== lastOrientation) {
+            console.log("🔄 Orientation changed from " + lastOrientation + " to " + currentOrientation);
+            lastOrientation = currentOrientation;
+            // Reload page on orientation change
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
+        }
+    }
+    
+    // Check orientation on resize as backup for orientationchange event
+    window.addEventListener('resize', () => {
+        setTimeout(checkOrientationChange, 200);
+    });
 
 </script>
 @endsection

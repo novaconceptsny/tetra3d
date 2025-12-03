@@ -5,7 +5,9 @@ use App\Models\Company;
 use App\Models\CompanyTour;
 use App\Models\ProjectTour;
 use App\Models\Tour;
+use App\Models\TutorialVideo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ResourceController extends Controller
 {
@@ -22,11 +24,12 @@ class ResourceController extends Controller
         }
 
         $templateTours = $this->getTemplateTours();
+        $tutorialVideos = TutorialVideo::orderBy('order')->get();
 
         // Optionally, you can remove the old $galleryIsBelongToCompany if not needed
         // $galleryIsBelongToCompany = CompanyTour::where('tour_id', $templateTours[0]->id)->get();
 
-        return view('resource.index', compact('companies', 'templateTours'));
+        return view('resource.index', compact('companies', 'templateTours', 'tutorialVideos'));
     }
 
     /**
@@ -167,6 +170,101 @@ class ResourceController extends Controller
                 'success' => false,
                 'error' => $e->getMessage()
             ]);
+        }
+    }
+
+    /**
+     * Upload a tutorial video (super admin only)
+     */
+    public function uploadVideo(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            
+            if (!$user || !$user->isSuperAdmin()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Unauthorized. Only super admins can upload videos.'
+                ], 403);
+            }
+
+            $request->validate([
+                'video' => 'required|file|mimes:mp4,webm,ogg,mov,avi|max:102400', // 100MB max
+                'title' => 'required|string|max:255',
+            ]);
+
+            // Store video
+            $videoPath = $request->file('video')->store('tutorial-videos', 'public');
+            $videoUrl = '/storage/' . $videoPath;
+
+            // Get the highest order value
+            $maxOrder = TutorialVideo::max('order') ?? 0;
+
+            // Create video record
+            $video = TutorialVideo::create([
+                'title' => $request->title,
+                'video_path' => $videoUrl,
+                'order' => $maxOrder + 1,
+            ]);
+
+            $tutorialVideos = TutorialVideo::orderBy('order')->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Video uploaded successfully',
+                'video' => $video,
+                'videos' => $tutorialVideos
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('uploadVideo error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete a tutorial video (super admin only)
+     */
+    public function deleteVideo(Request $request, $id)
+    {
+        try {
+            $user = auth()->user();
+            
+            if (!$user || !$user->isSuperAdmin()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Unauthorized. Only super admins can delete videos.'
+                ], 403);
+            }
+
+            $video = TutorialVideo::findOrFail($id);
+
+            // Delete video file
+            $videoFilePath = str_replace('/storage/', '', $video->video_path);
+            if (Storage::disk('public')->exists($videoFilePath)) {
+                Storage::disk('public')->delete($videoFilePath);
+            }
+
+            // Delete database record
+            $video->delete();
+
+            $tutorialVideos = TutorialVideo::orderBy('order')->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Video deleted successfully',
+                'videos' => $tutorialVideos
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('deleteVideo error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

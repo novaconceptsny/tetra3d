@@ -14,7 +14,7 @@ class ArtworkInfo extends Modal
     {
         $this->artworkId = $artworkId;
         if ($this->artworkId) {
-            $this->artwork = Artwork::find($this->artworkId);
+            $this->artwork = Artwork::with('collection')->find($this->artworkId);
         }
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Company;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -56,61 +57,67 @@ class InventoryController extends Controller
             $start       = $request->input('start', 0);
             $length      = $request->input('length', 10);
             $searchValue = $request->input('search.value', '');
-            $orderColumn = $request->input('order.0.column', user()->isSuperAdmin() ? 10 : 9); // Default to description column
+            $orderColumn = $request->input('order.0.column', 0); // Default to artwork ID column
             $orderDir    = $request->input('order.0.dir', 'desc');
 
-        // Column mapping for ordering
+        // Column mapping for ordering (accounting for hidden ID column at position 0)
         $columns = [
-            0  => 'id',         // Checkbox column
-            1  => 'image',      // Image column (not orderable)
-            2  => 'company',    // Company (only for super admin)
-            3  => 'collection', // Collection
-            4  => 'name',       // Name
-            5  => 'artist',     // Artist
-            6  => 'type',       // Type
-            7  => 'height',     // Height
-            8  => 'width',      // Width
-            9  => 'unit',       // Unit
-            10 => 'description', // Description
+            0  => 'id',         // Hidden ID column (orderable)
+            1  => null,         // Checkbox column (not orderable)
+            2  => null,         // Image column (not orderable)
+            3  => 'company',    // Company (only for super admin)
+            4  => 'collection', // Collection
+            5  => 'name',       // Name
+            6  => 'artist',     // Artist
+            7  => 'type',       // Type
+            8  => 'height',     // Height
+            9  => 'width',      // Width
+            10 => 'unit',       // Unit
+            11 => 'description', // Description
         ];
 
         // Adjust column mapping if user is not super admin
         if (! user()->isSuperAdmin()) {
             $columns = [
-                0 => 'id',         // Checkbox column
-                1 => 'image',      // Image column (not orderable)
-                2 => 'collection', // Collection
-                3 => 'name',       // Name
-                4 => 'artist',     // Artist
-                5 => 'type',       // Type
-                6 => 'height',     // Height
-                7 => 'width',      // Width
-                8 => 'unit',       // Unit
-                9 => 'description', // Description
+                0 => 'id',         // Hidden ID column (orderable)
+                1 => null,         // Checkbox column (not orderable)
+                2 => null,         // Image column (not orderable)
+                3 => 'collection', // Collection
+                4 => 'name',       // Name
+                5 => 'artist',     // Artist
+                6 => 'type',       // Type
+                7 => 'height',     // Height
+                8 => 'width',      // Width
+                9 => 'unit',       // Unit
+                10 => 'description', // Description
             ];
         }
 
-        $orderBy = $columns[$orderColumn] ?? 'updated_at';
+        $orderBy = $columns[$orderColumn] ?? 'id'; // Default to ID if column not found
 
         // Base query - remove global scope to avoid ambiguity when joining tables
-        $query = Artwork::withoutGlobalScope('forCurrentCompany')
+        $baseQuery = Artwork::withoutGlobalScope('forCurrentCompany')
             ->with('collection', 'company')
             ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at', 'artworks.updated_at']);
 
         // Filter by collection if provided
         if ($request->has('collection_id') && $request->collection_id) {
-            $query->where('artworks.artwork_collection_id', $request->collection_id);
+            $baseQuery->where('artworks.artwork_collection_id', $request->collection_id);
         }
 
         // For non-super admin users, ensure we're only getting artworks from their company
         // This needs to be done before any joins to avoid ambiguity
         if (!user()->isSuperAdmin()) {
-            $query->where('artworks.company_id', user()->company_id);
+            $baseQuery->where('artworks.company_id', user()->company_id);
         }
 
-        // Apply search filter
+        // Total records (before search filter)
+        $totalRecords = (clone $baseQuery)->count();
+
+        // Apply search filter to cloned query
+        $filteredQuery = clone $baseQuery;
         if (! empty($searchValue)) {
-            $query->where(function ($q) use ($searchValue) {
+            $filteredQuery->where(function ($q) use ($searchValue) {
                 $q->where('artworks.name', 'like', "%{$searchValue}%")
                     ->orWhere('artworks.artist', 'like', "%{$searchValue}%")
                     ->orWhere('artworks.type', 'like', "%{$searchValue}%")
@@ -123,31 +130,35 @@ class InventoryController extends Controller
             });
         }
 
-        // Get total records count (before pagination)
-        $totalRecords = $query->count();
+        // Count after search filter
+        $totalFilteredRecords = (clone $filteredQuery)->count();
 
-        // Apply ordering
+        // Apply ordering (skip if orderBy is null for non-orderable columns)
+        if ($orderBy === null) {
+            $orderBy = 'id'; // Fallback to ID if column is not orderable
+        }
+        
         if ($orderBy === 'company') {
-            $query->leftJoin('companies', 'artworks.company_id', '=', 'companies.id')
+            $filteredQuery->leftJoin('companies', 'artworks.company_id', '=', 'companies.id')
                 ->orderBy('companies.name', $orderDir);
         } elseif ($orderBy === 'collection') {
-            $query->leftJoin('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
+            $filteredQuery->leftJoin('artwork_collections', 'artworks.artwork_collection_id', '=', 'artwork_collections.id')
                 ->orderBy('artwork_collections.name', $orderDir);
         } elseif ($orderBy === 'height') {
             // Sort by height from JSON field, handling both numeric and string values
-            $query->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.height')), '0') AS DECIMAL(10,2)) {$orderDir}");
+            $filteredQuery->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.height')), '0') AS DECIMAL(10,2)) {$orderDir}");
         } elseif ($orderBy === 'width') {
             // Sort by width from JSON field, handling both numeric and string values
-            $query->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.width')), '0') AS DECIMAL(10,2)) {$orderDir}");
+            $filteredQuery->orderByRaw("CAST(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.width')), '0') AS DECIMAL(10,2)) {$orderDir}");
         } elseif ($orderBy === 'unit') {
             // Sort by unit from JSON field, handling NULL values
-            $query->orderByRaw("COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.unit')), '') {$orderDir}");
+            $filteredQuery->orderByRaw("COALESCE(JSON_UNQUOTE(JSON_EXTRACT(original_value, '$.unit')), '') {$orderDir}");
         } else {
-            $query->orderBy($orderBy, $orderDir);
+            $filteredQuery->orderBy($orderBy, $orderDir);
         }
 
         // Apply pagination
-        $artworks = $query->skip($start)->take($length)->get();
+        $artworks = $filteredQuery->skip($start)->take($length)->get();
 
         // Transform data for DataTables
         $data = $artworks->map(function ($artwork) {
@@ -179,7 +190,7 @@ class InventoryController extends Controller
         return response()->json([
             'draw'            => intval($draw),
             'recordsTotal'    => $totalRecords,
-            'recordsFiltered' => $totalRecords, // Same as total since we're not doing separate filtered count
+            'recordsFiltered' => $totalFilteredRecords,
             'data'            => $data,
         ]);
         
@@ -268,10 +279,10 @@ class InventoryController extends Controller
         $filesToZip = [];
 
         foreach ($artworks as $artwork) {
-            // Access original_value as SchemalessAttributes object
-            $height = $artwork->original_value->height ?? '';
-            $width  = $artwork->original_value->width ?? '';
-            $unit   = $artwork->original_value->unit ?? ($artwork->original_unit ?: 'cm');
+            $dimensions = $this->resolveArtworkDimensions($artwork);
+            $height = $dimensions['height'];
+            $width = $dimensions['width'];
+            $unit = $dimensions['unit'];
 
             $imageFileName = '';
             $media = $artwork->getFirstMedia('image');
@@ -1229,6 +1240,12 @@ class InventoryController extends Controller
 
             if ($request->has('collection') && ! empty($request->input('collection'))) {
                 $updateData['artwork_collection_id'] = $request->input('collection');
+                
+                // Update company_id to match the collection's company
+                $collection = ArtworkCollection::find($request->input('collection'));
+                if ($collection && $collection->company_id) {
+                    $updateData['company_id'] = $collection->company_id;
+                }
             }
 
             // Handle dimensions update
@@ -1310,6 +1327,161 @@ class InventoryController extends Controller
                 'message' => 'Error updating items: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function exportPdf(Request $request)
+    {
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '1024M');
+
+        $collectionId = $request->input('collection_id');
+        $searchValue  = $request->input('q');
+
+        // Build artworks query similar to getData()
+        $query = Artwork::with('collection', 'company', 'media')
+            ->select(['artworks.id', 'artworks.name', 'artworks.artist', 'artworks.type', 'artworks.description', 'artworks.data', 'artworks.original_unit', 'artworks.original_value', 'artworks.artwork_collection_id', 'artworks.company_id', 'artworks.created_at']);
+
+        if ($collectionId) {
+            $query->where('artworks.artwork_collection_id', $collectionId);
+        }
+
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('artworks.name', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.artist', 'like', "%{$searchValue}%")
+                    ->orWhere('artworks.type', 'like', "%{$searchValue}%")
+                    ->orWhereHas('collection', function ($subQuery) use ($searchValue) {
+                        $subQuery->where('name', 'like', "%{$searchValue}%");
+                    })
+                    ->orWhereHas('company', function ($subQuery) use ($searchValue) {
+                        $subQuery->where('name', 'like', "%{$searchValue}%");
+                    });
+            });
+        }
+
+        // For non-super admin, scope to their company
+        if (! user()->isSuperAdmin()) {
+            $query->where('artworks.company_id', user()->company_id);
+        }
+
+        $artworks = $query->orderBy('artworks.updated_at', 'desc')->get();
+
+        // Generate custom filename
+        $baseName = $this->generateExportFilename($collectionId, $artworks);
+
+        // Get collection name for PDF title
+        $collectionName = 'All Collections';
+        if ($collectionId) {
+            $collection = ArtworkCollection::find($collectionId);
+            if ($collection) {
+                $collectionName = $collection->name;
+            }
+        } elseif ($artworks->isNotEmpty()) {
+            $firstArtwork = $artworks->first();
+            if ($firstArtwork && $firstArtwork->collection) {
+                $collectionName = $firstArtwork->collection->name;
+            }
+        }
+
+        // Prepare data for PDF
+        $pdfData = [];
+        foreach ($artworks as $artwork) {
+            $imageSource = '';
+            $media = $artwork->getFirstMedia('image');
+            if ($media) {
+                $mediaPath = $media->getPath();
+
+                if ($mediaPath && is_readable($mediaPath)) {
+                    $mimeType = $media->mime_type ?? (function_exists('mime_content_type') ? mime_content_type($mediaPath) : 'image/jpeg');
+                    $imageSource = 'data:' . $mimeType . ';base64,' . base64_encode(file_get_contents($mediaPath));
+                } else {
+                    // Fall back to absolute URL so the image still renders if DomPDF is configured to fetch remote assets
+                    $imageUrl = $media->getUrl();
+                    if (! filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                        $imageUrl = url($imageUrl);
+                    }
+                    $imageSource = $imageUrl;
+                }
+            }
+
+            $dimensions = $this->resolveArtworkDimensions($artwork);
+
+            $pdfData[] = [
+                'image' => $imageSource,
+                'name' => $artwork->name ?? '',
+                'artist' => $artwork->artist ?? '',
+                'type' => $artwork->type ?? '',
+                'height' => $dimensions['height'],
+                'width' => $dimensions['width'],
+                'unit' => $dimensions['unit'],
+                'description' => $artwork->description ?? '',
+                'collection' => $artwork->collection->name ?? '',
+                'company' => auth()->user()->isSuperAdmin() ? ($artwork->company->name ?? '') : '',
+            ];
+        }
+
+        // Use dompdf if available, otherwise fallback to HTML download
+        try {
+            $pdf = Pdf::loadView('inventory.pdf', [
+                'artworks' => $pdfData,
+                'collectionName' => $collectionName,
+                'isSuperAdmin' => auth()->user()->isSuperAdmin(),
+            ]);
+            return $pdf->download($baseName . '.pdf');
+        } catch (\Exception $e) {
+            // Fallback: Create HTML view that can be printed as PDF
+            // User can use browser's print to PDF feature
+            return view('inventory.pdf', [
+                'artworks' => $pdfData,
+                'collectionName' => $collectionName,
+                'isSuperAdmin' => auth()->user()->isSuperAdmin(),
+            ]);
+        }
+    }
+
+    /**
+     * Ensure we always have meaningful height/width values when exporting/downloading.
+     */
+    private function resolveArtworkDimensions(Artwork $artwork): array
+    {
+        $originalValue = optional($artwork->original_value);
+        $data = optional($artwork->data);
+
+        $height = $originalValue->height;
+        $width = $originalValue->width;
+        $unit = $originalValue->unit ?? $artwork->original_unit;
+
+        $heightInch = $data->height_inch;
+        $widthInch = $data->width_inch;
+
+        if (! $unit) {
+            $unit = ($heightInch || $widthInch) ? 'inch' : 'cm';
+        }
+
+        if (($height === null || $height === '') && $heightInch !== null && $heightInch !== '') {
+            $height = $this->convertDimensionFromInches($heightInch, $unit);
+        }
+
+        if (($width === null || $width === '') && $widthInch !== null && $widthInch !== '') {
+            $width = $this->convertDimensionFromInches($widthInch, $unit);
+        }
+
+        return [
+            'height' => ($height === null || $height === '') ? '0' : $height,
+            'width' => ($width === null || $width === '') ? '0' : $width,
+            'unit' => $unit,
+        ];
+    }
+
+    private function convertDimensionFromInches($value, string $unit)
+    {
+        $numericValue = (float) $value;
+
+        if ($unit === 'cm') {
+            return round($numericValue * 2.54, 2);
+        }
+
+        return round($numericValue, 2);
     }
 
     /**

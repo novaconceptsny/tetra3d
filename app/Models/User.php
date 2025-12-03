@@ -102,7 +102,21 @@ class User extends Authenticatable implements HasMedia
         $role = $this->roles->first();
 
         return Attribute::make(
-            get: fn() => $role ? $role->display_name : '-'
+            get: function() use ($role) {
+                if ($role) {
+                    return $role->display_name;
+                }
+                
+                // Check if user is a workspace user (company name starts with "My Workspace")
+                if ($this->company && (
+                    $this->company->name === 'My Workspace' || 
+                    strpos($this->company->name, 'My Workspace_') === 0
+                )) {
+                    return 'Individual';
+                }
+                
+                return '-';
+            }
         );
     }
 

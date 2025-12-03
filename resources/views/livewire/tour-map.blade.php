@@ -18,11 +18,11 @@
                 @php
                     $parameters = [
                         $tour,
-                         'layout_id' => $layoutId,
-                         'shared' => Route::is('shared-tours.show'),
-                         'shared_tour_id' => $shared_tour_id ?? null
-                    ]
-               @endphp
+                        'layout_id' => $layoutId,
+                        'shared' => $isShared,
+                        'shared_tour_id' => $shared_tour_id ?? null,
+                    ];
+                @endphp
                 @foreach($selectedMap->spots as $spot)
                     <a href="{{ route('tours.show', array_merge($parameters, ['spot_id' => $spot->id]) )}}">
                         <div class="pin {{ $spot->id == $spot_id ? 'selected' : '' }}" top="{{ $spot->pivot->y }}" left="{{ $spot->pivot->x }}"

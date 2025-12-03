@@ -122,14 +122,20 @@ class SculptureController extends Controller
             'artwork_collection_id'
         ]));
 
-        $sculpture->addFromMediaLibraryRequest($request->sculpture->sculpture)
-            ->toMediaCollection('sculpture');
+        if ($request->has('sculpture') && $request->sculpture) {
+            $sculpture->addFromMediaLibraryRequest($request->sculpture)
+                ->toMediaCollection('sculpture');
+        }
 
-        $sculpture->addFromMediaLibraryRequest($request->sculpture->interaction)
-            ->toMediaCollection('interaction');
+        if ($request->has('interaction') && $request->interaction) {
+            $sculpture->addFromMediaLibraryRequest($request->interaction)
+                ->toMediaCollection('interaction');
+        }
 
-        $sculpture->addFromMediaLibraryRequest($request->sculpture->thumbnail)
-            ->toMediaCollection('thumbnail');
+        if ($request->has('thumbnail') && $request->thumbnail) {
+            $sculpture->addFromMediaLibraryRequest($request->thumbnail)
+                ->toMediaCollection('thumbnail');
+        }
 
         $sculpture->refresh();
 

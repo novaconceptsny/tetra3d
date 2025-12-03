@@ -134,6 +134,7 @@
                                                     <option value="100">100</option>
                                                 </select>
                                             </div>
+                                            @if(!auth()->user()->isSuperAdmin())
                                             <div class="d-flex align-items-center">
                                                 <!-- Main Artwork Button -->
                                                 <button class="btn d-flex align-items-center gap-2" type="button" id="addArtworkBtn" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; border-radius: 8px 0 0 8px; padding: 4px 16px; font-weight: 500; font-size: 14px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
@@ -152,6 +153,7 @@
                                                     </ul>
                                                 </div>
                                             </div>
+                                            @endif
 
                                                                                     <!-- Bulk Edit Controls -->
                                             <div id="bulkEditControls" style="display: none;">
@@ -206,6 +208,7 @@
                                                 </button>
 
                                                 <!-- Upload Multiple Button -->
+                                                @if(!auth()->user()->isSuperAdmin())
                                                 <button class="btn icon-button" type="button" id="uploadMultipleBtn"
                                                         data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
@@ -213,6 +216,7 @@
                                                         onclick="handleOpenUploadArtworks()"> >
                                                     <i class="fas fa-upload" style="color: #495057;"></i>
                                                 </button>
+                                                @endif
 
                                                 <!-- Delete Button -->
                                                 <button class="btn icon-button" type="button" id="deleteArtworkBtn"
@@ -230,6 +234,7 @@
                                             <table id="inventoryTable" class="table table-striped table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
+                                                        <th style="display: none;">ID</th>
                                                         <th><input type="checkbox" id="selectAll" class="form-check-input"></th>
                                                         <th>Image</th>
                                                         @if(auth()->user()->isSuperAdmin())
@@ -266,12 +271,17 @@
                                 </button>
                             </div>
 
+                            <div class="row mb-2">
+                                <div class="col md-6 d-flex align-items-center justify-content-between">
+                                    <label class="form-label mb-0" style="font-size: 0.875rem;">Upload spreadsheet</label>
+                                    <label class="form-label mb-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="cursor: pointer; font-size: 0.875rem;">Download spreadsheet template</label>
+                                </div>
+                                <div class="col md-6 d-flex align-items-center">
+                                    <label class="form-label mb-0" style="font-size: 0.875rem;">Upload image files</label>
+                                </div>
+                            </div>
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <label class="form-label">Upload spreadsheet</label>
-                                        <button class="btn btn-light border-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="background-color: #f8f9fa; color: #28a745; font-weight: 500; padding: 12px 24px; border-radius: 6px;">Download spreadsheet template</button>
-                                    </div>
                                     <div class="upload-box" id="spreadsheet-upload">
                                         <span id="spreadsheet-upload-text">Drag & drop a file here<br>or choose .csv, .xlsx, .xls file</span>
                                         <div id="spreadsheet-progress" style="display: none;">
@@ -285,7 +295,6 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Upload image files</label>
                                     <div class="upload-box" id="image-upload">
                                         <span id="image-upload-text">Drag & drop a file here<br>or choose .png, .jpg, .jpeg files</span>
                                         <div id="image-progress" style="display: none;">
@@ -312,22 +321,24 @@
                             <!-- Artworks Table -->
                             <div class="table-responsive mb-3">
 
-                                @if(auth()->user()->isSuperAdmin())
+                                <!-- @if(auth()->user()->isSuperAdmin())
                                 Company
                                 <select id="masterCompanyDropdown" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;">
                                     @foreach($companies as $company)
                                         <option value="{{$company->id}}">{{$company->name}}</option>
                                     @endforeach
                                 </select>
-                                @endif
+                                @endif -->
 
-                                Collection
-                                <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;" size="1">
-                                    @foreach($collections as $collection)
-                                        <option value="{{$collection->id}}">{{$collection->name}}</option>
-                                    @endforeach
-                                </select>
-                            
+                                <div class="d-flex align-items-center justify-content-center" style="background-color: #f5f5f5;">
+                                    Collection :
+                                    <select id="masterCollectionHeader" class="form-select" style="width: auto; display: inline-block; margin-left: 8px;" size="1">
+                                        @foreach($collections as $collection)
+                                            <option value="{{$collection->id}}">{{$collection->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                                 <!-- Top Pagination Controls -->
                                 <div id="pagination-controls-top" style="display: none;" class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -557,65 +568,91 @@
     <!-- Bulk Edit Modal -->
     <div class="modal fade" id="bulkEditModal" tabindex="-1" aria-labelledby="bulkEditModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bulkEditModalLabel">Edit information for selected pieces</h5>
+            <div class="modal-content" style="border-radius: 12px; border: 1px solid #e0e0e0;">
+                <div class="modal-header" style="background: #f8f9fa; border-bottom: 1px solid #dee2e6; border-radius: 12px 12px 0 0;">
+                    <h5 class="modal-title" id="bulkEditModalLabel" style="font-weight: 600; color: #495057;">Edit Multiple Artworks</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 0px">
                     <form id="bulkEditForm">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="bulkCollection" class="form-label">Collection</label>
-                                    <select class="form-select" id="bulkCollection" name="collection">
-                                        <option value="">-- Keep existing --</option>
-                                        @foreach($collections as $collection)
-                                            <option value="{{ $collection->id }}">{{ $collection->name }}</option>
-                                        @endforeach
-                                    </select>
+                        <div style="background-color: #f5f5f5">
+                            <div style="padding: 24px 24px 12px 24px;">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p style="font-size: 0.9em; color: #495057; margin-bottom: 16px;">
+                                            Entering information into the boxes below will update all selected artwork pieces. Leave the boxes blank to keep existing values unchanged.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="bulkArtist" class="form-label">Artist</label>
-                                    <input type="text" class="form-control" id="bulkArtist" name="artist" placeholder="Enter artist name">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkHeight" class="form-label">Height</label>
-                                    <input type="number" class="form-control" id="bulkHeight" name="height" placeholder="Enter height">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkUnit" class="form-label">Unit</label>
-                                    <select class="form-select" id="bulkUnit" name="unit">
-                                        <option value="">-- Keep existing --</option>
-                                        <option value="cm">cm</option>
-                                        <option value="inch">inch</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="bulkTitle" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="bulkTitle" name="name" placeholder="Enter title">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkDescription" class="form-label">Description</label>
-                                    <textarea class="form-control" id="bulkDescription" name="description" rows="3" placeholder="Enter description"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkWidth" class="form-label">Width</label>
-                                    <input type="number" class="form-control" id="bulkWidth" name="width" placeholder="Enter width">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bulkType" class="form-label">Type</label>
-                                    <input type="text" class="form-control" id="bulkType" name="type" placeholder="Enter artwork type">
+
+                                <!-- Form fields section with pale grey background -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @if(auth()->user()->isSuperAdmin())
+                                            <div class="mb-3">
+                                                <label for="bulkCompany" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Company</label>
+                                                <select class="form-select" id="bulkCompany" name="company" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                    <option value="">-- Keep existing --</option>
+                                                    @foreach($companies as $company)
+                                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="bulkCollection" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Collection</label>
+                                            <select class="form-select" id="bulkCollection" name="collection" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                <option value="">-- Keep existing --</option>
+                                                @foreach($collections as $collection)
+                                                    <option value="{{ $collection->id }}">{{ $collection->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkArtist" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Artist</label>
+                                            <input type="text" class="form-control" id="bulkArtist" name="artist" placeholder="Enter artist name" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkHeight" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Height</label>
+                                            <input type="number" class="form-control" id="bulkHeight" name="height" placeholder="Enter height" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkUnit" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Unit</label>
+                                            <select class="form-select" id="bulkUnit" name="unit" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                                <option value="">-- Keep existing --</option>
+                                                <option value="cm">cm</option>
+                                                <option value="inch">inch</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="bulkTitle" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Title</label>
+                                            <input type="text" class="form-control" id="bulkTitle" name="name" placeholder="Enter title" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkType" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Type</label>
+                                            <input type="text" class="form-control" id="bulkType" name="type" placeholder="Enter artwork type" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkWidth" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Width</label>
+                                            <input type="number" class="form-control" id="bulkWidth" name="width" placeholder="Enter width" step="0.01" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="bulkDescription" class="form-label" style="font-weight: 500; font-size: 1em; color: #495057;">Description</label>
+                                            <textarea class="form-control" id="bulkDescription" name="description" rows="5" placeholder="Enter description" style="border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="bulkUpdateBtn">Update Selected Items</button>
+                <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 16px 24px;">
+                    <button type="button" class="btn btn-success" id="bulkUpdateBtn" style="background: #099F9A; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; color: white;">Update Selected</button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="background: #dc3545; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; color: white; margin-right: 10px;">Cancel</button>
                 </div>
             </div>
         </div>
@@ -630,13 +667,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    @if(auth()->user()->isSuperAdmin())
+                    <div class="mb-3">
+                        <label for="moveCompanySelect" class="form-label">Select Company</label>
+                        <select class="form-select" id="moveCompanySelect" name="company" required>
+                            <option value="">Select company</option>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
                     <div class="mb-3">
                         <label for="moveCollectionSelect" class="form-label">Select Collection</label>
-                        <select class="form-select" id="moveCollectionSelect" name="collection">
+                        <select class="form-select" id="moveCollectionSelect" name="collection" required>
                             <option value="">Select collection</option>
-                            @foreach($collections as $collection)
-                                <option value="{{ $collection->id }}">{{ $collection->name }}</option>
-                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -652,7 +697,7 @@
     <template id="newArtworkRowTemplate">
         <tr class="new-artwork-row" data-temp-id="">
             <td>
-                <input type="checkbox" class="form-check-input">
+                <input type="checkbox" class="form-check-input new-row-checkbox">
             </td>
             <td>
                 <div class="drag-drop-area" style="width: 40px; height: 40px; border: 2px dashed #dee2e6; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #f8f9fa;">
@@ -817,6 +862,36 @@
         </div>
     </div>
 
+    <!-- Download Format Selection Modal -->
+    <div class="modal fade" id="downloadFormatModal" tabindex="-1" aria-labelledby="downloadFormatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="downloadFormatModalLabel">
+                        <i class="fas fa-download me-2"></i>Select Download Format
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-4">Choose how you would like to download the inventory:</p>
+                    <div class="d-flex flex-column gap-3">
+                        <button type="button" class="btn btn-outline-primary btn-lg download-format-btn" data-format="pdf">
+                            <i class="fas fa-file-pdf me-2"></i>Download as PDF
+                            <small class="d-block mt-1 text-muted">Table format with thumbnail images</small>
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-lg download-format-btn" data-format="spreadsheet">
+                            <i class="fas fa-file-excel me-2"></i>Download as Spreadsheet (ZIP)
+                            <small class="d-block mt-1 text-muted">CSV file with images in a ZIP archive</small>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Continue Upload Confirmation Modal -->
     <div class="modal fade" id="continueUploadModal" tabindex="-1" aria-labelledby="continueUploadModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -874,7 +949,7 @@
                                 <div class="detail-item mb-2">
                                     <strong>Collection:</strong> <span id="artworkDetailCollection">-</span>
                                 </div>
-                                <div class="detail-item mb-2">
+                                <div class="detail-item mb-2 d-none">
                                     <strong>Company:</strong> <span id="artworkDetailCompany">-</span>
                                 </div>
                                 <div class="detail-item mb-2">
@@ -906,6 +981,75 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/css/vendor/dataTables.bootstrap4.css') }}">
 <link href="{{ asset('css/page/inventory.css') }}" rel="stylesheet">
 
+<style>
+    /* Pale grey placeholder text for all input fields in modals */
+    .modal input::placeholder,
+    .modal textarea::placeholder {
+        color: #b3b3b3 !important;
+        opacity: 1;
+    }
+
+    /* Pale grey text for select dropdowns when no option is selected (empty value) */
+    .modal select option[value=""] {
+        color: #b3b3b3 !important;
+    }
+
+    /* Pale grey text for select dropdowns when they have empty/default placeholder option selected */
+    .modal select:invalid,
+    .modal select option:first-child {
+        color: #b3b3b3 !important;
+    }
+
+    /* Ensure select shows pale grey when empty value is selected */
+    .modal select option:checked[value=""] {
+        color: #b3b3b3 !important;
+    }
+
+    /* For select elements, make the displayed text pale grey when empty option is selected */
+    .modal select.form-select option[value=""]:checked,
+    .modal select.form-control option[value=""]:checked {
+        color: #b3b3b3 !important;
+    }
+
+    /* Additional styling to ensure empty selects show pale grey text */
+    .modal select:has(option[value=""]:checked) {
+        color: #b3b3b3 !important;
+    }
+
+    /* Fallback for browsers that don't support :has() - use JavaScript-friendly approach */
+    .modal select.empty-select {
+        color: #b3b3b3 !important;
+    }
+
+    /* Ensure consistent font sizing within the inventory table */
+    #inventoryTable,
+    #inventoryTable th,
+    #inventoryTable td {
+        font-size: 14px !important;
+    }
+
+    /* Inline editable boxes mimic input height */
+    .editable-box {
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 8px;
+        min-height: 38px;
+        line-height: 1.2;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .editable-box:focus {
+        outline: none;
+        border-color: #099F9A;
+        box-shadow: 0 0 0 2px rgba(9, 159, 154, 0.2);
+        background-color: #fff;
+    }
+</style>
+
 @endsection
 
 
@@ -933,6 +1077,39 @@
 
     const isSuperAdmin = @json(auth()->user()->isSuperAdmin());
 
+    // Function to update select dropdown styling based on value
+    function updateSelectStyling(selectElement) {
+        if (!selectElement) return;
+        if (selectElement.value === '' || selectElement.value === null) {
+            selectElement.classList.add('empty-select');
+        } else {
+            selectElement.classList.remove('empty-select');
+        }
+    }
+
+    // Function to initialize select styling for all selects in a modal
+    function initializeModalSelectStyling(modalElement) {
+        if (!modalElement) return;
+        const selects = modalElement.querySelectorAll('select');
+        selects.forEach(select => {
+            updateSelectStyling(select);
+            // Add change event listener
+            select.addEventListener('change', function() {
+                updateSelectStyling(this);
+            });
+        });
+    }
+
+    // Attach event listeners to all modals when they are shown
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all modals
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function() {
+                initializeModalSelectStyling(this);
+            });
+        });
+    });
 
     let uploadedSpreadsheetData = null;
     let uploadedImageFiles = [];
@@ -1051,13 +1228,13 @@
         // Update the artwork object in memory
         if (artwork) {
             artwork[field] = value;
-            
+
             // Update the corresponding item in allArtworksData
             const artworkIndex = allArtworksData.findIndex(a => a.id === artwork.id || a.filename === artwork.filename);
             if (artworkIndex !== -1) {
                 allArtworksData[artworkIndex][field] = value;
             }
-            
+
             // Optional: Show a visual indicator that the field was saved
             console.log(`Saved ${field}: ${value} for artwork ${artwork.filename || artwork.id}`);
         }
@@ -1656,7 +1833,7 @@
             const endIndex = Math.min(startIndex + artworksPerPage, allArtworksData.length);
             document.getElementById('submitProgressText').textContent = `Preparing artworks ${startIndex + 1}-${endIndex} for upload...`;
             document.getElementById('submitProgressBar').style.width = '25%';
-            
+
             // Get collection name from master collection header dropdown
             const masterCollectionSelect = document.getElementById('masterCollectionHeader');
             const collectionName = masterCollectionSelect.options[masterCollectionSelect.selectedIndex].text;
@@ -2266,8 +2443,12 @@
             row.innerHTML = `
                 <td><img src="${artwork.imageSrc}" data-filename="${artwork.filename}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"></td>
 
-                <td contenteditable="true" data-field="title" data-placeholder="Enter title..." class="${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</td>
-                <td contenteditable="true" data-field="artist" data-placeholder="Enter artist name..." class="${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</td>
+                <td>
+                    <div contenteditable="true" data-field="title" data-placeholder="Enter title..." class="editable-box ${!artwork.title ? 'empty-cell' : ''}">${artwork.title || ''}</div>
+                </td>
+                <td>
+                    <div contenteditable="true" data-field="artist" data-placeholder="Enter artist name..." class="editable-box ${!artwork.artist ? 'empty-cell' : ''}">${artwork.artist || ''}</div>
+                </td>
                 <td><input type="number" id="artwork-height-${uniqueId}" data-field="height" class="form-control ${!artwork.height ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.height || ''}" /></td>
                 <td><input type="number" id="artwork-width-${uniqueId}" data-field="width" class="form-control ${!artwork.width ? 'empty-cell' : ''}" style="width: 100px; min-width: 60px;" value="${artwork.width || ''}" /></td>
                 <td>
@@ -2277,7 +2458,9 @@
                     </select>
                 </td>
                 <td><textarea data-field="description" placeholder="Enter artwork description..." class="form-control ${!artwork.description ? 'empty-cell' : ''}" rows="2" style="resize: vertical; min-height: 40px;">${artwork.description || ''}</textarea></td>
-                <td contenteditable="true" data-field="type" data-placeholder="Enter artwork type..." class="${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</td>
+                <td>
+                    <div contenteditable="true" data-field="type" data-placeholder="Enter artwork type..." class="editable-box ${!artwork.type ? 'empty-cell' : ''}">${artwork.type || ''}</div>
+                </td>
                 <td><button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td>
             `;
             row.querySelector('button').onclick = function() {
@@ -2296,14 +2479,14 @@
                         this.classList.add('empty-cell');
                     }
                 });
-                
+
                 // Save data on blur (when user finishes editing)
                 cell.addEventListener('blur', function() {
                     const field = this.getAttribute('data-field');
                     const value = this.textContent.trim();
                     saveArtworkField(artwork, field, value);
                 });
-                
+
                 // Save data on Enter key press
                 cell.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
@@ -2322,14 +2505,14 @@
                         this.classList.add('empty-cell');
                     }
                 });
-                
+
                 // Save data on blur
                 input.addEventListener('blur', function() {
                     const field = this.getAttribute('data-field');
                     const value = this.value.trim();
                     saveArtworkField(artwork, field, value);
                 });
-                
+
                 // Save data on Enter key press
                 input.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
@@ -2347,7 +2530,7 @@
                     } else {
                         this.classList.add('empty-cell');
                     }
-                    
+
                     // Save data immediately on change
                     const field = this.getAttribute('data-field');
                     const value = this.value;
@@ -2365,7 +2548,7 @@
                         this.classList.add('empty-cell');
                     }
                 });
-                
+
                 // Save data on blur
                 textarea.addEventListener('blur', function() {
                     const field = this.getAttribute('data-field');
@@ -2647,6 +2830,11 @@ $(document).ready(function() {
         },
         columns: [
             {
+                data: 'id',
+                orderable: true,
+                visible: false  // Hidden column for sorting by ID
+            },
+            {
                 data: null,
                 orderable: false,
                 render: function(data, type, row) {
@@ -2719,7 +2907,7 @@ $(document).ready(function() {
             }
         ],
 
-        order: [{{ auth()->user()->isSuperAdmin() ? '10' : '9' }}, 'desc'], // Sort by description desc
+        order: [[0, 'desc']], // Sort by artwork ID desc
         pageLength: 25,
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         responsive: true,
@@ -2857,6 +3045,7 @@ $(document).ready(function() {
 
     // Search toggle functionality
     var currentSearchType = 'artwork';
+    var searchDebounceTimer = null;
 
     $('.search-toggle-btn').on('click', function() {
         var searchType = $(this).data('type');
@@ -2882,19 +3071,29 @@ $(document).ready(function() {
         console.log('Search type changed to:', searchType);
     });
 
-    // Custom search functionality
-    $('#tableSearch').on('keyup', function() {
+    // Helper to execute searches and always reset pagination
+    function executeInventorySearch(value) {
+        table.search(value || '');
+        table.page('first').draw('page'); // ensure server queries from start
+    }
+
+    // Custom search functionality with debounce
+    $('#tableSearch').on('input', function() {
         var searchValue = this.value;
 
-        // Apply search based on current type
-        if (currentSearchType === 'artwork') {
-            // Search in artwork table
-            table.search(searchValue).draw();
-        } else {
-            // For collections, we might need to implement different logic
-            // For now, still search in the main table but could be extended
-            table.search(searchValue).draw();
+        if (searchDebounceTimer) {
+            clearTimeout(searchDebounceTimer);
         }
+
+        searchDebounceTimer = setTimeout(function() {
+            // Apply search based on current type
+            if (currentSearchType === 'artwork') {
+                executeInventorySearch(searchValue);
+            } else {
+                // For collections, reuse main table search for now
+                executeInventorySearch(searchValue);
+            }
+        }, 200);
     });
 
     // Custom length functionality
@@ -2903,7 +3102,8 @@ $(document).ready(function() {
     });
 
     // Bulk edit functionality
-    var selectedRows = new Set();
+    var selectedRows = new Set(); // For existing rows (with IDs)
+    var selectedNewRows = new Set(); // For new rows (with temp IDs)
     var bulkEditControls = $('#bulkEditControls');
     var bulkEditBtn = $('#bulkEditBtn');
     var selectedCount = $('#selectedCount');
@@ -2911,7 +3111,7 @@ $(document).ready(function() {
     var bulkUpdateBtn = $('#bulkUpdateBtn');
     var selectAllCheckbox = $('#selectAll');
 
-    // Handle individual checkbox changes
+    // Handle individual checkbox changes for existing rows
     $(document).on('change', '.row-checkbox', function() {
         var rowId = $(this).data('id');
         var isChecked = $(this).is(':checked');
@@ -2929,21 +3129,43 @@ $(document).ready(function() {
         updateSelectAllState();
     });
 
+    // Handle individual checkbox changes for new rows
+    $(document).on('change', '.new-row-checkbox', function() {
+        var row = $(this).closest('.new-artwork-row');
+        var tempId = row.attr('data-temp-id');
+        var isChecked = $(this).is(':checked');
+
+        if (isChecked) {
+            selectedNewRows.add(tempId);
+            row.addClass('selected-row');
+        } else {
+            selectedNewRows.delete(tempId);
+            row.removeClass('selected-row');
+        }
+
+        updateBulkEditUI();
+        updateSelectAllState();
+    });
+
     // Make entire row clickable for checkbox selection
     $(document).on('click', '#inventoryTable tbody tr', function(e) {
         // Don't trigger if clicking on editable cells or other interactive elements
         if ($(e.target).hasClass('editable-cell') ||
             $(e.target).closest('.editable-cell').length > 0 ||
+            $(e.target).hasClass('editable-box') ||
+            $(e.target).closest('.editable-box').length > 0 ||
             $(e.target).is('input, select, button, a, textarea') ||
             $(e.target).closest('input, select, button, a, textarea').length > 0) {
             return;
         }
 
-        var checkbox = $(this).find('.row-checkbox');
-        var rowId = checkbox.data('id');
         var row = $(this);
+        var checkbox = row.find('.row-checkbox');
+        var newCheckbox = row.find('.new-row-checkbox');
 
+        // Handle existing rows
         if (checkbox.length > 0) {
+            var rowId = checkbox.data('id');
             checkbox.prop('checked', !checkbox.prop('checked'));
 
             if (checkbox.prop('checked')) {
@@ -2957,20 +3179,42 @@ $(document).ready(function() {
             updateBulkEditUI();
             updateSelectAllState();
         }
+        // Handle new rows
+        else if (newCheckbox.length > 0) {
+            var tempId = row.attr('data-temp-id');
+            newCheckbox.prop('checked', !newCheckbox.prop('checked'));
+
+            if (newCheckbox.prop('checked')) {
+                selectedNewRows.add(tempId);
+                row.addClass('selected-row');
+            } else {
+                selectedNewRows.delete(tempId);
+                row.removeClass('selected-row');
+            }
+
+            updateBulkEditUI();
+            updateSelectAllState();
+        }
     });
 
     // Handle select all checkbox
     selectAllCheckbox.on('change', function() {
         var isChecked = $(this).is(':checked');
-        $('.row-checkbox').prop('checked', isChecked);
+        $('.row-checkbox, .new-row-checkbox').prop('checked', isChecked);
 
         if (isChecked) {
             $('.row-checkbox').each(function() {
                 selectedRows.add($(this).data('id'));
                 $(this).closest('tr').addClass('selected-row');
             });
+            $('.new-row-checkbox').each(function() {
+                var tempId = $(this).closest('.new-artwork-row').attr('data-temp-id');
+                selectedNewRows.add(tempId);
+                $(this).closest('tr').addClass('selected-row');
+            });
         } else {
             selectedRows.clear();
+            selectedNewRows.clear();
             $('#inventoryTable tbody tr').removeClass('selected-row');
         }
 
@@ -2979,7 +3223,7 @@ $(document).ready(function() {
 
     // Update bulk edit UI visibility
     function updateBulkEditUI() {
-        var count = selectedRows.size;
+        var count = selectedRows.size + selectedNewRows.size;
         selectedCount.text(count + ' item' + (count !== 1 ? 's' : '') + ' selected');
 
         if (count > 0) {
@@ -3004,8 +3248,8 @@ $(document).ready(function() {
 
     // Update select all checkbox state
     function updateSelectAllState() {
-        var totalCheckboxes = $('.row-checkbox').length;
-        var checkedCheckboxes = $('.row-checkbox:checked').length;
+        var totalCheckboxes = $('.row-checkbox, .new-row-checkbox').length;
+        var checkedCheckboxes = $('.row-checkbox:checked, .new-row-checkbox:checked').length;
 
         if (checkedCheckboxes === 0) {
             selectAllCheckbox.prop('indeterminate', false).prop('checked', false);
@@ -3018,7 +3262,7 @@ $(document).ready(function() {
 
     // Open bulk edit modal
     bulkEditBtn.on('click', function() {
-        if (selectedRows.size === 0) {
+        if (selectedRows.size === 0 && selectedNewRows.size === 0) {
             alert('Please select at least one item to edit.');
             return;
         }
@@ -3028,9 +3272,11 @@ $(document).ready(function() {
     // Handle bulk update
     bulkUpdateBtn.on('click', function() {
         var formData = $('#bulkEditForm').serialize();
+        var formDataObj = Object.fromEntries(new URLSearchParams(formData));
         var selectedIds = Array.from(selectedRows);
+        var selectedNewRowIds = Array.from(selectedNewRows);
 
-        if (selectedIds.length === 0) {
+        if (selectedIds.length === 0 && selectedNewRowIds.length === 0) {
             alert('No items selected.');
             return;
         }
@@ -3038,38 +3284,162 @@ $(document).ready(function() {
         // Show loading state
         bulkUpdateBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Updating...');
 
-        $.ajax({
-            url: '{{ route("inventory.bulk-update") }}',
-            type: 'POST',
-            data: {
-                ids: selectedIds,
-                _token: '{{ csrf_token() }}',
-                ...Object.fromEntries(new URLSearchParams(formData))
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert('Successfully updated ' + response.updated_count + ' item(s).');
-                    bulkEditModal.modal('hide');
-                    // Clear pending changes since server data is now updated
-                    clearPendingChanges();
-                    table.ajax.reload(function() {
-                        // No need to reapply changes since server data is fresh
-                    }, false);
-                    selectedRows.clear();
-                    updateBulkEditUI();
-                    updateSelectAllState();
-                    $('#bulkEditForm')[0].reset();
-                } else {
-                    alert('Error: ' + response.message);
+        // Update new rows directly in DOM
+        var newRowsUpdated = 0;
+        selectedNewRowIds.forEach(function(tempId) {
+            var row = document.querySelector(`.new-artwork-row[data-temp-id="${tempId}"]`);
+            if (row) {
+                // Update company if provided
+                @if(auth()->user()->isSuperAdmin())
+                if (formDataObj.company) {
+                    var companySelect = row.querySelector('.company-select');
+                    if (companySelect) {
+                        companySelect.value = formDataObj.company;
+                        // Trigger change to update collections
+                        $(companySelect).trigger('change');
+                    }
                 }
-            },
-            error: function(xhr) {
-                alert('Error updating items: ' + (xhr.responseJSON?.message || 'Unknown error'));
-            },
-            complete: function() {
-                bulkUpdateBtn.prop('disabled', false).html('Update Selected Items');
+                @endif
+
+                // Update collection if provided
+                if (formDataObj.collection) {
+                    var collectionSelect = row.querySelector('.collection-select');
+                    if (collectionSelect) {
+                        collectionSelect.value = formDataObj.collection;
+                    }
+                }
+
+                // Update title if provided
+                if (formDataObj.name) {
+                    var titleInput = row.querySelector('.title-input');
+                    if (titleInput) {
+                        titleInput.value = formDataObj.name;
+                    }
+                }
+
+                // Update artist if provided
+                if (formDataObj.artist) {
+                    var artistInput = row.querySelector('.artist-input');
+                    if (artistInput) {
+                        artistInput.value = formDataObj.artist;
+                    }
+                }
+
+                // Update type if provided
+                if (formDataObj.type) {
+                    var typeInput = row.querySelector('.type-input');
+                    if (typeInput) {
+                        typeInput.value = formDataObj.type;
+                    }
+                }
+
+                // Update height if provided
+                if (formDataObj.height) {
+                    var heightInput = row.querySelector('.height-input');
+                    if (heightInput) {
+                        heightInput.value = formDataObj.height;
+                    }
+                }
+
+                // Update width if provided
+                if (formDataObj.width) {
+                    var widthInput = row.querySelector('.width-input');
+                    if (widthInput) {
+                        widthInput.value = formDataObj.width;
+                    }
+                }
+
+                // Update unit if provided
+                if (formDataObj.unit) {
+                    var unitSelect = row.querySelector('.unit-select');
+                    if (unitSelect) {
+                        unitSelect.value = formDataObj.unit;
+                    }
+                }
+
+                // Update description if provided
+                if (formDataObj.description) {
+                    var descriptionInput = row.querySelector('.description-input');
+                    if (descriptionInput) {
+                        descriptionInput.value = formDataObj.description;
+                    }
+                }
+
+                newRowsUpdated++;
             }
         });
+
+        // Update existing rows via AJAX if any are selected
+        if (selectedIds.length > 0) {
+            $.ajax({
+                url: '{{ route("inventory.bulk-update") }}',
+                type: 'POST',
+                data: {
+                    ids: selectedIds,
+                    _token: '{{ csrf_token() }}',
+                    ...formDataObj
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var totalUpdated = response.updated_count + newRowsUpdated;
+                        alert('Successfully updated ' + totalUpdated + ' item(s).');
+                        bulkEditModal.modal('hide');
+                        // Clear pending changes since server data is now updated
+                        clearPendingChanges();
+                        table.ajax.reload(function() {
+                            // No need to reapply changes since server data is fresh
+                        }, false);
+                        // Clear existing rows selection (they're reloaded from server)
+                        selectedRows.clear();
+                        // Keep new rows selected - reselect their checkboxes
+                        selectedNewRowIds.forEach(function(tempId) {
+                            var row = document.querySelector(`.new-artwork-row[data-temp-id="${tempId}"]`);
+                            if (row) {
+                                var checkbox = row.querySelector('.new-row-checkbox');
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                    $(row).addClass('selected-row');
+                                }
+                            }
+                        });
+                        updateBulkEditUI();
+                        updateSelectAllState();
+                        $('#bulkEditForm')[0].reset();
+                    } else {
+                        alert('Error: ' + response.message);
+                        bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error updating items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+                },
+                complete: function() {
+                    if (selectedIds.length > 0) {
+                        bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+                    }
+                }
+            });
+        } else {
+            // Only new rows were selected, no AJAX needed
+            alert('Successfully updated ' + newRowsUpdated + ' item(s).');
+            bulkEditModal.modal('hide');
+            // Keep new rows selected - reselect their checkboxes
+            selectedNewRowIds.forEach(function(tempId) {
+                var row = document.querySelector(`.new-artwork-row[data-temp-id="${tempId}"]`);
+                if (row) {
+                    var checkbox = row.querySelector('.new-row-checkbox');
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        $(row).addClass('selected-row');
+                    }
+                }
+            });
+            updateBulkEditUI();
+            updateSelectAllState();
+            $('#bulkEditForm')[0].reset();
+            bulkUpdateBtn.prop('disabled', false).html('Update Selected');
+        }
     });
 
     // Clear selection when modal is closed
@@ -3244,7 +3614,7 @@ $(document).ready(function() {
         console.log(collectionName, "collectionName")
         console.log(itemCount, "itemCount")
         console.log(thumbnailUrl, "thumbnailUrl")
-        
+
         window.selectedCollectionId = collectionId;
 
         // Update the dropdown button content
@@ -4030,6 +4400,8 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.success) {
                         alert('Successfully saved ' + response.saved_count + ' item(s).');
+                        // Clear selected new rows since all are being saved and removed
+                        selectedNewRows.clear();
                         // Remove all new rows
                         $('.new-artwork-row').remove();
                         // Reload table
@@ -4041,6 +4413,8 @@ $(document).ready(function() {
                         $('#multipleDropZone').remove();
                         // Update controls
                         updateBulkNewItemControls();
+                        updateBulkEditUI();
+                        updateSelectAllState();
                     } else {
                         alert('Error: ' + response.message);
                     }
@@ -4058,18 +4432,29 @@ $(document).ready(function() {
     // Cancel All functionality
     cancelAllBtn.on('click', function() {
         if (confirm('Are you sure you want to cancel all new items? This action cannot be undone.')) {
+            // Clear selected new rows since all are being removed
+            selectedNewRows.clear();
             // Remove all new rows
             $('.new-artwork-row').remove();
             // Hide multiple drop zone
             $('#multipleDropZone').remove();
             // Update controls
             updateBulkNewItemControls();
+            updateBulkEditUI();
+            updateSelectAllState();
         }
     });
 
     // Individual delete row functionality
     $(document).on('click', '.delete-row-btn', function() {
         const row = $(this).closest('.new-artwork-row');
+        const tempId = row.attr('data-temp-id');
+
+        // Remove from selectedNewRows if it was selected
+        if (tempId && selectedNewRows.has(tempId)) {
+            selectedNewRows.delete(tempId);
+        }
+
         row.remove();
 
         // Hide multiple drop zone if no more new rows
@@ -4079,6 +4464,8 @@ $(document).ready(function() {
 
         // Update controls
         updateBulkNewItemControls();
+        updateBulkEditUI();
+        updateSelectAllState();
     });
 
     // Copy/Duplicate functionality
@@ -4132,14 +4519,79 @@ $(document).ready(function() {
             alert('Please select at least one item to move.');
             return;
         }
-        $('#moveCollectionSelect').val('');
+        $('#moveCompanySelect').val('');
+        $('#moveCollectionSelect').val('').html('<option value="">Select collection</option>');
+
+        // For non-super admin, automatically load collections for their company
+        if (!isSuperAdmin) {
+            var userCompanyId = @json(auth()->user()->company_id);
+            loadCollectionsForCompany(userCompanyId);
+        }
+
         $('#moveToCollectionModal').modal('show');
+    });
+
+    // Helper function to load collections for a company
+    function loadCollectionsForCompany(companyId) {
+        var $collectionSelect = $('#moveCollectionSelect');
+
+        // Reset collection dropdown
+        $collectionSelect.val('').html('<option value="">Select collection</option>');
+
+        if (!companyId) {
+            return;
+        }
+
+        // Fetch collections for the selected company
+        $.ajax({
+            url: '{{ route("inventory.collections.by-company") }}',
+            type: 'GET',
+            data: {
+                company_id: companyId
+            },
+            success: function(response) {
+                if (response.success && response.collections.length > 0) {
+                    response.collections.forEach(function(collection) {
+                        $collectionSelect.append(
+                            $('<option></option>')
+                                .attr('value', collection.id)
+                                .text(collection.name)
+                        );
+                    });
+                } else {
+                    $collectionSelect.append(
+                        $('<option></option>')
+                            .attr('value', '')
+                            .text('No collections available')
+                            .prop('disabled', true)
+                    );
+                }
+            },
+            error: function(xhr) {
+                alert('Error loading collections: ' + (xhr.responseJSON?.message || 'Unknown error'));
+            }
+        });
+    }
+
+    // Filter collections based on selected company (only for super admin)
+    $('#moveCompanySelect').on('change', function() {
+        if (isSuperAdmin) {
+            var companyId = $(this).val();
+            loadCollectionsForCompany(companyId);
+        }
     });
 
     // Confirm move action
     $('#confirmMoveBtn').on('click', function() {
+        var targetCompany = $('#moveCompanySelect').val();
         var targetCollection = $('#moveCollectionSelect').val();
         var selectedIds = Array.from(selectedRows);
+
+        // Only validate company selection for super admin
+        if (isSuperAdmin && !targetCompany) {
+            alert('Please select a company.');
+            return;
+        }
 
         if (!targetCollection) {
             alert('Please select a collection to move to.');
@@ -4391,7 +4843,7 @@ $(document).ready(function() {
     // No additional JavaScript needed as collections are pre-filtered on the server
     @endif
 });
-    // Export inventory as ZIP (CSV + images)
+    // Export inventory - Show format selection modal
     (function attachExportHandler(){
         const downloadBtn = document.getElementById('downloadTableBtn');
         if (!downloadBtn) return;
@@ -4409,16 +4861,42 @@ $(document).ready(function() {
                 return; // Stop execution here
             }
 
-            const params = new URLSearchParams();
-            const searchInput = document.getElementById('tableSearch');
-            if (searchInput && searchInput.value) params.set('q', searchInput.value);
+            // Show download format selection modal
+            const formatModal = new bootstrap.Modal(document.getElementById('downloadFormatModal'));
+            formatModal.show();
+        });
 
-            // Set collection_id parameter
-            const matched = (allCollections || []).find(c => c.name === selectedName);
-            if (matched) params.set('collection_id', matched.id);
+        // Handle format selection buttons
+        document.querySelectorAll('.download-format-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const format = this.getAttribute('data-format');
+                const selectedCollectionNameEl = document.getElementById('selectedCollectionName');
+                const selectedName = selectedCollectionNameEl ? selectedCollectionNameEl.textContent.trim() : null;
 
-            const url = `${'{{ route("inventory.export") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
-            window.location.href = url;
+                if (!selectedName || selectedName === 'All Collections') {
+                    return;
+                }
+
+                const params = new URLSearchParams();
+                const searchInput = document.getElementById('tableSearch');
+                if (searchInput && searchInput.value) params.set('q', searchInput.value);
+
+                // Set collection_id parameter
+                const matched = (allCollections || []).find(c => c.name === selectedName);
+                if (matched) params.set('collection_id', matched.id);
+
+                let url;
+                if (format === 'pdf') {
+                    url = `${'{{ route("inventory.export-pdf") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
+                } else {
+                    url = `${'{{ route("inventory.export") }}'}${params.toString() ? ('?' + params.toString()) : ''}`;
+                }
+
+                // Close modal and download
+                const formatModal = bootstrap.Modal.getInstance(document.getElementById('downloadFormatModal'));
+                formatModal.hide();
+                window.location.href = url;
+            });
         });
     })();
 

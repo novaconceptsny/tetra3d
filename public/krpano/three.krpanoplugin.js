@@ -609,9 +609,9 @@ function krpanoplugin() {
 	function make_gizmo(object) {
 		var gizmo = new THREE.Group();
 
-		var arrowGeometry = new THREE.ConeGeometry(4, 8, 32);
-		var directGeometry = new THREE.CylinderGeometry(2, 2, 30, 32);
-		var gizmoPlaneGeometry = new THREE.PlaneGeometry(15, 15);
+		var arrowGeometry = new THREE.ConeGeometry(15, 30, 32);
+		var directGeometry = new THREE.CylinderGeometry(7.5, 7.5, 110, 32);
+		var gizmoPlaneGeometry = new THREE.PlaneGeometry(60, 60);
 
 		var arrow_x = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: false, opacity: 0.8 }));
 		var arrow_y = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, transparent: false, opacity: 0.8 }));
@@ -621,13 +621,13 @@ function krpanoplugin() {
 		var direct_z = new THREE.Mesh(directGeometry, new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: false, opacity: 0.8 }));
 		var gizmoPlane = new THREE.Mesh(gizmoPlaneGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, transparent: false, opacity: 0.8 }));
 
-		arrow_x.position.set(30, 0, 0);
-		arrow_y.position.set(0, -30, 0);
-		arrow_z.position.set(0, 0, 30);
-		direct_x.position.set(15, 0, 0);
-		direct_y.position.set(0, -15, 0); // Y direct position
-		direct_z.position.set(0, 0, 15);
-		gizmoPlane.position.set(7.5, 0, 7.5);
+		arrow_x.position.set(110, 0, 0);
+		arrow_y.position.set(0, -110, 0);
+		arrow_z.position.set(0, 0, 110);
+		direct_x.position.set(55, 0, 0);
+		direct_y.position.set(0, -55, 0); // Y direct position
+		direct_z.position.set(0, 0, 55);
+		gizmoPlane.position.set(30, 5, 30);
 
 		arrow_x.name = 'arrow_x';
 		arrow_y.name = 'arrow_y';
