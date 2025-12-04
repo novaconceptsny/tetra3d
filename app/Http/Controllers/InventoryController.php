@@ -573,7 +573,7 @@ class InventoryController extends Controller
             $request->validate([
                 'collection_name'         => 'required|string|max:255',
                 'collection_company_name' => 'required|string|max:255',
-                'collection_thumbnail'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'collection_thumbnail'    => 'nullable|image|mimes:jpeg,png,jpg,gif',
             ]);
 
             $collection             = new ArtworkCollection();
@@ -611,7 +611,7 @@ class InventoryController extends Controller
             $request->validate([
                 'collection_name'         => 'required|string|max:255',
                 'collection_company_name' => 'required|string|max:255',
-                'collection_thumbnail'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'collection_thumbnail'    => 'nullable|image|mimes:jpeg,png,jpg,gif',
             ]);
 
             $collection->name       = $request->collection_name;
