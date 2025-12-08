@@ -274,7 +274,7 @@
                             <div class="row mb-2">
                                 <div class="col md-6 d-flex align-items-center justify-content-between">
                                     <label class="form-label mb-0" style="font-size: 0.875rem;">Upload spreadsheet</label>
-                                    <label class="form-label mb-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="cursor: pointer; font-size: 0.875rem;">Download spreadsheet template</label>
+                                    <label class="form-label mb-0" id="download-template-btn" onclick="downloadSpreadsheet()" style="cursor: pointer; font-size: 0.875rem; color: #099F9A;">Download spreadsheet template</label>
                                 </div>
                                 <div class="col md-6 d-flex align-items-center">
                                     <label class="form-label mb-0" style="font-size: 0.875rem;">Upload image files</label>
