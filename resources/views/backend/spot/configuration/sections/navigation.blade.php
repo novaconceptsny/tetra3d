@@ -1,4 +1,22 @@
 @foreach($spots as $_spot)
+    @php
+        // Check if current spot has navigation data for target spot
+        $currentNav = $spot->xml->navigations[$_spot->id] ?? [];
+        $currentHlookat = $currentNav['hlookat'] ?? null;
+        
+        // If not set, check reverse navigation (target spot -> current spot)
+        // and use negated hlookat value
+        if ($currentHlookat === null) {
+            $reverseNav = $_spot->xml->navigations[$spot->id] ?? [];
+            $reverseHlookat = $reverseNav['hlookat'] ?? null;
+            if ($reverseHlookat !== null) {
+                $currentHlookat = -$reverseHlookat;
+            }
+        }
+        
+        // Default to 0 if still not set
+        $hlookatValue = $currentHlookat ?? 0;
+    @endphp
     <div class="rounded p-3 mb-3">
         <h5>
             {{ $_spot->friendly_name }}
@@ -18,7 +36,7 @@
             />
             <x-backend::inputs.input
                 col="col" name="navigations[{{$_spot->id}}][hlookat]" label="hlookat"
-                :value="$spot->xml->navigations[$_spot->id]['hlookat'] ?? 0"
+                :value="$hlookatValue"
             />
             <x-backend::inputs.input
                 col="col" name="navigations[{{$_spot->id}}][vlookat]" label="vlookat"
