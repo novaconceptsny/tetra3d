@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 use ZipArchive;
 
 class InventoryController extends Controller
@@ -850,8 +851,8 @@ class InventoryController extends Controller
                     // Handle image upload if present
                     if (!empty($itemData['image']) && str_starts_with($itemData['image'], 'data:image')) {
                         try {
-                            // Extract base64 data from data URL
-                            $base64Data = $itemData['image'];
+                            // Compress and resize image before saving
+                            $base64Data = $this->compressImage($itemData['image']);
 
                             // Add image to media collection
                             $artwork->addMediaFromBase64($base64Data)
@@ -1020,8 +1021,8 @@ class InventoryController extends Controller
                     // Handle image if provided
                     if (! empty($row['image']) && str_starts_with($row['image'], 'data:image')) {
                         try {
-                            // Extract base64 data from data URL
-                            $base64Data = $row['image'];
+                            // Compress and resize image before saving
+                            $base64Data = $this->compressImage($row['image']);
 
                             // Add image to media collection
                             $artwork->addMediaFromBase64($base64Data)
@@ -1482,6 +1483,106 @@ class InventoryController extends Controller
         }
 
         return round($numericValue, 2);
+    }
+
+    /**
+     * Compress and resize image from base64 data to target size under 2KB
+     * 
+     * @param string $base64Data Base64 encoded image data
+     * @param int $maxWidth Maximum width in pixels (default: 800)
+     * @param int $targetSizeKB Target file size in KB (default: 2)
+     * @return string Compressed base64 image data
+     */
+    private function compressImage($base64Data, $maxWidth = 800, $targetSizeKB = 2)
+    {
+        try {
+            // Decode base64 data
+            $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Data));
+            
+            if (!$imageData) {
+                return $base64Data; // Return original if decoding fails
+            }
+
+            // Create image instance
+            $image = Image::make($imageData);
+            
+            // Get original dimensions
+            $originalWidth = $image->width();
+            $originalHeight = $image->height();
+            
+            // Resize if image is larger than max width
+            if ($originalWidth > $maxWidth) {
+                // Calculate new height maintaining aspect ratio
+                $ratio = $maxWidth / $originalWidth;
+                $newHeight = (int) ($originalHeight * $ratio);
+                
+                // Resize image
+                $image->resize($maxWidth, $newHeight, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize(); // Prevent upsizing
+                });
+            }
+            
+            // Progressive quality reduction until we reach target size
+            $targetSizeBytes = $targetSizeKB * 1024;
+            $quality = 70; // Start with 70% quality
+            $minQuality = 40; // Don't go below 40% quality
+            $encoded = null;
+            $attempts = 0;
+            $maxAttempts = 10;
+            
+            while ($attempts < $maxAttempts && $quality >= $minQuality) {
+                // Encode as JPEG with current quality
+                $encoded = $image->encode('jpg', $quality);
+                $sizeBytes = strlen($encoded);
+                
+                // If we're under target size, we're done
+                if ($sizeBytes <= $targetSizeBytes) {
+                    break;
+                }
+                
+                // Reduce quality for next attempt
+                $quality -= 5;
+                $attempts++;
+            }
+            
+            // If still too large, try reducing dimensions further
+            if ($encoded && strlen($encoded) > $targetSizeBytes) {
+                $currentWidth = $image->width();
+                $newMaxWidth = (int) ($currentWidth * 0.8); // Reduce by 20%
+                
+                if ($newMaxWidth >= 300) { // Don't go below 300px
+                    $image->resize($newMaxWidth, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+                    
+                    // Try encoding again with reduced size
+                    $quality = 65;
+                    while ($attempts < $maxAttempts && $quality >= $minQuality) {
+                        $encoded = $image->encode('jpg', $quality);
+                        if (strlen($encoded) <= $targetSizeBytes) {
+                            break;
+                        }
+                        $quality -= 5;
+                        $attempts++;
+                    }
+                }
+            }
+            
+            // Ensure we have encoded data (fallback to minimum quality if needed)
+            if (!$encoded) {
+                $encoded = $image->encode('jpg', $minQuality);
+            }
+            
+            // Return as data URL
+            return 'data:image/jpeg;base64,' . base64_encode($encoded);
+            
+        } catch (\Exception $e) {
+            \Log::warning('Image compression failed: ' . $e->getMessage());
+            // Return original if compression fails
+            return $base64Data;
+        }
     }
 
     /**
