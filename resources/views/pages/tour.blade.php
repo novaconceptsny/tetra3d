@@ -148,7 +148,59 @@
     $userName = user()?->name;
 
     $query_params = array_merge(['tour' => $spot->tour_id], request()->all());
+    
+    // Get sharedLayout for meta tags if this is a shared tour
+    $sharedLayout = $sharedLayout ?? null;
 @endphp
+
+@push('meta')
+@if($sharedLayout && $tour_is_shared)
+    @php
+        $metaTitle = $sharedLayout->title ?? ($tour->name ?? config('app.name'));
+        $metaDescription = $sharedLayout->description ?? 'Explore this virtual tour';
+        $metaImage = null;
+        
+        // Get thumbnail image URL
+        if ($sharedLayout->thumbnail_url) {
+            // Check if it's already a full URL
+            if (filter_var($sharedLayout->thumbnail_url, FILTER_VALIDATE_URL)) {
+                $metaImage = $sharedLayout->thumbnail_url;
+            } else {
+                // It's a relative path, make it absolute
+                $metaImage = asset($sharedLayout->thumbnail_url);
+            }
+        } elseif ($layout && $layout->assignedTour() && $layout->assignedTour()->getFirstMediaUrl('thumbnail')) {
+            $metaImage = $layout->assignedTour()->getFirstMediaUrl('thumbnail');
+            // Ensure it's an absolute URL
+            if ($metaImage && !filter_var($metaImage, FILTER_VALIDATE_URL)) {
+                $metaImage = url($metaImage);
+            }
+        }
+        
+        $metaUrl = url()->current();
+    @endphp
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ $metaUrl }}">
+    <meta property="og:title" content="{{ $metaTitle }}">
+    <meta property="og:description" content="{{ $metaDescription }}">
+    @if($metaImage)
+    <meta property="og:image" content="{{ $metaImage }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    @endif
+    
+    <!-- Tetra3D Custom Meta Tags -->
+    @if($metaImage)
+    <meta name="tetra3d:thumbnail" content="{{ $metaImage }}">
+    @endif
+    <meta name="tetra3d:description" content="{{ $metaDescription }}">
+    
+    <!-- Additional meta tags -->
+    <meta name="description" content="{{ $metaDescription }}">
+@endif
+@endpush
 
 @section('page_actions')
 @auth

@@ -178,6 +178,7 @@ class SharedTourController extends Controller
         $data['project']        = $project;
         $data['shared_tour_id'] = $sharedTour->id;
         $data['shared_spot_id'] = $sharedTour->spot_id;
+        $data['sharedLayout']  = $sharedLayout;
         $data['navEnabled']     = false;
         $data['navbarLight']    = true;
         $data['tourModel']      = $tourModel;

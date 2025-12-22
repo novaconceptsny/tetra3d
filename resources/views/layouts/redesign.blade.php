@@ -10,6 +10,7 @@
     <!-- App favicons -->
     @include('backend.includes.partial.favicon')
     <title>{{ config('app.name') }}</title>
+    @stack('meta')
     <!-- bootstrap css link  -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
