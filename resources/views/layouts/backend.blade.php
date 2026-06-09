@@ -84,8 +84,8 @@
 
 @yield('scripts')
 @livewireScripts
-@livewire('modal-pro')
-@livewire('slide-over-pro')
+{{-- @livewire('modal-pro') --}}
+{{-- @livewire('slide-over-pro') --}}
 
 @mediaLibraryScripts
 <script src="{{ asset('js/modals.js') }}"></script>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\UserController;
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SurfaceStateController;
 use App\Http\Controllers\PhotoStateController;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,23 @@ use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\Tour360Controller;
 use App\Http\Controllers\SharePageController;
 use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\TourController;
+use App\Http\Controllers\ArtworksController;
+use App\Http\Controllers\ArtworkController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\SharedTourController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\Backend\SpotConfigurationController;
+use App\Http\Controllers\Backend\CompanyController;
+use App\Http\Controllers\Backend\ProjectController as BackendProjectController;
+use App\Http\Controllers\Backend\TourController as BackendTourController;
+use App\Http\Controllers\Backend\SculptureController;
+use App\Http\Controllers\Backend\ArtworkController as BackendArtworkController;
+use App\Http\Controllers\Backend\ArtworkCollectionController;
+use App\Http\Controllers\Backend\SpotController;
+use App\Http\Controllers\Backend\SurfaceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,40 +52,40 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('login-as/{user}', [UserController::class, 'loginAs'])->name('login.as.user');
     Route::post('back-to-admin', [UserController::class, 'backToAdmin'])->name('back.to.admin');
 
-    // Route::get('/', 'HomeController@index')->name('dashboard');
+    // Route::get('/', [HomeController::class, 'index'])->name('dashboard');
     Route::redirect('/', '/tour-360')->name('dashboard');
-    Route::get('tours/{tour}', 'TourController@show')->name('tours.show')->withoutMiddleware(['auth']);
-    Route::get('tours/{tour}/surfaces', 'TourController@surfaces')->name('tours.surfaces');
-    Route::get('artworks', 'ArtworksController@index')->name('artworks.index');
-    Route::get('projects/{project}/artworks', 'ArtworkController@getArtworks')->name('artworks.get');
-    Route::post('artworks/destroy/{id}', 'ArtworksController@destroyCollection')->name('artworks.destroyCollection');
-    Route::get('inventory', 'InventoryController@index')->name('inventory.index');
-    Route::get('inventory/export', 'InventoryController@export')->name('inventory.export');
-    Route::get('inventory/export-pdf', 'InventoryController@exportPdf')->name('inventory.export-pdf');
-    
-    Route::get('inventory/datatable', 'InventoryController@datatable')->name('inventory.datatable');
-    Route::get('inventory/data', 'InventoryController@getData')->name('inventory.data');
-    Route::post('inventory/editor', 'InventoryController@editor')->name('inventory.editor');
-    Route::post('inventory', 'InventoryController@store')->name('inventory.store');
-    Route::post('inventory/bulk-store', 'InventoryController@bulkStore')->name('inventory.bulk-store');
-    Route::post('inventory/bulk-copy', 'InventoryController@bulkCopy')->name('inventory.bulk-copy');
-    Route::post('inventory/bulk-delete', 'InventoryController@bulkDelete')->name('inventory.bulk-delete');
-    Route::post('inventory/bulk-update', 'InventoryController@bulkUpdate')->name('inventory.bulk-update');
-    Route::put('inventory/{id}', 'InventoryController@update')->name('inventory.update');
-    Route::delete('inventory/{id}', 'InventoryController@destroy')->name('inventory.destroy');
-    
-    Route::post('inventory/collections/add', 'InventoryController@addCollection')->name('inventory.collections.add');
-    Route::put('inventory/collections/{id}/edit', 'InventoryController@editCollection')->name('inventory.collections.edit');
-    Route::delete('inventory/collections/{id}/delete', 'InventoryController@deleteCollection')->name('inventory.collections.delete');
-    Route::get('inventory/collections/by-company', 'InventoryController@getCollectionsByCompany')->name('inventory.collections.by-company');
-    Route::post('inventory/artworks/bulk-delete', 'InventoryController@bulkDelete')->name('inventory.artworks.bulk-delete');
-    Route::get('/profile/edit', 'ProfileController@edit')->name('profile.edit');
-    Route::post('/profile/edit', 'ProfileController@update')->name('profile.update');
-    Route::post('/profile/password', 'ProfileController@updatePassword')->name('profile.password.update');
-    Route::get('/activity', 'ActivityController@index')->name('activity.index');
+    Route::get('tours/{tour}', [TourController::class, 'show'])->name('tours.show')->withoutMiddleware(['auth']);
+    Route::get('tours/{tour}/surfaces', [TourController::class, 'surfaces'])->name('tours.surfaces');
+    Route::get('artworks', [ArtworksController::class, 'index'])->name('artworks.index');
+    Route::get('projects/{project}/artworks', [ArtworkController::class, 'getArtworks'])->name('artworks.get');
+    Route::post('artworks/destroy/{id}', [ArtworksController::class, 'destroyCollection'])->name('artworks.destroyCollection');
+    Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('inventory/export', [InventoryController::class, 'export'])->name('inventory.export');
+    Route::get('inventory/export-pdf', [InventoryController::class, 'exportPdf'])->name('inventory.export-pdf');
+
+    Route::get('inventory/datatable', [InventoryController::class, 'datatable'])->name('inventory.datatable');
+    Route::get('inventory/data', [InventoryController::class, 'getData'])->name('inventory.data');
+    Route::post('inventory/editor', [InventoryController::class, 'editor'])->name('inventory.editor');
+    Route::post('inventory', [InventoryController::class, 'store'])->name('inventory.store');
+    Route::post('inventory/bulk-store', [InventoryController::class, 'bulkStore'])->name('inventory.bulk-store');
+    Route::post('inventory/bulk-copy', [InventoryController::class, 'bulkCopy'])->name('inventory.bulk-copy');
+    Route::post('inventory/bulk-delete', [InventoryController::class, 'bulkDelete'])->name('inventory.bulk-delete');
+    Route::post('inventory/bulk-update', [InventoryController::class, 'bulkUpdate'])->name('inventory.bulk-update');
+    Route::put('inventory/{id}', [InventoryController::class, 'update'])->name('inventory.update');
+    Route::delete('inventory/{id}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
+
+    Route::post('inventory/collections/add', [InventoryController::class, 'addCollection'])->name('inventory.collections.add');
+    Route::put('inventory/collections/{id}/edit', [InventoryController::class, 'editCollection'])->name('inventory.collections.edit');
+    Route::delete('inventory/collections/{id}/delete', [InventoryController::class, 'deleteCollection'])->name('inventory.collections.delete');
+    Route::get('inventory/collections/by-company', [InventoryController::class, 'getCollectionsByCompany'])->name('inventory.collections.by-company');
+    Route::post('inventory/artworks/bulk-delete', [InventoryController::class, 'bulkDelete'])->name('inventory.artworks.bulk-delete');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/edit', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::get('/activity', [ActivityController::class, 'index'])->name('activity.index');
 
     //shared tours
-    Route::get('shared-tours/{shared_tour}', 'SharedTourController@show')->name('shared-tours.show')->withoutMiddleware(['auth']);
+    Route::get('shared-tours/{shared_tour}', [SharedTourController::class, 'show'])->name('shared-tours.show')->withoutMiddleware(['auth']);
 
     Route::controller(SurfaceStateController::class)->group(function () {
         Route::get('surfaces/{surface}', 'show')->name('surfaces.show');
@@ -75,9 +93,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('surfaces/{surface}', 'update')->name('surfaces.update');
 
         // surface state
-        Route::get('surfaces/{state}/active', 'SurfaceStateController@active')->name('surfaces.active');
+        Route::get('surfaces/{state}/active', 'active')->name('surfaces.active');
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
-        Route::post('surfaces/destroy/{id}', 'SurfaceStateController@destroySurface')->name('surfaces.destroy');
+        Route::post('surfaces/destroy/{id}', 'destroySurface')->name('surfaces.destroy');
     });
 
     Route::controller(PhotoStateController::class)->group(function () {
@@ -85,12 +103,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('photos/{photo}', 'update')->name('photos.update');
     });
 
-    Route::get('/resource', 'ResourceController@index')->name('resource.index');
-    Route::post('/resource/assign-tour-to-companies', 'ResourceController@assignTourToCompanies')->name('resource.assignTourToCompanies');
-    Route::post('/resource/remove-gallery', 'ResourceController@removeGallery')->name('resource.removeGallery');
-    Route::post('/resource/videos/upload', 'ResourceController@uploadVideo')->name('resource.videos.upload');
-    Route::delete('/resource/videos/{id}', 'ResourceController@deleteVideo')->name('resource.videos.delete');
-    
+    Route::get('/resource', [ResourceController::class, 'index'])->name('resource.index');
+    Route::post('/resource/assign-tour-to-companies', [ResourceController::class, 'assignTourToCompanies'])->name('resource.assignTourToCompanies');
+    Route::post('/resource/remove-gallery', [ResourceController::class, 'removeGallery'])->name('resource.removeGallery');
+    Route::post('/resource/videos/upload', [ResourceController::class, 'uploadVideo'])->name('resource.videos.upload');
+    Route::delete('/resource/videos/{id}', [ResourceController::class, 'deleteVideo'])->name('resource.videos.delete');
+
     Route::controller(Tour360Controller::class)->group(function () {
         Route::get('/tour-360', 'index')->name('tour-360.index');
         Route::get('/tour360/create/{companyId}', 'create')->name('tour360.create');
@@ -110,21 +128,21 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/photo/collections/update', 'updateCollections')->name('photo.collections.update');
         Route::post('/photo/surface/store', 'storeSurface')->name('photo.surface.store');
         Route::post('/photo/{id}/edit', 'edit')->name('photo.edit');
-        Route::post('/photo/{id}/toggle-favorite', action: 'toggleFavorite')->name('photo.toggle-favorite');
+        Route::post('/photo/{id}/toggle-favorite', 'toggleFavorite')->name('photo.toggle-favorite');
         Route::get('/photo/projects/{id}', 'getProject')->name('photo.projects.get');
-        Route::post('/photos-store-project', 'storeProject')->name('photo.store-project');   
-        Route::post('/photos-update-project', 'updateProject')->name('photo.update-project');   
+        Route::post('/photos-store-project', 'storeProject')->name('photo.store-project');
+        Route::post('/photos-update-project', 'updateProject')->name('photo.update-project');
     });
 
-    Route::post('project/update/{id}', 'ProjectController@update')->name('project.update');
+    Route::post('project/update/{id}', [ProjectController::class, 'update'])->name('project.update');
 
-    Route::post('inventory/artworks/add', 'InventoryController@addArtworks')->name('inventory.artworks.add');
+    Route::post('inventory/artworks/add', [InventoryController::class, 'addArtworks'])->name('inventory.artworks.add');
 
     Route::get('/share', [SharePageController::class, 'index'])->name('share.index');
     Route::post('/share/store', [SharePageController::class, 'store'])->name('share.store');
     Route::post('/share/{id}/toggle', [SharePageController::class, 'toggle'])->name('share.toggle');
     Route::post('/share/{id}/edit', [SharePageController::class, 'edit'])->name('share.edit');
-    Route::delete('/share/{id}/delete', [App\Http\Controllers\SharePageController::class, 'destroy'])->name('share.delete');
+    Route::delete('/share/{id}/delete', [SharePageController::class, 'destroy'])->name('share.delete');
 
 });
 
@@ -132,7 +150,6 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group([
     'middleware' => ['auth', 'can:access-backend'],
     'prefix' => 'backend',
-    'namespace' => 'Backend',
     'as' => 'backend.',
 ], function () {
 
@@ -140,8 +157,7 @@ Route::group([
 
     Route::view('/collector-sync-report', 'report')->name('collector.report');
 
-    //Route::resource('spot-configuration', 'SpotConfigurationController');
-    Route::controller('SpotConfigurationController')->group(function () {
+    Route::controller(SpotConfigurationController::class)->group(function () {
         Route::get('spot-configuration/{spot}', 'show')
             ->name('spot-configuration.show');
         Route::get('spot-configuration/{spot}/edit', 'edit')
@@ -150,28 +166,20 @@ Route::group([
             ->name('spot-configuration.update');
     });
 
+    Route::resource('companies', CompanyController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('projects', BackendProjectController::class);
+    Route::resource('tours', BackendTourController::class);
+    Route::resource('sculptures', SculptureController::class);
+    Route::resource('artworks', BackendArtworkController::class);
+    Route::resource('artwork-collections', ArtworkCollectionController::class)
+        ->parameter('artwork-collections', 'collection');
+    Route::resource('tours.spots', SpotController::class)->shallow();
+    Route::resource('tours.surfaces', SurfaceController::class)->shallow();
 
-    Route::resource('companies', 'CompanyController');
-    Route::resource('users', 'UserController');
-    Route::resource('projects', 'ProjectController');
-    Route::resource('tours', 'TourController');
-    Route::resource('sculptures', 'SculptureController');
-    Route::resource('artworks', 'ArtworkController');
-    Route::resource('artwork-collections', 'ArtworkCollectionController')
-    ->parameter('artwork-collections', 'collection');
-    Route::resource('tours.spots', 'SpotController')->shallow();
-    Route::resource('tours.surfaces', 'SurfaceController')
-        ->shallow();
-
-    Route::post('/tours/regenerate-xml', 'TourController@reGenerateXML')
+    Route::post('/tours/regenerate-xml', [BackendTourController::class, 'reGenerateXML'])
         ->name('backend.tours.regenerate-xml');
 
-    Route::patch('/tours/{tour}/toggle-model', 'TourController@toggleModel')
+    Route::patch('/tours/{tour}/toggle-model', [BackendTourController::class, 'toggleModel'])
         ->name('backend.tours.toggle-model');
 });
-
-
-
-
-
-

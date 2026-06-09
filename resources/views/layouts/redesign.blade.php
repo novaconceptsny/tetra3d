@@ -120,8 +120,8 @@
         }
 </script>
 
-    @livewire('modal-pro')
-    @livewire('slide-over-pro')
+    {{-- @livewire('modal-pro') --}}
+    {{-- @livewire('slide-over-pro') --}}
 
     @yield('scripts')
     @livewireScripts

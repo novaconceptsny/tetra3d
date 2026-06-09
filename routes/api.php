@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SculptureController;
+use App\Http\Controllers\Backend\SculptureController as BackendSculptureController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +25,9 @@ Route::get('/companies/search', [App\Http\Controllers\Api\CompanyController::cla
 Route::post('/companies', [App\Http\Controllers\Api\CompanyController::class, 'store']);
 
 Route::middleware(['auth:sanctum', 'can:perform-admin-actions'])->group(function () {
-    Route::post('/sculpture_save', 'SculptureController@save')->name('sculpture_save');
-    Route::post('/sculpture_delete', 'SculptureController@delete')->name('sculpture_delete');
-    Route::post('/sculpture_load','SculptureController@load')->name('sculpture_load');
-    Route::post('/sculpture_store_canvas_image', 'Backend/SculptureController@store_canvas_image')->name('store_canvas_image');
+    Route::post('/sculpture_save', [SculptureController::class, 'save'])->name('sculpture_save');
+    Route::post('/sculpture_delete', [SculptureController::class, 'delete'])->name('sculpture_delete');
+    Route::post('/sculpture_load', [SculptureController::class, 'load'])->name('sculpture_load');
+    Route::post('/sculpture_store_canvas_image', [BackendSculptureController::class, 'store_canvas_image'])->name('store_canvas_image');
 });
 
