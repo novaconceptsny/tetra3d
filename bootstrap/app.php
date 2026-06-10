@@ -38,7 +38,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->command('media-library:delete-old-temporary-uploads')->daily();
+        // Only present when the paid Media Library Pro package is installed.
+        if (class_exists(\Spatie\MediaLibraryPro\Models\TemporaryUpload::class)) {
+            $schedule->command('media-library:delete-old-temporary-uploads')->daily();
+        }
+
+        // Sweep leftover temporary-upload hash directories from storage/app/public.
+        $schedule->command('tetra:clean-temp-uploads')->daily();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
