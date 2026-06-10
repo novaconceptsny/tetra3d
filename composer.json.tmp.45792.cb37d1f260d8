@@ -9,6 +9,10 @@
             "type": "composer",
             "url": "https://satis.spatie.be"
         },
+        {
+            "type": "composer",
+            "url": "https://wire-elements-pro.composer.sh"
+        },
 {
             "type": "vcs",
             "url": "https://github.com/amshehzad/laravel-form-components.git"
@@ -32,7 +36,8 @@
         "spatie/laravel-schemaless-attributes": "^2.4",
         "staudenmeir/belongs-to-through": "^2.12",
         "staudenmeir/eloquent-has-many-deep": "^1.15",
-        "vinkla/hashids": "^13.0"
+        "vinkla/hashids": "^13.0",
+        "wire-elements/pro": "^4.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",
@@ -50,8 +55,7 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
-            "WireElements\\Pro\\": "app/WireElementsPro/"
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {

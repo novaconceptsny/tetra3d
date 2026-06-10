@@ -29,5 +29,6 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
 
         Blade::anonymousComponentNamespace('backend.components', 'backend');
+        Blade::anonymousComponentNamespace('vendor.wire-elements-pro', 'wire-elements-pro');
     }
 }
