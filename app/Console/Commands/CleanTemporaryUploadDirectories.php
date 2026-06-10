@@ -39,16 +39,23 @@ class CleanTemporaryUploadDirectories extends Command
         $skipped = 0;
         $freed   = 0;
 
-        foreach (File::directories($root) as $dir) {
-            $name = basename($dir);
+        // 1) md5-style hash directories at the public disk root.
+        //    Real app data (media/, 3dmodel/, tours, ...) never matches this pattern.
+        $targets = collect(File::directories($root))
+            ->filter(fn ($dir) => preg_match('/^[0-9a-f]{32}$/', basename($dir)));
 
-            // Only touch md5-style hash directories created by Media Library Pro
-            // temporary uploads. Real app data (media/, 3dmodel/, tours, ...)
-            // never matches this pattern.
-            if (! preg_match('/^[0-9a-f]{32}$/', $name)) {
-                continue;
-            }
+        // 2) numbered staging directories under media/temporary_uploads
+        //    ({temporary_upload_id}/{media_id}/file, created by the custom PathGenerator).
+        $stagingRoot = $root.DIRECTORY_SEPARATOR.'media'.DIRECTORY_SEPARATOR.'temporary_uploads';
 
+        if (File::isDirectory($stagingRoot)) {
+            $targets = $targets->merge(
+                collect(File::directories($stagingRoot))
+                    ->filter(fn ($dir) => preg_match('/^\d+$/', basename($dir)))
+            );
+        }
+
+        foreach ($targets as $dir) {
             // Skip anything recently touched - it may be an in-progress upload.
             if ($this->newestTimestamp($dir) > $cutoff) {
                 $skipped++;
@@ -58,7 +65,7 @@ class CleanTemporaryUploadDirectories extends Command
             $size = $this->directorySize($dir);
 
             if ($dryRun) {
-                $this->line("[dry-run] would delete {$name} (".$this->formatBytes($size).')');
+                $this->line('[dry-run] would delete '.str_replace($root.DIRECTORY_SEPARATOR, '', $dir).' ('.$this->formatBytes($size).')');
             } else {
                 File::deleteDirectory($dir);
             }
