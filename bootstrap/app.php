@@ -47,5 +47,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('tetra:clean-temp-uploads')->daily();
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // On CSRF token mismatch (419), redirect back instead of showing the
+        // error page. If the user is already authenticated, the guest
+        // middleware then forwards them to the dashboard (/tour-360).
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, $request) {
+            return redirect()
+                ->back()
+                ->withInput($request->except('_token', 'password'))
+                ->with('status', 'Your session expired — please try again.');
+        });
     })->create();

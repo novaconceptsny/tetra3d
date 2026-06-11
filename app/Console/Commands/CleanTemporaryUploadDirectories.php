@@ -14,7 +14,8 @@ class CleanTemporaryUploadDirectories extends Command
      */
     protected $signature = 'tetra:clean-temp-uploads
                             {--days=2 : Only delete hash directories untouched for at least this many days}
-                            {--dry-run : List what would be deleted without deleting anything}';
+                            {--dry-run : List what would be deleted without deleting anything}
+                            {--force : Ignore the age check and delete all matching directories}';
 
     /**
      * The console command description.
@@ -34,6 +35,7 @@ class CleanTemporaryUploadDirectories extends Command
         $days   = max(1, (int) $this->option('days'));
         $cutoff = now()->subDays($days)->getTimestamp();
         $dryRun = (bool) $this->option('dry-run');
+        $force  = (bool) $this->option('force');
 
         $deleted = 0;
         $skipped = 0;
@@ -57,7 +59,7 @@ class CleanTemporaryUploadDirectories extends Command
 
         foreach ($targets as $dir) {
             // Skip anything recently touched - it may be an in-progress upload.
-            if ($this->newestTimestamp($dir) > $cutoff) {
+            if (! $force && $this->newestTimestamp($dir) > $cutoff) {
                 $skipped++;
                 continue;
             }

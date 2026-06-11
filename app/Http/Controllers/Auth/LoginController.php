@@ -37,6 +37,9 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        // Prevent browsers from caching the login form; a stale cached form
+        // carries an old CSRF token and causes intermittent 419 errors.
+        $this->middleware('cache.headers:no_store')->only('showLoginForm');
     }
 
     /**

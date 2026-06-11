@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7270e569557a39fa431ffa68d9aef63b",
+    "content-hash": "de6bb95f43ae2ce9bc694eb392af3d7a",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -4783,6 +4783,84 @@
                 }
             ],
             "time": "2026-05-28T06:39:00+00:00"
+        },
+        {
+            "name": "spatie/laravel-medialibrary-pro",
+            "version": "6.4.1",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:spatie/laravel-medialibrary-pro.git",
+                "reference": "9d7ba636989352cd43a782dff2d03a3b9786eb86"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://satis.spatie.be/dist/spatie/laravel-medialibrary-pro/spatie-laravel-medialibrary-pro-9d7ba636989352cd43a782dff2d03a3b9786eb86-zip-dc380c.zip",
+                "reference": "9d7ba636989352cd43a782dff2d03a3b9786eb86",
+                "shasum": "474849dffacc29f970e578da8aa3df3bff5e32af"
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/validation": "^10.0|^11.0|^12.0|^13.0",
+                "php": "^8.2",
+                "spatie/laravel-medialibrary": "^11.0",
+                "symfony/mime": "^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "livewire/livewire": "^3.0|^4.0",
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "pestphp/pest": "^2.0|^3.0|^4.0",
+                "symfony/var-dumper": "^6.0|^7.0|^8.0"
+            },
+            "suggest": {
+                "livewire/livewire": "Allow uploads without using a front end framework"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\MediaLibraryPro\\MediaLibraryProServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\MediaLibraryPro\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Spatie\\MediaLibraryPro\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/pest"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Handle media in a Laravel app",
+            "homepage": "https://github.com/spatie/laravel-medialibrary-pro",
+            "keywords": [
+                "laravel-medialibrary-pro",
+                "spatie"
+            ],
+            "support": {
+                "source": "https://github.com/spatie/laravel-medialibrary-pro/tree/6.4.1",
+                "issues": "https://github.com/spatie/laravel-medialibrary-pro/issues"
+            },
+            "time": "2026-03-23T07:59:23+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
