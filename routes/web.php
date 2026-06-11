@@ -95,7 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
         // surface state
         Route::get('surfaces/{state}/active', 'active')->name('surfaces.active');
         Route::delete('surfaces/{state}', 'destroy')->name('surfaces.destroy');
-        Route::post('surfaces/destroy/{id}', 'destroySurface')->name('surfaces.destroy');
+        Route::post('surfaces/destroy/{id}', 'destroySurface')->name('surfaces.destroy-by-id');
     });
 
     Route::controller(PhotoStateController::class)->group(function () {
