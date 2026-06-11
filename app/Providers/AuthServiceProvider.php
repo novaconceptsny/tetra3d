@@ -56,7 +56,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::policy(SculptureModel::class, SculptureModelPolicy::class);
 
         Gate::define('viewLogViewer', function (?User $user) {
-            return $user->isAdmin();
+            return (bool) $user?->isAdmin();
         });
 
         Gate::define('perform-admin-actions', function (User $user){

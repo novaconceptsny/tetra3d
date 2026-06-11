@@ -69,6 +69,7 @@ return [
 
     'middleware' => [
         'web',
+        \App\Http\Middleware\SetLogViewerBackUrl::class,
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
     ],
 

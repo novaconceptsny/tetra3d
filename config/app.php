@@ -10,7 +10,7 @@ return [
 
     'debug_tour' => (bool) env('DEBUG_TOUR', false),
 
-    'url' => env('APP_URL_TEST', 'http://localhost:8000'),
+    'url' => env('APP_URL', 'http://localhost'),
     'url_test' => env('APP_URL_TEST', 'http://localhost:8000'),
 
     'asset_url' => env('ASSET_URL'),
