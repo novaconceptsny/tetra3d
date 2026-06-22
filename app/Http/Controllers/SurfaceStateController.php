@@ -219,6 +219,28 @@ class SurfaceStateController extends Controller
             ? SurfaceState::findOrFail($request->surface_state_id)
             : $surface->getCurrentState($request->layout_id);
 
+        $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
+
+        // Canvas cleared of all artwork → reset this surface: remove the now-empty
+        // version (its hotspot/thumbnail media is deleted with the model) and fall
+        // back to another version for this surface/layout if one exists. Without this,
+        // the old hotspot.png lingered and the 360 tour kept showing the stale overlay.
+        if (empty($assigned_artworks)) {
+            if ($state) {
+                $state->artworks()->detach();
+                $state->addActivity('deleted');
+                $state->remove();
+            }
+
+            return redirect()->route($route, [
+                $surface->tour,
+                'spot_id'   => $request->spot_id,
+                'layout_id' => $request->layout_id,
+                'hlookat'   => $request->hlookat,
+                'vlookat'   => $request->vlookat,
+            ])->with('success', 'Surface reset');
+        }
+
         $state->update([
             'canvas' => json_decode($request->canvasState, true),
         ]);
@@ -250,8 +272,6 @@ class SurfaceStateController extends Controller
             );
         }
         $state->artworks()->sync($assigned_artworks);
-
-        $route = $request->return_to_versions ? "tours.surfaces" : "tours.show";
 
         $state->addActivity($request->new ? 'created' : 'updated');
         $state->save();
