@@ -138,12 +138,15 @@
 @endsection
 
 @section('scripts')
+{{-- Cache-busting version (computed in app/Helpers/general.php) so browsers
+     always load the latest canvas modules after a deploy. --}}
 <script>
     let selectedSurfaceStateId = @js($selectedSurfaceState?->id);
     let canvases = @json($canvases);
+    window.__CANVAS_VER = '{{ canvas_asset_version() }}';
 </script>
 <script type="text/javascript" src="{{ asset('js/fabric.min.js') }}"></script>
-<script type="module" src="{{ asset('canvas/canvas.js') }}"></script>
+<script type="module" src="{{ asset('canvas/canvas.js') }}?v={{ canvas_asset_version() }}"></script>
 
 @endsection
 

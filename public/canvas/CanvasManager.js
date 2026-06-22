@@ -1,5 +1,8 @@
-import ArtSelection from "./ArtSelection.js";
-import CanvasApi from "./CanvasApi.js";
+// Cache-busting: same ?v=<deploy version> trick as canvas.js, applied to this
+// module's own dependencies so the whole chain refreshes together after a deploy.
+const __canvasVer = (typeof window !== 'undefined' && window.__CANVAS_VER) ? `?v=${window.__CANVAS_VER}` : '';
+const { default: ArtSelection } = await import(`./ArtSelection.js${__canvasVer}`);
+const { default: CanvasApi } = await import(`./CanvasApi.js${__canvasVer}`);
 
 class CanvasManager {
     constructor(data) {
@@ -984,6 +987,15 @@ class CanvasManager {
             this.boundingBox.opacity = 0;  // hide bounding box
             this.artworkCanvas.backgroundImage.opacity = 0;  // hide background image
 
+            // Hide the pale-grey wall color overlay so the exported hotspot PNG
+            // stays transparent (otherwise it bakes in a near-white background).
+            const wallOverlayVisible = this.wallColorOverlay
+                ? this.wallColorOverlay.visible
+                : null;
+            if (this.wallColorOverlay) {
+                this.wallColorOverlay.visible = false;
+            }
+
             const href = this.artworkCanvas.toDataURL({
                 format: 'png',
                 left: this.boundingBox.left,
@@ -994,6 +1006,9 @@ class CanvasManager {
 
             this.boundingBox.opacity = 0.2;
             this.artworkCanvas.backgroundImage.opacity = 100;
+            if (this.wallColorOverlay) {
+                this.wallColorOverlay.visible = wallOverlayVisible;
+            }
             return href;
         };
 

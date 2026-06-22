@@ -59,6 +59,29 @@ function resizeBase64Image($base64, $scale)
 }
 
 /**
+ * Cache-busting version token for the canvas ES module chain
+ * (canvas.js -> CanvasManager.js -> ArtSelection.js / CanvasApi.js).
+ *
+ * Returns the newest filemtime across those files so the browser refetches
+ * the modules after any change instead of running a stale cached copy.
+ * Used by editor.blade.php to append "?v=<token>" to the module loads.
+ */
+function canvas_asset_version(): int
+{
+    $version = 0;
+
+    foreach (['canvas.js', 'CanvasManager.js', 'ArtSelection.js', 'CanvasApi.js'] as $file) {
+        $path = public_path('canvas/' . $file);
+
+        if (is_file($path)) {
+            $version = max($version, filemtime($path));
+        }
+    }
+
+    return $version;
+}
+
+/**
  * Format company name with ID for "My Workspace" companies
  * 
  * @param string $companyName
