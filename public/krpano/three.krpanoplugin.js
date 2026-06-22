@@ -359,6 +359,7 @@ function krpanoplugin() {
 		var object = null;
 		var gizmo = null;
 		var point = null;
+		var occluded = false;	// true when the found surface/artwork sits BEHIND another mesh (e.g. the 3d room model)
 
 		for (i = 0; i < intersects.length; i++) {
 			var obj = intersects[i].object;
@@ -372,30 +373,24 @@ function krpanoplugin() {
 				point = intersects[i].point;
 			}
 
-			if (obj.userData.type === "surface") {
-				obj = intersects[0].object;
-				point = intersects[i].point;
+			if ((obj.userData.type === "surface" || obj.userData.type === "artwork") && object === null) {
+				// first (= nearest) surface/artwork wins; return the surface/artwork
+				// itself (NOT intersects[0], which may be an occluder mesh of the
+				// room model standing in front of it)
 				object = obj;
-			}
-
-			if (obj.userData.type === "artwork") {
-				obj = intersects[0].object;
 				point = intersects[i].point;
-				object = obj;
+				occluded = (intersects[0].object !== obj);
 			}
 		}
 
-		if (intersects.length > 0) {
-			var obj = intersects[0].object;
-		}
 		if (point) {
 			if (tour_is_shared) {
-				if (object.userData.type === "artwork") {
-					return { object: object, gizmo: gizmo, point: point };
+				if (object && object.userData.type === "artwork") {
+					return { object: object, gizmo: gizmo, point: point, occluded: occluded };
 				}
 				return null;
 			}
-			return { object: object, gizmo: gizmo, point: point };
+			return { object: object, gizmo: gizmo, point: point, occluded: occluded };
 		}
 		else return null;
 	}
@@ -426,6 +421,7 @@ function krpanoplugin() {
 		var hitobj = null;
 		var gizmo = null;
 		var point = null;
+		var occluded = false;
 
 		// Update tour_is_shared status at the beginning of each event
 		tour_is_shared = window.location.pathname.includes("shared-tours") || 
@@ -465,6 +461,7 @@ function krpanoplugin() {
 			hitobj = hittest.object;
 			gizmo = hittest.gizmo;
 			point = hittest.point;
+			occluded = hittest.occluded;
 		}
 
 		if (type == "ondown") {
@@ -507,11 +504,13 @@ function krpanoplugin() {
 					} else {
 						if (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") {
 							selected_surface_id = hitobj.userData.surface_id;
-						} else {
+						} else if (hitobj.userData.temp) {
 							event.preventDefault();
 							event.stopPropagation();
 							selectedObj = hitobj.userData.temp;
 						}
+						// plain meshes (e.g. room-model occluders): don't block the
+						// event — let krpano handle the drag/rotation normally
 					}
 				}
 
@@ -592,7 +591,7 @@ function krpanoplugin() {
 				window.selectedArtworkId = null;
 			}
 
-			if (hitobj && isDown && (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") && selected_surface_id === hitobj.userData.surface_id) {
+			if (hitobj && isDown && !occluded && (hitobj.userData.type === "surface" || hitobj.userData.type === "artwork") && selected_surface_id === hitobj.userData.surface_id) {
 				var hlookat = krpano.view.hlookat;
 				var vlookat = krpano.view.vlookat;
 				console.log(hitobj.userData.surfacestateId, "surfacestateID")
@@ -667,7 +666,7 @@ function krpanoplugin() {
 			var hittest = do_object_hittest(krpano.mouse.x, krpano.mouse.y);
 
 			if (hittest && (!tour_is_shared || (tour_is_shared && hittest.object.userData.type === "artwork"))) {
-				if (hittest.object || hittest.gizmo) {
+				if (((hittest.object && !hittest.occluded) && (hittest.object.userData.temp || hittest.object.userData.type === "surface" || hittest.object.userData.type === "artwork")) || hittest.gizmo) {
 					krpano.control.layer.style.cursor = krpano.cursors.hit;
 				} else {
 					krpano.cursors.update();

@@ -138,7 +138,8 @@ class SpotXmlGenerator
     {
         $threejsPlugin = $this->xml->addChild('plugin');
         $threejsPlugin->addAttribute('name', 'threejs');
-        $threejsPlugin->addAttribute('url', '/krpano/three.krpanoplugin.js');
+        // ?v=<file modification time> busts the browser cache automatically whenever the plugin file changes
+        $threejsPlugin->addAttribute('url', '/krpano/three.krpanoplugin.js?v=' . filemtime(public_path('krpano/three.krpanoplugin.js')));
         $threejsPlugin->addAttribute('type', 'plugin');
         $threejsPlugin->addAttribute('keep', 'true');
     }
@@ -283,7 +284,7 @@ class SpotXmlGenerator
         $point = $hotspot->addChild('point');
 
         foreach ($attributes as $attribute => $value) {
-            $point->addAttribute($attribute, $value);
+            $point->addAttribute($attribute, $value ?? '');
         }
     }
 
