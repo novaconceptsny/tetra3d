@@ -9,7 +9,11 @@
             "type": "composer",
             "url": "https://satis.spatie.be"
         },
-{
+        {
+            "type": "composer",
+            "url": "https://wire-elements-pro.composer.sh"
+        },
+        {
             "type": "vcs",
             "url": "https://github.com/amshehzad/laravel-form-components.git"
         }
@@ -28,6 +32,7 @@
         "protonemedia/laravel-form-components": "dev-custom",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-medialibrary": "^11.0",
+        "spatie/laravel-medialibrary-pro": "^6.0",
         "spatie/laravel-permission": "^6.0",
         "spatie/laravel-schemaless-attributes": "^2.4",
         "staudenmeir/belongs-to-through": "^2.12",

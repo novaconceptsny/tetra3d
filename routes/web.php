@@ -41,6 +41,8 @@ use App\Http\Controllers\Backend\SurfaceController;
 
 Auth::routes();
 
+Route::mediaLibrary();
+
 // Email Verification Routes
 Route::get('/verify-email', [EmailVerificationController::class, 'showVerificationForm'])->name('verification.notice');
 Route::post('/verify-email', [EmailVerificationController::class, 'verifyEmail'])->name('verification.verify');
