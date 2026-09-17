@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\ArtowrkCollection;
 use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Comment;
@@ -18,7 +17,6 @@ use App\Models\SurfaceState;
 use App\Models\Tour;
 use App\Models\User;
 use App\Models\Wall;
-use App\Policies\ArtowrkCollectionPolicy;
 use App\Policies\ArtworkCollectionPolicy;
 use App\Policies\ArtworkPolicy;
 use App\Policies\CommentPolicy;
@@ -35,43 +33,27 @@ use App\Policies\SurfaceVersionPolicy;
 use App\Policies\TourPolicy;
 use App\Policies\UserPolicy;
 use App\Policies\WallPolicy;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use SpotConfiguration;
+use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array<class-string, class-string>
-     */
-    protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-        Company::class => CompanyPolicy::class,
-        Artwork::class => ArtworkPolicy::class,
-        Project::class => ProjectPolicy::class,
-        Tour::class => TourPolicy::class,
-        Surface::class => SurfacePolicy::class,
-        Spot::class => SpotPolicy::class,
-        SurfaceState::class => SurfaceVersionPolicy::class,
-        Map::class => MapPolicy::class,
-        ArtworkCollection::class => ArtworkCollectionPolicy::class,
-        User::class => UserPolicy::class,
-        Comment::class => CommentPolicy::class,
-        Like::class => LikePolicy::class,
-        SharedTour::class => SharedTourPolicy::class,
-        SculptureModel::class => SculptureModelPolicy::class,
-    ];
-
-    /**
-     * Register any authentication / authorization services.
-     *
-     * @return void
-     */
     public function boot()
     {
-        $this->registerPolicies();
+        Gate::policy(Company::class, CompanyPolicy::class);
+        Gate::policy(Artwork::class, ArtworkPolicy::class);
+        Gate::policy(Project::class, ProjectPolicy::class);
+        Gate::policy(Tour::class, TourPolicy::class);
+        Gate::policy(Surface::class, SurfacePolicy::class);
+        Gate::policy(Spot::class, SpotPolicy::class);
+        Gate::policy(SurfaceState::class, SurfaceVersionPolicy::class);
+        Gate::policy(Map::class, MapPolicy::class);
+        Gate::policy(ArtworkCollection::class, ArtworkCollectionPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Comment::class, CommentPolicy::class);
+        Gate::policy(Like::class, LikePolicy::class);
+        Gate::policy(SharedTour::class, SharedTourPolicy::class);
+        Gate::policy(SculptureModel::class, SculptureModelPolicy::class);
 
         Gate::define('viewLogViewer', function (?User $user) {
             return $user->isAdmin();
