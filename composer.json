@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "repositories": [
         {
@@ -37,7 +40,8 @@
         "spatie/laravel-schemaless-attributes": "^2.4",
         "staudenmeir/belongs-to-through": "^2.12",
         "staudenmeir/eloquent-has-many-deep": "^1.15",
-        "vinkla/hashids": "^13.0"
+        "vinkla/hashids": "^13.0",
+        "wire-elements/pro": "^4.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

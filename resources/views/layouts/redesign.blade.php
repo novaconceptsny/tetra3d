@@ -120,8 +120,12 @@
         }
 </script>
 
-    {{-- @livewire('modal-pro') --}}
-    {{-- @livewire('slide-over-pro') --}}
+    {{-- Wire Elements Pro: needed for the project "Enter" slide-over and layout modals.
+         Guarded so the page still loads if the package isn't installed yet. --}}
+    @if (class_exists(\WireElements\Pro\Components\SlideOver\SlideOver::class))
+        @livewire('modal-pro')
+        @livewire('slide-over-pro')
+    @endif
 
     @yield('scripts')
     @livewireScripts
