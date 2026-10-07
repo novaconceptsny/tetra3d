@@ -1,7 +1,9 @@
 <?php
 
 use Carbon\Carbon;
-use \Intervention\Image\Facades\Image;
+// use \Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 function carbon($time)
 {
     return new Carbon($time);
@@ -50,12 +52,15 @@ function resizeBase64Image($base64, $scale)
 {
     $scale = $scale ?? 1;
 
-    $image = Image::make($base64);
+    $manager = new ImageManager(new Driver());
+    $image   = $manager->read($base64);
+
     $image->resize(
-        $scale * $image->width(),
-        $scale * $image->height()
+        (int) round($scale * $image->width()),
+        (int) round($scale * $image->height())
     );
-    return $image->encode('data-url');
+
+    return $image->toPng()->toDataUri();
 }
 
 /**
