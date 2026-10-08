@@ -68,6 +68,7 @@ class UpdatedTourSwitcher extends SlideOver
 
         if ($user && method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
             $favorites = Layout::where('is_favorite', true)
+                ->onAttachedTour()
                 ->get();
         } else {
             $company = Company::findOrFail($user->company_id);
@@ -77,6 +78,7 @@ class UpdatedTourSwitcher extends SlideOver
             
             $favorites = Layout::where('is_favorite', true)
                 ->whereIn('user_id', $userIds)
+                ->onAttachedTour()
                 ->with(['tour' => function ($query) {
                     $query->withoutGlobalScope('forCurrentCompany');
                 }])

@@ -67,6 +67,9 @@ class TourController extends Controller
         if ($layout_id = request('layout_id')) {
             $layout  = Layout::findOrFail($layout_id);
             $project = Project::relevant()->findOrFail($layout->project_id);
+
+            // The layout's tour must still be attached to its project
+            abort_unless($layout->isOnAttachedTour(), 404);
         } else {
             // Allow access to template galleries for all authenticated users
             $isTemplateGallery = strpos($tour->name, 'Template Gallery') !== false;

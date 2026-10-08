@@ -28,7 +28,7 @@
 
                         </div>
                         <div class="d-flex flex-column gap-3">
-                            @forelse($project->layouts()->orderBy('updated_at', 'desc')->get() as $layout)
+                            @forelse($project->activeLayouts()->orderBy('updated_at', 'desc')->get() as $layout)
                                 <div class="layout-card d-flex align-items-start">
                                     <div class="layout-card-container">
                                         <div class="layout-favorite">

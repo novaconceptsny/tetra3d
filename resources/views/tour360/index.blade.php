@@ -205,7 +205,7 @@
                                                             <div>
                                                                 <small>Created: {{ $project->created_at->format('F jS, Y') }}</small><br>
                                                                 <div class="d-flex align-items-center justify-content-between">
-                                                                    <span style="font-size: 0.875rem;">{{ $project->layouts_count ?? $project->layouts()->count() }} layouts</span>
+                                                                    <span style="font-size: 0.875rem;">{{ $project->layouts_count ?? $project->activeLayouts()->count() }} layouts</span>
                                                                     <a href="javascript:void(0)" class="btn-enter ms-2" onclick="handleEnterProject({{ $project->id }}, {{ $project->assignedTours()->count() }})">Enter</a>
                                                                 </div>
                                                             </div>
@@ -801,6 +801,10 @@
                     // Set selected tours
                     const selectedTours = data.assignedTours.map(tour => tour.id);
                     $('#inlineTourSelect').val(selectedTours).trigger('change');
+
+                    // Remember the original tours + layout counts so we can warn before layouts get deleted
+                    window.editProjectOriginalTours = data.assignedTours.map(tour => ({ id: String(tour.id), name: tour.name }));
+                    window.editProjectLayoutCounts = data.layoutCountsByTour || {};
                 }
 
                 if (data.artworkCollections) {
@@ -864,6 +868,24 @@
             if (!name) {
                 alert('Please enter a project name');
                 return;
+            }
+
+            // Removing a tour deletes its layouts in this project - confirm first
+            const selectedTourIds = (tours || []).map(String);
+            const removedWithLayouts = (window.editProjectOriginalTours || [])
+                .filter(tour => !selectedTourIds.includes(tour.id))
+                .map(tour => ({ ...tour, layouts: Number((window.editProjectLayoutCounts || {})[tour.id] || 0) }))
+                .filter(tour => tour.layouts > 0);
+
+            if (removedWithLayouts.length) {
+                const lines = removedWithLayouts.map(t => `- ${t.name}: ${t.layouts} layout(s)`).join('\n');
+                const ok = confirm(
+                    'You are removing tour(s) that have layouts in this project:\n\n' + lines +
+                    '\n\nThese layouts will be permanently deleted. Continue?'
+                );
+                if (!ok) {
+                    return;
+                }
             }
 
             // Append all data to FormData

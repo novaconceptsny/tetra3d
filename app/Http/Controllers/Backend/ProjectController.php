@@ -108,10 +108,8 @@ class ProjectController extends Controller
         
         if (!empty($syncedTours['detached'])) {
             
-            // Remove layouts for detached tours
-            Layout::where('project_id', $project->id)
-                  ->whereIn('tour_id', $syncedTours['detached'])
-                  ->delete();
+            // Remove layouts for detached tours (model-by-model so their surface states are deleted too)
+            $project->deleteLayoutsForTours($syncedTours['detached']);
         }
 
 

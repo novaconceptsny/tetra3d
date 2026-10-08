@@ -24,15 +24,17 @@ class Tour360Controller extends Controller
             // For super admin, get all companies with their projects
             $companies = Company::with(['projects' => function($query) {
                 $query->orderBy('created_at', 'desc')
-                      ->withCount(['tours', 'artworkCollections', 'contributors', 'layouts']);
+                      ->withCount(['tours', 'artworkCollections', 'contributors', 'layouts' => fn($q) => $q->onAttachedTour()]);
             }])->get();
 
             $favorites = Layout::where('is_favorite', true)
+                ->onAttachedTour()
                 ->with(['project', 'tour'])
                 ->get();
                 
             // Get all layouts for super admin
-            $allLayouts = Layout::with(['project', 'user', 'tour'])
+            $allLayouts = Layout::onAttachedTour()
+                ->with(['project', 'user', 'tour'])
                 ->get();
                 
             // Get all tours for super admin
@@ -43,7 +45,7 @@ class Tour360Controller extends Controller
             $companies = Company::where('id', $user->company_id)
                 ->with(['projects' => function($query) {
                     $query->orderBy('created_at', 'desc')
-                          ->withCount(['tours', 'artworkCollections', 'contributors', 'layouts']);
+                          ->withCount(['tours', 'artworkCollections', 'contributors', 'layouts' => fn($q) => $q->onAttachedTour()]);
                 }])
                 ->get();
             $company = Company::findOrFail($user->company_id);
@@ -54,11 +56,13 @@ class Tour360Controller extends Controller
             // Get favorite layouts for those users
             $favorites = Layout::where('is_favorite', true)
                 ->whereIn('user_id', $userIds)
+                ->onAttachedTour()
                 ->with(['project', 'tour'])
                 ->get();
                 
             // Get all layouts for users in this company
             $allLayouts = Layout::whereIn('user_id', $userIds)
+                ->onAttachedTour()
                 ->with(['project', 'user', 'tour'])
                 ->get();
                 
@@ -129,6 +133,11 @@ class Tour360Controller extends Controller
             $data['assignedCollections'] = $project->artworkCollections;
             $data['assignedUsers']       = $project->contributors;
             $data['assignedTours']       = $project->assignedTours();
+            // Number of layouts per tour, so the edit form can warn before a tour (and its layouts) is removed
+            $data['layoutCountsByTour']  = $project->layouts()
+                ->selectRaw('tour_id, COUNT(*) as total')
+                ->groupBy('tour_id')
+                ->pluck('total', 'tour_id');
 
             return response()->json($data);
         } catch (\Exception $e) {
@@ -246,8 +255,19 @@ class Tour360Controller extends Controller
             $project->save();
 
             // Update relationships
+            $deletedLayouts = 0;
             if ($request->has('tour_ids')) {
-                $project->tours()->sync($tourIds);
+                $syncedTours = $project->tours()->sync($tourIds ?? []);
+
+                // Same rule as Backend\ProjectController@update:
+                // removing a tour from the project removes that tour's layouts in this project.
+                if (!empty($syncedTours['detached'])) {
+                    $deletedLayouts = $project->deleteLayoutsForTours($syncedTours['detached']);
+                }
+
+                if (!empty($syncedTours['attached']) || !empty($syncedTours['detached'])) {
+                    $project->addActivity('tours_updated');
+                }
             }
 
             if ($request->has('artwork_collection_ids')) {
@@ -262,6 +282,7 @@ class Tour360Controller extends Controller
                 'success' => true,
                 'message' => 'Project updated successfully',
                 'project' => $project,
+                'deleted_layouts' => $deletedLayouts,
             ]);
         } catch (\Exception $e) {
             return response()->json([

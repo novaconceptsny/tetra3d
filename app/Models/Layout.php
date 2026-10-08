@@ -21,6 +21,28 @@ class Layout extends Model
         });
     }
 
+    /**
+     * Only layouts whose tour is still attached to the layout's project
+     * (i.e. a matching row exists in the project_tour pivot).
+     * Layouts left behind after their tour was removed from the project are excluded.
+     */
+    public function scopeOnAttachedTour($query)
+    {
+        return $query->whereExists(function ($q) {
+            $q->selectRaw(1)
+                ->from('project_tour')
+                ->whereColumn('project_tour.project_id', 'layouts.project_id')
+                ->whereColumn('project_tour.tour_id', 'layouts.tour_id');
+        });
+    }
+
+    public function isOnAttachedTour(): bool
+    {
+        return ProjectTour::where('project_id', $this->project_id)
+            ->where('tour_id', $this->tour_id)
+            ->exists();
+    }
+
     public function tour()
     {
         return $this->belongsTo(Tour::class);

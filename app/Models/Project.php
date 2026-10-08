@@ -113,6 +113,31 @@ class Project extends Model implements HasMedia
         return $this->hasMany(Layout::class);
     }
 
+    /**
+     * Layouts whose tour is still attached to this project.
+     * Use this for anything shown to users (layout list, layout counts).
+     */
+    public function activeLayouts()
+    {
+        return $this->layouts()->onAttachedTour();
+    }
+
+    /**
+     * Delete this project's layouts that belong to the given (removed) tours.
+     * Deletes model-by-model so Layout::deleted fires and its surface states are removed too.
+     */
+    public function deleteLayoutsForTours(array $tourIds): int
+    {
+        if (empty($tourIds)) {
+            return 0;
+        }
+
+        $layouts = $this->layouts()->whereIn('tour_id', $tourIds)->get();
+        $layouts->each(fn (Layout $layout) => $layout->delete());
+
+        return $layouts->count();
+    }
+
     public function artworks()
     {
         return $this->hasManyDeep(
