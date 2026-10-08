@@ -4306,9 +4306,12 @@ $(document).ready(function() {
             return;
         }
 
-        newRows.each(function() {
+        newRows.each(function(rowIndex) {
             const row = $(this);
+            // row_key lets the server tell us exactly which rows were saved and which failed
+            row.attr('data-save-key', rowIndex);
             const formData = {
+                row_key: rowIndex,
                 name: row.find('.title-input').val(),
                 artist: row.find('.artist-input').val(),
                 type: row.find('.type-input').val(),
@@ -4371,6 +4374,48 @@ $(document).ready(function() {
             }
         });
 
+        // Remove only the rows the server saved; keep failed rows (highlighted) so they can be fixed and saved again
+        function handleBulkSaveResult(response) {
+            const savedKeys  = (response.saved_row_keys  || []).map(String);
+            const failedKeys = (response.failed_row_keys || []).map(String);
+            const hasKeys    = Array.isArray(response.saved_row_keys);
+
+            $('.new-artwork-row').each(function() {
+                const row = $(this);
+                const key = String(row.attr('data-save-key'));
+
+                if (hasKeys ? savedKeys.includes(key) : response.success) {
+                    selectedNewRows.delete(row.attr('data-temp-id'));
+                    row.remove();
+                } else if (failedKeys.includes(key)) {
+                    row.addClass('border-danger');
+                }
+            });
+
+            if (response.saved_count > 0) {
+                table.ajax.reload(function() {
+                    // Reapply any pending changes after reload
+                    reapplyPendingChanges();
+                }, false);
+            }
+
+            if ($('.new-artwork-row').length === 0) {
+                // Hide multiple drop zone
+                $('#multipleDropZone').remove();
+            }
+
+            // Update controls
+            updateBulkNewItemControls();
+            updateBulkEditUI();
+            updateSelectAllState();
+
+            let message = response.message || (response.success ? 'Saved.' : 'Error saving items.');
+            if (response.errors && response.errors.length) {
+                message += '\n\n' + response.errors.join('\n');
+            }
+            alert(message);
+        }
+
         function sendBulkData() {
             // Send all data to bulk store endpoint
             const formDataObj = new FormData();
@@ -4398,29 +4443,21 @@ $(document).ready(function() {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 success: function(response) {
-                    if (response.success) {
-                        alert('Successfully saved ' + response.saved_count + ' item(s).');
-                        // Clear selected new rows since all are being saved and removed
-                        selectedNewRows.clear();
-                        // Remove all new rows
-                        $('.new-artwork-row').remove();
-                        // Reload table
-                        table.ajax.reload(function() {
-                            // Reapply any pending changes after reload
-                            reapplyPendingChanges();
-                        }, false);
-                        // Hide multiple drop zone
-                        $('#multipleDropZone').remove();
-                        // Update controls
-                        updateBulkNewItemControls();
-                        updateBulkEditUI();
-                        updateSelectAllState();
-                    } else {
-                        alert('Error: ' + response.message);
-                    }
+                    handleBulkSaveResult(response);
                 },
                 error: function(xhr) {
-                    alert('Error saving items: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    const response = xhr.responseJSON || {};
+                    // 400 = nothing saved (e.g. every image failed): keep rows, mark the failed ones
+                    if (Array.isArray(response.failed_row_keys)) {
+                        handleBulkSaveResult(response);
+                        return;
+                    }
+                    // Unexpected server error: some rows may already be saved, so reload the table before retrying
+                    alert('Error saving items: ' + (response.message || xhr.statusText || 'Unknown error') +
+                        '\n\nSome items may already have been saved. The table will reload - please check it before saving again.');
+                    table.ajax.reload(function() {
+                        reapplyPendingChanges();
+                    }, false);
                 },
                 complete: function() {
                     saveAllBtn.prop('disabled', false).html('<i class="fas fa-save me-2"></i>Save All');

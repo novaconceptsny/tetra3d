@@ -9,7 +9,7 @@ use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Intervention\Image\Facades\Image;
+use Spatie\Image\Image;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
 
@@ -176,16 +176,14 @@ class Artwork extends Model implements HasMedia
             return 1;
         }
 
-        ini_set('memory_limit', '1G');
+        // Read the pixel size from the file header (no need to decode the whole image)
+        $size = @getimagesize($media->getPath());
 
-        $image = Image::make($media->getPath());
-        
-        // Get the original image actual proportions
-        $originalWidth = $image->width();
-        $originalHeight = $image->height();
-        $originalAspectRatio = $originalWidth / $originalHeight;
+        if (!$size || empty($size[0]) || empty($size[1])) {
+            return 1;
+        }
 
-        return $originalAspectRatio;
+        return $size[0] / $size[1];
     }
 
     public function updateSizeData()
@@ -198,9 +196,13 @@ class Artwork extends Model implements HasMedia
     {
         $media = $this->getFirstMedia('image');
 
+        if (!$media) {
+            return;
+        }
+
         ini_set('memory_limit', '1G');
 
-        $image = Image::make($media->getPath());
+        $image = Image::load($media->getPath());
         
         
         // Calculate new dimensions based on actual proportions and data-height value
@@ -228,12 +230,24 @@ class Artwork extends Model implements HasMedia
         //     $targetHeight = $targetWidth / $originalAspectRatio;
         // }
 
+        $targetWidth  = (int) round($targetWidth);
+        $targetHeight = (int) round($targetHeight);
+
+        if ($targetWidth < 1 || $targetHeight < 1) {
+            return;
+        }
+
         $image->resize($targetWidth, $targetHeight);
         
 
         $this->save();
 
-        $this->addMediaFromBase64($image->encode('data-url'))
+        // Keep the original file format (jpg/png/webp...) when re-encoding
+        $format = strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
+        $format = in_array($format, ['jpg', 'jpeg', 'png', 'gif', 'webp']) ? $format : 'jpeg';
+        $format = $format === 'jpg' ? 'jpeg' : $format;
+
+        $this->addMediaFromBase64($image->base64($format))
             ->usingFileName($media->file_name)
             ->usingName($media->name)
             ->toMediaCollection('image');

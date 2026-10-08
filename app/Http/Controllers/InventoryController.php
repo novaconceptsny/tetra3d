@@ -8,7 +8,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
+use Spatie\Image\Image;
 use ZipArchive;
 
 class InventoryController extends Controller
@@ -791,19 +791,26 @@ class InventoryController extends Controller
                 ], 400);
             }
 
-            $savedCount = 0;
-            $errors     = [];
+            $savedCount     = 0;
+            $errors         = [];
+            $savedRowKeys   = []; // row_key sent by the front-end, so it can remove only the rows that were saved
+            $failedRowKeys  = [];
 
             foreach ($items as $index => $itemData) {
+                $rowKey = $itemData['row_key'] ?? $index;
+                $label  = '#' . ($index + 1) . (!empty($itemData['name']) ? ' "' . $itemData['name'] . '"' : '');
+
                 try {
                     // Validate required fields
                     if (empty($itemData['name'])) {
-                        $errors[] = "Title is required for item #" . ($index + 1);
+                        $errors[]        = "Title is required for item #" . ($index + 1);
+                        $failedRowKeys[] = $rowKey;
                         continue;
                     }
 
                     if (empty($itemData['artwork_collection_id'])) {
-                        $errors[] = "Collection is required for item #" . ($index + 1);
+                        $errors[]        = "Collection is required for item #" . ($index + 1);
+                        $failedRowKeys[] = $rowKey;
                         continue;
                     }
 
@@ -814,6 +821,7 @@ class InventoryController extends Controller
                     $artwork->name                  = $itemData['name'];
                     $artwork->artist                = $itemData['artist'] ?? '';
                     $artwork->type                  = $itemData['type'] ?? '';
+                    $artwork->description           = $itemData['description'] ?? '';
                     $artwork->artwork_collection_id = $itemData['artwork_collection_id'];
 
                     // Handle dimensions
@@ -848,54 +856,51 @@ class InventoryController extends Controller
 
                     $artwork->save();
 
-                    // Handle image upload if present
+                    // Handle image upload if present.
+                    // If the image cannot be stored, the artwork is removed again so we never
+                    // leave an artwork without an image behind (it would show as broken in the editor).
                     if (!empty($itemData['image']) && str_starts_with($itemData['image'], 'data:image')) {
-                        try {
-                            // Compress and resize image before saving
-                            $base64Data = $this->compressImage($itemData['image']);
+                        $imageError = $this->attachArtworkImage($artwork, $itemData['image']);
 
-                            // Add image to media collection
-                            $artwork->addMediaFromBase64($base64Data)
-                                ->usingFileName('artwork_' . $artwork->id . '_' . time() . '.jpg')
-                                ->usingName($artwork->name)
-                                ->toMediaCollection('image');
-
-                            // Refresh model to ensure media is attached
-                            $artwork->refresh();
-                            $artwork->updateSizeData();
-
-                            // Resize image if dimensions are available
-                            if (!empty($artwork->data->width_inch) && !empty($artwork->data->height_inch)) {
-                                $artwork->resizeImage();
-                            }
-                        } catch (\Exception $e) {
-                            // Continue without failing the entire operation
-                            \Log::warning('Failed to save image for artwork ' . $artwork->id . ': ' . $e->getMessage());
+                        if ($imageError) {
+                            $artwork->delete();
+                            $errors[]        = "Image could not be saved for item {$label}: {$imageError}";
+                            $failedRowKeys[] = $rowKey;
+                            continue;
                         }
                     }
 
                     $savedCount++;
+                    $savedRowKeys[] = $rowKey;
 
-                } catch (\Exception $e) {
-                    $errors[] = "Error saving item #" . ($index + 1) . ": " . $e->getMessage();
+                } catch (\Throwable $e) {
+                    \Log::error('bulkStore: failed to save item ' . $label . ': ' . $e->getMessage(), ['exception' => $e]);
+                    $errors[]        = "Error saving item {$label}: " . $e->getMessage();
+                    $failedRowKeys[] = $rowKey;
                 }
             }
 
             if ($savedCount > 0) {
                 return response()->json([
-                    'success' => true,
-                    'message' => "Successfully saved {$savedCount} item(s).",
-                    'saved_count' => $savedCount,
-                    'errors'      => $errors,
+                    'success'         => true,
+                    'message'         => "Successfully saved {$savedCount} item(s)." . ($errors ? ' ' . count($errors) . ' item(s) failed.' : ''),
+                    'saved_count'     => $savedCount,
+                    'saved_row_keys'  => $savedRowKeys,
+                    'failed_row_keys' => $failedRowKeys,
+                    'errors'          => $errors,
                 ]);
             } else {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'No items were saved. ' . implode(' ', $errors),
+                    'success'         => false,
+                    'message'         => 'No items were saved. ' . implode(' ', $errors),
+                    'saved_row_keys'  => [],
+                    'failed_row_keys' => $failedRowKeys,
+                    'errors'          => $errors,
                 ], 400);
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            \Log::error('bulkStore failed: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json([
                 'success' => false,
                 'message' => 'Error processing bulk save: ' . $e->getMessage(),
@@ -1018,34 +1023,21 @@ class InventoryController extends Controller
                     // Save artwork first to get the ID
                     $artwork->save();
 
-                    // Handle image if provided
+                    // Handle image if provided (artwork is removed again if the image cannot be stored)
                     if (! empty($row['image']) && str_starts_with($row['image'], 'data:image')) {
-                        try {
-                            // Compress and resize image before saving
-                            $base64Data = $this->compressImage($row['image']);
+                        $imageError = $this->attachArtworkImage($artwork, $row['image']);
 
-                            // Add image to media collection
-                            $artwork->addMediaFromBase64($base64Data)
-                                ->usingFileName('artwork_' . $artwork->id . '_' . time() . '.jpg')
-                                ->usingName($artwork->name)
-                                ->toMediaCollection('image');
-
-                            // Refresh model to ensure media is attached
-                            $artwork->refresh();
-                            $artwork->updateSizeData();
-
-                            // Resize image if dimensions are available
-                            if (! empty($artwork->data->width_inch) && ! empty($artwork->data->height_inch)) {
-                                $artwork->resizeImage();
-                            }
-                        } catch (\Exception $e) {
-                            // Continue without failing the entire operation
+                        if ($imageError) {
+                            $artwork->delete();
+                            $errors[] = "Image could not be saved for artwork #{$index} \"{$artwork->name}\": {$imageError}";
+                            continue;
                         }
                     }
 
                     $createdCount++;
 
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
+                    \Log::error("addArtworks: failed to create artwork #{$index}: " . $e->getMessage(), ['exception' => $e]);
                     $errors[] = "Error creating artwork #{$index}: " . $e->getMessage();
                 }
             }
@@ -1062,7 +1054,8 @@ class InventoryController extends Controller
 
             return response()->json($response);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            \Log::error('addArtworks failed: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -1486,102 +1479,120 @@ class InventoryController extends Controller
     }
 
     /**
-     * Compress and resize image from base64 data to target size under 2KB
-     * 
-     * @param string $base64Data Base64 encoded image data
-     * @param int $maxWidth Maximum width in pixels (default: 800)
-     * @param int $targetSizeKB Target file size in KB (default: 2)
-     * @return string Compressed base64 image data
+     * Store a base64 image on the artwork (compress -> media library -> size data -> resize).
+     * Returns null on success, or an error message if the image could not be stored.
+     * Problems after the image is stored (size data / resize) are only logged, because the artwork already has its image.
+     */
+    private function attachArtworkImage(Artwork $artwork, string $base64Image): ?string
+    {
+        try {
+            // Compress and resize image before saving
+            $base64Data = $this->compressImage($base64Image);
+
+            // Add image to media collection
+            $artwork->addMediaFromBase64($base64Data)
+                ->usingFileName('artwork_' . $artwork->id . '_' . time() . '.jpg')
+                ->usingName($artwork->name)
+                ->toMediaCollection('image');
+        } catch (\Throwable $e) {
+            \Log::error('Failed to store image for artwork ' . $artwork->id . ': ' . $e->getMessage(), ['exception' => $e]);
+            return $e->getMessage();
+        }
+
+        try {
+            // Refresh model to ensure media is attached
+            $artwork->refresh();
+            $artwork->updateSizeData();
+
+            // Resize image if dimensions are available
+            if (!empty($artwork->data->width_inch) && !empty($artwork->data->height_inch)) {
+                $artwork->resizeImage();
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('Image stored but resize/size update failed for artwork ' . $artwork->id . ': ' . $e->getMessage(), ['exception' => $e]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Resize + re-encode a base64 image as JPEG, lowering quality step by step to get close to $targetSizeKB.
+     * Uses spatie/image (installed with spatie/laravel-medialibrary; picks Imagick or GD automatically).
+     * Returns a data URL. If anything fails, the original data is returned unchanged.
      */
     private function compressImage($base64Data, $maxWidth = 800, $targetSizeKB = 2)
     {
+        $tmpPath = null;
+
         try {
             // Decode base64 data
-            $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Data));
+            $imageData = base64_decode(preg_replace('#^data:image/[\w.+-]+;base64,#i', '', $base64Data));
             
             if (!$imageData) {
                 return $base64Data; // Return original if decoding fails
             }
 
-            // Create image instance
-            $image = Image::make($imageData);
-            
-            // Get original dimensions
-            $originalWidth = $image->width();
-            $originalHeight = $image->height();
-            
-            // Resize if image is larger than max width
-            if ($originalWidth > $maxWidth) {
-                // Calculate new height maintaining aspect ratio
-                $ratio = $maxWidth / $originalWidth;
-                $newHeight = (int) ($originalHeight * $ratio);
-                
-                // Resize image
-                $image->resize($maxWidth, $newHeight, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize(); // Prevent upsizing
-                });
+            // spatie/image loads from a file, so write the upload to a temp file
+            $tmpPath = tempnam(sys_get_temp_dir(), 'artwork_');
+            file_put_contents($tmpPath, $imageData);
+
+            $image = Image::load($tmpPath);
+
+            // Resize if image is larger than max width (keeps aspect ratio)
+            if ($image->getWidth() > $maxWidth) {
+                $image->width($maxWidth);
             }
-            
-            // Progressive quality reduction until we reach target size
+
+            // JPEG has no transparency: flatten PNG/WebP transparency onto white instead of black
+            $image->background('#ffffff');
+
             $targetSizeBytes = $targetSizeKB * 1024;
-            $quality = 70; // Start with 70% quality
-            $minQuality = 40; // Don't go below 40% quality
-            $encoded = null;
-            $attempts = 0;
-            $maxAttempts = 10;
-            
-            while ($attempts < $maxAttempts && $quality >= $minQuality) {
-                // Encode as JPEG with current quality
-                $encoded = $image->encode('jpg', $quality);
-                $sizeBytes = strlen($encoded);
-                
-                // If we're under target size, we're done
-                if ($sizeBytes <= $targetSizeBytes) {
+            $minQuality      = 40; // Don't go below 40% quality
+            $encoded         = null;
+
+            $encodeAtQuality = function (int $quality) use ($image) {
+                return $image->quality($quality)->base64('jpeg', false);
+            };
+
+            // Progressive quality reduction until we reach target size
+            for ($quality = 70; $quality >= $minQuality; $quality -= 5) {
+                $encoded = $encodeAtQuality($quality);
+                if (strlen(base64_decode($encoded)) <= $targetSizeBytes) {
                     break;
                 }
-                
-                // Reduce quality for next attempt
-                $quality -= 5;
-                $attempts++;
             }
-            
-            // If still too large, try reducing dimensions further
-            if ($encoded && strlen($encoded) > $targetSizeBytes) {
-                $currentWidth = $image->width();
-                $newMaxWidth = (int) ($currentWidth * 0.8); // Reduce by 20%
-                
-                if ($newMaxWidth >= 300) { // Don't go below 300px
-                    $image->resize($newMaxWidth, null, function ($constraint) {
-                        $constraint->aspectRatio();
-                        $constraint->upsize();
-                    });
-                    
-                    // Try encoding again with reduced size
-                    $quality = 65;
-                    while ($attempts < $maxAttempts && $quality >= $minQuality) {
-                        $encoded = $image->encode('jpg', $quality);
-                        if (strlen($encoded) <= $targetSizeBytes) {
+
+            // If still too large, try reducing dimensions further (not below 300px)
+            if ($encoded && strlen(base64_decode($encoded)) > $targetSizeBytes) {
+                $newMaxWidth = (int) ($image->getWidth() * 0.8);
+
+                if ($newMaxWidth >= 300) {
+                    $image->width($newMaxWidth);
+
+                    for ($quality = 65; $quality >= $minQuality; $quality -= 5) {
+                        $encoded = $encodeAtQuality($quality);
+                        if (strlen(base64_decode($encoded)) <= $targetSizeBytes) {
                             break;
                         }
-                        $quality -= 5;
-                        $attempts++;
                     }
                 }
             }
-            
-            // Ensure we have encoded data (fallback to minimum quality if needed)
+
             if (!$encoded) {
-                $encoded = $image->encode('jpg', $minQuality);
+                $encoded = $encodeAtQuality($minQuality);
             }
-            
+
             // Return as data URL
-            return 'data:image/jpeg;base64,' . base64_encode($encoded);
-            
-        } catch (\Exception $e) {
+            return 'data:image/jpeg;base64,' . $encoded;
+
+        } catch (\Throwable $e) {
             \Log::warning('Image compression failed: ' . $e->getMessage());
             // Return original if compression fails
             return $base64Data;
+        } finally {
+            if ($tmpPath && file_exists($tmpPath)) {
+                @unlink($tmpPath);
+            }
         }
     }
 

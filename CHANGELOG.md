@@ -6,6 +6,89 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-10-08 — Inventory: "Server Error" when adding artworks, duplicate rows, broken images
+
+**Type:** Bug fix
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — image code tested against spatie/image 3.9.4 + GD; not yet tested in the full app / not deployed
+
+### Problem
+On `app.tetra3d.com/inventory`, adding artworks with an image (one or many, via **+ Artwork → Save All**):
+- An alert said **"Error saving items: Server Error"**.
+- But the artworks *were* created — trying 3 times created 3 copies (collection `test`: "379233" and two "tumblr_lo2srfoT4D1qikgdeo1_r1_1280").
+- Those artworks had **no image**: placeholder in Inventory, and in the tour editor the artwork list showed "card-img" and the alert **"Image could not be loaded..."**.
+- The description typed in the row was also not saved.
+
+### Root cause
+1. `app/Models/Artwork.php` and `app/Http/Controllers/InventoryController.php` use `Intervention\Image\Facades\Image`,
+   but the **`intervention/image` package is not installed** (it is not in `composer.json` / `composer.lock`; it was
+   dropped during the Laravel 12 upgrade — medialibrary 11 now uses `spatie/image` 3 instead).
+   Calling `Image::make()` throws `Error: Class "Intervention\Image\Facades\Image" not found`.
+2. That is a PHP `Error`, not an `Exception`. Every `catch (\Exception $e)` around the image code missed it, so it went
+   straight to Laravel's handler → HTTP 500 with the generic message "Server Error".
+3. The artwork row is saved (`$artwork->save()`) **before** the image code runs, so each attempt left an artwork with no
+   image behind. The front-end kept the unsaved rows on screen after the error, so the user clicked Save again → duplicates.
+   With several rows, the request died on the first image, so only the first row was saved each time.
+4. `bulkStore()` never copied `description` onto the artwork.
+
+### Decision
+- Use **`spatie/image`** (already installed as a dependency of spatie/laravel-medialibrary; picks Imagick or GD
+  automatically). No `composer require` needed, so deploying the code is enough.
+- If an image cannot be stored, the artwork is **deleted again** and reported as failed — never leave an artwork without its image.
+- Catch `\Throwable` (not only `\Exception`) and log it, so the user sees the real error message.
+- Front-end removes only the rows the server confirms as saved; failed rows stay (red border) so they can be retried without duplicates.
+
+### Changes
+1. **`app/Http/Controllers/InventoryController.php`**
+   - `use Intervention\Image\Facades\Image` → `use Spatie\Image\Image`.
+   - `compressImage()` rewritten with spatie/image: writes the upload to a temp file, `Image::load()`, `width($maxWidth)` if wider,
+     `background('#ffffff')` (transparent PNG → white, not black), same quality loop 70→40 and the extra 80% shrink pass as before,
+     returns `data:image/jpeg;base64,...`. Temp file deleted in `finally`. Catches `\Throwable`.
+   - New private `attachArtworkImage(Artwork $artwork, string $base64Image): ?string` — compress → `addMediaFromBase64()` →
+     `updateSizeData()` → `resizeImage()`. Returns `null` on success or the error message if the image could not be stored.
+     Errors after the image is stored (size data/resize) are only logged as warnings.
+   - `bulkStore()`: saves `description`; reads `row_key` from each item; uses `attachArtworkImage()` and deletes the artwork if
+     it returns an error; catches `\Throwable` per item and overall (logged with `\Log::error`). Response now includes
+     `saved_row_keys`, `failed_row_keys`, `errors` (also on the 400 "nothing saved" response).
+   - `addArtworks()` (the multi-upload / import modal): same `attachArtworkImage()` + delete-on-failure, `\Throwable` catches, logging.
+2. **`app/Models/Artwork.php`**
+   - `use Intervention\Image\Facades\Image` → `use Spatie\Image\Image`.
+   - `getOriginalAspectRatio()`: uses `getimagesize()` on the media file (no full decode, no 1G memory bump); returns 1 if unreadable.
+   - `resizeImage()`: returns early if there is no media or the target size is < 1px; uses `Image::load()->resize(w, h)` and
+     `base64($format)` keeping the original file format (was `encode('data-url')`).
+3. **`resources/views/inventory/index.blade.php`** (Save All for new rows)
+   - Each new row gets `data-save-key` and sends `row_key` with its data.
+   - New `handleBulkSaveResult(response)`: removes only rows in `saved_row_keys`, adds `border-danger` to rows in
+     `failed_row_keys`, reloads the table if anything was saved, and shows the message plus each error line.
+   - `error:` handler: if the server sent `failed_row_keys` (400) it uses the same handler; for unexpected errors it shows the
+     message, warns that some items may already be saved, and reloads the table.
+
+### Not changed / follow-ups
+- **Existing broken artworks are still in the database** (the 3 in collection `test`, and any others created while this bug
+  was live). Delete them from Inventory, or find them with:
+  ```sql
+  SELECT a.id, a.name, a.created_at FROM artworks a
+  LEFT JOIN media m ON m.model_type = 'App\\Models\\Artwork' AND m.model_id = a.id AND m.collection_name = 'image'
+  WHERE m.id IS NULL ORDER BY a.created_at DESC;
+  ```
+  Some may be on layouts already (surface states) — check before deleting.
+- `compressImage()` target size is still **2 KB** (pre-existing) — in practice every image ends at quality 40 and ~640px wide.
+  Consider raising `$targetSizeKB` if images look too soft.
+- The server must have the PHP **GD or Imagick** extension (needed by spatie/image and medialibrary anyway).
+- No other files in `app/` use Intervention. If any other code (outside `app/`) does, it will fail the same way.
+
+### How to test
+1. Inventory → **+ Artwork** → one row with a JPG, collection, title, description → **Save All**.
+   Expect "Successfully saved 1 item(s)."; row disappears; artwork shows with its image and description; only 1 artwork created.
+2. Same with a transparent PNG → image saved, background white.
+3. Several rows at once (like the 11-row test) → all saved with images; no duplicates.
+4. Open a layout in the tour editor and add one of the new artworks → image loads, no "Image could not be loaded".
+5. Multi-upload / import modal (`/inventory/artworks/add`) with images → artworks created with images.
+6. Force a failure (e.g. temporarily rename the media disk folder) → alert lists the failed item; that row stays with a red border;
+   no artwork without an image is left in the table. Check `storage/logs/laravel.log` for the logged error.
+
+---
+
 ## 2026-10-08 — Layouts left behind after a tour is removed from a project
 
 **Type:** Bug fix
@@ -34,7 +117,7 @@ which does **not** fire the `Layout::deleted` model event, so the layouts' `surf
 were never deleted.
 
 ### Decision
-Option A (agreed with Nova): removing a tour from a project **permanently deletes** that
+Option A : removing a tour from a project **permanently deletes** that
 tour's layouts in that project — same rule as the backend. The front-end now asks for
 confirmation first. Orphaned layouts that already exist are hidden and cannot be opened.
 
