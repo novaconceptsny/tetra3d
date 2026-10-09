@@ -146,6 +146,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/share/{id}/edit', [SharePageController::class, 'edit'])->name('share.edit');
     Route::delete('/share/{id}/delete', [SharePageController::class, 'destroy'])->name('share.delete');
 
+    // Sculpture placement in the tour editor (save / delete / load).
+    // Moved here from routes/api.php: in Laravel 12 the "api" group has no session, so the browser's
+    // login was not seen by auth:sanctum and every save failed silently with 401.
+    // Same route names as before, so route('sculpture_save') etc. keep working.
+    Route::middleware('can:perform-admin-actions')->prefix('sculpture-placements')->group(function () {
+        Route::post('save', [\App\Http\Controllers\SculptureController::class, 'save'])->name('sculpture_save');
+        Route::post('delete', [\App\Http\Controllers\SculptureController::class, 'delete'])->name('sculpture_delete');
+        Route::post('load', [\App\Http\Controllers\SculptureController::class, 'load'])->name('sculpture_load');
+        Route::post('canvas-image', [\App\Http\Controllers\Backend\SculptureController::class, 'store_canvas_image'])->name('store_canvas_image');
+    });
+
 });
 
 

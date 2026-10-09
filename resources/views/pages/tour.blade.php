@@ -880,11 +880,12 @@
                 url: '<?php echo route('sculpture_delete'); ?>',
                 type: 'POST',
                 data: request_data,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 success: function (response) {
 
                 },
                 error: function (xhr) {
-
+                    alert(sculptureRequestErrorMessage(xhr, 'deleted'));
                 }
             });
             scene.remove(object.userData.model);
@@ -906,7 +907,6 @@
         save_icon.classList.add('fa-save');
 
         save_btn.onclick = function () {
-            object.userData.changed = false;
             label.innerHTML = '';
             var request_data = {
                 'layout_id': layout_id,
@@ -923,11 +923,14 @@
                 url: '<?php echo route('sculpture_save'); ?>',
                 type: 'POST',
                 data: request_data,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 success: function (response) {
-
+                    // Only mark as saved once the server has confirmed it
+                    object.userData.changed = false;
                 },
                 error: function (xhr) {
-
+                    object.userData.changed = true;
+                    alert(sculptureRequestErrorMessage(xhr, 'saved'));
                 }
             })
         }
@@ -942,6 +945,18 @@
         save_btn.append(save_icon);
 
         object.position.copy(object.userData.model.position);
+    }
+
+    // Readable message for a failed sculpture save/delete request (these used to fail silently)
+    function sculptureRequestErrorMessage(xhr, action) {
+        if (xhr.status === 401 || xhr.status === 419) {
+            return 'The sculpture could not be ' + action + ': your session has expired. Please reload the page and log in again.';
+        }
+        if (xhr.status === 403) {
+            return 'The sculpture could not be ' + action + ': your account is not allowed to change sculptures.';
+        }
+        var message = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : (xhr.statusText || 'Unknown error');
+        return 'The sculpture could not be ' + action + ' (' + xhr.status + '): ' + message;
     }
 
     function loadTemp(object, position, rotation_x, rotation_y, rotation_z, temp_model_url) {

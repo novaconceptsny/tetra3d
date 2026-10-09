@@ -2,8 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SculptureController;
-use App\Http\Controllers\Backend\SculptureController as BackendSculptureController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,10 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/companies/search', [App\Http\Controllers\Api\CompanyController::class, 'search']);
 Route::post('/companies', [App\Http\Controllers\Api\CompanyController::class, 'store']);
 
-Route::middleware(['auth:sanctum', 'can:perform-admin-actions'])->group(function () {
-    Route::post('/sculpture_save', [SculptureController::class, 'save'])->name('sculpture_save');
-    Route::post('/sculpture_delete', [SculptureController::class, 'delete'])->name('sculpture_delete');
-    Route::post('/sculpture_load', [SculptureController::class, 'load'])->name('sculpture_load');
-    Route::post('/sculpture_store_canvas_image', [BackendSculptureController::class, 'store_canvas_image'])->name('store_canvas_image');
-});
+// Sculpture save/delete/load/canvas-image routes moved to routes/web.php (group "sculpture-placements"),
+// because they are called from the logged-in browser and need the web session + CSRF. See CHANGELOG 2026-10-09.
 

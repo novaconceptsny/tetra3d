@@ -6,6 +6,65 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-10-09 — Tour editor: placed sculptures disappear after moving to another spot
+
+**Type:** Bug fix
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — PHP/JS syntax-checked; not yet tested in a browser / not deployed
+
+### Problem
+In a layout, a sculpture (e.g. "sculpture 01", 3ds max) is placed in the 360 view and saved with the save button.
+After clicking a navigation hotspot to move to another spot, the sculpture is gone (and it is also gone after a reload).
+
+### Root cause
+The sculpture was **never saved**:
+1. The tour page (`resources/views/pages/tour.blade.php`) posts to `route('sculpture_save')` / `route('sculpture_delete')`,
+   which were defined in **`routes/api.php`** with `auth:sanctum`.
+2. Since the Laravel 12 upgrade, routes are registered in `bootstrap/app.php`; the old `app/Http/Kernel.php` (which
+   defined the `api` group) is no longer used, and `statefulApi()` is not enabled. So `/api/*` requests get **no session**,
+   `auth:sanctum` cannot see the browser login, and every save/delete returned **401 Unauthenticated**.
+3. The `$.ajax` `success` / `error` callbacks were empty, and the save button set `userData.changed = false` *before*
+   the request — so nothing told the user the save failed.
+4. Moving to another spot is a full page load (`NavigateTo` in `public/krpano/action.xml` → `tours.show?spot_id=…&layout_id=…`),
+   which loads sculptures from the `sculptures` table for the layout — empty, so nothing is drawn.
+(The save/load position maths — `position + spot offset` on save, `position − spot offset` on load — is consistent; not the cause.)
+
+### Decision
+Move these routes into the authenticated **web** route group (session + CSRF), keep the **same route names** so the
+Blade code keeps working, keep the existing permission (`can:perform-admin-actions`), and show an error when a save fails.
+
+### Changes
+1. **`routes/web.php`** — inside the `auth` group, new group `prefix('sculpture-placements')` with
+   `can:perform-admin-actions`: `POST save` → `sculpture_save`, `POST delete` → `sculpture_delete`, `POST load` → `sculpture_load`
+   (`App\Http\Controllers\SculptureController`), `POST canvas-image` → `store_canvas_image` (`Backend\SculptureController`).
+   Full class names are used because `web.php` already imports `Backend\SculptureController` as `SculptureController`.
+2. **`routes/api.php`** — removed the 4 sculpture routes and their `use` lines (comment points to web.php).
+   URLs change from `/api/sculpture_save` etc. to `/sculpture-placements/save` etc.; nothing hard-codes the old URLs.
+3. **`resources/views/pages/tour.blade.php`**
+   - Save and delete `$.ajax` calls send `X-CSRF-TOKEN` (from `<meta name="csrf-token">` in `layouts/redesign`).
+   - Save: `object.userData.changed = false` only in `success`; on `error` it stays "changed" and an alert explains why.
+   - Delete: alert on error.
+   - New helper `sculptureRequestErrorMessage(xhr, action)` (401/419 → session expired, 403 → not allowed, else status + message).
+
+### Not changed / follow-ups
+- **Permission:** `perform-admin-actions` = **super admin only** (`AuthServiceProvider`). Company users see the save
+  button but will now get "your account is not allowed to change sculptures". Decide whether company admins/users should
+  be allowed to place sculptures; if so, change the gate on this route group.
+- Sculptures placed before this fix were never stored — they need to be placed and saved again.
+- `store_canvas_image` route points to `Backend\SculptureController::store_canvas_image`, which **does not exist**
+  (pre-existing, nothing calls it).
+- Other routes left in `routes/api.php` (`/api/user`, `/api/companies*`) get no session either; check they don't rely on login.
+- After deploying run `php artisan route:clear` (or `route:cache`) so the new routes are picked up.
+
+### How to test
+1. Log in as super admin, open a layout in the tour, add a sculpture, move/rotate it, click save → no alert.
+2. Click a navigation hotspot to another spot → the sculpture is there (in the same place in the room).
+3. Reload the page → still there. Delete it → reload → gone.
+4. As a non-super-admin user → clicking save shows the "not allowed" alert (and nothing disappears silently).
+5. Let the session expire (or log out in another tab) → save shows the "session has expired" alert.
+
+---
+
 ## 2026-10-09 — Backend "Add New Sculpture": 3D preview stays empty, Length/Width/Height not filled
 
 **Type:** Bug fix
