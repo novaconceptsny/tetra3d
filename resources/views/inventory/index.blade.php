@@ -155,6 +155,14 @@
                                             </div>
                                             @endif
 
+                                            @can('manage-inventory-sculptures')
+                                            {{-- Inventory > Sculptures (company admins + super admins) --}}
+                                            <a href="{{ route('inventory.sculptures.index') }}" class="btn d-flex align-items-center gap-2 ms-2" id="inventorySculpturesBtn" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; border-radius: 8px; padding: 4px 16px; font-weight: 500; font-size: 14px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+                                                <i class="fas fa-cube" style="color: #495057;"></i>
+                                                <span>Sculptures</span>
+                                            </a>
+                                            @endcan
+
                                                                                     <!-- Bulk Edit Controls -->
                                             <div id="bulkEditControls" style="display: none;">
                                                 <div class="d-flex align-items-center gap-3">

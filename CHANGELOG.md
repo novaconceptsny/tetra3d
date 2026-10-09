@@ -6,6 +6,115 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-10-09 — Company admins can upload / edit sculptures from Inventory (backend stays super-admin only)
+
+**Type:** Feature (permissions)
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — PHP/JS syntax-checked; not yet tested in a browser / not deployed
+
+### Problem
+Only super admins could add sculptures (backend `/backend/sculptures`, `SculptureModelPolicy` = super admin only).
+Company admins need to upload and edit their company's sculptures — but from the **Inventory** page, not the backend.
+Sculptures were not shown on the Inventory page at all.
+
+### Decision
+- New front-end section **Inventory → Sculptures** (`/inventory/sculptures`): list, add, edit, delete.
+- Who: **company admins** (own company only) and super admins (all companies). Employees: no access.
+- Backend sculpture pages unchanged: still super-admin only (policy not touched, so the backend sidebar item stays hidden for company admins).
+- Re-use the existing sculpture form (3D preview, auto size, resize) instead of a copy, rendered with the front-end layout.
+- Company admins cannot choose the company; collections are limited to their company.
+
+### Changes
+1. **`app/Providers/AuthServiceProvider.php`** — new gate `manage-inventory-sculptures` = `isSuperAdmin() || isCompanyAdmin()`.
+2. **`routes/web.php`** — in the `auth` group: `inventory/sculptures` group with `can:manage-inventory-sculptures`, names
+   `inventory.sculptures.index|create|store|edit|update|destroy` → `InventorySculptureController`.
+3. **`app/Http/Controllers/InventorySculptureController.php`** (new)
+   - `index` (optional `collection_id` filter), `create`, `store`, `edit`, `update`, `destroy`.
+   - Company admin: `company_id` is always `user()->company_id`; super admin: `company_id` from the form (required).
+   - `ensureCollectionBelongsToCompany()` — collection must belong to that company (validation error otherwise).
+   - `ensureCanManage()` — 403 if a company admin opens another company's sculpture (HasCompany global scope already hides them; double check).
+   - Validation: `ValidationRules::storeSculpture()` / `updateSculpture()` + `artwork_collection_id` required.
+   - Redirects back to `inventory.sculptures.index` with a success message.
+4. **`resources/views/inventory/sculptures/index.blade.php`** (new) — table: thumbnail, (company for super admin), collection,
+   name, artist, type, size L x W x H m (+ "% of model" if resized), edit / delete (with confirm). Collection filter, "Add Sculpture", back to Inventory.
+5. **`resources/views/backend/sculpture/form.blade.php`** (shared)
+   - `@extends($layout ?? 'layouts.backend')`; optional `$backUrl` (back button + page padding).
+   - `$lockCompany`: shows the company as read-only text instead of the select; collection select lists that company's collections.
+   - Front-end layout: adds `@mediaLibraryStyles` (missing from `layouts.redesign`) and skips the duplicate three.js import map
+     (already in `layouts.redesign`).
+   - JS: company-select listeners are skipped when there is no company select.
+   - Backend behaviour unchanged (no `$layout` / `$lockCompany` passed).
+6. **`resources/views/inventory/index.blade.php`** — "Sculptures" button in the toolbar (next to "+ Artwork"), shown with `@can('manage-inventory-sculptures')`.
+
+### Not changed / follow-ups
+- **Placing sculptures in tours** (`sculpture_save` / `sculpture_delete`, gate `perform-admin-actions`) is still **super admin only**.
+  Company admins can upload sculptures but cannot save their placement in a layout yet — waiting for Nova's decision.
+- Pre-existing: `HasCompany::booted()` sets `company_id` to the *logged-in user's* company on `created`. When a super admin
+  creates a sculpture for another company (backend or inventory), it ends up in the super admin's own company. Not changed.
+- Company admins can also **delete** their sculptures (deleting removes them from every layout where they are placed).
+- Backend `SculptureController::update()` returns a view instead of a redirect (pre-existing).
+
+### How to test
+1. Log in as a **company admin** → Inventory → "Sculptures" button → list shows only own company's sculptures.
+2. Add Sculpture → company is fixed, collections are own company's → upload GLB/thumbnail/interaction → preview + size work → Create → back on the list.
+3. Edit it (change size/name) → Update → list shows new values. Delete → gone.
+4. Company admin opens `/backend/sculptures` → still not allowed; backend sidebar has no Sculptures item.
+5. Company admin opens `/inventory/sculptures/{id of another company}/edit` → 404/403.
+6. **Employee** → no Sculptures button; `/inventory/sculptures` → 403.
+7. **Super admin** → Inventory → Sculptures shows all companies with a Company column; backend sculpture pages still work as before.
+
+---
+
+## 2026-10-09 — Backend sculpture page: sculpture size can be changed (proportional resize)
+
+**Type:** Feature
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — PHP/JS syntax-checked; not yet tested in a browser / not deployed
+
+### Problem
+On `/backend/sculptures/create` (and edit) the Length / Width / Height fields were read-only and always equal to the size
+of the GLB file. There was no way to make a sculpture bigger or smaller than the exported model.
+
+### Decision
+- **Uniform (proportional) resize only** — changing one value updates the other two, so the sculpture is never stretched.
+- Store a size factor `data.scale` (1 = model as exported) plus the measured model size
+  (`data.original_length/width/height`). `data.length/width/height` keep holding the **displayed / real size in metres**
+  (already used for the sculpture list "L x W x H meter" in the tour).
+- The tour multiplies its fixed sculpture scale (200) by `data.scale`, so placed sculptures appear at the new size.
+- Allowed factor: 0.01–100 (1%–10000%).
+
+### Changes
+1. **`resources/views/backend/sculpture/form.blade.php`**
+   - Length / Width / Height are editable number inputs (`step="any"`, `min="0.01"`), labelled "(m)".
+   - New hidden inputs `data[scale]`, `data[original_length]`, `data[original_width]`, `data[original_height]`.
+   - New "Reset to model size" button and an info line ("Resized to 150% of the original model (…)").
+   - JS: `GLTFLoad(url, initialScale)` measures the model at scale 1 → `originalSize`, then `applyScale()` scales the preview,
+     fills all fields and hidden inputs, and re-frames the camera. Typing in a size field → `onSizeFieldInput()` computes the
+     factor from that field and updates the others. `getSize()` no longer writes to the fields.
+   - New upload starts at scale 1; editing an existing sculpture starts at its saved `data.scale` (old sculptures → 1).
+2. **`app/Helpers/ValidationRules.php`** — `storeSculpture()` (and so `updateSculpture()`): `data.length/width/height`
+   `nullable|numeric|gt:0`, `data.scale` `nullable|numeric|between:0.01,100`, `data.original_*` `nullable|numeric`.
+   (Controller already saves the whole `data` array via `$request->only([... 'data' ...])` — no controller change.)
+3. **`resources/views/pages/tour.blade.php`**
+   - `sculptureUrls[id]` now includes `scale` (from `data.scale`, default 1).
+   - New `sculptureScaleFor(imageId)` = `sculptureScale * scale`; used in `add_model()`, `load_model()`, and for the invisible
+     interaction model in `loadTemp()` / `addTemp()` (addTemp used `tourScale`, same value 200) so click/drag area matches.
+
+### Not changed / follow-ups
+- Changing a sculpture's size also changes it in **every layout** where it is already placed (positions stay the same).
+- Assumes GLB units are metres (glTF standard). A model exported in cm/mm will show 100×/1000× too big — fix with the size fields.
+- No non-uniform (stretch) resize.
+
+### How to test
+1. Create a sculpture with a GLB → fields fill with the model size, info says "Original model size".
+2. Change Height to double → Length and Width double, preview grows, info "Resized to 200%". Save.
+3. Edit it again → preview opens at the saved size; "Reset to model size" returns to 100%.
+4. In a tour/layout, add the sculpture → it appears at the new size; click/drag/save still work on it.
+5. Existing sculptures (created before this change) → open edit → shown at 100%, unchanged in tours.
+6. Try 0 or a negative value → not accepted.
+
+---
+
 ## 2026-10-09 — Tour editor: placed sculptures disappear after moving to another spot
 
 **Type:** Bug fix

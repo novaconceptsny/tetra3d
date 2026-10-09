@@ -1,4 +1,6 @@
-@extends('layouts.backend')
+{{-- Shared form: backend (super admin, layouts.backend) and Inventory > Sculptures
+     (company admins, layouts.redesign — see InventorySculptureController::formData). --}}
+@extends($layout ?? 'layouts.backend')
 
 @section('title_right')
 <x-backend::layout.breadcrumbs>
@@ -15,8 +17,12 @@ $heading = $heading ?? ($sculpture ? __('Edit Sculpture') : __('Add New Sculptur
 $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
 @endphp
 
+<div class="{{ !empty($backUrl) ? 'container-fluid py-4 px-4' : '' }}">
 <div class="card mb-3">
-    <div class="card-header">
+    <div class="card-header d-flex align-items-center gap-3">
+        @if(!empty($backUrl))
+            <a href="{{ $backUrl }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Sculptures</a>
+        @endif
         <h5 class="mb-0">{{ $heading }}</h5>
     </div>
     <div class="card-body">
@@ -53,6 +59,13 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
                             @endif
                         </div>
                         
+                        @if($lockCompany ?? false)
+                            {{-- Company admins: the sculpture always belongs to their own company --}}
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Company</label>
+                                <input type="text" class="form-control" value="{{ $companies->first()?->name }}" readonly>
+                            </div>
+                        @else
                         <x-backend::inputs.select col="col-12 mb-3" id="sculpture-company-select"
                             name="company_id" label="Company" required>
                             <option value="">Select Company</option>
@@ -61,10 +74,16 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
                                     :selected="$sculpture?->company_id" />
                             @endforeach
                         </x-backend::inputs.select>
+                        @endif
 
                         <x-backend::inputs.select col="col-12 mb-3" id="sculpture-collection-select"
                             name="artwork_collection_id" label="Collection" required>
-                            @if($sculpture)
+                            @if($lockCompany ?? false)
+                                @foreach($artwork_collections as $collection)
+                                    <x-backend::inputs.select-option :value="$collection->id" :text="$collection->name"
+                                        field="artwork_collection_id" :selected="$sculpture?->artwork_collection_id" />
+                                @endforeach
+                            @elseif($sculpture)
                                 @foreach($artwork_collections->where('company_id', $sculpture->company_id) as $collection)
                                     <x-backend::inputs.select-option :value="$collection->id" :text="$collection->name"
                                         :selected="$sculpture?->artwork_collection_id" />
@@ -79,12 +98,25 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
                             value="{{ $sculpture?->artist }}" label="Artist" required />
                         <x-backend::inputs.text col="col-12 mb-3" id="sculpture_type" name="type"
                             value="{{ $sculpture?->type }}" label="Type" required />
-                        <x-backend::inputs.text col="col-4 mb-3" readonly='readonly' name="data.length" id="data-length"
-                            value="{{ $sculpture?->data->length }}" label="Length" />
-                        <x-backend::inputs.text col="col-4 mb-3" readonly='readonly' name="data.width" id="data-width"
-                            value="{{ $sculpture?->data->width }}" label="Width" />
-                        <x-backend::inputs.text col="col-4 mb-3" readonly='readonly' name="data.height" id="data-height"
-                            value="{{ $sculpture?->data->height }}" label="Height" />
+                        {{-- Size in metres. Filled from the 3D model; editing one value resizes the sculpture proportionally. --}}
+                        <x-backend::inputs.text col="col-4 mb-3" type="number" step="any" min="0.01" name="data.length" id="data-length"
+                            value="{{ $sculpture?->data->length }}" label="Length (m)" />
+                        <x-backend::inputs.text col="col-4 mb-3" type="number" step="any" min="0.01" name="data.width" id="data-width"
+                            value="{{ $sculpture?->data->width }}" label="Width (m)" />
+                        <x-backend::inputs.text col="col-4 mb-3" type="number" step="any" min="0.01" name="data.height" id="data-height"
+                            value="{{ $sculpture?->data->height }}" label="Height (m)" />
+                        <input type="hidden" name="data[scale]" id="data-scale" value="{{ $sculpture?->data->scale ?? 1 }}">
+                        <input type="hidden" name="data[original_length]" id="data-original-length" value="{{ $sculpture?->data->original_length }}">
+                        <input type="hidden" name="data[original_width]" id="data-original-width" value="{{ $sculpture?->data->original_width }}">
+                        <input type="hidden" name="data[original_height]" id="data-original-height" value="{{ $sculpture?->data->original_height }}">
+                        <div class="col-12 mb-3 d-flex align-items-center justify-content-between">
+                            <small class="text-muted" id="sculpture-scale-info">
+                                Change any size to resize the sculpture (proportions are kept).
+                            </small>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="sculpture-size-reset">
+                                Reset to model size
+                            </button>
+                        </div>
                         <div class="col-12 text-end">
                             <button class="btn btn-primary" type="submit" id='sculpture_form_submit'>
                                 {{ $submit_text ?? ($edit_mode ? __('Update') : __('Create')) }}
@@ -100,9 +132,14 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         </form>
     </div>
 </div>
+</div>
 @endsection
 
 @section('styles')
+@if(($layout ?? 'layouts.backend') === 'layouts.redesign')
+    {{-- the front-end layout does not include the media library styles --}}
+    @mediaLibraryStyles
+@endif
 <link rel="stylesheet" href="{{ asset('backend/css/media-library.css') }}">
 <style>
     .sculpture-left {
@@ -136,6 +173,8 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
 @endsection
 
 @section('scripts')
+@if(($layout ?? 'layouts.backend') !== 'layouts.redesign')
+{{-- layouts.redesign already defines this import map --}}
 <script type="importmap">
     {
         "imports": {
@@ -144,6 +183,7 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         }
     }
 </script>
+@endif
 
 <script>
     function previewImage(input) {
@@ -223,7 +263,7 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         if (!file || !/\.(glb|gltf)$/i.test(file.name)) {
             return;
         }
-        GLTFLoad(URL.createObjectURL(file));
+        GLTFLoad(URL.createObjectURL(file), 1); // a new model starts at its own size
     }
 
     // Listen on the wrapper (capture phase) instead of on the <input> itself:
@@ -272,11 +312,79 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         controls = new OrbitControls(camera, renderer.domElement);
     }
 
-    function GLTFLoad(full_model_url) {
+    // ---- Sculpture size / scale --------------------------------------------------------
+    // originalSize = size of the GLB as exported (metres, at scale 1).
+    // currentScale = uniform factor chosen by the admin; saved as data.scale and applied in the tour.
+    // data.length/width/height always hold the resulting (scaled) size.
+    let currentModel = null;
+    let originalSize = null;
+    let currentScale = 1;
+    const MIN_SCALE = 0.01;
+    const MAX_SCALE = 100;
+    const sizeFields = { length: 'data-length', width: 'data-width', height: 'data-height' };
+
+    function roundSize(value) {
+        return Math.round(value * 100) / 100;
+    }
+
+    function applyScale(skipField) {
+        if (!currentModel || !originalSize) {
+            return;
+        }
+
+        currentModel.scale.setScalar(currentScale);
+
+        Object.keys(sizeFields).forEach(function (key) {
+            if (key !== skipField) {
+                document.getElementById(sizeFields[key]).value = roundSize(originalSize[key] * currentScale);
+            }
+        });
+
+        document.getElementById('data-scale').value = currentScale;
+        document.getElementById('data-original-length').value = originalSize.length;
+        document.getElementById('data-original-width').value = originalSize.width;
+        document.getElementById('data-original-height').value = originalSize.height;
+
+        const info = document.getElementById('sculpture-scale-info');
+        if (info) {
+            info.textContent = Math.abs(currentScale - 1) < 0.0001
+                ? 'Original model size. Change any size to resize the sculpture (proportions are kept).'
+                : 'Resized to ' + Math.round(currentScale * 1000) / 10 + '% of the original model ('
+                    + roundSize(originalSize.length) + ' x ' + roundSize(originalSize.width) + ' x ' + roundSize(originalSize.height) + ' m).';
+        }
+
+        // Keep the whole sculpture in view
+        const height = originalSize.height * currentScale;
+        const maxDim = Math.max(originalSize.length, originalSize.width, originalSize.height) * currentScale;
+        camera.position.set(0, height / 2, Math.max(5, maxDim * 2));
+        controls.target.set(0, height / 2, 0);
+        controls.update();
+    }
+
+    function onSizeFieldInput(key) {
+        const value = parseFloat(document.getElementById(sizeFields[key]).value);
+        if (!originalSize || !(value > 0) || !(originalSize[key] > 0)) {
+            return;
+        }
+        currentScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, value / originalSize[key]));
+        applyScale(key); // don't rewrite the field the user is typing in
+    }
+
+    Object.keys(sizeFields).forEach(function (key) {
+        const field = document.getElementById(sizeFields[key]);
+        field.addEventListener('input', function () { onSizeFieldInput(key); });
+        field.addEventListener('change', function () { applyScale(); }); // tidy up the typed value
+    });
+
+    document.getElementById('sculpture-size-reset').addEventListener('click', function () {
+        currentScale = 1;
+        applyScale();
+    });
+
+    function GLTFLoad(full_model_url, initialScale) {
         var loader = new GLTFLoader();
         loader.setDRACOLoader(dracoLoader);
         loader.setMeshoptDecoder(MeshoptDecoder);
-        var model = null;
 
         scene.traverse(function (object) {
             if (object.name === 'space-model') {
@@ -285,16 +393,18 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         });
 
         loader.load(full_model_url, function (gltf) {
-            model = gltf.scene;
-            var width = getSize(model).width;
-            var height = getSize(model).height;
-            var depth = getSize(model).depth;
+            const model = gltf.scene;
+            // Measure at scale 1, before rotating (length = z, width = x, height = y)
+            const size = getSize(model);
+            originalSize = { length: size.depth, width: size.width, height: size.height };
 
-            camera.position.set(0, height / 2, 5);
-            controls.target.set(0, height / 2, 0);
             model.rotation.y = - Math.PI / 2;
             model.name = "space-model";
             scene.add(model);
+
+            currentModel = model;
+            currentScale = (initialScale > 0) ? initialScale : 1;
+            applyScale();
         }, undefined, function (error) {
             console.error('Sculpture model could not be loaded:', error);
             alert('The 3D model could not be previewed, so its size could not be filled in.\n\n' + (error && error.message ? error.message : error));
@@ -319,10 +429,6 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         let height = size.y;
         let depth = size.z;
 
-        document.getElementById('data-length').value = depth;
-        document.getElementById('data-height').value = height;
-        document.getElementById('data-width').value = width;
-
         return { width: width, height: height, depth: depth };
     }
 
@@ -333,7 +439,7 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
     var sculpture_url = @json($sculpture_url);
 
     if (sculpture_url) {
-        GLTFLoad(sculpture_url);
+        GLTFLoad(sculpture_url, parseFloat(@json($sculpture?->data->scale ?? 1)) || 1);
     }
 
     $('#sculpture_name').on('keydown', function (event) {
@@ -354,7 +460,8 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
         }
     });
 
-    document.getElementById('sculpture-company-select').addEventListener('change', function() {
+    // Company select only exists for super admins (company admins have a fixed company)
+    document.getElementById('sculpture-company-select')?.addEventListener('change', function() {
         const companyId = this.value;
         const collectionSelect = document.getElementById('sculpture-collection-select');
         const currentSelectedValue = collectionSelect.value; // Store current selection
@@ -399,6 +506,9 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
     // Modify the window load event handler to only trigger if we're not in edit mode
     window.addEventListener('load', function() {
         const companySelect = document.getElementById('sculpture-company-select');
+        if (!companySelect) {
+            return;
+        }
         const sculptureForm = document.getElementById('sculpture_form');
         const isEditMode = sculptureForm.querySelector('input[name="_method"]').value === 'PUT';
         

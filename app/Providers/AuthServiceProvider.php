@@ -63,6 +63,12 @@ class AuthServiceProvider extends ServiceProvider
             return $user->isSuperAdmin();
         });
 
+        // Upload / edit / delete sculptures from Inventory > Sculptures (own company only).
+        // The backend sculpture pages stay super-admin only (SculptureModelPolicy).
+        Gate::define('manage-inventory-sculptures', function (User $user) {
+            return $user->isSuperAdmin() || $user->isCompanyAdmin();
+        });
+
         Gate::define('access-backend', function (User $user){
             if ($user->isCompanyAdmin()){
                 return true;

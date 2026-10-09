@@ -128,6 +128,13 @@ class ValidationRules
             'sculpture' => 'required',
             'thumbnail' => 'required',
             'interaction' => 'required',
+            'data.length' => 'nullable|numeric|gt:0',
+            'data.width' => 'nullable|numeric|gt:0',
+            'data.height' => 'nullable|numeric|gt:0',
+            'data.scale' => 'nullable|numeric|between:0.01,100',
+            'data.original_length' => 'nullable|numeric',
+            'data.original_width' => 'nullable|numeric',
+            'data.original_height' => 'nullable|numeric',
         ];
     }
 

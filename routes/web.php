@@ -140,6 +140,20 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('inventory/artworks/add', [InventoryController::class, 'addArtworks'])->name('inventory.artworks.add');
 
+    // Inventory > Sculptures: company admins manage their own company's sculptures here (backend stays super-admin only)
+    Route::middleware('can:manage-inventory-sculptures')
+        ->prefix('inventory/sculptures')
+        ->name('inventory.sculptures.')
+        ->controller(\App\Http\Controllers\InventorySculptureController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('{sculpture}/edit', 'edit')->name('edit');
+            Route::put('{sculpture}', 'update')->name('update');
+            Route::delete('{sculpture}', 'destroy')->name('destroy');
+        });
+
     Route::get('/share', [SharePageController::class, 'index'])->name('share.index');
     Route::post('/share/store', [SharePageController::class, 'store'])->name('share.store');
     Route::post('/share/{id}/toggle', [SharePageController::class, 'toggle'])->name('share.toggle');

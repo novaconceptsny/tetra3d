@@ -619,10 +619,18 @@
             @foreach($sculptures as $sculpture)
                 "{{ $sculpture->id }}": {
                     sculpture: "{{ $sculpture->getFirstMediaUrl('sculpture') }}",
-                    interaction: "{{ $sculpture->getFirstMediaUrl('interaction') }}"
+                    interaction: "{{ $sculpture->getFirstMediaUrl('interaction') }}",
+                    // Size factor set on the backend sculpture page (1 = model as exported)
+                    scale: {{ (is_numeric($sculpture->data->scale ?? null) && $sculpture->data->scale > 0) ? (float) $sculpture->data->scale : 1 }}
                 },
             @endforeach
     };
+
+    // Three.js scale for a sculpture: base tour scale x the size factor chosen on the backend sculpture page
+    function sculptureScaleFor(imageId) {
+        var factor = (sculptureUrls[imageId] && sculptureUrls[imageId].scale > 0) ? sculptureUrls[imageId].scale : 1;
+        return sculptureScale * factor;
+    }
 
     function toggleLayout() {
         if (surface_meshes.length > 0) {
@@ -984,7 +992,7 @@
                 rx: rotation_x * 180 / Math.PI,
                 ry: rotation_y * 180 / Math.PI,
                 rz: rotation_z * 180 / Math.PI,
-                scale: sculptureScale,
+                scale: sculptureScaleFor(object.userData.id),
                 onup: function (obj) { createLabel(obj) }
             });
 
@@ -1019,7 +1027,7 @@
                 atv: spherical_position.theta,
                 depth: spherical_position.r,
                 rz: -180,
-                scale: tourScale,
+                scale: sculptureScaleFor(object.userData.id),
                 onup: function (obj) { createLabel(obj) }
             });
 
@@ -1085,7 +1093,7 @@
                 atv: spherical_position.theta,
                 depth: spherical_position.r,
                 rz: -180,
-                scale: sculptureScale
+                scale: sculptureScaleFor(imageId)
             });
         });
     }
@@ -1133,7 +1141,7 @@
                 rx: rotation_x * 180 / Math.PI,
                 ry: rotation_y * 180 / Math.PI,
                 rz: rotation_z * 180 / Math.PI,
-                scale: sculptureScale,
+                scale: sculptureScaleFor(imageId),
             });
         });
     }
