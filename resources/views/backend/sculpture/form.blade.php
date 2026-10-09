@@ -208,22 +208,47 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
 
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+    import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
     var artwork_collection = @json($artwork_collections);
 
-    function eventFuntion(event) {
-        console.log(event.target.files[0]);
-        const url = URL.createObjectURL(event.target.files[0]);
-        GLTFLoad(url);
+    // Many exported/optimised GLB files are Draco- or Meshopt-compressed.
+    // Without these decoders GLTFLoader fails and nothing is shown.
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://unpkg.com/three@0.161.0/examples/jsm/libs/draco/gltf/');
+
+    function loadSculptureFile(file) {
+        if (!file || !/\.(glb|gltf)$/i.test(file.name)) {
+            return;
+        }
+        GLTFLoad(URL.createObjectURL(file));
     }
 
+    // Listen on the wrapper (capture phase) instead of on the <input> itself:
+    // - the media-library uploader is a Livewire component, so its <input> can be re-rendered/replaced;
+    // - when a file is dragged onto the drop zone, the uploader uploads it directly and the input never fires "change".
+    // The wrapper div is outside the Livewire component, so these listeners always stay attached.
     function addSculptureModelUploadListener() {
-        const inputs = document.querySelector('#sculpture-model-upload').querySelectorAll('input');
-        inputs.forEach(input => {
-            input.removeEventListener('change', eventFuntion);
-            input.addEventListener('change', eventFuntion);
-        });
+        const uploadBox = document.getElementById('sculpture-model-upload');
+        if (!uploadBox) {
+            return;
+        }
+
+        uploadBox.addEventListener('change', function (event) {
+            const input = event.target;
+            if (input && input.type === 'file' && input.files && input.files.length) {
+                loadSculptureFile(input.files[0]);
+            }
+        }, true);
+
+        uploadBox.addEventListener('drop', function (event) {
+            const files = event.dataTransfer && event.dataTransfer.files;
+            if (files && files.length) {
+                loadSculptureFile(files[0]);
+            }
+        }, true);
     }
 
     function init() {
@@ -249,6 +274,8 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
 
     function GLTFLoad(full_model_url) {
         var loader = new GLTFLoader();
+        loader.setDRACOLoader(dracoLoader);
+        loader.setMeshoptDecoder(MeshoptDecoder);
         var model = null;
 
         scene.traverse(function (object) {
@@ -268,11 +295,13 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
             model.rotation.y = - Math.PI / 2;
             model.name = "space-model";
             scene.add(model);
+        }, undefined, function (error) {
+            console.error('Sculpture model could not be loaded:', error);
+            alert('The 3D model could not be previewed, so its size could not be filled in.\n\n' + (error && error.message ? error.message : error));
         });
     }
 
     function animate() {
-        addSculptureModelUploadListener()
         requestAnimationFrame(animate);
         render();
     }
@@ -298,6 +327,7 @@ $sculpture_url = $sculpture ? $sculpture->getFirstMediaUrl('sculpture') : null;
     }
 
     init();
+    addSculptureModelUploadListener();
     animate();
 
     var sculpture_url = @json($sculpture_url);

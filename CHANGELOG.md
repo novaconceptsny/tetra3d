@@ -6,6 +6,64 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-10-09 — Backend "Add New Sculpture": 3D preview stays empty, Length/Width/Height not filled
+
+**Type:** Bug fix
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — JS syntax-checked; not yet tested in a browser / not deployed
+
+### Problem
+`/backend/sculptures/create`: after choosing a GLB in **Sculpture Model**, the file uploads ("GLB 2.23 MB  Remove")
+but the 3D preview on the right stays empty grey and Length / Width / Height stay empty. Tried with 2 different models.
+This used to work.
+
+### Root cause
+The preview and size fill-in are done in the browser (three.js) in `resources/views/backend/sculpture/form.blade.php`,
+by reading the chosen file from the upload `<input>`. Not reproduced in a browser (no access to the backend login from
+the AI session), but the code has three ways to fail silently:
+1. **Listener attached to the wrong thing for the new uploader.** The old code attached a `change` listener directly
+   to each `<input>` inside `#sculpture-model-upload` (re-attached every animation frame). Since the Laravel 12 /
+   Livewire 3 / medialibrary-pro 6 upgrade, that uploader is a Livewire component:
+   - **dragging** a file onto the drop zone calls `$wire.upload()` directly (`handleDrop` in
+     `vendor/spatie/laravel-medialibrary-pro/resources/views/livewire/uploader.blade.php`) — the input never fires `change`,
+     so the preview code never runs;
+   - Livewire can re-render/replace the input.
+2. **Compressed GLB files.** `GLTFLoader` had no `DRACOLoader` / `MeshoptDecoder`, so Draco- or Meshopt-compressed GLBs
+   (common from exporters/optimisers) fail to load.
+3. **No error callback** on `loader.load()`, so any load failure was invisible (only in the browser console).
+Also `OrbitControls` was imported without `.js` (`three/addons/controls/OrbitControls`).
+
+### Decision
+Make the preview independent of how the file is chosen (click or drag), support compressed GLBs, and show an alert when
+a model cannot be previewed instead of failing silently. No server-side change: sizes are still computed in the browser.
+
+### Changes
+1. **`resources/views/backend/sculpture/form.blade.php`** (module script)
+   - Imports `DRACOLoader` (decoder path `https://unpkg.com/three@0.161.0/examples/jsm/libs/draco/gltf/`) and
+     `MeshoptDecoder` (`three/addons/libs/meshopt_decoder.module.js`); `GLTFLoad()` calls
+     `loader.setDRACOLoader()` / `loader.setMeshoptDecoder()`. (Paths checked on unpkg for three@0.161.0.)
+   - `OrbitControls` import fixed to `three/addons/controls/OrbitControls.js`.
+   - Removed `eventFuntion()` and the per-frame re-attaching from `animate()`.
+   - `addSculptureModelUploadListener()` now runs once and adds **capture-phase** `change` and `drop` listeners on the
+     wrapper `#sculpture-model-upload` (outside the Livewire component, so they survive re-renders). Both call new
+     `loadSculptureFile(file)`, which only previews `.glb` / `.gltf` files.
+   - `loader.load()` has an error callback: logs to console and alerts "The 3D model could not be previewed…" with the reason.
+
+### Not changed / follow-ups
+- Not tested in a real browser yet. If it still fails, the new alert / console message shows the exact reason.
+- Models with KTX2/Basis textures would still need a `KTX2Loader` (not added).
+- The upload limit is still `max:20480` (20 MB) per file.
+
+### How to test
+1. `/backend/sculptures/create` → click **Sculpture Model** and pick a GLB → model appears, Length/Width/Height fill in.
+2. Reload, **drag** a GLB onto the Sculpture Model drop zone → same result.
+3. Try a Draco-compressed GLB → loads.
+4. Pick a broken/non-3D file renamed to .glb → alert explains it could not be previewed.
+5. Edit an existing sculpture → its model still loads on page open.
+6. Uploading a JPG in **Thumbnail Image** must not affect the 3D preview.
+
+---
+
 ## 2026-10-08 — Inventory: "Server Error" when adding artworks, duplicate rows, broken images
 
 **Type:** Bug fix
