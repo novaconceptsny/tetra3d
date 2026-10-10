@@ -6,6 +6,45 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-10-09 — Tour editor: new sculptures dropped at a size-aware distance (gizmo visible)
+
+**Type:** Improvement
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — JS syntax-checked; not yet tested in a browser / not deployed
+
+### Problem
+Clicking a sculpture in the Sculpture List always dropped it **1 m in front of the camera** (`findAddModelPosition()` returned
+the camera's unit direction × 200). Large sculptures then filled the whole screen and you had to zoom out to find the gizmo.
+
+### Decision
+Keep dropping it in the direction you are looking, but choose the distance so the whole sculpture fits in the view,
+and never behind a wall.
+
+### Changes
+**`resources/views/pages/tour.blade.php`**
+1. `findAddModelPosition(maxDimension)` — horizontal direction you are looking at (same `-direction` convention as before);
+   distance = `size*1.2 / (2*tan(fov/2)) + size/2` using krpano `view.fov` and the sculpture's largest dimension
+   (min 0.5 m), clamped to **1.5 m – 15 m**, and shortened to stay in front of the first wall. Returns `{x, z}` in scene
+   units (200 = 1 m) — callers no longer multiply by `offsetScale`.
+2. New `distanceToWall(direction)` — raycast from the viewer against the (invisible) 3D space model `model`; `null` if no model.
+3. `add_model()` — computes the drop position **after** the GLB is loaded, from its bounding box × `sculptureScaleFor(imageId)`
+   (so the resize factor from the sculpture page is included), and passes it to `addTemp()`.
+4. `addTemp(object, url, spherical_position)` — uses the given position so the invisible interaction model sits exactly on the
+   sculpture (falls back to computing one if not given).
+
+### Not changed / follow-ups
+- Height is unchanged (`offset_y`, as before). Rotation unchanged (`rz: -180`).
+- Loading saved sculptures (`load_model`) is unchanged — only newly added ones.
+- If the space model has furniture/low walls at camera height, the wall check may place the sculpture closer (min 0.5 m).
+
+### How to test
+1. Open a layout, Sculpture List → click a large sculpture → it appears fully in view in front of you, gizmo/label reachable without zooming.
+2. Click a small sculpture → appears ~1.5 m away (not tiny far away).
+3. Face a nearby wall and add a big sculpture → it stays in front of the wall, not behind it.
+4. Drag / rotate / save the new sculpture → move to another spot → it is where you saved it.
+
+---
+
 ## 2026-10-09 — Company admins can upload / edit sculptures from Inventory (backend stays super-admin only)
 
 **Type:** Feature (permissions)

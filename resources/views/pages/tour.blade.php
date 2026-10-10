@@ -1001,14 +1001,18 @@
         });
     }
 
-    function addTemp(object, temp_model_url) {
+    // spherical_position: where the sculpture itself was dropped (see add_model), so the
+    // invisible interaction model lands exactly on it
+    function addTemp(object, temp_model_url, spherical_position) {
         var temp = null;
         const loader = new THREE.GLTFLoader();
         const dracoLoader = new THREE.DRACOLoader();
         loader.setDRACOLoader(dracoLoader);
 
-        var add_model_position = findAddModelPosition();
-        var spherical_position = cartesianToSpherical(-add_model_position.x * offsetScale, offset_y, -add_model_position.z * offsetScale);
+        if (!spherical_position) {
+            var add_model_position = findAddModelPosition();
+            spherical_position = cartesianToSpherical(add_model_position.x, offset_y, add_model_position.z);
+        }
 
         loader.load(temp_model_url, function (gltf) {
             temp = gltf.scene;
@@ -1066,16 +1070,20 @@
         var sculpture_url = sculptureUrls[imageId].sculpture;
         var temp_url = sculptureUrls[imageId].interaction;
 
-        var add_model_position = findAddModelPosition();
-        var spherical_position = cartesianToSpherical(-add_model_position.x * offsetScale, offset_y, -add_model_position.z * offsetScale);
-
         loader.load(sculpture_url, async function (gltf) {
             model = gltf.scene;
             model.castShadow = true;
             model.receiveShadow = true;
 
+            // Drop the sculpture in front of the current view, far enough away that the whole
+            // sculpture (and its gizmo) is visible, but not behind a wall.
+            var modelSize = getSize(model); // unscaled (metres)
+            var maxDimension = Math.max(modelSize.width, modelSize.height, modelSize.depth) * sculptureScaleFor(imageId);
+            var add_model_position = findAddModelPosition(maxDimension);
+            var spherical_position = cartesianToSpherical(add_model_position.x, offset_y, add_model_position.z);
+
             if (!tour_is_shared) {
-                addTemp(model, temp_url);
+                addTemp(model, temp_url, spherical_position);
                 model.traverse((obj) => {
                     if (obj instanceof THREE.Mesh) {
                         obj.name = "sculpture-model";
@@ -1300,10 +1308,45 @@
         loadWithFallback(image_url, false);
     }
 
-    function findAddModelPosition() {
-        var position = new THREE.Vector3();
-        camera.getWorldDirection(position);
-        return position;
+    // Where a sculpture picked from the Sculpture List is dropped (x/z in scene units, 200 = 1 m).
+    // Was: always 1 m in front of the camera, so big sculptures filled the screen and hid their gizmo.
+    // Now: in the direction you are looking, at a distance where the whole sculpture fits in the view
+    // (based on its size and the current field of view), clamped to 1.5 m - 15 m and kept in front of
+    // the first wall of the 3D space model.
+    function findAddModelPosition(maxDimension) {
+        var lookDirection = new THREE.Vector3();
+        camera.getWorldDirection(lookDirection);
+
+        // Sculptures are placed at -direction (same convention as before); keep it horizontal
+        var dropDirection = new THREE.Vector3(-lookDirection.x, 0, -lookDirection.z);
+        if (dropDirection.lengthSq() < 1e-6) {
+            dropDirection.set(0, 0, 1); // looking straight up/down
+        }
+        dropDirection.normalize();
+
+        var size = Math.max(maxDimension || 0, offsetScale * 0.5);
+        var fov = parseFloat(krpano && krpano.get('view.fov')) || 90;
+        var halfFovTan = Math.tan(Math.min(Math.max(fov, 20), 150) * M_RAD / 2);
+
+        var distance = (size * 1.2) / (2 * halfFovTan) + size / 2;
+        distance = Math.min(Math.max(distance, offsetScale * 1.5), offsetScale * 15);
+
+        var wallDistance = distanceToWall(dropDirection);
+        if (wallDistance !== null) {
+            distance = Math.max(offsetScale * 0.5, Math.min(distance, wallDistance - size / 2));
+        }
+
+        return { x: dropDirection.x * distance, z: dropDirection.z * distance };
+    }
+
+    // Distance from the viewer to the first wall of the 3D space model in that direction (null if unknown)
+    function distanceToWall(direction) {
+        if (!model) {
+            return null; // space model not loaded
+        }
+        var raycaster = new THREE.Raycaster(new THREE.Vector3(0, 0, 0), direction.clone().normalize());
+        var hits = raycaster.intersectObject(model, true);
+        return hits.length ? hits[0].distance : null;
     }
 
     function cartesianToSpherical(x, y, z) {
