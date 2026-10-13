@@ -6,6 +6,64 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-10-13 — Company admins can save / delete sculptures in tour layouts
+
+**Type:** Bug fix (permissions)
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — PHP syntax-checked; not yet deployed / not tested on app.tetra3d.com
+
+### Problem
+Live (app.tetra3d.com): company admins (reported by Kris Nuzzi, Ford Foundation; reproduced by Nova with Lisa Kim's
+account) cannot save or delete sculptures in a tour. E.g. `/tours/2?layout_id=390` → place/move a sculpture → save →
+alert "The sculpture could not be saved: your account is not allowed to change sculptures." Super admin works.
+Employees not tested yet.
+
+### Root cause
+`routes/web.php` → group `sculpture-placements` (`sculpture_save`, `sculpture_delete`) uses middleware
+`can:perform-admin-actions`, and that gate (`AuthServiceProvider`) is **super admin only** → 403 for everyone else.
+This was noted as an open decision in the 2026-10-09 "sculpture placement routes" entry (the routes had moved from
+`routes/api.php`, where they were also 401 for everybody). The Sculpture List button in the tour is shown to all
+logged-in users, so company users can place a sculpture but never save it.
+
+### Decision
+- New gate `place-sculptures` instead of loosening `perform-admin-actions` (that gate is also used for the tracker and
+  other super-admin-only things in the tour page).
+- Allowed: **super admins** (any layout) and **company admins** for layouts whose project belongs to **their own
+  company**. Other companies' layouts → 403.
+- **Employees: still not allowed** — waiting for Nova's decision (they also see the Sculpture List button and get the
+  "not allowed" alert).
+- The layout check is done in the controller (route middleware cannot see the layout id in the POST body).
+
+### Changes
+1. `app/Providers/AuthServiceProvider.php` → `boot()` → new gate `place-sculptures(User, ?Layout)`: super admin true;
+   non-company-admin false; company admin true without a layout (route check), with a layout only if
+   `projects.company_id` of `layout.project_id` = `user.company_id` (queried `withoutGlobalScope('forCurrentCompany')`).
+   Added `use App\Models\Layout;`.
+2. `routes/web.php` → sculpture placement routes split in two groups (same URLs and route names):
+   `save` + `delete` → `can:place-sculptures`; `load` + `canvas-image` stay `can:perform-admin-actions`.
+3. `app/Http/Controllers/SculptureController.php`
+   - `save()` → loads the layout first and calls `Gate::authorize('place-sculptures', $layout)` (403 if not allowed),
+     before reading/creating sculpture rows.
+   - `delete()` → same check **before** deleting (previously the layout was only loaded after deleting, for the activity log).
+   - Added `use Illuminate\Support\Facades\Gate;`.
+
+### Not changed / follow-ups
+- Employees: decide whether they may place sculptures (e.g. on layouts of projects they are assigned to — artworks
+  have no extra permission check). If yes, extend the `place-sculptures` gate.
+- Company admins can place any sculpture shown in the Sculpture List; the list itself was not changed.
+- `tour.blade.php` not changed (its 403 alert is what users saw; still used for real 403s).
+- After deploying: `php artisan route:clear` (or `route:cache`) and `php artisan optimize:clear`.
+
+### How to test
+1. Deploy, clear caches. Log in as a company admin (e.g. Ford Foundation) → open a layout of an own-company project
+   (e.g. `/tours/2?layout_id=390`) → add a sculpture, move it, save → no alert. Go to another spot / reload → it is still there.
+2. Same user → delete the sculpture → reload → gone (tidy test sculptures off client layouts afterwards).
+3. Company admin posting to `sculpture-placements/save` with a layout of another company → 403.
+4. Employee → save shows "not allowed" (unchanged, by design for now).
+5. Super admin → save / delete work as before.
+
+---
+
 ## 2026-10-09 — Tour editor: new sculptures dropped at a size-aware distance (gizmo visible)
 
 **Type:** Improvement

@@ -6,6 +6,7 @@ use App\Models\Artwork;
 use App\Models\ArtworkCollection;
 use App\Models\Comment;
 use App\Models\Company;
+use App\Models\Layout;
 use App\Models\Like;
 use App\Models\Map;
 use App\Models\Project;
@@ -67,6 +68,27 @@ class AuthServiceProvider extends ServiceProvider
         // The backend sculpture pages stay super-admin only (SculptureModelPolicy).
         Gate::define('manage-inventory-sculptures', function (User $user) {
             return $user->isSuperAdmin() || $user->isCompanyAdmin();
+        });
+
+        // Place / move / delete sculptures in a layout in the tour editor (routes sculpture_save / sculpture_delete).
+        // Super admins: any layout. Company admins: layouts of their own company's projects.
+        // Employees: not allowed (yet). Without a layout (route middleware) only the role is checked;
+        // SculptureController checks the actual layout.
+        Gate::define('place-sculptures', function (User $user, ?Layout $layout = null) {
+            if ($user->isSuperAdmin()) {
+                return true;
+            }
+            if (! $user->isCompanyAdmin()) {
+                return false;
+            }
+            if (! $layout) {
+                return true;
+            }
+            $companyId = Project::withoutGlobalScope('forCurrentCompany')
+                ->whereKey($layout->project_id)
+                ->value('company_id');
+
+            return $companyId && (int) $companyId === (int) $user->company_id;
         });
 
         Gate::define('access-backend', function (User $user){

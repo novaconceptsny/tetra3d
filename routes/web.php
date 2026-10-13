@@ -164,9 +164,13 @@ Route::group(['middleware' => 'auth'], function () {
     // Moved here from routes/api.php: in Laravel 12 the "api" group has no session, so the browser's
     // login was not seen by auth:sanctum and every save failed silently with 401.
     // Same route names as before, so route('sculpture_save') etc. keep working.
-    Route::middleware('can:perform-admin-actions')->prefix('sculpture-placements')->group(function () {
+    // Save / delete: super admins + company admins (own company's layouts) - gate 'place-sculptures'.
+    Route::middleware('can:place-sculptures')->prefix('sculpture-placements')->group(function () {
         Route::post('save', [\App\Http\Controllers\SculptureController::class, 'save'])->name('sculpture_save');
         Route::post('delete', [\App\Http\Controllers\SculptureController::class, 'delete'])->name('sculpture_delete');
+    });
+    // Load (not used by the tour page) and canvas-image stay super admin only.
+    Route::middleware('can:perform-admin-actions')->prefix('sculpture-placements')->group(function () {
         Route::post('load', [\App\Http\Controllers\SculptureController::class, 'load'])->name('sculpture_load');
         Route::post('canvas-image', [\App\Http\Controllers\Backend\SculptureController::class, 'store_canvas_image'])->name('store_canvas_image');
     });

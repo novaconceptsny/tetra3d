@@ -7,6 +7,7 @@ use App\Models\SpotsPosition;
 use App\Models\Activity;
 use App\Models\Sculpture;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class SculptureController extends Controller
 {
@@ -46,9 +47,13 @@ class SculptureController extends Controller
             'sculpture_id' => 'required'
         ]);
         $data = $request->all();
+
+        // Super admin: any layout. Company admin: only layouts of their own company's projects (403 otherwise).
+        $layout = Layout::findOrFail($data['layout_id']);
+        Gate::authorize('place-sculptures', $layout);
+
         $sculpture_datas = Sculpture::where('layout_id', $data['layout_id'])->where('sculpture_id', $data['sculpture_id'])->get();
 
-        $layout = Layout::findOrFail($data['layout_id']);
         $url = route('tours.show', ['tour' => $layout->tour_id, 'layout_id' => $layout->id], false);
         // $activity = "Sculptures updated in layout {$layout->id}";
         $activity = "Sculpture updated";
@@ -92,6 +97,11 @@ class SculptureController extends Controller
             'sculpture_id' => 'required'
         ]);
         $data = $request->all();
+
+        // Same permission as save(); checked before anything is deleted.
+        $layout = Layout::findOrFail($data['layout_id']);
+        Gate::authorize('place-sculptures', $layout);
+
         $sculpture_datas = Sculpture::where('layout_id', $data['layout_id'])->where('sculpture_id', $data['sculpture_id'])->get();
         if ($sculpture_datas->isEmpty()) {
             return response()->json([
@@ -103,7 +113,6 @@ class SculptureController extends Controller
 
             // $activity = "Sculptures deleted in layout {$data['layout_id']}";
             $activity = "Sculpture deleted";
-            $layout = Layout::findOrFail($data['layout_id']);
             $url = route('tours.show', ['tour' => $layout->tour_id, 'layout_id' => $layout->id], false);
 
             Activity::create([
