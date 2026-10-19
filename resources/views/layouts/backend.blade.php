@@ -83,8 +83,12 @@
 </script>
 
 @yield('scripts')
+{{-- Wire Elements Pro modal host: required for Livewire.dispatch('modal.open', ...)
+     (e.g. Krpano Tools in backend/spot/index). Guarded like layouts/redesign. --}}
+@if (class_exists(\WireElements\Pro\Components\Modal\Modal::class))
+    @livewire('modal-pro')
+@endif
 @livewireScripts
-{{-- @livewire('modal-pro') --}}
 {{-- @livewire('slide-over-pro') --}}
 
 @mediaLibraryScripts

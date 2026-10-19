@@ -6,6 +6,49 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-10-19 — Krpano Tools button in Backend → Tours → Spots does nothing
+
+**Type:** Bug fix
+**Made by:** Claude (AI), requested by Nova
+**Status:** Code changed locally — not yet deployed / not tested on app.tetra3d.com
+
+### Problem
+`/backend/tours/2/spots` → ⋮ menu on a spot → **Krpano Tools**: nothing happens (no modal, no error shown).
+
+### Root cause
+The menu item (`resources/views/backend/spot/index.blade.php`) runs
+`Livewire.dispatch('modal.open', {component: 'modals.krpano-tools', arguments: {spot: <id>}})`.
+`modal.open` is the Wire Elements Pro event; it is handled only by the `modal-pro` Livewire component.
+In `resources/views/layouts/backend.blade.php` that component was commented out (`{{-- @livewire('modal-pro') --}}`),
+so the event was dispatched with no listener and silently ignored. `App\Livewire\Modals\KrpanoTools` (a WEP `Modal`)
+and its view were never loaded. The front-end layout `layouts/redesign.blade.php` does include `@livewire('modal-pro')`,
+which is why WEP modals work there.
+
+### Decision
+Re-enable `@livewire('modal-pro')` in the backend layout, placed before `@livewireScripts` and guarded with
+`class_exists(WireElements\Pro\Components\Modal\Modal::class)` — same pattern as `layouts/redesign.blade.php`.
+Rejected: rewriting the menu item to use the old `<livewire:modals.base-modal />` (`showModal`) flow, because
+`KrpanoTools` extends the WEP `Modal` class and its view uses `<x-wire-elements-pro::bootstrap.modal>`.
+
+### Changes
+1. `resources/views/layouts/backend.blade.php` → bottom scripts → replaced the commented-out
+   `{{-- @livewire('modal-pro') --}}` (after `@livewireScripts`) with a guarded `@livewire('modal-pro')` before `@livewireScripts`.
+
+### Not changed / follow-ups
+- `public/js/modals.js` (old base-modal flow) still calls `Livewire.emit('resetModal')`, which does not exist in Livewire 3
+  (should be `Livewire.dispatch`). Not touched; it only affects the legacy `base-modal`.
+- "Make Panos" inside the modal still depends on the krpano binary (`config('krpano.path')`) and Pusher/Echo for live output —
+  not tested here.
+- `slide-over-pro` stays disabled in the backend (nothing in the backend uses it).
+
+### How to test
+1. Deploy, then `php artisan view:clear`.
+2. Log in as super admin → Backend → Tours → a tour → Spots → ⋮ on a spot → **Krpano Tools**.
+3. Expected: "Krpano Tools" modal opens with a **Make Panos** button; **Close** closes it.
+4. Browser console shows no errors on click. Other backend pages (Tours, Projects) still load normally.
+
+---
+
 ## 2026-10-13 — Company admins can save / delete sculptures in tour layouts
 
 **Type:** Bug fix (permissions)
