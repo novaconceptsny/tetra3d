@@ -32,6 +32,11 @@ class CollectorTools extends Modal
     {
         $this->output = false;
         $this->artwork = null;
+
+        if (! user()->can('accessCollector', $this->company)) {
+            $this->output = 'You are not allowed to use Collector Tools for this company.';
+            return;
+        }
         $this->success = false;
 
         if ($this->syncBy == 'object'){
@@ -45,28 +50,28 @@ class CollectorTools extends Modal
 
     public function getArtwork()
     {
-        $collector = new CollectorApi($this->company);
         try {
+            $collector = new CollectorApi($this->company);
             $object = $collector->getObjectById($this->objectId);
             $this->artwork = $collector->syncArtwork($object);
             $this->success = true;
             $this->output = "Artwork synced successfully";
         } catch (\Exception $exception){
-            $this->output = $exception->getMessage();
+            $this->output = e($exception->getMessage());
         }
     }
 
     public function getCollection()
     {
-        $collector = new CollectorApi($this->company);
         try {
+            $collector = new CollectorApi($this->company);
             $report_url = route('backend.collector.report');
 
             $collector->syncCollection($this->collectionId);
             $this->success = true;
-            $this->output = "Collection has started syncing. Click <a href='$report_url' target='_blank'>here</a> to see report";
+            $this->output = "Collection sync has started. Click <a href='$report_url' target='_blank'>here</a> to see the report";
         } catch (\Exception $exception){
-            $this->output = $exception->getMessage();
+            $this->output = e($exception->getMessage());
         }
     }
 

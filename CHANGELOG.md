@@ -6,6 +6,143 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-11-11 — Collector Systems sync moved to Public API 2.0 (old API returns 404)
+
+**Type:** Upgrade + Bug fix
+**Made by:** Claude (AI), requested by Nova (LuckyRyo)
+**Status:** Local only. Tested against a scratch copy of `tetra_test.sql` with live Collector Systems API calls (single
+object, re-sync, an old 11184 artwork, full collection 71438 → 37 of 39, error cases); the Livewire UI was not clicked
+through; not deployed
+
+### Problem
+Laurel (Tishman Speyer) asked to sync new artworks from the Collector Systems collection **"AC/Rob Art"**.
+Backend → Companies → ⋮ → **Collector Tools** could no longer sync anything. The old API
+`https://api.collectorsystems.com/{subscription_id}/objects/...` (set up in May 2024, ticket PP6M6N-93RYK) returns **404**
+for every account. Collector Systems retired it and replaced it with **Public API 2.0**:
+- Docs: https://apis.collectorsystems.com/swagger/index.html (spec: `/swagger/2.0/swagger.json`)
+- Base URL: `https://apis.collectorsystems.com/public/v2/{AccountGUID}/...`
+- Auth: header `Ocp-Apim-Subscription-Key: <key>`. The key is in Collector Systems → gear icon → Account Settings → **API** tab.
+- AccountGUID: from the Collector web address `https://app.collectorsystems.com/Items/Index/{AccountGUID}?subscriptionId=...`.
+  The old numeric subscription ID (168001 / 11184) is **not** accepted (401).
+- OData (`$filter`, `$expand`, `$select`, `$top`, `$skip`). Responses use **PascalCase** field names (`ObjectId`, `Title`),
+  not the camelCase shown in the swagger schemas.
+
+Tishman Speyer's account GUID `99d5121f-3ae6-4864-9989-161be577bed6` covers both subscriptions 11184 (old Tishman
+artworks) and 168001 ("AC/Rob Art" = collection **71438**, 39 objects).
+
+### Root cause
+1. `app/Services/CollectorApi.php` used the retired API: wrong host and paths, no API key, the old lowercase field names
+   (`objectid`, `artistname`, `widthimperial`, ...) and `/objects/{id}/mainimage`.
+2. Found while testing, and fixed too: since commit `5521ddd` (2025-07-01) `Artwork::$fillable` does not include
+   `collector_object_id` or `artist`. `CollectorApi::syncArtwork()` used `Artwork::updateOrCreate()`, so both values were
+   silently dropped. Synced artworks were saved without Collector ID or artist, and every re-sync made duplicates.
+3. Found while testing, and fixed too: the `HasCompany` trait's `created` hook sets `company_id` to the **logged-in
+   user's** company. When a super admin synced for another company, new artworks and collections could end up in the
+   admin's company.
+4. `SyncArtworksJob` serialized the whole `CollectorApi` object plus the raw API response into the queue.
+
+### Decision
+- Use the API 2.0 **`Art`** endpoint, not `Objects`: only `Art` can expand `Artist` (on these records `ArtistMaker` is
+  empty). One call per page returns everything: `Art?$filter=CollectionId eq {id}&$expand=Artist,MainDimension,ObjectType,Collection,MainImageAttachment`.
+- One API key for the app in `.env` (`COLLECTOR_API_KEY`), because one key covers the whole Collector account. The
+  **AccountGUID is per company**, in the new column `companies.collector_account_guid`.
+- Keep `collector_subscription_id` (reference only). Not reused for the GUID: in the DB dump it is `bigint`.
+- Only **Tishman Speyer** gets the GUID (decided by Nova). Ford Foundation and Nova Concepts also had subscription 11184
+  but stay without a GUID, so Collector Tools is hidden for them (`Company::hasCollector()` now checks the GUID).
+- Match artworks on **company_id + collector_object_id** (was collector_object_id only), so companies sharing a Collector
+  account never move each other's artworks. Old object IDs still work in API 2.0 (e.g. 379399, 379565), so artworks
+  synced before are updated in place, not duplicated.
+- Image: download the **original** when it is JPEG/PNG/GIF/WebP and ≤ 50 MB, else Collector's `size=iphone` rendition
+  (~1440px JPEG). Needed because object 2364822 ("Day and Night") has a 181 MB TIFF original (over the 100 MB media limit,
+  and not viewable in a browser). Collector's renditions are JPEG even though it sends `Content-Type: image/tiff`, so the
+  file extension is taken from the bytes (`getimagesizefromstring`). Other sizes are small: `detail` is 200px,
+  `detailxlarge` 500px.
+- The image is downloaded **before** the artwork is saved, so a failed download never leaves an artwork without an image.
+- Artworks with width or height 0 or missing are **skipped** and logged (as the old code did when the dimensions were
+  missing). Saving them would break scale and placement.
+
+### Changes
+1. `app/Services/CollectorApi.php`: rewritten for API 2.0.
+   - `__construct()`: base URL from `config('services.collector.url')` + `/public/v2/{collector_account_guid}`. The key
+     comes from `config('services.collector.key')`. Clear error when the GUID or key is missing.
+   - `getObjectById()` → `GET Art({id})?$expand=...`. `getCollectionById()` → `GET Collections({id})`.
+     `getCollectionObjects()` → pages through `GET Art?$filter=CollectionId eq {id}` (100 per page).
+   - `syncCollection()` checks the collection exists, then dispatches `SyncArtworksJob` with IDs only.
+   - `syncArtworksFromCollection(int $collection_id, string $collection_name)`: logs progress and errors to
+     `storage/logs/collector.log`, and ends with "synced X of Y".
+   - `syncArtwork()`: dimensions → download image → `ArtworkCollection` (by company + `Collection.CollectionName`) →
+     `Artwork::firstOrNew(company_id, collector_object_id)` with every field set explicitly (name = `Title`,
+     artist = `Artist.ArtistName`, type = `ObjectType.ObjectTypeName`, `data.width_inch` / `data.height_inch` merged into
+     the existing data, `original_unit` = inch, `original_value` = {height, width, unit: inch}) → `addMediaFromString()`
+     → `resizeImage()` (unchanged).
+   - New private helpers: `downloadMainImage()`, `getDimensions()` (`MainDimension.WidthImperial/HeightImperial`),
+     `forceCompany()` (undoes the HasCompany hook), `request()` (key header, 60s timeout, 2 retries on connection errors
+     only), `ensureSuccessful()` (readable messages for 401/403/500; logs URL, status and body to laravel.log).
+2. `app/Jobs/SyncArtworksJob.php`: constructor is now `(Company $company, int $collectionId, string $collectionName)`.
+   `handle()` builds a new `CollectorApi`. `$tries = 1`. The old `fail()` (never called by Laravel) is now `failed()`.
+3. `app/Livewire/Modals/CollectorTools.php`: `sync()` checks `accessCollector` (the modal could be opened by
+   dispatching the event). `new CollectorApi()` is moved inside the try blocks. Error messages are escaped with `e()`,
+   because the view prints `$output` unescaped.
+4. `database/migrations/2026_11_11_000000_add_collector_account_guid_to_companies_table.php`: new nullable
+   `companies.collector_account_guid` varchar(36), after `collector_subscription_id`.
+5. `app/Models/Company.php`: `collector_account_guid` added to `$fillable`. `hasCollector()` returns true only when the
+   GUID is set.
+6. `app/Http/Controllers/Backend/CompanyController.php`: `store()` and `update()` also save `collector_account_guid`.
+7. `app/Helpers/ValidationRules.php` → `storeCompany()` (also used by `updateCompany()`): `collector_account_guid` =>
+   `nullable|uuid`.
+8. `resources/views/backend/company/form.blade.php`: new field "Collector Account GUID".
+9. `config/services.php`: new `collector` entry (`url` = `COLLECTOR_API_URL`, default `https://apis.collectorsystems.com`;
+   `key` = `COLLECTOR_API_KEY`).
+10. `.env.example`: added `COLLECTOR_API_URL` and `COLLECTOR_API_KEY` (empty). The real key is only in the server `.env`;
+    never commit it.
+
+### Not changed / follow-ups
+- **Deploy steps** (server):
+  1. Add to `.env`: `COLLECTOR_API_URL=https://apis.collectorsystems.com` and `COLLECTOR_API_KEY=<Primary key from Collector → Account Settings → API>`
+  2. `php artisan migrate --force` (adds `companies.collector_account_guid`)
+  3. `php artisan config:clear` (or `config:cache`) and `php artisan view:clear`
+  4. Set the GUID for Tishman Speyer only: Backend → Companies → Tishman Speyer → Edit → "Collector Account GUID" =
+     `99d5121f-3ae6-4864-9989-161be577bed6`. Or with SQL, after checking that the name matches exactly one row (not
+     "Tishman Speyer - One Canal Park"):
+     `UPDATE companies SET collector_account_guid = '99d5121f-3ae6-4864-9989-161be577bed6' WHERE name = 'Tishman Speyer';`
+  5. If the server uses a real queue (not `QUEUE_CONNECTION=sync`), restart the workers (`php artisan queue:restart`),
+     because the job's constructor changed. Any old `SyncArtworksJob` still waiting in the queue will fail.
+- **Two "AC/Rob Art" artworks are skipped** because they have 0×0 dimensions in Collector: 2364954 "Chandelier" and
+  2364956 "51st and 7th" (both Installations). Either the client adds dimensions in Collector and we re-sync, or they are
+  added by hand in Tetra3D.
+- 2364953 "Japanese Print" has no artist in Collector (`ArtistId` null), so it syncs with an empty artist.
+- Before this fix, artworks synced after 2025-07-01 may exist **without** `collector_object_id` / `artist`, and may be
+  duplicated. Not cleaned up. Check with
+  `SELECT company_id, name, COUNT(*) FROM artworks WHERE collector_object_id IS NULL GROUP BY company_id, name HAVING COUNT(*) > 1;`
+- `Artwork::resizeImage()` (unchanged) resizes the image to `scale × height_inch` px, which **upscales** small images a
+  lot (e.g. a 650×603 original becomes 10951×10159 for a 78.75" tall work). Existing behaviour, not changed here, but it
+  makes syncing slow and uses a lot of disk and memory.
+- Sub-collections are not included (filter is `CollectionId eq {id}`). "AC/Rob Art" has none.
+- Ford Foundation / Nova Concepts (subscription 11184) have no GUID now, so Collector Tools is hidden for them. Add the
+  GUID to them later if they need the sync.
+- `accessCollector` in `app/Policies/CompanyPolicy.php` still returns nothing when the company has a GUID, so only super
+  admins (via `Gate::after`) can use Collector Tools. Unchanged.
+- The Collector API key was shared in chat and screenshots. Consider regenerating it in Collector (then update `.env`).
+  You can use the Secondary key in the meantime so the sync keeps working.
+- The API is sometimes slow (some test requests timed out after 30s). Requests use a 60s timeout (300s for images)
+  and retry twice on connection errors.
+
+### How to test
+1. Do the deploy steps above.
+2. Backend → Companies: the ⋮ menu of **Tishman Speyer** shows **Collector Tools**. Ford Foundation / Nova Concepts do not.
+3. Collector Tools → Sync By **Object** → `2364364` → Sync. Expected: "Artwork synced successfully", card shows
+   "Geometric Mirror H", artist "Hein, Jeppe b. 1974", type Sculpture, collection "AC/Rob Art", image visible.
+4. Sync the same object again. Expected: still one artwork (same ID), still one image.
+5. Sync By **Collection** → `71438` → Sync → open the report link (`/backend/collector-sync-report`). Expected: 39 objects
+   processed, "Collection synced: 37 of 39 artworks". Errors only for 2364954 and 2364956 (no dimensions).
+   2364822 "Day and Night" syncs with a ~1440px JPEG.
+6. Inventory (as Tishman Speyer): collection "AC/Rob Art" shows 37 artworks with size in inches and image, and an
+   artist on all except "Japanese Print".
+7. Error cases: object `1` → "No artwork found in Collector Systems with Object ID 1". Wrong GUID → "...Account GUID is
+   wrong". Missing key → "Collector Systems API key is missing...".
+
+---
+
 ## 2026-10-19 — Krpano Tools button in Backend → Tours → Spots does nothing
 
 **Type:** Bug fix

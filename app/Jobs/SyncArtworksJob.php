@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Company;
 use App\Services\CollectorApi;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,19 +11,23 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Syncs all artworks of one Collector Systems collection into a company (see App\Services\CollectorApi).
+ * Only IDs are queued; the artworks are fetched from the API when the job runs.
+ */
 class SyncArtworksJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $timeout = 3600;
 
-    public $collection;
-    public CollectorApi $collector;
+    public int $tries = 1;
 
-    public function __construct(CollectorApi $collector, $collection)
-    {
-        $this->collection = $collection;
-        $this->collector = $collector;
+    public function __construct(
+        public Company $company,
+        public int $collectionId,
+        public string $collectionName = '',
+    ) {
     }
 
     /**
@@ -32,13 +37,14 @@ class SyncArtworksJob implements ShouldQueue
     {
         set_time_limit(60 * 60);
 
-        $collection = $this->collection;
-        $this->collector->syncArtworksFromCollection($collection);
-
+        (new CollectorApi($this->company))
+            ->syncArtworksFromCollection($this->collectionId, $this->collectionName);
     }
 
-    public function fail($exception = null): void
+    public function failed(?\Throwable $exception = null): void
     {
-        Log::channel('collector-sync-report')->error($exception);
+        Log::channel('collector-sync-report')->error(
+            "############ Collection sync failed ############ \n " . ($exception?->getMessage() ?? 'Unknown error')
+        );
     }
 }

@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Collector Systems Public API 2.0 (App\Services\CollectorApi). Key: Collector Systems → Account Settings → API.
+    'collector' => [
+        'url' => env('COLLECTOR_API_URL', 'https://apis.collectorsystems.com'),
+        'key' => env('COLLECTOR_API_KEY'),
+    ],
+
 ];

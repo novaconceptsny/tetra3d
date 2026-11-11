@@ -8,7 +8,7 @@ class Company extends Model
 {
     protected $guarded = ['id'];
     
-    protected $fillable = ['name', 'collector_subscription_id'];
+    protected $fillable = ['name', 'collector_subscription_id', 'collector_account_guid'];
 
     public function users()
     {
@@ -30,8 +30,11 @@ class Company extends Model
         return $this->hasMany(Project::class);
     }
 
+    /**
+     * Collector Systems API 2.0 needs the account GUID (the API key is global, see config services.collector).
+     */
     public function hasCollector()
     {
-        return (bool) $this->collector_subscription_id;
+        return (bool) $this->collector_account_guid;
     }
 }

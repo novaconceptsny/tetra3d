@@ -75,6 +75,7 @@ class ValidationRules
     {
         return [
             'name' => self::$basicString,
+            'collector_account_guid' => 'nullable|uuid',
         ];
     }
 

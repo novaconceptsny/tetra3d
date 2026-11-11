@@ -24,6 +24,9 @@
 
                 <x-backend::inputs.text name="name" value="{{ $company?->name }}"/>
                 <x-backend::inputs.text name="collector_subscription_id" value="{{ $company?->collector_subscription_id }}"/>
+                <x-backend::inputs.text name="collector_account_guid" label="Collector Account GUID"
+                                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                        value="{{ $company?->collector_account_guid }}"/>
 
                 <div class="col-12 d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">
