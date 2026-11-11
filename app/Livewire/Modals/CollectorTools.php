@@ -55,7 +55,13 @@ class CollectorTools extends Modal
             $object = $collector->getObjectById($this->objectId);
             $this->artwork = $collector->syncArtwork($object);
             $this->success = true;
-            $this->output = "Artwork synced successfully";
+            $this->output = match ($collector->lastSyncStatus) {
+                'created' => 'New artwork added',
+                'unchanged' => 'No changes, the artwork is already up to date',
+                default => 'Artwork updated:<ul class="mb-0">'
+                    . collect($collector->lastSyncChanges)->map(fn ($change) => '<li>' . e($change) . '</li>')->implode('')
+                    . '</ul>',
+            };
         } catch (\Exception $exception){
             $this->output = e($exception->getMessage());
         }

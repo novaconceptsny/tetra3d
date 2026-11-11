@@ -6,6 +6,87 @@ and add an entry for every change you make (see `CLAUDE.md` for the format).
 
 ---
 
+## 2026-11-11 — Collector sync reports what changed (new / updated with changes / no changes)
+
+**Type:** Feature
+**Made by:** Claude (AI), requested by Nova (LuckyRyo), after client feedback from Tishman Speyer
+**Status:** Local only. Tested against a scratch copy of `tetra_test.sql` with live Collector Systems API calls; the
+Collector Tools modal could not be tested locally (the paid `wire-elements/pro` package is not installed here); not deployed
+
+### Problem
+Client feedback after the Collector API 2.0 upgrade (entry below): "Is it possible when updating the artwork, it can also
+tell what the change is?" Before this change, Backend → Companies → Tishman Speyer → ⋮ → **Collector Tools** only said
+"Artwork synced successfully", and the collection report (`/backend/collector-sync-report`) only said
+"Syncing Object X - n/39". Nobody could see whether an artwork was new, changed or untouched, or what changed.
+
+### Root cause
+`App\Services\CollectorApi::syncArtwork()` always overwrote every field and downloaded the image again, without looking
+at the values already in Tetra3D.
+
+### Decision
+- Before saving, compare the Tetra3D values with Collector: **name, artist, type, collection, width, height and image**.
+  Each artwork ends as `created`, `updated` (with a list like `Height: 70" → 78.75"`) or `unchanged`.
+- The image is compared by Collector's main-image attachment ID, now stored in `artworks.data.collector_image_id`.
+  Comparing files is not possible, because `resizeImage()` changes the stored file. Artworks synced before this change
+  have no stored ID, so their first sync reports "Image: downloaded again (first sync since the Collector API upgrade)".
+  After that they show "No changes".
+- Unchanged artworks are **not saved** and their image is **not downloaded** again. A re-sync of a single unchanged
+  artwork took 1.3 s in testing, against 8–12 s with the download and resize.
+- The image is downloaded again when it changed **or the size changed**, because `resizeImage()` resizes the stored
+  file and needs the original.
+- `original_unit` / `original_value` are only rewritten when the size changed, so a unit someone set by hand in Tetra3D
+  is kept when nothing changed.
+- No permanent history table (not asked for). The report lives in `storage/logs/collector.log`, which the next
+  collection sync replaces, and in the modal.
+
+### Changes
+1. `app/Services/CollectorApi.php`
+   - New public properties `$lastSyncStatus` ('created' | 'updated' | 'unchanged') and `$lastSyncChanges` (list of
+     texts).
+   - `syncArtwork()`: dimensions → `Artwork::firstOrNew(company_id, collector_object_id)` → compare (`compareText()` for
+     name / artist / type / collection, `compareInches()` for width / height, attachment ID for the image) → return
+     early if nothing changed → download the image only if the image or size changed → save, with
+     `data.collector_image_id` added → attach and resize the image only if it was downloaded.
+   - Name, artist and type are compared with the raw DB values (`getRawOriginal()`), because
+     `Artwork::getTypeAttribute()` shows an empty type as "Unknown". Otherwise "Tulip Bed" (no type in Collector)
+     reported `Type: "Unknown" → (empty)` on every sync.
+   - New `lastSyncSummary()`: "New artwork added" / "No changes (already up to date)" / "Updated: a; b; c".
+   - `syncArtworksFromCollection()`: one report line per artwork, e.g.
+     `[3/39] Object 2364753 (2022-RJS_05_) "Untitled (Days)": Updated: Height: 100" → 120"`. Errors now include the
+     title. The last line is "Collection synced: X of Y artworks — N new, N updated, N unchanged, N skipped".
+     The report file is now emptied (`File::put(..., '')`) instead of deleted. Deleting it while Monolog still had it
+     open made the next write fail with `fileinode(): stat failed`. In a long-running queue worker, Laravel turns that
+     warning into an exception, so a second collection sync in the same worker would fail. Found while testing two
+     syncs in one process.
+2. `app/Livewire/Modals/CollectorTools.php` → `getArtwork()`: the message is "New artwork added", "No changes, the
+   artwork is already up to date" or "Artwork updated:" with a bullet list of the changes. Each change is escaped with
+   `e()`, because the view prints `$output` unescaped.
+
+### Not changed / follow-ups
+- On the first collection sync after deploying, every artwork synced before reports the one-time "Image: downloaded
+  again" line. Expected, not a real change.
+- Only the fields Tetra3D uses are compared. Changes to other Collector fields (description, medium, location, ...) are
+  not reported, because Tetra3D does not store them.
+- Changes someone makes by hand in Tetra3D (e.g. renaming an artwork in Inventory) are overwritten by the next sync and
+  reported as a change (`Name: "my name" → "Collector name"`). Same overwrite behaviour as before; now it is visible.
+- If the client wants a permanent change history (e.g. a "last synced / changes" column in Inventory, or an emailed
+  report), that is a separate feature.
+
+### How to test
+1. Deploy, then `php artisan view:clear` (no migration needed for this change).
+2. Collector Tools (Tishman Speyer) → Object `2364364` → Sync. Expected: "New artwork added" (or the one-time
+   "Image: downloaded again" if it was synced before).
+3. Sync it again. Expected: "No changes, the artwork is already up to date", and it returns quickly.
+4. In Inventory, rename that artwork, then sync object `2364364` again. Expected: "Artwork updated:" with
+   `Name: "<your name>" → "Geometric Mirror H"`. The name is back.
+5. Collection `71438` → Sync → report link. Expected: one line per artwork with "New artwork added", "Updated: ..." or
+   "No changes". 2 errors (2364954, 2364956: no dimensions). The last line has the new / updated / unchanged / skipped
+   counts.
+6. Sync the collection again. Expected last line: "Collection synced: 37 of 39 artworks — 0 new, 0 updated,
+   37 unchanged, 2 skipped". Much faster than the first run.
+
+---
+
 ## 2026-11-11 — Collector Systems sync moved to Public API 2.0 (old API returns 404)
 
 **Type:** Upgrade + Bug fix

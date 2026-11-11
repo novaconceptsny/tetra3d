@@ -48,6 +48,12 @@ class CollectorApi
 
     private Company $company;
 
+    /** Result of the last syncArtwork() call: 'created', 'updated' or 'unchanged'. */
+    public string $lastSyncStatus = '';
+
+    /** What changed in the last syncArtwork() call, e.g. 'Height: 10" → 12"'. Empty for new / unchanged artworks. */
+    public array $lastSyncChanges = [];
+
     private string $baseUrl;
 
     private string $apiKey;
@@ -104,7 +110,9 @@ class CollectorApi
     {
         ini_set('memory_limit', -1);
 
-        File::delete(storage_path('logs/collector.log'));
+        // Empty the report instead of deleting it: Monolog keeps the file open, and a deleted file makes the next
+        // log write fail with "fileinode(): stat failed" (an exception inside a long-running queue worker).
+        File::put(storage_path('logs/collector.log'), '');
 
         $log = Log::channel('collector-sync-report');
         $label = $collection_name ?: $collection_id;
@@ -113,45 +121,56 @@ class CollectorApi
 
         $objects = $this->getCollectionObjects($collection_id);
         $total = count($objects);
-        $synced = 0;
+        $counts = ['created' => 0, 'updated' => 0, 'unchanged' => 0, 'skipped' => 0];
 
         foreach ($objects as $index => $object) {
             $current = $index + 1;
             $inventoryNumber = $object->InventoryNumber ?? '-';
-
-            $log->info("Syncing Object {$object->ObjectId} ($inventoryNumber) - $current/$total");
+            $title = $object->Title ?? '';
 
             try {
                 $this->syncArtwork($object);
-                $synced++;
+                $counts[$this->lastSyncStatus]++;
+                $log->info("[$current/$total] Object {$object->ObjectId} ($inventoryNumber) \"$title\": {$this->lastSyncSummary()}");
             } catch (Exception $exception) {
+                $counts['skipped']++;
                 $log->error(
-                    "############ Error in Object {$object->ObjectId} ($inventoryNumber) ############ \n {$exception->getMessage()}"
+                    "############ [$current/$total] Error in Object {$object->ObjectId} ($inventoryNumber) \"$title\" ############ \n {$exception->getMessage()}"
                 );
             }
         }
 
-        $log->info("*********** Collection synced: $synced of $total artworks ***********");
+        $synced = $total - $counts['skipped'];
+        $log->info(
+            "*********** Collection synced: $synced of $total artworks — "
+            . "{$counts['created']} new, {$counts['updated']} updated, {$counts['unchanged']} unchanged, {$counts['skipped']} skipped ***********"
+        );
     }
 
     /**
      * Create or update one Tetra3D artwork from a Collector Systems "Art" record
      * (as returned by getObjectById / getCollectionObjects).
      *
+     * Compares the current Tetra3D values with Collector first and only saves / downloads what changed.
+     * The result is in $lastSyncStatus ('created' | 'updated' | 'unchanged') and $lastSyncChanges
+     * (e.g. 'Height: 10" → 12"'), shown in the sync report and the Collector Tools modal.
+     *
      * @throws Exception
      */
     public function syncArtwork($object): Artwork
     {
+        $this->lastSyncStatus = '';
+        $this->lastSyncChanges = [];
+
         [$width, $height] = $this->getDimensions($object);
 
-        // Download the image first, so a failed download never leaves an artwork without an image.
-        [$imageBytes, $imageExtension] = $this->downloadMainImage($object);
-
-        $collection =ArtworkCollection::withoutGlobalScopes()->firstOrCreate([
-            'company_id' => $this->company->id,
-            'name' => $object->Collection->CollectionName ?? 'Collector Systems',
-        ]);
-        $this->forceCompany($collection);
+        $values = [
+            'name' => (string) ($object->Title ?? ''),
+            'artist' => $object->Artist->ArtistName ?? null,
+            'type' => $object->ObjectType->ObjectTypeName ?? null,
+            'collection' => $object->Collection->CollectionName ?? 'Collector Systems',
+        ];
+        $imageId = (int) ($object->MainImageAttachmentId ?? 0);
 
         // Match on company + Collector object ID so two companies on the same Collector account
         // never take over each other's artworks.
@@ -159,35 +178,131 @@ class CollectorApi
             'company_id' => $this->company->id,
             'collector_object_id' => $object->ObjectId,
         ]);
+        $isNew = !$artwork->exists;
+
+        $changes = [];
+        $dimensionsChanged = $isNew;
+        $imageChanged = $isNew;
+
+        if (!$isNew) {
+            $oldCollection = ArtworkCollection::withoutGlobalScopes()
+                ->whereKey($artwork->artwork_collection_id)->value('name');
+
+            // Raw DB values: Artwork::getTypeAttribute() shows an empty type as "Unknown".
+            $this->compareText($changes, 'Name', $artwork->getRawOriginal('name'), $values['name']);
+            $this->compareText($changes, 'Artist', $artwork->getRawOriginal('artist'), $values['artist']);
+            $this->compareText($changes, 'Type', $artwork->getRawOriginal('type'), $values['type']);
+            $this->compareText($changes, 'Collection', $oldCollection, $values['collection']);
+            $widthChanged = $this->compareInches($changes, 'Width', $artwork->data->get('width_inch'), $width);
+            $heightChanged = $this->compareInches($changes, 'Height', $artwork->data->get('height_inch'), $height);
+            $dimensionsChanged = $widthChanged || $heightChanged;
+
+            // collector_image_id is stored since the API 2.0 upgrade; artworks synced before have none.
+            $oldImageId = (int) $artwork->data->get('collector_image_id');
+            if (!$artwork->getFirstMedia('image')) {
+                $imageChanged = true;
+                $changes[] = 'Image: added (artwork had no image)';
+            } elseif ($oldImageId === 0) {
+                $imageChanged = true;
+                $changes[] = 'Image: downloaded again (first sync since the Collector API upgrade)';
+            } elseif ($oldImageId !== $imageId) {
+                $imageChanged = true;
+                $changes[] = 'Image: replaced with the new main image from Collector Systems';
+            }
+        }
+
+        $this->lastSyncChanges = $changes;
+
+        if (!$isNew && !$changes) {
+            $this->lastSyncStatus = 'unchanged';
+
+            return $artwork;
+        }
+
+        // Download the image before saving, so a failed download never leaves an artwork without an image.
+        // A new size also needs the original again, because resizeImage() resizes the stored file.
+        $image = ($imageChanged || $dimensionsChanged) ? $this->downloadMainImage($object) : null;
+
+        $collection = ArtworkCollection::withoutGlobalScopes()->firstOrCreate([
+            'company_id' => $this->company->id,
+            'name' => $values['collection'],
+        ]);
+        $this->forceCompany($collection);
 
         // collector_object_id and artist are not in Artwork::$fillable, so set every field explicitly.
         $artwork->company_id = $this->company->id;
         $artwork->collector_object_id = $object->ObjectId;
         $artwork->artwork_collection_id = $collection->id;
-        $artwork->name = $object->Title ?? '';
-        $artwork->artist = $object->Artist->ArtistName ?? null;
-        $artwork->type = $object->ObjectType->ObjectTypeName ?? null;
+        $artwork->name = $values['name'];
+        $artwork->artist = $values['artist'];
+        $artwork->type = $values['type'];
         $artwork->data = array_merge($artwork->data?->all() ?? [], [
             'width_inch' => $width,
             'height_inch' => $height,
+            'collector_image_id' => $imageId,
         ]);
-        $artwork->original_unit = 'inch';
-        $artwork->original_value = ['height' => $height, 'width' => $width, 'unit' => 'inch'];
+        if ($dimensionsChanged) {
+            $artwork->original_unit = 'inch';
+            $artwork->original_value = ['height' => $height, 'width' => $width, 'unit' => 'inch'];
+        }
         $artwork->save();
         $this->forceCompany($artwork);
 
-        $fileName = Str::slug($object->Title ?? '') ?: 'artwork';
-        $artwork->addMediaFromString($imageBytes)
-            ->usingFileName("{$object->ObjectId}-{$fileName}.{$imageExtension}")
-            ->toMediaCollection('image');
-        unset($imageBytes);
+        if ($image) {
+            [$imageBytes, $imageExtension] = $image;
+            unset($image);
 
-        // refresh model, to ensure the media is attached!
-        $artwork->refresh();
+            $fileName = Str::slug($values['name']) ?: 'artwork';
+            $artwork->addMediaFromString($imageBytes)
+                ->usingFileName("{$object->ObjectId}-{$fileName}.{$imageExtension}")
+                ->toMediaCollection('image');
+            unset($imageBytes);
 
-        $artwork->resizeImage();
+            // refresh model, to ensure the media is attached!
+            $artwork->refresh();
+
+            $artwork->resizeImage();
+        }
+
+        $this->lastSyncStatus = $isNew ? 'created' : 'updated';
 
         return $artwork;
+    }
+
+    /** Text summary of the last syncArtwork() call, for the sync report. */
+    public function lastSyncSummary(): string
+    {
+        return match ($this->lastSyncStatus) {
+            'created' => 'New artwork added',
+            'unchanged' => 'No changes (already up to date)',
+            'updated' => 'Updated: ' . implode('; ', $this->lastSyncChanges),
+            default => '',
+        };
+    }
+
+    private function compareText(array &$changes, string $label, $old, $new): void
+    {
+        $old = trim((string) $old);
+        $new = trim((string) $new);
+
+        if ($old !== $new) {
+            $changes[] = "$label: " . ($old === '' ? '(empty)' : "\"$old\"") . ' → ' . ($new === '' ? '(empty)' : "\"$new\"");
+        }
+    }
+
+    private function compareInches(array &$changes, string $label, $old, float $new): bool
+    {
+        $format = fn ($value) => ($value === null || $value === '')
+            ? '(empty)'
+            : rtrim(rtrim(number_format((float) $value, 4, '.', ''), '0'), '.') . '"';
+
+        if ($old !== null && $old !== '' && round((float) $old, 4) === round($new, 4)) {
+            return false;
+        }
+
+        $changes[] = "$label: {$format($old)} → {$format($new)}";
+
+        return true;
     }
 
     /**
